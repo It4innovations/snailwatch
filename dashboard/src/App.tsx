@@ -7,7 +7,7 @@ import {Route} from 'react-router';
 import {Routes} from './lib/nav/routes';
 import {LoginScreen} from './components/login-screen/login-screen';
 
-import './App.css';
+import styles from './App.scss';
 
 export class App extends PureComponent
 {
@@ -16,7 +16,7 @@ export class App extends PureComponent
         return (
             <Provider store={store}>
                 <ConnectedRouter history={history}>
-                    <div className='app'>
+                    <div className={styles.app}>
                         <ul className='nav nav-pills'>
                             <li><Link to={'/'}>Home</Link></li>
                         </ul>

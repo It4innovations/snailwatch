@@ -12,6 +12,9 @@
 # JS files
 src/**/*.js
 
+# artificial declaration files
+src/**/*.scss.d.ts
+
 # misc
 .DS_Store
 .env.local
