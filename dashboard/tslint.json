@@ -1,0 +1,117 @@
+{
+  "rules": {
+    "no-any": true,
+    "no-duplicate-variable": true,
+    "class-name": true,
+    "max-classes-per-file": false,
+    "curly": false,
+    "only-arrow-functions": [true, "allow-declarations"],
+    "arrow-parens": false,
+    "adjacent-overload-signatures": true,
+    "no-var-requires": true,
+    "no-null-keyword": false,
+    "no-shadowed-variable": [true, {
+      "typeParameter": false
+    }],
+    "no-reference": true,
+    "switch-default": true,
+    "use-isnan": true,
+    "label-position": true,
+    "eofline": true,
+    "no-conditional-assignment": true,
+    "object-literal-key-quotes": [false],
+    "ordered-imports": false,
+    "interface-name": false,
+    "jsdoc-format": true,
+    "new-parens": true,
+    "typedef": false,
+    "member-ordering": [
+      true,
+      { "order":[
+        "public-static-field",
+        "protected-static-field",
+        "private-static-field",
+        "public-instance-field",
+        "protected-instance-field",
+        "private-instance-field",
+        "constructor",
+        "public-static-method",
+        "protected-static-method",
+        "private-static-method",
+        "public-instance-method",
+        "protected-instance-method",
+        "private-instance-method"
+      ]
+      }
+    ],
+    "max-line-length": [
+      true,
+      120
+    ],
+    "trailing-comma": [
+      false,
+      {
+        "multiline": "always",
+        "singleline": "never"
+      }
+    ],
+    "align": [
+      true,
+      "parameters",
+      "statements"
+    ],
+    "comment-format": [
+      true,
+      "check-space"
+    ],
+    "indent": [
+      true,
+      "spaces"
+    ],
+    "no-eval": true,
+    "no-internal-module": true,
+    "no-trailing-whitespace": false,
+    "no-var-keyword": true,
+    "one-line": false,
+    "quotemark": [
+      true,
+      "single"
+    ],
+    "semicolon": [
+      true,
+      "always"
+    ],
+    "triple-equals": [
+      true,
+      "allow-null-check"
+    ],
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace"
+      },
+      {
+        "call-signature": "onespace",
+        "index-signature": "onespace",
+        "parameter": "onespace",
+        "property-declaration": "onespace",
+        "variable-declaration": "onespace"
+      }
+    ],
+    "variable-name": [
+      true,
+      "ban-keywords"
+    ],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-separator",
+      "check-type"
+    ]
+  },
+  "no-unsafe-finally": true,
+  "prefer-for-of": true
+}

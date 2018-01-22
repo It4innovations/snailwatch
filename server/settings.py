@@ -1,4 +1,4 @@
-from auth import AdminAuthenticator
+from server.auth import AdminAuthenticator
 
 # metadata
 SWAGGER_INFO = {

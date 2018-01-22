@@ -1,6 +1,6 @@
 from eve import Eve
 from flask import request
-from auth import hash_password
+from server.auth import hash_password
 
 
 def before_insert_user(users):
