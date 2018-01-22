@@ -23,7 +23,7 @@ MONGO_PORT = 27017
 MONGO_DBNAME = 'snailwatch'
 
 # permissions
-AUTH_FIELD = 'owner_id'
+AUTH_FIELD = 'owner'
 
 # settings
 HATEOAS = False
