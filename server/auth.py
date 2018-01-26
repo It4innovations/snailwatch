@@ -2,11 +2,11 @@ import werkzeug.security
 import uuid
 from eve.auth import TokenAuth
 from flask import current_app as app
-from settings import ADMIN_AUTH_TOKEN
 
 
 class AdminAuthenticator(TokenAuth):
     def check_auth(self, token, allowed_roles, resource, method):
+        from settings import ADMIN_AUTH_TOKEN
         return token == ADMIN_AUTH_TOKEN
 
 
