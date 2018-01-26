@@ -1,0 +1,15 @@
+import {userReducer, UserState} from '../user/reducer';
+import {RouterState} from 'react-router-redux';
+import {projectReducer, ProjectState} from '../project/reducer';
+
+export interface AppState
+{
+    user: UserState;
+    project: ProjectState;
+    router: RouterState;
+}
+
+export const reducers = {
+    user: userReducer,
+    project: projectReducer
+};
