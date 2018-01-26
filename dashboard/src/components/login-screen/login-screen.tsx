@@ -4,11 +4,11 @@ import {connect} from 'react-redux';
 import {loginUser} from '../../state/user/actions';
 import {AppState} from '../../state/app/reducers';
 import {RouteComponentProps, withRouter} from 'react-router';
+import {RequestContext} from '../../util/request';
 
 interface StateProps
 {
-    loginInProgress: boolean;
-    loginError: string;
+    loginRequest: RequestContext;
 }
 interface DispatchProps
 {
@@ -21,8 +21,8 @@ class LoginScreenComponent extends PureComponent<StateProps & DispatchProps & Ro
     {
         return (
             <div>
-                {this.props.loginInProgress && <div>Loading...</div>}
-                {this.props.loginError && <div>{this.props.loginError.toString()}</div>}
+                {this.props.loginRequest.loading && <div>Loading...</div>}
+                {this.props.loginRequest.error && <div>{this.props.loginRequest.error.toString()}</div>}
                 <LoginForm handleSubmit={this.tryLogin} />
             </div>
         );
@@ -38,8 +38,7 @@ class LoginScreenComponent extends PureComponent<StateProps & DispatchProps & Ro
 }
 
 export const LoginScreen = withRouter(connect<StateProps, DispatchProps, {}>((state: AppState) => ({
-    loginInProgress: state.user.loginInProgress,
-    loginError: state.user.loginError
+    loginRequest: state.user.loginRequest
 }), {
     loginUser: loginUser.started
 })(LoginScreenComponent));
