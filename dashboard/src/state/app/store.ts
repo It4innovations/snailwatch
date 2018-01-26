@@ -14,9 +14,6 @@ import Raven from 'raven-js';
 import {RestClient} from '../../lib/api/rest-client';
 import configuration from '../../configuration.json';
 
-Raven
-    .config('https://7819c60749c84e27a09d1cdc8bcc276e@sentry.io/278022')
-    .install();
 function errorHandler(error: Error, getState: () => AppState, action: Action)
 {
     Raven.setExtraContext({
@@ -53,8 +50,12 @@ const middleware = [
     epic,
     thunk
 ];
+
 if (process.env.NODE_ENV === 'production')
 {
+    Raven
+        .config('https://7819c60749c84e27a09d1cdc8bcc276e@sentry.io/278022')
+        .install();
     middleware.push(reduxCatch(errorHandler));
 }
 else middleware.push(createLogger());

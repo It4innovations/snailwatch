@@ -36,6 +36,15 @@ export class RestClient implements SnailClient
             password
         });
     }
+
+    createProject(user: User, name: string): Observable<boolean>
+    {
+        return this.call('/projects', 'POST', {
+            name
+        }, {
+            token: user.token
+        }).map(() => true);
+    }
     loadProjects(user: User): Observable<Project[]>
     {
         return this.call('/projects', 'GET', {}, {
@@ -49,6 +58,7 @@ export class RestClient implements SnailClient
             }))
         );
     }
+
     loadBenchmarks(user: User, project: Project): Observable<Benchmark[]>
     {
         return this.call('/benchmarks', 'GET', {

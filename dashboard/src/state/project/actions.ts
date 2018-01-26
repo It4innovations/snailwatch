@@ -4,4 +4,16 @@ import {Project} from '../../lib/project/project';
 
 const actionCreator = actionCreatorFactory('project');
 
-export const loadProjects = actionCreator.async<User, Project[]>('load');
+export interface LoadProjectParams
+{
+    user: User;
+    force: boolean;
+}
+export const loadProjects = actionCreator.async<LoadProjectParams, Project[]>('load');
+
+export interface CreateProjectParams
+{
+    user: User;
+    name: string;
+}
+export const createProject = actionCreator.async<CreateProjectParams, boolean>('create');
