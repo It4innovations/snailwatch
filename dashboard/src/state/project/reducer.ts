@@ -7,27 +7,27 @@ import {RequestContext, requestDone, requestErrored, requestStarted} from '../..
 export interface ProjectState
 {
     projects: Project[];
-    projectsLoadRequest: RequestContext;
+    projectRequest: RequestContext;
 }
 
 const reducer = reducerWithInitialState<ProjectState>({
     projects: null,
-    projectsLoadRequest: requestDone()
+    projectRequest: requestDone()
 })
 .case(loadProjects.started, state => ({
     ...state,
-    projectsLoadRequest: requestStarted()
+    projectRequest: requestStarted()
 }))
 .case(loadProjects.failed, (state, response) => ({
     ...state,
-    projectsLoadRequest: requestErrored(response.error)
+    projectRequest: requestErrored(response.error)
 }))
 .case(loadProjects.done, (state, response) => ({
     ...state,
-    projectsLoadRequest: requestDone(),
+    projectRequest: requestDone(),
     projects: response.result
 }));
 
-export const getProjects = (state: AppState) => state.project.projects;
+export const getProjects = (state: AppState) => state.project.projects || [];
 
 export const projectReducer = reducer;

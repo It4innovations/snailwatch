@@ -20,10 +20,6 @@ class TokenAuthenticator(TokenAuth):
         return False
 
 
-def init_auth(app):
-    app.data.driver.db['sessions'].create_index("token", unique=True)
-
-
 def find_session(token: str) -> dict:
     sessions = app.data.driver.db['sessions']
     session = sessions.find_one({

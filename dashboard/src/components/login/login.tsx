@@ -15,7 +15,7 @@ interface DispatchProps
     loginUser: (data: {username: string, password: string}) => void;
 }
 
-class LoginScreenComponent extends PureComponent<StateProps & DispatchProps & RouteComponentProps<void>>
+class LoginComponent extends PureComponent<StateProps & DispatchProps & RouteComponentProps<void>>
 {
     render()
     {
@@ -37,8 +37,8 @@ class LoginScreenComponent extends PureComponent<StateProps & DispatchProps & Ro
     }
 }
 
-export const LoginScreen = withRouter(connect<StateProps, DispatchProps, {}>((state: AppState) => ({
+export const Login = withRouter(connect<StateProps, DispatchProps, {}>((state: AppState) => ({
     loginRequest: state.user.loginRequest
 }), {
     loginUser: loginUser.started
-})(LoginScreenComponent));
+})(LoginComponent));

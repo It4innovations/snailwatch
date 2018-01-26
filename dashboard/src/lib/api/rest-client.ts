@@ -4,6 +4,7 @@ import 'rxjs/add/observable/fromPromise';
 import axios from 'axios';
 import {User} from '../user/user';
 import {Project} from '../project/project';
+import {Benchmark} from '../benchmark/benchmark';
 
 interface ArrayResponse<T>
 {
@@ -11,6 +12,11 @@ interface ArrayResponse<T>
 }
 
 interface ProjectDAO
+{
+    _id: string;
+    name: string;
+}
+interface BenchmarkDAO
 {
     _id: string;
     name: string;
@@ -42,6 +48,21 @@ export class RestClient implements SnailClient
                 name: project.name
             }))
         );
+    }
+    loadBenchmarks(user: User, project: Project): Observable<Benchmark[]>
+    {
+        return this.call('/benchmarks', 'GET', {
+            where: `{"project":"${project.id}"}`
+        }, {
+            token: user.token
+        })
+            .map((data: ArrayResponse<BenchmarkDAO>) =>
+                data._items
+                    .map((benchmark: BenchmarkDAO) => ({
+                        id: benchmark._id,
+                        name: benchmark.name
+                    }))
+            );
     }
 
     private call<T>(path: string, method: 'GET' | 'POST',

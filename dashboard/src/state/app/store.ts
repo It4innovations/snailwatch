@@ -48,7 +48,8 @@ const rootReducer = combineReducers({
     router: routerReducer
 });
 
-const middleware = [router,
+const middleware = [
+    router,
     epic,
     thunk
 ];

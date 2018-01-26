@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Routes} from '../../state/nav/routes';
+import {Navigation, Routes} from '../../state/nav/routes';
 import {Link} from 'react-router-dom';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {Button} from 'react-bootstrap';
@@ -16,8 +16,8 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
     {
         return (
             <ul className='nav nav-pills'>
-                {this.publicLink('Login', Routes.Login)}
-                {this.authLink('Projects', Routes.Projects)}
+                {this.publicLink('Login', Navigation.Login)}
+                {this.authLink('Projects', Navigation.Projects)}
                 {this.props.authenticated && <Button onClick={this.props.onLogout}>Sign out</Button>}
             </ul>
         );

@@ -9,7 +9,6 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/if';
 import {User} from '../../lib/user/user';
 import {loadProjects} from './actions';
-import {getProjects} from './reducer';
 
 const loadProjectsEpic = (action$: ActionsObservable<ReduxAction>,
                           store: Store<AppState>,
@@ -18,7 +17,7 @@ const loadProjectsEpic = (action$: ActionsObservable<ReduxAction>,
         .ofAction(loadProjects.started)
         .switchMap((action: Action<User>) =>
             {
-                const storedProjects = getProjects(store.getState());
+                const storedProjects = store.getState().project.projects;
                 if (storedProjects === null)
                 {
                     return deps.client.loadProjects(action.payload)

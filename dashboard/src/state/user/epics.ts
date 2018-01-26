@@ -8,7 +8,7 @@ import {Observable} from 'rxjs/Observable';
 import '../../util/redux-observable';
 import 'rxjs/add/observable/of';
 import {push} from 'react-router-redux';
-import {Routes} from '../nav/routes';
+import {Navigation, Routes} from '../nav/routes';
 
 interface LoginData
 {
@@ -39,12 +39,6 @@ const loginUserEpic = (action$: ActionsObservable<ReduxAction>,
                 )
         );
 
-const goToProjectsAfterLoginEpic = (action$: ActionsObservable<ReduxAction>) =>
-    action$
-        .ofAction(loginUser.done)
-        .map(() => push(Routes.Projects));
-
 export const userEpics = combineEpics(
-    loginUserEpic,
-    goToProjectsAfterLoginEpic
+    loginUserEpic
 );
