@@ -27,7 +27,7 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
         return (
             <div className={styles.app}>
                 <Menu authenticated={this.props.authenticated} onLogout={this.props.onLogout} />
-                <div className='content'>
+                <div>
                     <Switch>
                         <SwitchRoute path={Routes.Login} component={LoginScreen}
                                      usePrimaryRoute={!this.props.authenticated} redirect={Routes.Projects} />
