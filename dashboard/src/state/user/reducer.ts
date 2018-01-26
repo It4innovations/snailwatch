@@ -3,34 +3,30 @@ import {loginUser, logoutUser} from './actions';
 import {AppState} from '../app/reducers';
 import {User} from '../../lib/user/user';
 import {createSelector} from 'reselect';
+import {RequestContext, requestDone, requestErrored, requestStarted} from '../../util/request';
 
 export interface UserState
 {
     user: User;
-    loginInProgress: boolean;
-    loginError: string;
+    loginRequest: RequestContext;
 }
 
 const reducer = reducerWithInitialState<UserState>({
     user: null,
-    loginInProgress: false,
-    loginError: null
+    loginRequest: requestDone()
 })
 .case(loginUser.started, state => ({
     ...state,
-    loginInProgress: true,
-    loginError: null
+    loginRequest: requestStarted()
 }))
-.case(loginUser.failed, (state, error) => ({
+.case(loginUser.failed, (state, response) => ({
     ...state,
-    loginInProgress: false,
-    loginError: error.error
+    loginRequest: requestErrored(response.error)
 }))
-.case(loginUser.done, (state, user) => ({
+.case(loginUser.done, (state, response) => ({
     ...state,
-    loginInProgress: false,
-    loginError: null,
-    user: user.result
+    loginRequest: requestDone(),
+    user: response.result
 }))
 .case(logoutUser, (state) => ({
     ...state,

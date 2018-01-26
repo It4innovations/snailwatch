@@ -2,34 +2,30 @@ import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {AppState} from '../app/reducers';
 import {Project} from '../../lib/project/project';
 import {loadProjects} from './actions';
+import {RequestContext, requestDone, requestErrored, requestStarted} from '../../util/request';
 
 export interface ProjectState
 {
     projects: Project[];
-    projectsLoading: boolean;
-    projectsLoadError: string;
+    projectsLoadRequest: RequestContext;
 }
 
 const reducer = reducerWithInitialState<ProjectState>({
     projects: null,
-    projectsLoading: false,
-    projectsLoadError: null
+    projectsLoadRequest: requestDone()
 })
 .case(loadProjects.started, state => ({
     ...state,
-    projectsLoading: true,
-    projectsLoadError: null
+    projectsLoadRequest: requestStarted()
 }))
-.case(loadProjects.failed, (state, error) => ({
+.case(loadProjects.failed, (state, response) => ({
     ...state,
-    projectsLoading: false,
-    projectsLoadError: error.error
+    projectsLoadRequest: requestErrored(response.error)
 }))
-.case(loadProjects.done, (state, projects) => ({
+.case(loadProjects.done, (state, response) => ({
     ...state,
-    projectsLoading: false,
-    projectsLoadError: null,
-    projects: projects.result
+    projectsLoadRequest: requestDone(),
+    projects: response.result
 }));
 
 export const getProjects = (state: AppState) => state.project.projects;
