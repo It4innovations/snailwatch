@@ -26,6 +26,7 @@ MONGO_DBNAME = 'snailwatch'
 AUTH_FIELD = 'owner'
 X_DOMAINS = '*'
 X_HEADERS = 'Authorization'
+ADMIN_AUTH_TOKEN = 'a67ba93bc150ab9f38e385feb038bf52'
 
 # settings
 HATEOAS = False
