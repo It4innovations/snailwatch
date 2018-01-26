@@ -1,15 +1,29 @@
 import createHistory from 'history/createBrowserHistory';
 import {routerMiddleware, routerReducer} from 'react-router-redux';
-import {applyMiddleware, combineReducers, compose, createStore} from 'redux';
+import {Action, applyMiddleware, combineReducers, compose, createStore} from 'redux';
 import {createLogger} from 'redux-logger';
 import {createEpicMiddleware} from 'redux-observable';
 import thunk from 'redux-thunk';
 import {rootEpic} from './epics';
-import {reducers} from './reducers';
+import {AppState, reducers} from './reducers';
 import url from 'url';
 import {persistStore, persistReducer} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import reduxCatch from 'redux-catch';
+import Raven from 'raven-js';
 import {RestClient} from '../../lib/api/rest-client';
+
+Raven
+    .config('https://7819c60749c84e27a09d1cdc8bcc276e@sentry.io/278022')
+    .install();
+function errorHandler(error: Error, getState: () => AppState, action: Action)
+{
+    Raven.setExtraContext({
+        state: getState() as {},
+        action
+    });
+    Raven.captureException(error);
+}
 
 export const history = createHistory({
     basename: url.parse(process.env.PUBLIC_URL || 'http://localhost').pathname
@@ -22,7 +36,6 @@ const epic = createEpicMiddleware(rootEpic, {
         client: new RestClient('http://localhost:5000')
     }
 });
-const logger = createLogger();
 const persistConfig = {
     key: 'auth',
     storage,
@@ -34,8 +47,18 @@ const rootReducer = combineReducers({
     router: routerReducer
 });
 
+const middleware = [router,
+    epic,
+    thunk
+];
+if (process.env.NODE_ENV === 'production')
+{
+    middleware.push(reduxCatch(errorHandler));
+}
+else middleware.push(createLogger());
+
 export const store = createStore(
     rootReducer,
-    composeEnhancers(applyMiddleware(router, epic, thunk, logger))
+    composeEnhancers(applyMiddleware(...middleware))
 );
 export const persistor = persistStore(store);
