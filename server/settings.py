@@ -1,4 +1,4 @@
-from server.auth import AdminAuthenticator
+from auth import AdminAuthenticator
 
 # metadata
 SWAGGER_INFO = {
@@ -24,6 +24,8 @@ MONGO_DBNAME = 'snailwatch'
 
 # permissions
 AUTH_FIELD = 'owner'
+X_DOMAINS = '*'
+X_HEADERS = 'Authorization'
 
 # settings
 HATEOAS = False
