@@ -25,7 +25,7 @@ MONGO_DBNAME = 'snailwatch'
 # permissions
 AUTH_FIELD = 'owner'
 X_DOMAINS = '*'
-X_HEADERS = 'Authorization'
+X_HEADERS = ['Authorization', 'Content-Type']
 ADMIN_AUTH_TOKEN = 'a67ba93bc150ab9f38e385feb038bf52'
 
 # settings
@@ -60,38 +60,13 @@ project_schema = {
         'unique_to_user': True
     }
 }
-benchmark_schema = {
-    'name': {
+measurement_schema = {
+    'benchmark': {
         'type': 'string',
         'required': True,
         'empty': False
     },
-    'project': {
-        'type': 'objectid',
-        'required': True,
-        'data_relation': {
-            'resource': 'projects',
-            'field': '_id'
-        }
-    }
-}
-measurement_schema = {
-    'benchmark': {
-        'type': 'objectid',
-        'required': True,
-        'data_relation': {
-            'resource': 'benchmarks',
-            'field': '_id'
-        }
-    },
     'environment': {
-        'type': 'dict',
-        'propertyschema': dict_key_schema,
-        'valueschema': {
-            'type': 'string'
-        }
-    },
-    'revision': {
         'type': 'dict',
         'propertyschema': dict_key_schema,
         'valueschema': {
@@ -132,10 +107,6 @@ DOMAIN = {
     },
     'projects': {
         'schema': project_schema,
-        'resource_methods': ['GET', 'POST']
-    },
-    'benchmarks': {
-        'schema': benchmark_schema,
         'resource_methods': ['GET', 'POST']
     },
     'measurements': {
