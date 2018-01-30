@@ -1,7 +1,7 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {AppState} from '../app/reducers';
 import {Project} from '../../lib/project/project';
-import {createProject, loadProject, loadProjects} from './actions';
+import {clearProjects, createProject, loadProject, loadProjects} from './actions';
 import {createRequest, hookRequestActions, Request} from '../../util/request';
 
 export interface ProjectState
@@ -17,7 +17,14 @@ let reducer = reducerWithInitialState<ProjectState>({
     loadProjectsRequest: createRequest(),
     loadProjectRequest: createRequest(),
     createProjectRequest: createRequest()
-});
+})
+.case(clearProjects, (state) => ({
+    ...state,
+    loadProjectRequest: createRequest(),
+    loadProjectsRequest: createRequest(),
+    createProjectRequest: createRequest(),
+    projects: []
+}));
 
 reducer = hookRequestActions(reducer,
     loadProject,

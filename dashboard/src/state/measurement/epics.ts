@@ -7,9 +7,7 @@ import {Observable} from 'rxjs/Observable';
 import '../../util/redux-observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/if';
-import {User} from '../../lib/user/user';
-import {loadMeasurements} from './actions';
-import {Project} from '../../lib/project/project';
+import {LoadMeasurementParams, loadMeasurements} from './actions';
 import {getMeasurements} from './reducer';
 
 const loadMeasurementsForProject = (action$: ActionsObservable<ReduxAction>,
@@ -17,15 +15,13 @@ const loadMeasurementsForProject = (action$: ActionsObservable<ReduxAction>,
                                     deps: ServiceContainer) =>
     action$
         .ofAction(loadMeasurements.started)
-        .switchMap((action: Action<{
-            user: User,
-            project: Project
-            }>) =>
+        .switchMap((action: Action<LoadMeasurementParams>) =>
             {
+                const {user, project} = action.payload;
                 const storedMeasurements = store.getState().measurement.measurements;
-                if (!storedMeasurements.hasOwnProperty(action.payload.project.id))
+                if (!storedMeasurements.hasOwnProperty(project.id))
                 {
-                    return deps.client.loadMeasurements(action.payload.user, action.payload.project)
+                    return deps.client.loadMeasurements(user, project)
                         .map(measurements =>
                             loadMeasurements.done({
                                 params: action.payload,
@@ -40,7 +36,7 @@ const loadMeasurementsForProject = (action$: ActionsObservable<ReduxAction>,
                 }
                 else return Observable.of(loadMeasurements.done({
                     params: action.payload,
-                    result: getMeasurements(store.getState(), action.payload.project)
+                    result: getMeasurements(store.getState())
                 }));
             }
         );

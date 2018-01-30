@@ -12,7 +12,7 @@ interface StateProps
 }
 interface DispatchProps
 {
-    loginUser: (data: {username: string, password: string}) => void;
+    loginUser(data: {username: string, password: string}): void;
 }
 
 class LoginComponent extends PureComponent<StateProps & DispatchProps & RouteComponentProps<void>>

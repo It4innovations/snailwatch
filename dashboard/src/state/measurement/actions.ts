@@ -5,7 +5,12 @@ import {Measurement} from '../../lib/measurement/measurement';
 
 const actionCreator = actionCreatorFactory('measurement');
 
-export const loadMeasurements = actionCreator.async<{
-    user: User,
-    project: Project
-}, Measurement[]>('load');
+export interface LoadMeasurementParams
+{
+    user: User;
+    project: Project;
+}
+
+export const loadMeasurements = actionCreator.async<LoadMeasurementParams, Measurement[]>('load');
+
+export const clearMeasurements = actionCreator('clear');

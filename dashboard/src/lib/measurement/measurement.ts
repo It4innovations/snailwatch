@@ -1,3 +1,5 @@
+import {Moment} from 'moment';
+
 interface MeasurementRecord
 {
     type: 'time' | 'size' | 'integer' | 'string';
@@ -10,4 +12,5 @@ export interface Measurement
     benchmark: string;
     environment: { [key: string]: string };
     measurement: { [key: string]: MeasurementRecord };
+    createdAt: Moment;
 }

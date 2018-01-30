@@ -2,7 +2,7 @@ import React, {PureComponent} from 'react';
 import {Route, RouteComponentProps, Switch, withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {Project} from '../../lib/project/project';
-import {ProjectDetail} from './project';
+import {ProjectDetail} from '../project/project';
 import {User} from '../../lib/user/user';
 import {
     createProject, CreateProjectParams, loadProjects, loadProject,
@@ -99,7 +99,10 @@ class ProjectsComponent extends PureComponent<Props, State>
 
             return <div>Loading project {name}</div>;
         }
-        else return <ProjectDetail project={project} />;
+        else
+        {
+            return <ProjectDetail project={project} />;
+        }
     }
 
     renderProjects = (): JSX.Element =>
@@ -110,6 +113,8 @@ class ProjectsComponent extends PureComponent<Props, State>
                 <h2>Projects</h2>
                 {this.props.loadProjectsRequest.error && <div>{this.props.loadProjectsRequest.error.toString()}</div>}
                 {this.props.loadProjectsRequest.loading && <div>Loading...</div>}
+                {this.props.createProjectRequest.error && <div>{this.props.createProjectRequest.error.toString()}</div>}
+                {this.props.createProjectRequest.loading && <div>Creating project...</div>}
                 {projects.map(project =>
                     <div key={project.id}>
                         <Link to={projectRoute(project.name)}>
@@ -118,7 +123,7 @@ class ProjectsComponent extends PureComponent<Props, State>
                     </div>
                 )}
                 {this.state.creatingProject ? this.renderProjectCreation() :
-                    <Button onClick={this.startProjectCreate}>Create project</Button>}
+                    <Button bsStyle='success' onClick={this.startProjectCreate}>Create project</Button>}
             </div>
         );
     }

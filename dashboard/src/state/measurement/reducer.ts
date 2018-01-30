@@ -1,45 +1,34 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {Request, requestDone, requestErrored, requestStarted} from '../../util/request';
-import {Project} from '../../lib/project/project';
+import {
+    createRequest, hookRequestActions, Request
+} from '../../util/request';
 import {AppState} from '../app/reducers';
 import {Measurement} from '../../lib/measurement/measurement';
-import {loadMeasurements} from './actions';
+import {clearMeasurements, loadMeasurements} from './actions';
+import {createDatabase, Database, getDatabaseItems} from '../../util/database';
 
 export interface MeasurementState
 {
-    measurements: {[key: string]: Measurement[]};
-    measurementRequest: Request;
+    measurements: Database<Measurement>;
+    loadMeasurementsRequest: Request;
 }
 
-const reducer = reducerWithInitialState<MeasurementState>({
-    measurements: {},
-    measurementRequest: requestDone()
+let reducer = reducerWithInitialState<MeasurementState>({
+    measurements: createDatabase(),
+    loadMeasurementsRequest: createRequest()
 })
-.case(loadMeasurements.started, state => ({
+.case(clearMeasurements, (state) => ({
     ...state,
-    measurementRequest: requestStarted()
-}))
-.case(loadMeasurements.failed, (state, response) => ({
-    ...state,
-    measurementRequest: requestErrored(response.error)
-}))
-.case(loadMeasurements.done, (state, response) => ({
-    ...state,
-    measurementRequest: requestDone(),
-    measurements: {
-        ...state.measurements,
-        [response.params.project.id]: response.result
-    }
+    measurements: createDatabase()
 }));
 
-export function getMeasurements(state: AppState, project: Project): Measurement[]
-{
-    const measurements = state.measurement.measurements;
-    if (measurements.hasOwnProperty(project.id))
-    {
-        return measurements[project.id];
-    }
-    else return [];
-}
+reducer = hookRequestActions(reducer, loadMeasurements,
+    (state: MeasurementState) => state.loadMeasurementsRequest,
+    (state: MeasurementState, response) => ({
+        measurements: createDatabase(response)
+    })
+);
+
+export const getMeasurements = (state: AppState) => getDatabaseItems(state.measurement.measurements);
 
 export const measurementReducer = reducer;

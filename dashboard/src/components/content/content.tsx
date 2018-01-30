@@ -18,7 +18,7 @@ interface StateProps
 }
 interface DispatchProps
 {
-    onLogout: () => void;
+    onLogout(): void;
 }
 
 class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteComponentProps<void>>

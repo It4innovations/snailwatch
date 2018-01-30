@@ -1,8 +1,9 @@
 import React, {FormEvent, PureComponent} from 'react';
+import {Button} from 'react-bootstrap';
 
 interface Props
 {
-    handleSubmit: (username: string, password: string) => void;
+    handleSubmit(username: string, password: string): void;
 }
 
 export class LoginForm extends PureComponent<Props>
@@ -25,7 +26,7 @@ export class LoginForm extends PureComponent<Props>
                         <input name='password' type='password' defaultValue='1' required={true}
                                ref={elem => this.password = elem} />
                     </div>
-                    <button>Login</button>
+                    <Button bsStyle='primary' type='submit'>Login</Button>
                 </form>
             </div>
         );

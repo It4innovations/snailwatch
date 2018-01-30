@@ -5,21 +5,28 @@ import axios from 'axios';
 import {User} from '../user/user';
 import {Project} from '../project/project';
 import {Measurement} from '../measurement/measurement';
+import * as moment from 'moment';
 
 interface ArrayResponse<T>
 {
     _items: T[];
 }
 
-interface ProjectDAO
+interface DAO
 {
     _id: string;
+    _created: string;
+}
+
+interface ProjectDAO extends DAO
+{
     name: string;
 }
-interface MeasurementDAO
+interface MeasurementDAO extends DAO
 {
-    _id: string;
     benchmark: string;
+    measurement: {};
+    environment: {};
 }
 
 export class RestClient implements SnailClient
@@ -29,12 +36,15 @@ export class RestClient implements SnailClient
 
     }
 
-    loginUser(username: string, password: string): Observable<string>
+    loginUser(username: string, password: string): Observable<User>
     {
         return this.call('/login', 'POST', {
             username,
             password
-        });
+        }).map((token: string) => ({
+            username,
+            token
+        }));
     }
 
     createProject(user: User, name: string): Observable<boolean>
@@ -92,7 +102,8 @@ export class RestClient implements SnailClient
     {
         return {
             id: project._id,
-            name: project.name
+            name: project.name,
+            createdAt: moment(project._created)
         };
     }
     private parseMeasurement(measurement: MeasurementDAO): Measurement
@@ -100,8 +111,9 @@ export class RestClient implements SnailClient
         return {
             id: measurement._id,
             benchmark: measurement.benchmark,
-            environment: {},
-            measurement: {}
+            environment: {...measurement.environment},
+            measurement: {...measurement.measurement},
+            createdAt: moment(measurement._created)
         };
     }
 

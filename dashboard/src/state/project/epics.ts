@@ -22,10 +22,11 @@ const loadProjectsEpic = (action$: ActionsObservable<ReduxAction>,
         .ofAction(loadProjects.started)
         .switchMap((action: Action<LoadProjectsParams>) =>
             {
+                const {user, force} = action.payload;
                 const storedProjects = getProjects(store.getState());
-                if (action.payload.force || isEmpty(storedProjects))
+                if (force || isEmpty(storedProjects))
                 {
-                    return deps.client.loadProjects(action.payload.user)
+                    return deps.client.loadProjects(user)
                         .map(projects =>
                             loadProjects.done({
                                 params: action.payload,
@@ -52,10 +53,11 @@ const loadProjectEpic = (action$: ActionsObservable<ReduxAction>,
         .ofAction(loadProject.started)
         .switchMap((action: Action<LoadProjectParams>) =>
             {
-                let storedProject = getProjectByName(getProjects(store.getState()), action.payload.name);
+                const {user, name} = action.payload;
+                let storedProject = getProjectByName(getProjects(store.getState()), name);
                 if (storedProject === null)
                 {
-                    return deps.client.loadProject(action.payload.user, action.payload.name)
+                    return deps.client.loadProject(user, name)
                         .map(project =>
                             loadProject.done({
                                 params: action.payload,

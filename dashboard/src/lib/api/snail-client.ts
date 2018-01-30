@@ -5,7 +5,7 @@ import {Measurement} from '../measurement/measurement';
 
 export interface SnailClient
 {
-    loginUser(username: string, password: string): Observable<string>;
+    loginUser(username: string, password: string): Observable<User>;
 
     createProject(user: User, name: string): Observable<boolean>;
     loadProjects(user: User): Observable<Project[]>;
