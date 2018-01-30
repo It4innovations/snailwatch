@@ -1,5 +1,4 @@
 import React, {PureComponent} from 'react';
-import styles from '../../App.scss';
 import {Projects} from '../projects/projects';
 import {Login} from '../login/login';
 import {Navigation, Routes} from '../../state/nav/routes';
@@ -10,6 +9,8 @@ import {isUserAuthenticated} from '../../state/user/reducer';
 import {Menu} from './menu';
 import {logoutUser} from '../../state/user/actions';
 import {SwitchRoute} from '../../state/nav/switch-route';
+
+import style from './content.scss';
 
 interface StateProps
 {
@@ -25,7 +26,7 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
     render()
     {
         return (
-            <div className={styles.app}>
+            <div className={style.app}>
                 <Menu authenticated={this.props.authenticated} onLogout={this.props.onLogout} />
                 <div>
                     <Switch>
