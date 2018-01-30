@@ -196,12 +196,11 @@ module.exports = {
                     {
                         loader: 'typings-for-css-modules-loader',
                         options: {
-                            importLoaders: 1,
+                            importLoaders: 2,
                             modules: true,
                             localIdentName: "[name]__[local]___[hash:base64:5]",
                             camelCase: true,
-                            namedExport: true,
-                            sass: true
+                            namedExport: true
                         }
                     },
                     {
@@ -224,6 +223,7 @@ module.exports = {
                             ],
                         },
                     },
+                    require.resolve('sass-loader')
                 ],
             },
           // "file" loader makes sure those assets get served by WebpackDevServer.
@@ -280,7 +280,7 @@ module.exports = {
     // solution that requires the user to opt into importing specific locales.
     // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
     // You can remove this if you don't use Moment.js:
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/, /css\.d\.ts$/),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/, /scss\.d\.ts$/),
     // Perform type checking and linting in a separate process to speed up compilation
     new ForkTsCheckerWebpackPlugin({
       async: false,
