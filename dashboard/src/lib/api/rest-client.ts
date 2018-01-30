@@ -4,7 +4,7 @@ import 'rxjs/add/observable/fromPromise';
 import axios from 'axios';
 import {User} from '../user/user';
 import {Project} from '../project/project';
-import {Benchmark} from '../benchmark/benchmark';
+import {Measurement} from '../measurement/measurement';
 
 interface ArrayResponse<T>
 {
@@ -16,10 +16,10 @@ interface ProjectDAO
     _id: string;
     name: string;
 }
-interface BenchmarkDAO
+interface MeasurementDAO
 {
     _id: string;
-    name: string;
+    benchmark: string;
 }
 
 export class RestClient implements SnailClient
@@ -52,27 +52,57 @@ export class RestClient implements SnailClient
         })
         .map((data: ArrayResponse<ProjectDAO>) =>
             data._items
-            .map((project: ProjectDAO) => ({
-                id: project._id,
-                name: project.name
-            }))
+            .map(p => this.parseProject(p))
         );
     }
-
-    loadBenchmarks(user: User, project: Project): Observable<Benchmark[]>
+    loadProject(user: User, name: string): Observable<Project>
     {
-        return this.call('/benchmarks', 'GET', {
+        return this.call('/projects', 'GET', {
+            where: `{"name":"${name}"}`
+        }, {
+            token: user.token
+        })
+            .map((data: ArrayResponse<ProjectDAO>) =>
+                data._items
+                    .map(p => this.parseProject(p))
+            )
+            .map(projects => {
+                if (projects.length === 0)
+                {
+                    throw new Error(`Project ${name} not found`);
+                }
+                return projects[0];
+            });
+    }
+
+    loadMeasurements(user: User, project: Project): Observable<Measurement[]>
+    {
+        return this.call('/measurements', 'GET', {
             where: `{"project":"${project.id}"}`
         }, {
             token: user.token
         })
-            .map((data: ArrayResponse<BenchmarkDAO>) =>
+            .map((data: ArrayResponse<MeasurementDAO>) =>
                 data._items
-                    .map((benchmark: BenchmarkDAO) => ({
-                        id: benchmark._id,
-                        name: benchmark.name
-                    }))
+                    .map(m => this.parseMeasurement(m))
             );
+    }
+
+    private parseProject(project: ProjectDAO): Project
+    {
+        return {
+            id: project._id,
+            name: project.name
+        };
+    }
+    private parseMeasurement(measurement: MeasurementDAO): Measurement
+    {
+        return {
+            id: measurement._id,
+            benchmark: measurement.benchmark,
+            environment: {},
+            measurement: {}
+        };
     }
 
     private call<T>(path: string, method: 'GET' | 'POST',

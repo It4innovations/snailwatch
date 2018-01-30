@@ -3,35 +3,31 @@ import {loginUser, logoutUser} from './actions';
 import {AppState} from '../app/reducers';
 import {User} from '../../lib/user/user';
 import {createSelector} from 'reselect';
-import {RequestContext, requestDone, requestErrored, requestStarted} from '../../util/request';
+import {
+    createRequest, hookRequestActions, Request
+} from '../../util/request';
 
 export interface UserState
 {
     user: User;
-    loginRequest: RequestContext;
+    loginRequest: Request;
 }
 
-const reducer = reducerWithInitialState<UserState>({
+let reducer = reducerWithInitialState<UserState>({
     user: null,
-    loginRequest: requestDone()
+    loginRequest: createRequest()
 })
-.case(loginUser.started, state => ({
-    ...state,
-    loginRequest: requestStarted()
-}))
-.case(loginUser.failed, (state, response) => ({
-    ...state,
-    loginRequest: requestErrored(response.error)
-}))
-.case(loginUser.done, (state, response) => ({
-    ...state,
-    loginRequest: requestDone(),
-    user: response.result
-}))
 .case(logoutUser, (state) => ({
     ...state,
     user: null
 }));
+
+reducer = hookRequestActions(reducer, loginUser,
+    (state: UserState) => state.loginRequest,
+    (state: UserState, user) => ({
+        user
+    })
+);
 
 export const getUser = (state: AppState) => state.user.user;
 export const isUserAuthenticated = createSelector(

@@ -4,11 +4,11 @@ import {connect} from 'react-redux';
 import {loginUser} from '../../state/user/actions';
 import {AppState} from '../../state/app/reducers';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {RequestContext} from '../../util/request';
+import {Request} from '../../util/request';
 
 interface StateProps
 {
-    loginRequest: RequestContext;
+    loginRequest: Request;
 }
 interface DispatchProps
 {

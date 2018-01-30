@@ -1,18 +1,21 @@
 import React, {PureComponent} from 'react';
-import {Redirect, Route, RouteComponentProps, Switch, withRouter} from 'react-router';
+import {Route, RouteComponentProps, Switch, withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {Project} from '../../lib/project/project';
 import {ProjectDetail} from './project';
 import {User} from '../../lib/user/user';
-import {createProject, CreateProjectParams, loadProjects} from '../../state/project/actions';
+import {
+    createProject, CreateProjectParams, loadProjects, loadProject,
+    LoadProjectParams
+} from '../../state/project/actions';
 import {getUser} from '../../state/user/reducer';
 import {AppState} from '../../state/app/reducers';
-import {getProjects} from '../../state/project/reducer';
+import {getProjectByName, getProjects} from '../../state/project/reducer';
 import {Link} from 'react-router-dom';
-import {Navigation, projectRoute} from '../../state/nav/routes';
+import {projectRoute} from '../../state/nav/routes';
 import {Button} from 'react-bootstrap';
 import {CreateProject} from './create-project';
-import {RequestContext} from '../../util/request';
+import {Request} from '../../util/request';
 
 interface State
 {
@@ -22,12 +25,15 @@ interface StateProps
 {
     user: User;
     projects: Project[];
-    projectRequest: RequestContext;
+    loadProjectsRequest: Request;
+    createProjectRequest: Request;
+    loadProjectRequest: Request;
 }
 interface DispatchProps
 {
-    loadProjects: (user: User) => void;
-    createProject: (params: CreateProjectParams) => void;
+    loadProjects(user: User): void;
+    loadProject(params: LoadProjectParams): void;
+    createProject(params: CreateProjectParams): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
@@ -50,9 +56,9 @@ class ProjectsComponent extends PureComponent<Props, State>
     componentWillReceiveProps(props: Props)
     {
         if (this.state.creatingProject &&
-            this.props.projectRequest.loading &&
-            !props.projectRequest.loading &&
-            !props.projectRequest.error)
+            this.props.createProjectRequest.loading &&
+            !props.createProjectRequest.loading &&
+            !props.createProjectRequest.error)
         {
             this.setState(() => ({
                 creatingProject: false
@@ -65,8 +71,8 @@ class ProjectsComponent extends PureComponent<Props, State>
         const match = this.props.match;
         return (
             <Switch>
-                <Route path={`${match.url}/:name`} render={this.renderProject} />
-                <Route exact path={match.url} render={this.renderProjects} />
+                <Route path={`${match.url}/:name`} render={props => this.renderProject(props)} />
+                <Route exact path={match.url} render={() => this.renderProjects()} />
             </Switch>
         );
     }
@@ -74,13 +80,26 @@ class ProjectsComponent extends PureComponent<Props, State>
     renderProject = (props: RouteComponentProps<{name: string}>): JSX.Element =>
     {
         const name = props.match.params.name;
-        const project = this.props.projects.find(p => p.name === name);
-        if (project === undefined)
+        if (this.props.loadProjectRequest.error)
         {
-            return <Redirect to={Navigation.Projects} />;
+            return <div>{this.props.loadProjectRequest.error}</div>;
+        }
+        if (this.props.loadProjectRequest.loading)
+        {
+            return <div>Loading project {name}</div>;
         }
 
-        return <ProjectDetail project={project} />;
+        const project = getProjectByName(this.props.projects, name);
+        if (project === null)
+        {
+            this.props.loadProject({
+                user: this.props.user,
+                name
+            });
+
+            return <div>Loading project {name}</div>;
+        }
+        else return <ProjectDetail project={project} />;
     }
 
     renderProjects = (): JSX.Element =>
@@ -89,8 +108,8 @@ class ProjectsComponent extends PureComponent<Props, State>
         return (
             <div>
                 <h2>Projects</h2>
-                {this.props.projectRequest.error && <div>{this.props.projectRequest.error}</div>}
-                {this.props.projectRequest.loading && <div>Loading...</div>}
+                {this.props.loadProjectsRequest.error && <div>{this.props.loadProjectsRequest.error.toString()}</div>}
+                {this.props.loadProjectsRequest.loading && <div>Loading...</div>}
                 {projects.map(project =>
                     <div key={project.id}>
                         <Link to={projectRoute(project.name)}>
@@ -125,10 +144,13 @@ class ProjectsComponent extends PureComponent<Props, State>
 }
 
 export const Projects = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
-    projectRequest: state.project.projectRequest,
+    loadProjectsRequest: state.project.loadProjectsRequest,
+    loadProjectRequest: state.project.loadProjectRequest,
+    createProjectRequest: state.project.createProjectRequest,
     user: getUser(state),
     projects: getProjects(state)
 }), {
     loadProjects: (user: User) => loadProjects.started({ user, force: false }),
+    loadProject: loadProject.started,
     createProject: createProject.started
 })(ProjectsComponent));

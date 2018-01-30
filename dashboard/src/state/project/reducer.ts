@@ -1,37 +1,44 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {AppState} from '../app/reducers';
 import {Project} from '../../lib/project/project';
-import {createProject, loadProjects} from './actions';
-import {RequestContext, requestDone, requestErrored, requestStarted} from '../../util/request';
+import {createProject, loadProject, loadProjects} from './actions';
+import {createRequest, hookRequestActions, Request} from '../../util/request';
 
 export interface ProjectState
 {
     projects: Project[];
-    projectRequest: RequestContext;
+    loadProjectsRequest: Request;
+    loadProjectRequest: Request;
+    createProjectRequest: Request;
 }
 
-const reducer = reducerWithInitialState<ProjectState>({
-    projects: null,
-    projectRequest: requestDone()
-})
-.cases([loadProjects.started, createProject.started], state => ({
-    ...state,
-    projectRequest: requestStarted()
-}))
-.cases([loadProjects.failed, createProject.failed], (state, response) => ({
-    ...state,
-    projectRequest: requestErrored(response.error)
-}))
-.case(loadProjects.done, (state, response) => ({
-    ...state,
-    projectRequest: requestDone(),
-    projects: response.result
-}))
-.case(createProject.done, (state) => ({
-    ...state,
-    projectRequest: requestDone()
-}));
+let reducer = reducerWithInitialState<ProjectState>({
+    projects: [],
+    loadProjectsRequest: createRequest(),
+    loadProjectRequest: createRequest(),
+    createProjectRequest: createRequest()
+});
 
-export const getProjects = (state: AppState) => state.project.projects || [];
+reducer = hookRequestActions(reducer,
+    loadProject,
+    (state: ProjectState) => state.loadProjectRequest,
+    (state: ProjectState, result) => ({
+        projects: [...state.projects.filter(p => p.id !== result.id), result]
+    })
+);
+reducer = hookRequestActions(reducer,
+    loadProjects,
+    (state: ProjectState) => state.loadProjectsRequest,
+    (state: ProjectState, projects) => ({
+        projects
+    })
+);
+reducer = hookRequestActions(reducer,
+    createProject,
+    (state: ProjectState) => state.createProjectRequest
+);
+
+export const getProjects = (state: AppState) => state.project.projects;
+export const getProjectByName = (projects: Project[], name: string) => projects.find(p => p.name === name) || null;
 
 export const projectReducer = reducer;

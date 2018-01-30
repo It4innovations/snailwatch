@@ -7,3 +7,8 @@ declare module '*.json' {
     const value: {[key: string]: string};
     export default value;
 }
+
+interface Dictionary<T>
+{
+    [key: string]: T;
+}

@@ -1,7 +1,7 @@
 import {Observable} from 'rxjs/Observable';
 import {Project} from '../project/project';
 import {User} from '../user/user';
-import {Benchmark} from '../benchmark/benchmark';
+import {Measurement} from '../measurement/measurement';
 
 export interface SnailClient
 {
@@ -9,6 +9,7 @@ export interface SnailClient
 
     createProject(user: User, name: string): Observable<boolean>;
     loadProjects(user: User): Observable<Project[]>;
+    loadProject(user: User, name: string): Observable<Project>;
 
-    loadBenchmarks(user: User, project: Project): Observable<Benchmark[]>;
+    loadMeasurements(user: User, project: Project): Observable<Measurement[]>;
 }
