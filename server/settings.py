@@ -61,6 +61,14 @@ project_schema = {
     }
 }
 measurement_schema = {
+    'project': {
+        'type': 'objectid',
+        'required': True,
+        'data_relation': {
+            'resource': 'projects',
+            'field': '_id'
+        }
+    },
     'benchmark': {
         'type': 'string',
         'required': True,
