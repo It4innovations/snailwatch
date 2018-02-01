@@ -143,14 +143,21 @@ module.exports = {
             test: /\.(ts|tsx)$/,
             include: paths.appSrc,
             use: [
+                {
+                    loader: 'babel-loader',
+                    options: {
+                        babelrc: false,
+                        plugins: ['react-hot-loader/babel']
+                    },
+                },
               {
                 loader: require.resolve('ts-loader'),
                 options: {
                   // disable type checker - we will use it in fork plugin
                   transpileOnly: true,
                 },
-              },
-            ],
+              }
+            ]
           },
           // "postcss" loader applies autoprefixer to our CSS.
           // "css" loader resolves paths in CSS and adds assets as dependencies.
