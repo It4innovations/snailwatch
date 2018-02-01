@@ -9,8 +9,7 @@ import {isUserAuthenticated} from '../../state/user/reducer';
 import {Menu} from './menu';
 import {logoutUser} from '../../state/user/actions';
 import {SwitchRoute} from '../../state/nav/switch-route';
-
-import style from './content.scss';
+import styled from 'styled-components';
 
 interface StateProps
 {
@@ -21,23 +20,27 @@ interface DispatchProps
     onLogout(): void;
 }
 
+const Wrapper = styled.div`
+    width: 100%;
+    margin: 0;
+    padding: 5px;
+`;
+
 class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteComponentProps<void>>
 {
     render()
     {
         return (
-            <div className={style.app}>
+            <Wrapper>
                 <Menu authenticated={this.props.authenticated} onLogout={this.props.onLogout} />
-                <div>
-                    <Switch>
-                        <SwitchRoute path={Routes.Login} component={Login}
-                                     usePrimaryRoute={!this.props.authenticated} redirect={Navigation.Projects} />
-                        {this.authRoute(Routes.Projects, Projects)}
-                        {this.props.authenticated && <Redirect to={Navigation.Projects} />}
-                        {!this.props.authenticated && <Redirect to={Navigation.Login} />}
-                    </Switch>
-                </div>
-            </div>
+                <Switch>
+                    <SwitchRoute path={Routes.Login} component={Login}
+                                 usePrimaryRoute={!this.props.authenticated} redirect={Navigation.Projects} />
+                    {this.authRoute(Routes.Projects, Projects)}
+                    {this.props.authenticated && <Redirect to={Navigation.Projects} />}
+                    {!this.props.authenticated && <Redirect to={Navigation.Login} />}
+                </Switch>
+            </Wrapper>
         );
     }
 

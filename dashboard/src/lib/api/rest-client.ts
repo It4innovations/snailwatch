@@ -5,7 +5,7 @@ import axios from 'axios';
 import {User} from '../user/user';
 import {Project} from '../project/project';
 import {Measurement} from '../measurement/measurement';
-import * as moment from 'moment';
+import moment from 'moment';
 
 interface ArrayResponse<T>
 {
