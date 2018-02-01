@@ -81,7 +81,7 @@ measurement_schema = {
             'type': 'string'
         }
     },
-    'measurement': {
+    'result': {
         'type': 'dict',
         'required': True,
         'propertyschema': dict_key_schema,
