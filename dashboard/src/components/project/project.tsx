@@ -11,6 +11,7 @@ import {MeasurementList} from './measurement-list/measurement-list';
 import {clearMeasurements, LoadMeasurementParams, loadMeasurements} from '../../state/measurement/actions';
 import {Measurement} from '../../lib/measurement/measurement';
 import {getMeasurements} from '../../state/measurement/reducer';
+import {Visualisation} from './visualisation/visualisation';
 
 interface OwnProps
 {
@@ -82,7 +83,10 @@ class ProjectComponent extends PureComponent<Props>
                 </Tab>
                 <Tab eventKey='visualisation'
                      title='Visualisation'>
-                    visualisation
+                    <Visualisation
+                        user={this.props.user}
+                        project={this.props.project}
+                        measurements={this.props.measurements} />
                 </Tab>
             </Tabs>
         );

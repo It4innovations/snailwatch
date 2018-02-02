@@ -5,11 +5,23 @@ interface Props
 {
     handleSubmit(username: string, password: string): void;
 }
-
-export class LoginForm extends PureComponent<Props>
+interface State
 {
-    private username: HTMLInputElement;
-    private password: HTMLInputElement;
+    username: string;
+    password: string;
+}
+
+export class LoginForm extends PureComponent<Props, State>
+{
+    constructor(props: Props)
+    {
+        super(props);
+
+        this.state = {
+            username: '1',
+            password: '1'
+        };
+    }
 
     render()
     {
@@ -18,13 +30,16 @@ export class LoginForm extends PureComponent<Props>
                 <form onSubmit={this.handleSubmit}>
                     <div>
                         <label htmlFor='username'>Username</label>
-                        <input name='username' type='text' defaultValue='1' required={true}
-                               ref={elem => this.username = elem} />
+                        <input name='username' type='text' required={true}
+                               value={this.state.username}
+                               onChange={e => this.change('username', e.currentTarget.value)}
+                        />
                     </div>
                     <div>
                         <label htmlFor='password'>Password</label>
-                        <input name='password' type='password' defaultValue='1' required={true}
-                               ref={elem => this.password = elem} />
+                        <input name='password' type='password' required={true}
+                               value={this.state.password}
+                               onChange={e => this.change('password', e.currentTarget.value)} />
                     </div>
                     <Button bsStyle='primary' type='submit'>Login</Button>
                 </form>
@@ -32,9 +47,16 @@ export class LoginForm extends PureComponent<Props>
         );
     }
 
+    change = (key: keyof State, value: string) =>
+    {
+        const changeObj = {};
+        changeObj[key] = value;
+        this.setState(() => changeObj);
+    }
+
     handleSubmit = (event: FormEvent<HTMLFormElement>) =>
     {
         event.preventDefault();
-        this.props.handleSubmit(this.username.value, this.password.value);
+        this.props.handleSubmit(this.state.username, this.state.password);
     }
 }

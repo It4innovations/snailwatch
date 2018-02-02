@@ -6,6 +6,7 @@ import {AppState} from '../app/reducers';
 import {Measurement} from '../../lib/measurement/measurement';
 import {clearMeasurements, loadMeasurements} from './actions';
 import {createDatabase, Database, getDatabaseItems} from '../../util/database';
+import {createSelector} from 'reselect';
 
 export interface MeasurementState
 {
