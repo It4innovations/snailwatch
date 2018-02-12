@@ -17,7 +17,7 @@ ADMIN_AUTH_TOKEN = 'a67ba93bc150ab9f38e385feb038bf52'
 HATEOAS = False
 PAGINATION = False
 XML = False
-DATE_FORMAT = '%Y%m%dT%H:%M:%S'
+DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 # schemas
 dict_key_schema = {
