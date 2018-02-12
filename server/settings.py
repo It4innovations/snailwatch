@@ -15,7 +15,7 @@ ADMIN_AUTH_TOKEN = 'a67ba93bc150ab9f38e385feb038bf52'
 
 # settings
 HATEOAS = False
-PAGINATION = False
+PAGINATION = True
 XML = False
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
@@ -24,6 +24,12 @@ dict_key_schema = {
     'type': 'string',
     'regex': '[a-zA-Z_/-]+'
 }
+number_or_string_schema = [{
+    'type': 'string',
+    'empty': False
+    }, {
+    'type': 'number'
+}]
 
 user_schema = {
     'username': {
@@ -69,7 +75,7 @@ measurement_schema = {
         'type': 'dict',
         'propertyschema': dict_key_schema,
         'valueschema': {
-            'type': 'string'
+            'oneof': number_or_string_schema,
         }
     },
     'result': {
@@ -85,12 +91,7 @@ measurement_schema = {
                     'allowed': ['time', 'size', 'integer', 'string']
                 },
                 'value': {
-                    'oneof': [{
-                        'type': 'string',
-                        'empty': False
-                        }, {
-                        'type': 'number'
-                    }],
+                    'oneof': number_or_string_schema,
                     'required': True
                 }
             }

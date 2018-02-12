@@ -19,7 +19,7 @@ def before_insert_measurement(measurements):
     for measurement in measurements:
         measurement["info"] = info
         if measurement["timestamp"] == "":
-            measurement["timestamp"] = datetime.datetime.now()
+            measurement["timestamp"] = datetime.datetime.utcnow()
 
 
 def set_app_callbacks(app: Eve):
