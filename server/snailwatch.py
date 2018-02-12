@@ -1,5 +1,4 @@
 from eve import Eve
-from eve_swagger import swagger
 from flask_cors import CORS
 
 from callbacks import set_app_callbacks
@@ -8,7 +7,6 @@ from database import init_database
 from routes import setup_routes
 
 app = Eve(auth=TokenAuthenticator)
-app.register_blueprint(swagger)
 CORS(app)
 
 with app.app_context():

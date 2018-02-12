@@ -1,20 +1,5 @@
 from auth import AdminAuthenticator
 
-# metadata
-SWAGGER_INFO = {
-    'title': 'Snailwatch',
-    'version': '0.1.0',
-    'description': 'REST API for Snailwatch',
-    'contact': {
-        'name': 'Jakub Beránek',
-        'email': 'jakub.beranek.st@vsb.cz'
-    },
-    'license': {
-        'name': 'BSD'
-    },
-    'schemes': ['http', 'https']
-}
-
 # database
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
@@ -32,6 +17,7 @@ ADMIN_AUTH_TOKEN = 'a67ba93bc150ab9f38e385feb038bf52'
 HATEOAS = False
 PAGINATION = False
 XML = False
+DATE_FORMAT = '%Y%m%dT%H:%M:%S'
 
 # schemas
 dict_key_schema = {
@@ -73,6 +59,11 @@ measurement_schema = {
         'type': 'string',
         'required': True,
         'empty': False
+    },
+    'timestamp': {
+        'type': 'datetime',
+        'required': False,
+        'default': ''
     },
     'environment': {
         'type': 'dict',

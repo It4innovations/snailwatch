@@ -1,3 +1,5 @@
+import datetime
+
 from eve import Eve
 from flask import request
 from auth import hash_password
@@ -16,6 +18,8 @@ def before_insert_measurement(measurements):
 
     for measurement in measurements:
         measurement["info"] = info
+        if measurement["timestamp"] == "":
+            measurement["timestamp"] = datetime.datetime.now()
 
 
 def set_app_callbacks(app: Eve):
