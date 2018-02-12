@@ -25,8 +25,9 @@ interface ProjectDAO extends DAO
 interface MeasurementDAO extends DAO
 {
     benchmark: string;
-    measurement: {};
+    timestamp: string;
     environment: {};
+    result: {};
 }
 
 export class RestClient implements SnailClient
@@ -111,9 +112,9 @@ export class RestClient implements SnailClient
         return {
             id: measurement._id,
             benchmark: measurement.benchmark,
+            timestamp: moment(measurement.timestamp),
             environment: {...measurement.environment},
-            measurement: {...measurement.measurement},
-            createdAt: moment(measurement._created)
+            result: {...measurement.result}
         };
     }
 

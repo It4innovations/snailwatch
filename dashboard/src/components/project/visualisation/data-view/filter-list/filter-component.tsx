@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {createFilter, Filter, Operator} from '../../../../lib/filter/filter';
+import {createFilter, Filter, Operator} from '../../../../../lib/view/filter';
 import styled from 'styled-components';
 import {Button} from 'react-bootstrap';
 import {equals} from 'ramda';

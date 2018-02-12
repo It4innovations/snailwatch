@@ -1,9 +1,8 @@
 import React, {PureComponent} from 'react';
-import {createFilter, Filter} from '../../../../lib/filter/filter';
+import {createFilter, Filter} from '../../../../../lib/view/filter';
 import {FilterComponent} from './filter-component';
 import {Button} from 'react-bootstrap';
-import {update, remove} from 'ramda';
-import uuid from 'uuid/v4';
+import {update, remove, reduce, max} from 'ramda';
 
 interface Props
 {
@@ -31,7 +30,7 @@ export class FilterList extends PureComponent<Props>
 
     addFilter = () =>
     {
-        this.props.onFiltersChange([...this.props.filters, createFilter(uuid())]);
+        this.props.onFiltersChange([...this.props.filters, createFilter(this.generateId(this.props.filters))]);
     }
     removeFilter = (index: number) =>
     {
@@ -40,5 +39,10 @@ export class FilterList extends PureComponent<Props>
     changeFilter = (index: number, filter: Filter) =>
     {
         this.props.onFiltersChange(update(index, filter, this.props.filters));
+    }
+
+    generateId = (filters: Filter[]): number =>
+    {
+        return reduce(max, 0, filters.map(f => f.id)) + 1;
     }
 }

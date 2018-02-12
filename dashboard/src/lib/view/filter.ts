@@ -6,7 +6,7 @@ export type Operator = '==' | '!=' | '<' | '<=' | '>' | '>=';
 
 export interface Filter
 {
-    id: string;
+    id: number;
     path: string;
     operator: Operator;
     value: string;
@@ -22,7 +22,7 @@ export class BadValueFilteredError extends Error
     }
 }
 
-export function createFilter(id: string = '', path: string = '',
+export function createFilter(id: number = 0, path: string = '',
                              operator: Operator = '==', value: string = ''): Filter
 {
     return {

@@ -32,8 +32,7 @@ export class LoginForm extends PureComponent<Props, State>
                         <label htmlFor='username'>Username</label>
                         <input name='username' type='text' required={true}
                                value={this.state.username}
-                               onChange={e => this.change('username', e.currentTarget.value)}
-                        />
+                               onChange={e => this.change('username', e.currentTarget.value)} />
                     </div>
                     <div>
                         <label htmlFor='password'>Password</label>

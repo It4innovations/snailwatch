@@ -9,8 +9,8 @@ interface MeasurementRecord
 export interface Measurement
 {
     id: string;
+    timestamp: Moment;
     benchmark: string;
     environment: { [key: string]: string };
-    measurement: { [key: string]: MeasurementRecord };
-    createdAt: Moment;
+    result: { [key: string]: MeasurementRecord };
 }

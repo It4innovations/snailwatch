@@ -3,7 +3,7 @@ import {Project} from '../../../lib/project/project';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {User} from '../../../lib/user/user';
 import {Panel, PanelGroup} from 'react-bootstrap';
-import {contains, without} from 'ramda';
+import {contains, without, sort} from 'ramda';
 
 interface Props
 {
@@ -29,9 +29,12 @@ export class MeasurementList extends PureComponent<Props, State>
 
     render()
     {
+        const measurements = sort((m1: Measurement, m2: Measurement) =>
+                m1.timestamp.isBefore(m2.timestamp) ? 1 : -1, this.props.measurements);
+
         return (
             <PanelGroup id='measurement-list'>
-                {this.props.measurements.map(measurement =>
+                {measurements.map(measurement =>
                     this.renderMeasurement(measurement))}
             </PanelGroup>
         );
@@ -45,7 +48,7 @@ export class MeasurementList extends PureComponent<Props, State>
                    onToggle={() => this.toggleExpand(measurement.id)}>
                 <Panel.Heading>
                     <Panel.Title toggle>
-                        Benchmark {measurement.benchmark} - {measurement.createdAt.format('DD. MM. YYYY HH:mm:ss')}
+                        Benchmark {measurement.benchmark} - {measurement.timestamp.format('DD. MM. YYYY HH:mm:ss')}
                     </Panel.Title>
                 </Panel.Heading>
                 <Panel.Collapse>
@@ -53,8 +56,9 @@ export class MeasurementList extends PureComponent<Props, State>
                         <div>
                             <pre>
                                 {JSON.stringify({
+                                    benchmark: measurement.benchmark,
                                     environment: measurement.environment,
-                                    measurement: measurement.measurement
+                                    result: measurement.result
                                 }, null, 2)}
                             </pre>
                         </div>
