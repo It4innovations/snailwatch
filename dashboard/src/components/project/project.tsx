@@ -8,42 +8,44 @@ import {Route, RouteComponentProps, Switch, withRouter} from 'react-router';
 import {Tab, Tabs} from 'react-bootstrap';
 import {push} from 'react-router-redux';
 import {MeasurementList} from './measurement-list/measurement-list';
-import {clearMeasurements, LoadMeasurementParams, loadMeasurements} from '../../state/measurement/actions';
+import {clearMeasurements} from '../../state/measurement/actions';
 import {Measurement} from '../../lib/measurement/measurement';
 import {getMeasurements} from '../../state/measurement/reducer';
 import {Visualisation} from './visualisation/visualisation';
+import {Request} from '../../util/request';
+import {getSelectedProject} from '../../state/project/reducer';
+import {selectProject} from '../../state/project/actions';
 
-interface OwnProps
-{
-    project: Project;
-}
 interface StateProps
 {
     user: User;
+    project: Project;
     measurements: Measurement[];
+    loadProjectRequest: Request;
 }
 interface DispatchProps
 {
     push(path: string): void;
-    loadMeasurements(params: LoadMeasurementParams): void;
+    selectProject(name: string): void;
     clearMeasurements(): void;
 }
 
-type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
+type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
 const TAB_ROUTES = {
     measurements: 'measurements',
     visualisation: 'visualisation'
 };
 
-class ProjectComponent extends PureComponent<Props>
+class ProjectComponent extends PureComponent<Props & RouteComponentProps<{name: string}>>
 {
-    componentDidMount()
+    componentWillMount()
     {
-        this.props.loadMeasurements({
-            user: this.props.user,
-            project: this.props.project
-        });
+        const {name} = this.props.match.params;
+        if (this.props.project === null)
+        {
+            this.props.selectProject(name);
+        }
     }
 
     componentWillUnmount()
@@ -53,6 +55,16 @@ class ProjectComponent extends PureComponent<Props>
 
     render()
     {
+        if (this.props.loadProjectRequest.error)
+        {
+            return <div>{this.props.loadProjectRequest.error}</div>;
+        }
+
+        if (this.props.project === null || this.props.loadProjectRequest.loading)
+        {
+            return <div>Loading project {this.props.match.params.name}</div>;
+        }
+
         const {match} = this.props;
         return (
             <Switch>
@@ -76,10 +88,7 @@ class ProjectComponent extends PureComponent<Props>
                   animation={false}>
                 <Tab eventKey='measurements'
                      title='Measurements'>
-                    <MeasurementList
-                        user={this.props.user}
-                        project={this.props.project}
-                        measurements={this.props.measurements} />
+                    <MeasurementList />
                 </Tab>
                 <Tab eventKey='visualisation'
                      title='Visualisation'>
@@ -98,12 +107,13 @@ class ProjectComponent extends PureComponent<Props>
     }
 }
 
-export const ProjectDetail = withRouter(connect<StateProps, DispatchProps, {}>((state: AppState) => ({
+export const ProjectDetail = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     user: getUser(state),
-    measurements: getMeasurements(state)
+    project: getSelectedProject(state),
+    measurements: getMeasurements(state),
+    loadProjectRequest: state.project.loadProjectRequest
 }), {
     push,
-    loadMeasurements: loadMeasurements.started,
+    selectProject,
     clearMeasurements
-}
-)(ProjectComponent));
+})(ProjectComponent));

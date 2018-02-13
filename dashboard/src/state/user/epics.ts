@@ -7,10 +7,9 @@ import {Action} from 'typescript-fsa';
 import {Observable} from 'rxjs/Observable';
 import '../../util/redux-observable';
 import 'rxjs/add/observable/of';
-import {push} from 'react-router-redux';
-import {Navigation, Routes} from '../nav/routes';
 import {clearMeasurements} from '../measurement/actions';
 import {clearProjects} from '../project/actions';
+import {AppEpic} from '../app/app-epic';
 
 interface LoginData
 {
@@ -38,9 +37,7 @@ const loginUserEpic = (action$: ActionsObservable<ReduxAction>,
                 )
         );
 
-const clearDataAfterLogout = (action$: ActionsObservable<ReduxAction>,
-                              store: Store<AppState>,
-                              deps: ServiceContainer) =>
+const clearDataAfterLogout: AppEpic = (action$: ActionsObservable<ReduxAction>) =>
     action$
         .ofAction(logoutUser)
         .switchMap(() =>

@@ -25,4 +25,5 @@ export interface CreateProjectParams
 }
 export const createProject = actionCreator.async<CreateProjectParams, boolean>('create');
 
+export const selectProject = actionCreator<string>('select');
 export const clearProjects = actionCreator('clear');

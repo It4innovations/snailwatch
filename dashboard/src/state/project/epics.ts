@@ -2,18 +2,21 @@ import {ActionsObservable, combineEpics} from 'redux-observable';
 import {Store, Action as ReduxAction} from 'redux';
 import {ServiceContainer} from '../app/di';
 import {AppState} from '../app/reducers';
-import {Action} from 'typescript-fsa';
 import {
     createProject, CreateProjectParams, LoadProjectsParams, loadProjects, loadProject,
-    LoadProjectParams
+    LoadProjectParams, selectProject
 } from './actions';
 import {Observable} from 'rxjs/Observable';
 import '../../util/redux-observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/if';
 import 'rxjs/add/observable/from';
+import 'rxjs/add/observable/empty';
 import {isEmpty} from 'ramda';
 import {getProjectByName, getProjects} from './reducer';
+import {getUser} from '../user/reducer';
+import {Action} from 'typescript-fsa';
+import {AppEpic} from '../app/app-epic';
 
 const loadProjectsEpic = (action$: ActionsObservable<ReduxAction>,
                           store: Store<AppState>,
@@ -103,8 +106,32 @@ const createProjectEpic = (action$: ActionsObservable<ReduxAction>,
                         )
         );
 
+const loadProjectAfterSelectEpic: AppEpic = (action$: ActionsObservable<ReduxAction>,
+                                             store: Store<AppState>) =>
+    action$
+        .ofAction(selectProject)
+        .switchMap((action: Action<string>): Observable<ReduxAction> => {
+            const user = getUser(store.getState());
+            const params = {
+                user: user,
+                name: action.payload
+            };
+            const project = getProjectByName(getProjects(store.getState()), action.payload);
+
+            if (project === null)
+            {
+                return Observable.of(loadProject.started(params));
+            }
+
+            return Observable.of(loadProject.done({
+                params: params,
+                result: project
+            }));
+        });
+
 export const projectEpics = combineEpics(
     loadProjectsEpic,
     loadProjectEpic,
-    createProjectEpic
+    createProjectEpic,
+    loadProjectAfterSelectEpic
 );

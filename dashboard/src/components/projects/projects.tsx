@@ -5,12 +5,11 @@ import {Project} from '../../lib/project/project';
 import {ProjectDetail} from '../project/project';
 import {User} from '../../lib/user/user';
 import {
-    createProject, CreateProjectParams, loadProjects, loadProject,
-    LoadProjectParams
+    createProject, CreateProjectParams, loadProjects, selectProject
 } from '../../state/project/actions';
 import {getUser} from '../../state/user/reducer';
 import {AppState} from '../../state/app/reducers';
-import {getProjectByName, getProjects} from '../../state/project/reducer';
+import {getProjects} from '../../state/project/reducer';
 import {Link} from 'react-router-dom';
 import {projectRoute} from '../../state/nav/routes';
 import {Button} from 'react-bootstrap';
@@ -32,7 +31,7 @@ interface StateProps
 interface DispatchProps
 {
     loadProjects(user: User): void;
-    loadProject(params: LoadProjectParams): void;
+    selectProject(name: string): void;
     createProject(params: CreateProjectParams): void;
 }
 
@@ -71,38 +70,10 @@ class ProjectsComponent extends PureComponent<Props, State>
         const match = this.props.match;
         return (
             <Switch>
-                <Route path={`${match.url}/:name`} render={props => this.renderProject(props)} />
+                <Route path={`${match.url}/:name`} render={() => <ProjectDetail />} />
                 <Route exact path={match.url} render={() => this.renderProjects()} />
             </Switch>
         );
-    }
-
-    renderProject = (props: RouteComponentProps<{name: string}>): JSX.Element =>
-    {
-        const name = props.match.params.name;
-        if (this.props.loadProjectRequest.error)
-        {
-            return <div>{this.props.loadProjectRequest.error}</div>;
-        }
-        if (this.props.loadProjectRequest.loading)
-        {
-            return <div>Loading project {name}</div>;
-        }
-
-        const project = getProjectByName(this.props.projects, name);
-        if (project === null)
-        {
-            this.props.loadProject({
-                user: this.props.user,
-                name
-            });
-
-            return <div>Loading project {name}</div>;
-        }
-        else
-        {
-            return <ProjectDetail project={project} />;
-        }
     }
 
     renderProjects = (): JSX.Element =>
@@ -156,6 +127,6 @@ export const Projects = withRouter(connect<StateProps, DispatchProps>((state: Ap
     projects: getProjects(state)
 }), {
     loadProjects: (user: User) => loadProjects.started({ user, force: false }),
-    loadProject: loadProject.started,
+    selectProject,
     createProject: createProject.started
 })(ProjectsComponent));

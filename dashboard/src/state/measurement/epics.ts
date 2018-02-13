@@ -9,6 +9,7 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/if';
 import {LoadMeasurementParams, loadMeasurements} from './actions';
 import {getMeasurements} from './reducer';
+import {getPage} from '../../lib/api/pagination';
 
 const loadMeasurementsForProject = (action$: ActionsObservable<ReduxAction>,
                                     store: Store<AppState>,
@@ -17,27 +18,22 @@ const loadMeasurementsForProject = (action$: ActionsObservable<ReduxAction>,
         .ofAction(loadMeasurements.started)
         .switchMap((action: Action<LoadMeasurementParams>) =>
             {
-                const {user, project} = action.payload;
-                const storedMeasurements = store.getState().measurement.measurements;
-                if (!storedMeasurements.hasOwnProperty(project.id))
-                {
-                    return deps.client.loadMeasurements(user, project)
-                        .map(measurements =>
-                            loadMeasurements.done({
-                                params: action.payload,
-                                result: measurements
-                            })
-                        ).catch(error =>
-                            Observable.of(loadMeasurements.failed({
-                                params: action.payload,
-                                error
-                            }))
-                        );
-                }
-                else return Observable.of(loadMeasurements.done({
-                    params: action.payload,
-                    result: getMeasurements(store.getState())
-                }));
+                const {user, project, filters} = action.payload;
+                const requestCount = 50;
+                const page = getPage(getMeasurements(store.getState()).length, requestCount);
+
+                return deps.client.loadMeasurements(user, project, filters, '-timestamp', page, requestCount)
+                    .map(measurements =>
+                        loadMeasurements.done({
+                            params: action.payload,
+                            result: measurements
+                        })
+                    ).catch(error =>
+                        Observable.of(loadMeasurements.failed({
+                            params: action.payload,
+                            error
+                        }))
+                    );
             }
         );
 
