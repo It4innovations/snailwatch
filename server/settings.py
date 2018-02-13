@@ -16,8 +16,9 @@ ADMIN_AUTH_TOKEN = 'a67ba93bc150ab9f38e385feb038bf52'
 # settings
 HATEOAS = False
 PAGINATION = True
+PAGINATION_LIMIT = 500
 XML = False
-DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 # schemas
 dict_key_schema = {
