@@ -17,21 +17,11 @@ ADMIN_AUTH_TOKEN = 'a67ba93bc150ab9f38e385feb038bf52'
 HATEOAS = False
 PAGINATION = True
 PAGINATION_LIMIT = 500
-XML = False
+PAGINATION_DEFAULT = 50
+RENDERERS = ['eve.render.JSONRenderer']
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 # schemas
-dict_key_schema = {
-    'type': 'string',
-    'regex': '[a-zA-Z_/-]+'
-}
-number_or_string_schema = [{
-    'type': 'string',
-    'empty': False
-    }, {
-    'type': 'number'
-}]
-
 user_schema = {
     'username': {
         'type': 'string',
@@ -74,15 +64,21 @@ measurement_schema = {
     },
     'environment': {
         'type': 'dict',
-        'propertyschema': dict_key_schema,
+        'keyschema': {
+            'type': 'string',
+            'regex': '[a-zA-Z_/-]+'
+        },
         'valueschema': {
-            'oneof': number_or_string_schema,
+            'type': ['string', 'number']
         }
     },
     'result': {
         'type': 'dict',
         'required': True,
-        'propertyschema': dict_key_schema,
+        'keyschema': {
+            'type': 'string',
+            'regex': '[a-zA-Z_/-]+'
+        },
         'valueschema': {
             'type': 'dict',
             'schema': {
@@ -92,7 +88,7 @@ measurement_schema = {
                     'allowed': ['time', 'size', 'integer', 'string']
                 },
                 'value': {
-                    'oneof': number_or_string_schema,
+                    'type': ['string', 'number'],
                     'required': True
                 }
             }

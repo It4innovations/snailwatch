@@ -1,2 +1,2 @@
-eve
+git+https://github.com/pyeve/eve
 flask-cors
