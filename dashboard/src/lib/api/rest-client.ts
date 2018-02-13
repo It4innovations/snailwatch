@@ -1,4 +1,4 @@
-import {SnailClient} from './snail-client';
+import {FetchResult, SnailClient} from './snail-client';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import axios from 'axios';
@@ -6,11 +6,21 @@ import {User} from '../user/user';
 import {Project} from '../project/project';
 import {Measurement} from '../measurement/measurement';
 import moment from 'moment';
+import {Filter} from '../view/filter';
+import {buildRequestFilter} from './filter';
 
 interface ArrayResponse<T>
 {
     _items: T[];
 }
+
+type PaginatedResponse<T> = T & {
+    _meta: {
+        total: number;
+        max_results: number;
+        page: number;
+    }
+};
 
 interface DAO
 {
@@ -86,17 +96,33 @@ export class RestClient implements SnailClient
             });
     }
 
-    loadMeasurements(user: User, project: Project): Observable<Measurement[]>
+    loadMeasurements(user: User, project: Project,
+                     filters: Filter[],
+                     sortBy: string,
+                     page: number,
+                     count: number): Observable<FetchResult<Measurement>>
     {
+        const filter = buildRequestFilter([...filters, {
+            id: 0,
+            path: 'project',
+            operator: '==',
+            value: project.id
+        }]);
+
         return this.call('/measurements', 'GET', {
-            where: `{"project":"${project.id}"}`
+            where: filter,
+            page: page.toString(),
+            max_results: count.toString(),
+            sort: sortBy
         }, {
             token: user.token
         })
-            .map((data: ArrayResponse<MeasurementDAO>) =>
-                data._items
-                    .map(m => this.parseMeasurement(m))
-            );
+            .map((data: PaginatedResponse<ArrayResponse<MeasurementDAO>>) => ({
+                items: data._items
+                    .map(m => this.parseMeasurement(m)),
+                total: data._meta.total
+            })
+        );
     }
 
     private parseProject(project: ProjectDAO): Project
