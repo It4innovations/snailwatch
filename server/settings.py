@@ -95,6 +95,52 @@ measurement_schema = {
         }
     }
 }
+view_schema = {
+    'name': {
+        'type': 'string',
+        'empty': False,
+        'required': True,
+        'unique_to_user': True
+    },
+    'project': {
+        'type': 'objectid',
+        'required': True,
+        'data_relation': {
+            'resource': 'projects',
+            'field': '_id'
+        }
+    },
+    'filters': {
+        'type': 'list',
+        'required': True,
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'path': {
+                    'type': 'string',
+                    'required': True
+                },
+                'operator': {
+                    'type': 'string',
+                    'required': True,
+                    'allowed': ['==', '!=', '<', '<=', '>', '>=']
+                },
+                'value': {
+                    'type': ['string', 'number'],
+                    'required': True
+                }
+            }
+        }
+    },
+    'xAxis': {
+        'type': 'string',
+        'required': True
+    },
+    'yAxis': {
+        'type': 'string',
+        'required': True
+    }
+}
 
 DOMAIN = {
     'users': {
@@ -108,6 +154,10 @@ DOMAIN = {
     },
     'measurements': {
         'schema': measurement_schema,
+        'resource_methods': ['GET', 'POST']
+    },
+    'views': {
+        'schema': view_schema,
         'resource_methods': ['GET', 'POST']
     }
 }
