@@ -6,6 +6,7 @@ import {ActionsObservable} from 'redux-observable';
 import {Observable} from 'rxjs/Observable';
 import {Action as ReduxAction, Store} from 'redux';
 import {ServiceContainer} from '../state/app/di';
+import '../util/redux-observable';
 
 export interface Request
 {
