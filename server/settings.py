@@ -60,8 +60,7 @@ measurement_schema = {
     },
     'timestamp': {
         'type': 'datetime',
-        'required': False,
-        'default': ''
+        'required': False
     },
     'environment': {
         'type': 'dict',
@@ -70,7 +69,7 @@ measurement_schema = {
             'regex': '[a-zA-Z_/-]+'
         },
         'valueschema': {
-            'type': ['string', 'number']
+            'type': 'string'
         }
     },
     'result': {
@@ -89,7 +88,7 @@ measurement_schema = {
                     'allowed': ['time', 'size', 'integer', 'string']
                 },
                 'value': {
-                    'type': ['string', 'number'],
+                    'type': 'string',
                     'required': True
                 }
             }
@@ -159,7 +158,7 @@ DOMAIN = {
     },
     'views': {
         'schema': view_schema,
-        'resource_methods': ['GET', 'POST', 'DELETE'],
+        'resource_methods': ['GET', 'POST'],
         'item_methods': ['GET', 'PATCH', 'DELETE']
     }
 }

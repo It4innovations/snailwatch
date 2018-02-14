@@ -18,7 +18,7 @@ def before_insert_measurement(measurements):
 
     for measurement in measurements:
         measurement["info"] = info
-        if measurement["timestamp"] == "":
+        if "timestamp" not in measurement:
             measurement["timestamp"] = datetime.datetime.utcnow()
 
 
