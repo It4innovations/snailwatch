@@ -12,6 +12,7 @@ export interface LoadMeasurementParams
     user: User;
     project: Project;
     filters: Filter[];
+    reload: boolean;
 }
 
 export const loadMeasurements = actionCreator.async<LoadMeasurementParams, FetchResult<Measurement>>('load');

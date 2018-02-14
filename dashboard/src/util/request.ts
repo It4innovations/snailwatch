@@ -1,5 +1,11 @@
 import {ReducerBuilder} from 'typescript-fsa-reducers';
-import {AsyncActionCreators} from 'typescript-fsa';
+import {Action, AsyncActionCreators, Success} from 'typescript-fsa';
+import {AppEpic} from '../state/app/app-epic';
+import {AppState} from '../state/app/reducers';
+import {ActionsObservable} from 'redux-observable';
+import {Observable} from 'rxjs/Observable';
+import {Action as ReduxAction, Store} from 'redux';
+import {ServiceContainer} from '../state/app/di';
 
 export interface Request
 {
@@ -51,7 +57,8 @@ function replaceKey<T, Value>(obj: T, valueSelector: (obj: T) => Value, value: V
 export function hookRequestActions<T extends {}, P, S, E>(reducer: ReducerBuilder<T, T>,
                                                           action: AsyncActionCreators<P, S, E>,
                                                           requestSelector: (state: T) => Request,
-                                                          mapData: (state: T, result: S) => Partial<T> = null)
+                                                          mapData: (state: T, result: Action<Success<P, S>>)
+                                                              => Partial<T> = null)
 : ReducerBuilder<T, T>
 {
     return reducer
@@ -65,16 +72,52 @@ export function hookRequestActions<T extends {}, P, S, E>(reducer: ReducerBuilde
             replaceKey(nextstate, requestSelector, requestErrored(response.error.toString()));
             return nextstate as T;
         })
-        .case(action.done, (state: T, response) => {
+        .caseWithAction(action.done, (state: T, response) => {
             let nextstate = {...(state as object)};
             replaceKey(nextstate, requestSelector, requestDone());
 
             if (mapData !== null)
             {
-                let mapped = mapData(nextstate as T, response.result);
+                let mapped = mapData(nextstate as T, response);
                 nextstate = {...nextstate, ...(mapped as object)};
             }
 
             return nextstate as T;
         });
+}
+
+export function mapRequestToActions<P, S, E>(creator: AsyncActionCreators<P, S, E>,
+                                             action: Action<P>,
+                                             request: Observable<S>)
+: Observable<ReduxAction>
+{
+    return request
+        .map(result =>
+            creator.done({
+                params: action.payload,
+                result
+            })
+        ).catch(error =>
+            Observable.of(creator.failed({
+                params: action.payload,
+                error
+            }))
+        );
+}
+
+export function createRequestEpic<P, S, E>(creator: AsyncActionCreators<P, S, E>,
+                                           startRequest: (action: Action<P>,
+                                                          state: AppState,
+                                                          deps: ServiceContainer) => Observable<S>): AppEpic
+{
+    return (action$: ActionsObservable<ReduxAction>,
+            store: Store<AppState>,
+            deps: ServiceContainer) =>
+        action$
+            .ofAction(creator.started)
+            .switchMap((action: Action<P>) =>
+                {
+                    return mapRequestToActions(creator, action, startRequest(action, store.getState(), deps));
+                }
+            );
 }

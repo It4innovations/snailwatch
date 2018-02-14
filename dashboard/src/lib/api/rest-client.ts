@@ -8,6 +8,8 @@ import {Measurement} from '../measurement/measurement';
 import moment from 'moment';
 import {Filter} from '../view/filter';
 import {buildRequestFilter} from './filter';
+import {DAO, MeasurementDAO, ProjectDAO, ViewDAO} from './dao';
+import {createView, View} from '../view/view';
 
 interface ArrayResponse<T>
 {
@@ -21,24 +23,6 @@ type PaginatedResponse<T> = T & {
         page: number;
     }
 };
-
-interface DAO
-{
-    _id: string;
-    _created: string;
-}
-
-interface ProjectDAO extends DAO
-{
-    name: string;
-}
-interface MeasurementDAO extends DAO
-{
-    benchmark: string;
-    timestamp: string;
-    environment: {};
-    result: {};
-}
 
 export class RestClient implements SnailClient
 {
@@ -79,7 +63,9 @@ export class RestClient implements SnailClient
     loadProject(user: User, name: string): Observable<Project>
     {
         return this.call('/projects', 'GET', {
-            where: `{"name":"${name}"}`
+            where: JSON.stringify({
+                name
+            })
         }, {
             token: user.token
         })
@@ -103,7 +89,6 @@ export class RestClient implements SnailClient
                      count: number): Observable<FetchResult<Measurement>>
     {
         const filter = buildRequestFilter([...filters, {
-            id: 0,
             path: 'project',
             operator: '==',
             value: project.id
@@ -125,6 +110,64 @@ export class RestClient implements SnailClient
         );
     }
 
+    loadViews(user: User, project: Project): Observable<View[]>
+    {
+        return this.call('/views', 'GET', {
+            where: JSON.stringify({
+                project: project.id
+            })
+        }, {
+            token: user.token
+        })
+            .map((data: ArrayResponse<ViewDAO>) =>
+                data._items
+                    .map(v => this.parseView(v))
+            );
+    }
+    createView(user: User, project: Project, view: View): Observable<View>
+    {
+        return this.call('/views', 'POST', {
+            name: view.name,
+            project: project.id,
+            filters: view.filters.map(f => ({
+                path: f.path,
+                operator: f.operator,
+                value: f.value
+            })),
+            xAxis: view.projection.xAxis,
+            yAxis: view.projection.yAxis
+        }, {
+            token: user.token
+        })
+        .map((data: DAO) => ({
+            ...view,
+            id: data._id
+        }));
+    }
+    deleteView(user: User, view: View): Observable<boolean>
+    {
+        return this.call(`/views/${view.id}`, 'DELETE', {}, {
+            token: user.token
+        })
+        .map(() => true);
+    }
+    updateView(user: User, view: View): Observable<boolean>
+    {
+        return this.call(`/views/${view.id}`, 'PATCH', {
+            name: view.name,
+            filters: view.filters.map(f => ({
+                path: f.path,
+                operator: f.operator,
+                value: f.value
+            })),
+            xAxis: view.projection.xAxis,
+            yAxis: view.projection.yAxis
+        }, {
+            token: user.token
+        })
+        .map(() => true);
+    }
+
     private parseProject(project: ProjectDAO): Project
     {
         return {
@@ -143,9 +186,25 @@ export class RestClient implements SnailClient
             result: {...measurement.result}
         };
     }
+    private parseView(view: ViewDAO): View
+    {
+        return {
+            id: view._id,
+            name: view.name,
+            projection: {
+                xAxis: view.xAxis,
+                yAxis: view.yAxis
+            },
+            filters: view.filters.map(f => ({
+                path: f.path,
+                operator: f.operator,
+                value: f.value
+            }))
+        };
+    }
 
-    private call<T>(path: string, method: 'GET' | 'POST',
-                    params: {[key: string]: string}, options: {
+    private call<T>(path: string, method: 'GET' | 'POST' | 'DELETE' | 'PATCH',
+                    params: {[key: string]: {}}, options: {
             token?: string;
         } = {
             token: null

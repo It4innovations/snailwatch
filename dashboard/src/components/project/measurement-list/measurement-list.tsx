@@ -27,9 +27,9 @@ interface DispatchProps
     loadMeasurements(params: LoadMeasurementParams): void;
 }
 
-type Props = StateProps & DispatchProps;
+type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
-class MeasurementListComponent extends PureComponent<Props & RouteComponentProps<{}>>
+class MeasurementListComponent extends PureComponent<Props>
 {
     componentDidMount()
     {
@@ -74,7 +74,8 @@ class MeasurementListComponent extends PureComponent<Props & RouteComponentProps
         this.props.loadMeasurements({
             user: this.props.user,
             project: this.props.project,
-            filters: []
+            filters: [],
+            reload: false
         });
     }
 }

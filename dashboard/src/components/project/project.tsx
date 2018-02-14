@@ -11,10 +11,10 @@ import {MeasurementList} from './measurement-list/measurement-list';
 import {clearMeasurements} from '../../state/measurement/actions';
 import {Measurement} from '../../lib/measurement/measurement';
 import {getMeasurements} from '../../state/measurement/reducer';
-import {Visualisation} from './visualisation/visualisation';
 import {Request} from '../../util/request';
 import {getSelectedProject} from '../../state/project/reducer';
 import {selectProject} from '../../state/project/actions';
+import {ChartsPage} from './visualisation/charts-page';
 
 interface StateProps
 {
@@ -34,7 +34,7 @@ type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
 const TAB_ROUTES = {
     measurements: 'measurements',
-    visualisation: 'visualisation'
+    charts: 'charts'
 };
 
 class ProjectComponent extends PureComponent<Props & RouteComponentProps<{name: string}>>
@@ -69,7 +69,7 @@ class ProjectComponent extends PureComponent<Props & RouteComponentProps<{name: 
         return (
             <Switch>
                 {this.tabRoute(match.url, TAB_ROUTES.measurements)}
-                {this.tabRoute(match.url, TAB_ROUTES.visualisation)}
+                {this.tabRoute(match.url, TAB_ROUTES.charts)}
                 <Route render={() => this.renderTabs(TAB_ROUTES.measurements)} />
             </Switch>
         );
@@ -90,12 +90,9 @@ class ProjectComponent extends PureComponent<Props & RouteComponentProps<{name: 
                      title='Measurements'>
                     <MeasurementList />
                 </Tab>
-                <Tab eventKey='visualisation'
-                     title='Visualisation'>
-                    <Visualisation
-                        user={this.props.user}
-                        project={this.props.project}
-                        measurements={this.props.measurements} />
+                <Tab eventKey='charts'
+                     title='Charts'>
+                    <ChartsPage />
                 </Tab>
             </Tabs>
         );

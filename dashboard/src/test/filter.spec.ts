@@ -4,7 +4,7 @@ describe('Filter', () =>
 {
     it('can navigate to nested properties', () =>
     {
-        const filter = createFilter(0, 'a.b', '==', 'x');
+        const filter = createFilter('a.b', '==', 'x');
         const obj = {
             a: {
                 b: 'x'
@@ -16,7 +16,7 @@ describe('Filter', () =>
 
     it('handles inexact comparison of numeric string and integer', () =>
     {
-        const filter = createFilter(0, 'val', '<', '2');
+        const filter = createFilter('val', '<', '2');
         const obj = {
             val: 100
         };
@@ -25,7 +25,7 @@ describe('Filter', () =>
     });
     it('throws if non-numeric string is compared inexactly with integer', () =>
     {
-        const filter = createFilter(0, 'val', '<', '2');
+        const filter = createFilter('val', '<', '2');
         const obj = {
             val: 'asd'
         };
@@ -36,7 +36,7 @@ describe('Filter', () =>
     });
     it('handles exact comparison of string and integer', () =>
     {
-        const filter = createFilter(0, 'val', '==', '2');
+        const filter = createFilter('val', '==', '2');
         const obj = {
             val: 2
         };
@@ -125,7 +125,7 @@ describe('Filter', () =>
     {
         it(`evaluates ${data.left} ${data.operator} ${data.right} is ${data.result} correctly`, () =>
         {
-            const filter = createFilter(0, 'val', data.operator, data.right);
+            const filter = createFilter('val', data.operator, data.right);
             const obj = {
                 val: data.left
             };

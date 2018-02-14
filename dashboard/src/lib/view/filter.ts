@@ -1,12 +1,10 @@
 import {Filter} from './filter';
 import {lensPath, view, contains} from 'ramda';
 
-
 export type Operator = '==' | '!=' | '<' | '<=' | '>' | '>=';
 
 export interface Filter
 {
-    id: number;
     path: string;
     operator: Operator;
     value: string;
@@ -22,11 +20,9 @@ export class BadValueFilteredError extends Error
     }
 }
 
-export function createFilter(id: number = 0, path: string = '',
-                             operator: Operator = '==', value: string = ''): Filter
+export function createFilter(path: string = '', operator: Operator = '==', value: string = ''): Filter
 {
     return {
-        id,
         path,
         operator,
         value

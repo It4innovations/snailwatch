@@ -4,11 +4,12 @@ import {Project} from '../../lib/project/project';
 import {clearProjects, createProject, loadProject, loadProjects, selectProject} from './actions';
 import {createRequest, hookRequestActions, Request} from '../../util/request';
 import {createSelector} from 'reselect';
+import {compose} from 'ramda';
 
 export interface ProjectState
 {
     projects: Project[];
-    selectedProject: string;
+    selectedProject: string | null;
     loadProjectsRequest: Request;
     loadProjectRequest: Request;
     createProjectRequest: Request;
@@ -34,24 +35,25 @@ let reducer = reducerWithInitialState<ProjectState>({
     selectedProject
 }));
 
-reducer = hookRequestActions(reducer,
-    loadProject,
-    state => state.loadProjectRequest,
-    (state: ProjectState, result) => ({
-        projects: [...state.projects.filter(p => p.id !== result.id), result]
-    })
-);
-reducer = hookRequestActions(reducer,
-    loadProjects,
-    (state: ProjectState) => state.loadProjectsRequest,
-    (state: ProjectState, projects) => ({
-        projects
-    })
-);
-reducer = hookRequestActions(reducer,
-    createProject,
-    (state: ProjectState) => state.createProjectRequest
-);
+reducer = compose(
+    (r: typeof reducer) => hookRequestActions(r,
+        loadProject,
+        state => state.loadProjectRequest,
+        (state: ProjectState, action) => ({
+            projects: [...state.projects.filter(p => p.id !== action.payload.result.id), action.payload.result]
+        })
+    ),
+    (r: typeof reducer) => hookRequestActions(r,
+        loadProjects,
+        (state: ProjectState) => state.loadProjectsRequest,
+        (state: ProjectState, action) => ({
+            projects: action.payload.result
+        })
+    ),
+    (r: typeof reducer) => hookRequestActions(r,
+        createProject,
+        (state: ProjectState) => state.createProjectRequest
+))(reducer);
 
 export const getProjects = (state: AppState) => state.project.projects;
 export const getSelectedProjectName = (state: AppState) => state.project.selectedProject;

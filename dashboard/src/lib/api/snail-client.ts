@@ -3,6 +3,7 @@ import {Project} from '../project/project';
 import {User} from '../user/user';
 import {Measurement} from '../measurement/measurement';
 import {Filter} from '../view/filter';
+import {View} from '../view/view';
 
 export interface FetchResult<T>
 {
@@ -23,4 +24,9 @@ export interface SnailClient
                      sortBy: string,
                      page: number,
                      count: number): Observable<FetchResult<Measurement>>;
+
+    loadViews(user: User, project: Project): Observable<View[]>;
+    createView(user: User, project: Project, view: View): Observable<View>;
+    deleteView(user: User, view: View): Observable<boolean>;
+    updateView(user: User, view: View): Observable<boolean>;
 }

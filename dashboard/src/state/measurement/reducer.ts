@@ -4,6 +4,7 @@ import {AppState} from '../app/reducers';
 import {Measurement} from '../../lib/measurement/measurement';
 import {clearMeasurements, loadMeasurements} from './actions';
 import {createDatabase, Database, getDatabaseItems, mergeDatabase} from '../../util/database';
+import {compose} from 'ramda';
 
 export interface MeasurementState
 {
@@ -22,13 +23,16 @@ let reducer = reducerWithInitialState<MeasurementState>({
     measurements: createDatabase()
 }));
 
-reducer = hookRequestActions(reducer, loadMeasurements,
-    (state: MeasurementState) => state.loadMeasurementsRequest,
-    (state: MeasurementState, response) => ({
-        measurements: mergeDatabase(state.measurements, response.items),
-        totalMeasurements: response.total
-    })
-);
+reducer = compose(
+    (r: typeof reducer) => hookRequestActions(r, loadMeasurements,
+        (state: MeasurementState) => state.loadMeasurementsRequest,
+        (state: MeasurementState, action) => ({
+            measurements: action.payload.params.reload ?
+                createDatabase(action.payload.result.items) :
+                mergeDatabase(state.measurements, action.payload.result.items),
+            totalMeasurements: action.payload.result.total
+        })
+))(reducer);
 
 export const getMeasurements = (state: AppState) => getDatabaseItems(state.measurement.measurements);
 

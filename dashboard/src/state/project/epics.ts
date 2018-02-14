@@ -17,6 +17,7 @@ import {getProjectByName, getProjects} from './reducer';
 import {getUser} from '../user/reducer';
 import {Action} from 'typescript-fsa';
 import {AppEpic} from '../app/app-epic';
+import {mapRequestToActions} from '../../util/request';
 
 const loadProjectsEpic = (action$: ActionsObservable<ReduxAction>,
                           store: Store<AppState>,
@@ -29,18 +30,7 @@ const loadProjectsEpic = (action$: ActionsObservable<ReduxAction>,
                 const storedProjects = getProjects(store.getState());
                 if (force || isEmpty(storedProjects))
                 {
-                    return deps.client.loadProjects(user)
-                        .map(projects =>
-                            loadProjects.done({
-                                params: action.payload,
-                                result: projects
-                            })
-                        ).catch(error =>
-                            Observable.of(loadProjects.failed({
-                                params: action.payload,
-                                error
-                            }))
-                        );
+                    return mapRequestToActions(loadProjects, action, deps.client.loadProjects(user));
                 }
                 else return Observable.of(loadProjects.done({
                     params: action.payload,
@@ -60,18 +50,7 @@ const loadProjectEpic = (action$: ActionsObservable<ReduxAction>,
                 let storedProject = getProjectByName(getProjects(store.getState()), name);
                 if (storedProject === null)
                 {
-                    return deps.client.loadProject(user, name)
-                        .map(project =>
-                            loadProject.done({
-                                params: action.payload,
-                                result: project
-                            })
-                        ).catch(error =>
-                            Observable.of(loadProject.failed({
-                                params: action.payload,
-                                error
-                            }))
-                        );
+                    return mapRequestToActions(loadProject, action, deps.client.loadProject(user, name));
                 }
                 else return Observable.of(loadProject.done({
                     params: action.payload,
@@ -86,24 +65,15 @@ const createProjectEpic = (action$: ActionsObservable<ReduxAction>,
     action$
         .ofAction(createProject.started)
         .switchMap((action: Action<CreateProjectParams>) =>
-            deps.client.createProject(action.payload.user, action.payload.name)
-                        .flatMap(result =>
-                            Observable.from([
-                                createProject.done({
-                                    params: action.payload,
-                                    result
-                                }),
-                                loadProjects.started({
-                                    user: action.payload.user,
-                                    force: true
-                                })
-                            ])
-                        ).catch(error =>
-                            Observable.of(createProject.failed({
-                                params: action.payload,
-                                error
-                            }))
-                        )
+            mapRequestToActions(createProject, action,
+                deps.client.createProject(action.payload.user, action.payload.name))
+                .flatMap(result => Observable.from([
+                    result,
+                    loadProjects.started({
+                        user: action.payload.user,
+                        force: true
+                    })
+                ]))
         );
 
 const loadProjectAfterSelectEpic: AppEpic = (action$: ActionsObservable<ReduxAction>,

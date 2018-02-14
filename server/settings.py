@@ -20,6 +20,7 @@ PAGINATION_LIMIT = 500
 PAGINATION_DEFAULT = 50
 RENDERERS = ['eve.render.JSONRenderer']
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
+ENFORCE_IF_MATCH = False
 
 # schemas
 user_schema = {
@@ -126,7 +127,7 @@ view_schema = {
                     'allowed': ['==', '!=', '<', '<=', '>', '>=']
                 },
                 'value': {
-                    'type': ['string', 'number'],
+                    'type': 'string',
                     'required': True
                 }
             }
@@ -158,6 +159,7 @@ DOMAIN = {
     },
     'views': {
         'schema': view_schema,
-        'resource_methods': ['GET', 'POST']
+        'resource_methods': ['GET', 'POST', 'DELETE'],
+        'item_methods': ['GET', 'PATCH', 'DELETE']
     }
 }
