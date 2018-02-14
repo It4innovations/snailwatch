@@ -1,5 +1,2 @@
-from eve import Eve
-
-
-def init_database(app: Eve):
+def init_database(app):
     app.data.driver.db['sessions'].create_index("token", unique=True)

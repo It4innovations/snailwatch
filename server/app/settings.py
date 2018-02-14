@@ -1,17 +1,32 @@
-from auth import AdminAuthenticator
+import json
+import os
+from app.auth import AdminAuthenticator
+
+# import configuration
+dir = os.path.dirname(__file__)
+with open(os.path.join(dir, '../configuration.json'), 'r') as f:
+    configuration = json.load(f)
+
 
 # database
-MONGO_HOST = 'localhost'
-MONGO_PORT = 27017
-# MONGO_USERNAME = 'snailwatch'
-# MONGO_PASSWORD = 'snailwatch'
-MONGO_DBNAME = 'snailwatch'
+MONGO_HOST = configuration["mongoHost"]
+MONGO_PORT = configuration["mongoPort"]
+
+if "mongoUser" in configuration:
+    MONGO_USERNAME = configuration["mongoUser"]
+
+if "mongoPassword" in configuration:
+    MONGO_PASSWORD = configuration["mongoPassword"]
+
+MONGO_DBNAME = configuration["mongoDB"]
+
 
 # permissions
 AUTH_FIELD = 'owner'
 X_DOMAINS = '*'
 X_HEADERS = ['Authorization', 'Content-Type']
-ADMIN_AUTH_TOKEN = 'a67ba93bc150ab9f38e385feb038bf52'
+ADMIN_AUTH_TOKEN = configuration['adminAuthToken']
+
 
 # settings
 HATEOAS = False
@@ -21,6 +36,7 @@ PAGINATION_DEFAULT = 50
 RENDERERS = ['eve.render.JSONRenderer']
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 ENFORCE_IF_MATCH = False
+
 
 # schemas
 user_schema = {
@@ -142,6 +158,7 @@ view_schema = {
     }
 }
 
+# endpoints
 DOMAIN = {
     'users': {
         'schema': user_schema,

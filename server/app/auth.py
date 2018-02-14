@@ -6,7 +6,7 @@ from flask import current_app as app
 
 class AdminAuthenticator(TokenAuth):
     def check_auth(self, token, allowed_roles, resource, method):
-        from settings import ADMIN_AUTH_TOKEN
+        from app.settings import ADMIN_AUTH_TOKEN
         return token == ADMIN_AUTH_TOKEN
 
 
@@ -20,7 +20,7 @@ class TokenAuthenticator(TokenAuth):
         return False
 
 
-def find_session(token: str) -> dict:
+def find_session(token):
     sessions = app.data.driver.db['sessions']
     session = sessions.find_one({
         "token": token
@@ -28,7 +28,7 @@ def find_session(token: str) -> dict:
     return session
 
 
-def create_session(user_id: str) -> str:
+def create_session(user_id):
     token = str(uuid.uuid4().hex)
     session = {
         "user_id": user_id,
@@ -40,7 +40,7 @@ def create_session(user_id: str) -> str:
     return token
 
 
-def find_user_by_username(username: str) -> dict:
+def find_user_by_username(username):
     users = app.data.driver.db['users']
     user = users.find_one({
         "username": username
@@ -48,9 +48,9 @@ def find_user_by_username(username: str) -> dict:
     return user
 
 
-def hash_password(password: str):
+def hash_password(password):
     return werkzeug.security.generate_password_hash(password)
 
 
-def check_password(user: dict, password: str):
+def check_password(user, password):
     return werkzeug.security.check_password_hash(user["password"], password)
