@@ -87,7 +87,6 @@ export class ViewManager extends PureComponent<Props, State>
                     editing={this.canEdit()}
                     selected={view !== null}
                     dirty={!equals(this.props.selectedView, this.state.view)}
-                    onLoad={this.loadMeasurements}
                     onCreate={this.createView}
                     onCopy={this.copyView}
                     onSave={this.updateView}
@@ -141,6 +140,7 @@ export class ViewManager extends PureComponent<Props, State>
     {
         this.stopEdit();
         this.props.selectView(view);
+        this.loadMeasurements(view);
     }
     startEdit = () =>
     {
@@ -156,9 +156,9 @@ export class ViewManager extends PureComponent<Props, State>
         }));
     }
 
-    loadMeasurements = () =>
+    loadMeasurements = (view: View) =>
     {
-        this.props.loadMeasurements(this.props.selectedView.filters);
+        this.props.loadMeasurements(view.filters);
     }
     createView = () =>
     {
@@ -190,6 +190,7 @@ export class ViewManager extends PureComponent<Props, State>
     {
         this.props.updateView(this.state.view);
         this.stopEdit();
+        this.loadMeasurements(this.state.view);
     }
 
     handleNameChange = (name: string) =>

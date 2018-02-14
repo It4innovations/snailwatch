@@ -8,7 +8,6 @@ interface Props
     dirty: boolean;
     onStartEdit(): void;
     onCancelEdit(): void;
-    onLoad(): void;
     onCreate(): void;
     onCopy(): void;
     onDelete(): void;
@@ -21,7 +20,6 @@ export class ViewControls extends PureComponent<Props>
     {
         return (
             <div>
-                {this.renderLoadButton()}
                 {this.renderEditButton()}
                 {this.renderEditCancelButton()}
                 {this.renderCreateButton()}
@@ -31,18 +29,6 @@ export class ViewControls extends PureComponent<Props>
         );
     }
 
-    renderLoadButton = (): JSX.Element =>
-    {
-        if (!this.props.selected || this.props.editing)
-        {
-            return null;
-        }
-
-        return (
-            <Button key='load'
-                    onClick={this.props.onLoad}>Load</Button>
-        );
-    }
     renderEditButton = (): JSX.Element =>
     {
         if (!this.props.selected)

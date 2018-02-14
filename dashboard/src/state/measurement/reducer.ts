@@ -35,5 +35,6 @@ reducer = compose(
 ))(reducer);
 
 export const getMeasurements = (state: AppState) => getDatabaseItems(state.measurement.measurements);
+export const getTotalMeasurements = (state: AppState) => state.measurement.totalMeasurements;
 
 export const measurementReducer = reducer;

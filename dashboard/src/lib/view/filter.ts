@@ -111,7 +111,7 @@ function convert(value: string): string | number
     return value;
 }
 
-function getValueWithPath<T>(data: T, path: string): string | undefined
+export function getValueWithPath<T>(data: T, path: string): string | undefined
 {
     const lens = lensPath(path.split('.'));
     return view<T, string>(lens, data);
