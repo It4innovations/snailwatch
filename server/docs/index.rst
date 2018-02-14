@@ -8,11 +8,16 @@ Snailwatch
 
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
+    :caption: User guide:
 
     overview
-    install
     workflow
     collection
-    server
     dashboard
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Admin guide:
+
+    server-deploy
+    dashboard-deploy
