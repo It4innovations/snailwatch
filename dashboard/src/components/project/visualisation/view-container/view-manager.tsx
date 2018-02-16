@@ -69,7 +69,7 @@ export class ViewManager extends PureComponent<Props, State>
         else if (props.views.length > 0 && props.selectedView === null)
         {
             const views = this.sortViews(props.views);
-            this.props.selectView(views[0]);
+            this.selectView(views[0]);
         }
     }
 
@@ -83,7 +83,7 @@ export class ViewManager extends PureComponent<Props, State>
                 <ViewSelect
                     views={views}
                     selectedView={this.props.selectedView}
-                    onSelect={this.selectView} />
+                    onSelect={this.handleViewSelect} />
                 {this.renderViewContent(view)}
                 <ViewControls
                     editing={this.canEdit()}
@@ -141,7 +141,6 @@ export class ViewManager extends PureComponent<Props, State>
     }
     selectView = (view: View) =>
     {
-        this.stopEdit();
         this.props.selectView(view);
         this.loadMeasurements(view);
     }
@@ -207,6 +206,11 @@ export class ViewManager extends PureComponent<Props, State>
     handleProjectionChange = (projection: Projection) =>
     {
         this.changeView({ projection });
+    }
+    handleViewSelect = (view: View) =>
+    {
+        this.stopEdit();
+        this.selectView(view);
     }
     changeView = (change: Partial<View>) =>
     {
