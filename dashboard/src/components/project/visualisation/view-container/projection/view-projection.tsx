@@ -1,9 +1,12 @@
 import React, {PureComponent} from 'react';
-import {Projection} from '../../../../lib/view/projection';
+import {Projection} from '../../../../../lib/view/projection';
+import {Measurement} from '../../../../../lib/measurement/measurement';
+import {AxisInput} from './axis-input';
 
 interface Props
 {
     projection: Projection;
+    measurements: Measurement[];
     editable: boolean;
     onChange(projection: Projection): void;
 }
@@ -33,17 +36,17 @@ export class ViewProjection extends PureComponent<Props>
             return <span>{this.props.projection[key]}</span>;
         }
 
-        return <input type='text' name='{key}'
-               value={this.props.projection[key]}
-               onChange={e => this.handleChange(e, key)} />;
+        return <AxisInput
+                    value={this.props.projection[key]}
+                    measurements={this.props.measurements}
+                    onChange={(value: string) => this.handleChange(value, key)} />;
     }
 
-    handleChange = (e: React.FormEvent<HTMLInputElement>, key: keyof Projection) =>
+    handleChange = (value: string, key: keyof Projection) =>
     {
-        const val = e.currentTarget.value;
         this.props.onChange({
             ...this.props.projection,
-            [key]: val
+            [key]: value
         });
     }
 }

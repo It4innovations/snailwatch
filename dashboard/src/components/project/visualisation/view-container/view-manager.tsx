@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {ViewProjection} from './view-projection';
+import {ViewProjection} from './projection/view-projection';
 import {FilterList} from './filter/filter-list';
 import {createView, View} from '../../../../lib/view/view';
 import {ViewSelect} from './view-select';
@@ -9,12 +9,14 @@ import {Filter} from '../../../../lib/view/filter';
 import {Projection} from '../../../../lib/view/projection';
 import {Request} from '../../../../util/request';
 import {sort, equals} from 'ramda';
+import {Measurement} from '../../../../lib/measurement/measurement';
 
 interface Props
 {
     views: View[];
     viewRequest: Request;
     selectedView: View;
+    measurements: Measurement[];
     loadViews(): void;
     selectView(view: View): void;
     createView(view: View): void;
@@ -123,6 +125,7 @@ export class ViewManager extends PureComponent<Props, State>
                     <h2>Projection</h2>
                     <ViewProjection
                         projection={view.projection}
+                        measurements={this.props.measurements}
                         editable={this.canEdit()}
                         onChange={this.handleProjectionChange} />
                 </div>

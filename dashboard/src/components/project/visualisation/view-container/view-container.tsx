@@ -5,7 +5,7 @@ import {User} from '../../../../lib/user/user';
 import {Filter} from '../../../../lib/view/filter';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {createView, View} from '../../../../lib/view/view';
+import {View} from '../../../../lib/view/view';
 import {getUser} from '../../../../state/user/reducer';
 import {getSelectedProject} from '../../../../state/project/reducer';
 import {AppState} from '../../../../state/app/reducers';
@@ -50,8 +50,9 @@ class ViewContainerComponent extends PureComponent<Props>
                 <ViewManager
                     views={this.props.views}
                     viewRequest={this.props.viewRequest}
-                    loadViews={this.loadViews}
+                    measurements={this.props.measurements}
                     selectedView={this.props.selectedView}
+                    loadViews={this.loadViews}
                     selectView={this.selectView}
                     createView={this.createView}
                     updateView={this.updateView}
