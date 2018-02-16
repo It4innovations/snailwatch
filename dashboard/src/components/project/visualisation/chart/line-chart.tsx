@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import {hashMeasurement, Measurement} from '../../../../lib/measurement/measurement';
 import {View} from '../../../../lib/view/view';
-import {groupBy, values, sum, reduce, min, max, any} from 'ramda';
+import {groupBy, values, sum, reduce, min, max, all} from 'ramda';
 import {getValueWithPath} from '../../../../lib/view/filter';
 
 interface Props
@@ -43,19 +43,10 @@ export class LineChart extends PureComponent<Props, State>
         if (props.measurements !== this.props.measurements ||
             props.view !== this.props.view)
         {
-            try
-            {
-                this.checkViewValidity(props.measurements, props.view);
-                this.setState(() => ({
-                    error: ''
-                }));
-            }
-            catch (e)
-            {
-                this.setState(() => ({
-                    error: e.toString()
-                }));
-            }
+            const errors = this.checkViewValidity(props.measurements, props.view);
+            this.setState(() => ({
+                error: errors.join(' ')
+            }));
         }
     }
 
@@ -111,8 +102,8 @@ export class LineChart extends PureComponent<Props, State>
     getValidMeasurements(measurements: Measurement[], view: View): Measurement[]
     {
         return measurements.filter(m =>
-            getValueWithPath(m, view.projection.xAxis) !== undefined &&
-            getValueWithPath(m, view.projection.yAxis) !== undefined
+            this.isAxisXValid(getValueWithPath(m, view.projection.xAxis)) &&
+            this.isAxisYValid(getValueWithPath(m, view.projection.yAxis))
         );
     }
 
@@ -137,17 +128,31 @@ export class LineChart extends PureComponent<Props, State>
             });
     }
 
-    checkViewValidity = (measurements: Measurement[], view: View) =>
+    checkViewValidity = (measurements: Measurement[], view: View): string[] =>
     {
-        this.checkAxisValidity(measurements, view.projection.xAxis, 'x');
-        this.checkAxisValidity(measurements, view.projection.yAxis, 'y');
+        const errors = [];
+        if (!all(m => this.isAxisXValid(getValueWithPath(m, view.projection.xAxis)), measurements))
+        {
+            errors.push(
+                `Some measurements were left out because of x projection: ${view.projection.xAxis}`);
+        }
+        if (!all(m => this.isAxisYValid(getValueWithPath(m, view.projection.yAxis)), measurements))
+        {
+            errors.push(
+                `Some measurements were left out because of y projection: ${view.projection.yAxis}`);
+        }
+
+        return errors;
     }
 
-    checkAxisValidity = (measurements: Measurement[], path: string, label: string) =>
+    isAxisXValid = (value: {}): boolean =>
     {
-        if (any(m => getValueWithPath(m, path) === undefined, measurements))
-        {
-            throw new Error(`Some measurements were left out because of ${label} projection: ${path}`);
-        }
+        return value !== undefined;
+    }
+    isAxisYValid = (value: {}): boolean =>
+    {
+        return value !== undefined &&
+            value !== '' &&
+            !isNaN(Number(value));
     }
 }
