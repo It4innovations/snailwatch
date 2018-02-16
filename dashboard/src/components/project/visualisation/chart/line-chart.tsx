@@ -5,13 +5,18 @@ import {
 } from 'recharts';
 import {hashMeasurement, Measurement} from '../../../../lib/measurement/measurement';
 import {View} from '../../../../lib/view/view';
-import {groupBy, values, sum, reduce, min, max} from 'ramda';
+import {groupBy, values, sum, reduce, min, max, any} from 'ramda';
 import {getValueWithPath} from '../../../../lib/view/filter';
 
 interface Props
 {
     measurements: Measurement[];
     view: View;
+}
+
+interface State
+{
+    error: string;
 }
 
 interface DataPoint
@@ -22,31 +27,67 @@ interface DataPoint
 }
 
 
-export class LineChart extends PureComponent<Props>
+export class LineChart extends PureComponent<Props, State>
 {
+    constructor(props: Props)
+    {
+        super(props);
+
+        this.state = {
+            error: ''
+        };
+    }
+
+    componentWillReceiveProps(props: Props)
+    {
+        if (props.measurements !== this.props.measurements ||
+            props.view !== this.props.view)
+        {
+            try
+            {
+                this.checkViewValidity(props.measurements, props.view);
+                this.setState(() => ({
+                    error: ''
+                }));
+            }
+            catch (e)
+            {
+                this.setState(() => ({
+                    error: e.toString()
+                }));
+            }
+        }
+    }
+
     render()
     {
-        const measurements = this.generateData(this.props.measurements, this.props.view);
+        const measurements = this.generateData(
+            this.getValidMeasurements(this.props.measurements, this.props.view),
+            this.props.view
+        );
         const margin = 20;
         const horizontalPadding = 20;
         const verticalPadding = 20;
 
         return (
-            <ResponsiveContainer width='100%' height={400}>
-                <ReLineChart width={400}
-                             data={measurements}
-                             margin={{ top: margin, right: margin, left: margin, bottom: margin }}>
-                    <CartesianGrid stroke='#ccc' />
-                    <XAxis padding={{ left: horizontalPadding, right: horizontalPadding }} dataKey='x' />
-                    <YAxis padding={{ bottom: verticalPadding, top: verticalPadding }} />
-                    <Tooltip content={this.renderTooltip} />
-                    <Line isAnimationActive={false} type='monotone'
-                          dataKey='y'
-                          stroke='#8884d8'>
-                        <ErrorBar dataKey='deviation' stroke='red' strokeWidth={4} />
-                    </Line>
-                </ReLineChart>
-            </ResponsiveContainer>
+            <>
+                {this.state.error && <div>{this.state.error}</div>}
+                <ResponsiveContainer width='100%' height={400}>
+                    <ReLineChart width={400}
+                                 data={measurements}
+                                 margin={{top: margin, right: margin, left: margin, bottom: margin}}>
+                        <CartesianGrid stroke='#ccc' />
+                        <XAxis padding={{left: horizontalPadding, right: horizontalPadding}} dataKey='x' />
+                        <YAxis padding={{bottom: verticalPadding, top: verticalPadding}} />
+                        <Tooltip content={this.renderTooltip} />
+                        <Line isAnimationActive={false} type='monotone'
+                              dataKey='y'
+                              stroke='#8884d8'>
+                            <ErrorBar dataKey='deviation' stroke='red' strokeWidth={4} />
+                        </Line>
+                    </ReLineChart>
+                </ResponsiveContainer>
+            </>
         );
     }
 
@@ -64,6 +105,14 @@ export class LineChart extends PureComponent<Props>
                 <div>Avg: {point.y}</div>
                 <div>Deviation: [{point.deviation[0]}, {point.deviation[1]}]</div>
             </div>
+        );
+    }
+
+    getValidMeasurements(measurements: Measurement[], view: View): Measurement[]
+    {
+        return measurements.filter(m =>
+            getValueWithPath(m, view.projection.xAxis) !== undefined &&
+            getValueWithPath(m, view.projection.yAxis) !== undefined
         );
     }
 
@@ -86,5 +135,19 @@ export class LineChart extends PureComponent<Props>
                     deviation: range
                 };
             });
+    }
+
+    checkViewValidity = (measurements: Measurement[], view: View) =>
+    {
+        this.checkAxisValidity(measurements, view.projection.xAxis, 'x');
+        this.checkAxisValidity(measurements, view.projection.yAxis, 'y');
+    }
+
+    checkAxisValidity = (measurements: Measurement[], path: string, label: string) =>
+    {
+        if (any(m => getValueWithPath(m, path) === undefined, measurements))
+        {
+            throw new Error(`Some measurements were left out because of ${label} projection: ${path}`);
+        }
     }
 }
