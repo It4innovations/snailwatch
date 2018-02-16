@@ -2,34 +2,34 @@ Server deployment
 =================
 Installation
 ------------
-You can install the dependencies of the server with pip (you have to be in the
-``server`` directory)::
+You can install the dependencies of the server with pip::
 
+    $ cd server
     $ pip install -r requirements.txt
 
 Configuration
 -------------
 Before you can upload and visualise the data, you first have to configure
 and launch the server. It is a Flask application that uses MongoDB for data
-storage. Before launching the server you have to provide some basic
-configuration in a JSON file located at ``server/configuration.json``.
-You can set the following properties:
+storage. It can be configured with the following environment variables:
 
-+----------------+------------+-----------------------------------------------+
-| Name           | Required   | Description                                   |
-+================+============+===============================================+
-| adminAuthToken | True       | Authentication token used for admin actions.  |
-+----------------+------------+-----------------------------------------------+
-| mongoHost      | True       | Address of MongoDB server.                    |
-+----------------+------------+-----------------------------------------------+
-| mongoPort      | True       | Port of MongoDB server.                       |
-+----------------+------------+-----------------------------------------------+
-| mongoDB        | True       | Name of MongoDB database.                     |
-+----------------+------------+-----------------------------------------------+
-| mongoUsername  | False      | Auth username for MongoDB server.             |
-+----------------+------------+-----------------------------------------------+
-| mongoPassword  | False      | Auth password for MongoDB server.             |
-+----------------+------------+-----------------------------------------------+
++--------------------+------------+------------------+--------------------------------------------------------+
+| Name               | Required   | Default          | Description                                            |
++====================+============+==================+========================================================+
+| SW_ADMIN_TOKEN     | True       |(generated) [#t]_ | Authentication token used for administrative actions.  |
++--------------------+------------+------------------+--------------------------------------------------------+
+| SW_MONGO_HOST      | True       | localhost        | Address of MongoDB server.                             |
++--------------------+------------+------------------+--------------------------------------------------------+
+| SW_MONGO_PORT      | True       | 27017            | Port of MongoDB server.                                |
++--------------------+------------+------------------+--------------------------------------------------------+
+| SW_MONGO_DB        | True       | snailwatch       | Name of MongoDB database.                              |
++--------------------+------------+------------------+--------------------------------------------------------+
+| SW_MONGO_USERNAME  | False      |                  | Auth username for MongoDB server.                      |
++--------------------+------------+------------------+--------------------------------------------------------+
+| SW_MONGO_PASSWORD  | False      |                  | Auth password for MongoDB server.                      |
++--------------------+------------+------------------+--------------------------------------------------------+
+
+.. [#t] If you don't specify the admin token, a random one will be generated and printed to the standard output during server startup.
 
 Running the server
 ------------------

@@ -1,7 +1,7 @@
 from eve import ID_FIELD
 from flask import request, abort, jsonify
 
-from app.auth import find_user_by_username, check_password, create_session
+from .auth import find_user_by_username, check_password, create_session
 
 
 def setup_routes(app):

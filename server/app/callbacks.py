@@ -1,7 +1,7 @@
 import datetime
 
 from flask import request
-from app.auth import hash_password
+from .auth import hash_password
 
 
 def before_insert_user(users):

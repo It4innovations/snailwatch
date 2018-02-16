@@ -1,31 +1,36 @@
-import json
-import os
+import uuid
+
 from app.auth import AdminAuthenticator
-
-# import configuration
-dir = os.path.dirname(__file__)
-with open(os.path.join(dir, '../configuration.json'), 'r') as f:
-    configuration = json.load(f)
-
+from app.configuration import get_mongo_db, get_mongo_host, get_mongo_port, \
+    get_mongo_username, get_mongo_password, get_admin_token
 
 # database
-MONGO_HOST = configuration["mongoHost"]
-MONGO_PORT = configuration["mongoPort"]
+MONGO_HOST = get_mongo_host()
+MONGO_PORT = get_mongo_port()
 
-if "mongoUser" in configuration:
-    MONGO_USERNAME = configuration["mongoUser"]
+username = get_mongo_username()
+if username:
+    MONGO_USERNAME = username
 
-if "mongoPassword" in configuration:
-    MONGO_PASSWORD = configuration["mongoPassword"]
+password = get_mongo_password()
+if password:
+    MONGO_PASSWORD = password
 
-MONGO_DBNAME = configuration["mongoDB"]
+MONGO_DBNAME = get_mongo_db()
 
 
 # permissions
 AUTH_FIELD = 'owner'
 X_DOMAINS = '*'
 X_HEADERS = ['Authorization', 'Content-Type']
-ADMIN_AUTH_TOKEN = configuration['adminAuthToken']
+
+
+token = get_admin_token()
+if not token:
+    token = str(uuid.uuid4().hex)
+    print("Generated admin token: {}".format(token))
+
+ADMIN_AUTH_TOKEN = token
 
 
 # settings

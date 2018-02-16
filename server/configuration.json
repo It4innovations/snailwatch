@@ -1,6 +1,0 @@
-{
-  "adminAuthToken": "a67ba93bc150ab9f38e385feb038bf52",
-  "mongoHost": "localhost",
-  "mongoPort": 27017,
-  "mongoDB": "snailwatch"
-}
