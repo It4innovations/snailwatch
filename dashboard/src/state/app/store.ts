@@ -12,7 +12,7 @@ import storage from 'redux-persist/lib/storage';
 import reduxCatch from 'redux-catch';
 import Raven from 'raven-js';
 import {RestClient} from '../../lib/api/rest-client';
-import configuration from '../../configuration.json';
+import {API_SERVER} from '../../configuration';
 
 function errorHandler(error: Error, getState: () => AppState, action: Action)
 {
@@ -31,7 +31,7 @@ const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compo
 const router = routerMiddleware(history);
 const epic = createEpicMiddleware(rootEpic, {
     dependencies: {
-        client: new RestClient(configuration.apiServer)
+        client: new RestClient(API_SERVER)
     }
 });
 const persistConfig = {

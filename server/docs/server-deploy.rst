@@ -36,7 +36,7 @@ Running the server
 After you configure the server, you have to start the MongoDB instance that you
 configured and afterwards you can launch the server itself using::
 
-    $ python server/start.py
+    $ python start.py
 
 The server can be launched under both Python 2 and 3.
 
