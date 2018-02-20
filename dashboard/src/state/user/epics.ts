@@ -8,6 +8,7 @@ import {clearMeasurements} from '../measurement/actions';
 import {clearProjects} from '../project/actions';
 import {AppEpic} from '../app/app-epic';
 import {createRequestEpic} from '../../util/request';
+import {clearViews} from '../view/actions';
 
 const loginUserEpic = createRequestEpic(loginUser, (action, state, deps) =>
     deps.client.loginUser(action.payload.username, action.payload.password)
@@ -19,7 +20,8 @@ const clearDataAfterLogout: AppEpic = (action$: ActionsObservable<ReduxAction>) 
         .switchMap(() =>
             Observable.from([
                 clearMeasurements(),
-                clearProjects()
+                clearProjects(),
+                clearViews()
             ])
         );
 

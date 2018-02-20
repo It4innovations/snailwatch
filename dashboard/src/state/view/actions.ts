@@ -31,3 +31,4 @@ export type DeleteViewParams = UpdateViewParams;
 export const deleteView = actionCreator.async<DeleteViewParams, boolean>('delete');
 
 export const selectView = actionCreator<string>('select');
+export const clearViews = actionCreator('clear');

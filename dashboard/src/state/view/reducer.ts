@@ -1,5 +1,5 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {createView, deleteView, loadViews, selectView, updateView} from './actions';
+import {clearViews, createView, deleteView, loadViews, selectView, updateView} from './actions';
 import {createRequest, hookRequestActions, Request} from '../../util/request';
 import {View} from '../../lib/view/view';
 import {find} from 'ramda';
@@ -27,6 +27,12 @@ let reducer = reducerWithInitialState<ViewState>({
 .case(selectView, (state, selectedView) => ({
     ...state,
     selectedView
+}))
+.case(clearViews, state => ({
+    ...state,
+    views: [],
+    selectedView: null,
+    viewRequest: createRequest()
 }));
 
 reducer = compose(

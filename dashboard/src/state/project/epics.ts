@@ -18,6 +18,8 @@ import {getUser} from '../user/reducer';
 import {Action} from 'typescript-fsa';
 import {AppEpic} from '../app/app-epic';
 import {mapRequestToActions} from '../../util/request';
+import {clearMeasurements} from '../measurement/actions';
+import {clearViews} from '../view/actions';
 
 const loadProjectsEpic = (action$: ActionsObservable<ReduxAction>,
                           store: Store<AppState>,
@@ -99,9 +101,18 @@ const loadProjectAfterSelectEpic: AppEpic = (action$: ActionsObservable<ReduxAct
             }));
         });
 
+const clearDataAfterProjectSelect: AppEpic = (action$: ActionsObservable<ReduxAction>) =>
+    action$
+        .ofAction(selectProject)
+        .switchMap(() => Observable.from([
+            clearMeasurements(),
+            clearViews()
+        ]));
+
 export const projectEpics = combineEpics(
     loadProjectsEpic,
     loadProjectEpic,
     createProjectEpic,
-    loadProjectAfterSelectEpic
+    loadProjectAfterSelectEpic,
+    clearDataAfterProjectSelect
 );
