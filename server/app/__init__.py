@@ -1,1 +1,1 @@
-from .snailwatch import start
+from .snailwatch import start  # noqa
