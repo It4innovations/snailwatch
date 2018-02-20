@@ -1,1 +1,1 @@
-export const API_SERVER = process.env.SW_API_SERVER || 'http://localhost:5000';
+export const API_SERVER = window['API_HOST'] || 'http://localhost:5000';

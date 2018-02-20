@@ -3,6 +3,14 @@ FROM node:carbon-slim as build
 WORKDIR /dashboard
 COPY package.json package-lock.json ./
 RUN npm install
-COPY . ./
+COPY . .
+RUN npm run build
 
-CMD rm -rf build && npm run build && ./node_modules/.bin/serve -p 3000 -s build
+FROM node:carbon-slim
+
+WORKDIR /dashboard
+COPY --from=build /dashboard/build .
+
+EXPOSE 3000
+
+CMD node server.js
