@@ -10,7 +10,7 @@ import {getMeasurements, getTotalMeasurements} from '../../../state/measurement/
 import {AppState} from '../../../state/app/reducers';
 import {getSelectedView} from '../../../state/view/reducer';
 import {MeasurementInfo} from './measurement-info';
-import {LoadMeasurementParams, loadMeasurements} from '../../../state/measurement/actions';
+import {createLoadMeasurementParams, LoadMeasurementParams, loadMeasurements} from '../../../state/measurement/actions';
 import {Project} from '../../../lib/project/project';
 import {User} from '../../../lib/user/user';
 import {getUser} from '../../../state/user/reducer';
@@ -57,12 +57,12 @@ class ChartsPageComponent extends PureComponent<Props>
 
     loadMoreMeasurements = () =>
     {
-        this.props.loadMeasurements({
+        this.props.loadMeasurements(createLoadMeasurementParams({
             user: this.props.user,
             project: this.props.project,
             filters: this.props.selectedView.filters,
             reload: false
-        });
+        }));
     }
 }
 

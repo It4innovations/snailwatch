@@ -4,7 +4,7 @@ import {Project} from '../../lib/project/project';
 import {User} from '../../lib/user/user';
 import {AppState} from '../../state/app/reducers';
 import {getUser} from '../../state/user/reducer';
-import {Route, RouteComponentProps, Switch, withRouter} from 'react-router';
+import {Route, RouteComponentProps, withRouter} from 'react-router';
 import {Tab, Tabs} from 'react-bootstrap';
 import {push} from 'react-router-redux';
 import {MeasurementList} from './measurement-list/measurement-list';
@@ -65,27 +65,20 @@ class ProjectComponent extends PureComponent<Props & RouteComponentProps<{name: 
             return <div>Loading project {this.props.match.params.name}</div>;
         }
 
-        const {match} = this.props;
+        const match = this.props.match;
         return (
-            <Switch>
-                {this.tabRoute(match.url, TAB_ROUTES.measurements)}
-                {this.tabRoute(match.url, TAB_ROUTES.charts)}
-                <Route render={() => this.renderTabs(TAB_ROUTES.measurements)} />
-            </Switch>
+            <Route path={`${match.url}/:tab?`} render={this.renderTabs} />
         );
     }
 
-    tabRoute = (url: string, path: string): JSX.Element =>
-    {
-        return <Route path={`${url}/${path}`} render={() => this.renderTabs(path)} />;
-    }
-
-    renderTabs = (path: string): JSX.Element =>
+    renderTabs = (path: RouteComponentProps<{tab: string}>): JSX.Element =>
     {
         return (
-            <Tabs activeKey={path} id='project-view-menu'
+            <Tabs activeKey={path.match.params.tab || TAB_ROUTES.measurements} id='project-view-menu'
                   onSelect={this.selectTab}
-                  animation={false}>
+                  animation={false}
+                  mountOnEnter={true}
+                  unmountOnExit={true}>
                 <Tab eventKey='measurements'
                      title='Measurements'>
                     <MeasurementList />

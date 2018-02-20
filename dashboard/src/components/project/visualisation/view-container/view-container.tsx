@@ -17,7 +17,10 @@ import {
     selectView, updateView, UpdateViewParams
 } from '../../../../state/view/actions';
 import {Request} from '../../../../util/request';
-import {LoadMeasurementParams, loadMeasurements} from '../../../../state/measurement/actions';
+import {
+    createLoadMeasurementParams, LoadMeasurementParams,
+    loadMeasurements
+} from '../../../../state/measurement/actions';
 
 interface StateProps
 {
@@ -64,12 +67,11 @@ class ViewContainerComponent extends PureComponent<Props>
 
     loadMeasurements = (filters: Filter[]) =>
     {
-        this.props.loadMeasurements({
+        this.props.loadMeasurements(createLoadMeasurementParams({
             user: this.props.user,
             project: this.props.project,
-            filters,
-            reload: true
-        });
+            filters
+        }));
     }
     loadViews = () =>
     {

@@ -6,6 +6,8 @@ import {clearMeasurements, deleteMeasurement, loadMeasurements} from './actions'
 import {createDatabase, Database, deleteFromDatabase, getDatabaseItems, mergeDatabase} from '../../util/database';
 import {compose} from 'ramda';
 
+export const MEASUREMENT_PAGE_SIZE = 50;
+
 export interface MeasurementState
 {
     measurements: Database<Measurement>;

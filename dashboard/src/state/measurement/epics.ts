@@ -7,7 +7,7 @@ import '../../util/redux-observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/if';
 import {deleteMeasurement, LoadMeasurementParams, loadMeasurements} from './actions';
-import {getMeasurements} from './reducer';
+import {getMeasurements, MEASUREMENT_PAGE_SIZE} from './reducer';
 import {getPage} from '../../lib/api/pagination';
 import {createRequestEpic, mapRequestToActions} from '../../util/request';
 
@@ -18,12 +18,16 @@ const loadMeasurementsForProject = (action$: ActionsObservable<ReduxAction>,
         .ofAction(loadMeasurements.started)
         .switchMap((action: Action<LoadMeasurementParams>) =>
             {
-                const {user, project, filters, reload} = action.payload;
-                const requestCount = 50;
-                const page = reload ? 1 : getPage(getMeasurements(store.getState()).length, requestCount);
+                const {user, project, filters, sort, reload, page} = action.payload;
+                const requestCount = MEASUREMENT_PAGE_SIZE;
+                const calculatePage = () => {
+                    if (page !== null) return page + 1;
+                    if (reload) return 1;
+                    return getPage(getMeasurements(store.getState()).length, requestCount);
+                };
 
                 return mapRequestToActions(loadMeasurements, action,
-                    deps.client.loadMeasurements(user, project, filters, '-timestamp', page, requestCount));
+                    deps.client.loadMeasurements(user, project, filters, sort, calculatePage(), requestCount));
             }
         );
 
