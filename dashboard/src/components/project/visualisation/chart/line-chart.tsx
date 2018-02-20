@@ -113,11 +113,11 @@ export class LineChart extends PureComponent<Props, State>
         return values(groups)
             .map(group => {
                 const x = getValueWithPath(group[0], view.projection.xAxis);
-                const yValues = group.map(value => Number(getValueWithPath(value, view.projection.yAxis)));
+                const yValues: number[] = group.map(value => Number(getValueWithPath(value, view.projection.yAxis)));
                 const avg = sum(yValues) / yValues.length;
                 const range = [
-                    avg - reduce(min, yValues[0], yValues),
-                    reduce(max, yValues[0], yValues) - avg
+                    avg - (reduce(min, yValues[0], yValues) as number),
+                    (reduce(max, yValues[0], yValues) as number) - avg
                 ];
 
                 return {
