@@ -7,6 +7,7 @@ import {Observable} from 'rxjs/Observable';
 import {Action as ReduxAction, Store} from 'redux';
 import {ServiceContainer} from '../state/app/di';
 import '../util/redux-observable';
+import {any} from 'ramda';
 
 export interface Request
 {
@@ -40,6 +41,14 @@ export function requestDone(): Request
     return {
         loading: false,
         error: null
+    };
+}
+
+export function combineRequests(...requests: Request[]): Request
+{
+    return {
+        loading: any(r => r.loading, requests),
+        error: requests.map(r => r.error).find(r => r !== null) || null
     };
 }
 

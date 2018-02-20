@@ -3,9 +3,12 @@ import {Project} from '../../../lib/project/project';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {User} from '../../../lib/user/user';
 import {sort} from 'ramda';
-import {LoadMeasurementParams, loadMeasurements, createLoadMeasurementParams} from '../../../state/measurement/actions';
+import {
+    LoadMeasurementParams, loadMeasurements, createLoadMeasurementParams,
+    DeleteMeasurementParams, deleteMeasurement
+} from '../../../state/measurement/actions';
 import {connect} from 'react-redux';
-import {Request} from '../../../util/request';
+import {Request, combineRequests} from '../../../util/request';
 import {getUser} from '../../../state/user/reducer';
 import {AppState} from '../../../state/app/reducers';
 import {getSelectedProject} from '../../../state/project/reducer';
@@ -13,6 +16,7 @@ import {getMeasurements, getTotalMeasurements, MEASUREMENT_PAGE_SIZE} from '../.
 import {RouteComponentProps, withRouter} from 'react-router';
 import ReactTable, {ControlledStateOverrideProps, RowInfo} from 'react-table';
 import {createFilter, Filter} from '../../../lib/view/filter';
+import {Button} from 'react-bootstrap';
 
 interface StateProps
 {
@@ -20,12 +24,13 @@ interface StateProps
     project: Project;
     measurements: Measurement[];
     totalMeasurements: number;
-    loadMeasurementsRequest: Request;
+    measurementRequests: Request;
 }
 
 interface DispatchProps
 {
     loadMeasurements(params: LoadMeasurementParams): void;
+    deleteMeasurement(params: DeleteMeasurementParams): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
@@ -41,7 +46,7 @@ class MeasurementListComponent extends PureComponent<Props>
 
     render()
     {
-        const request = this.props.loadMeasurementsRequest;
+        const request = this.props.measurementRequests;
         return (
             <div>
                 {this.renderMeasurements()}
@@ -56,13 +61,23 @@ class MeasurementListComponent extends PureComponent<Props>
             m1.timestamp.isBefore(m2.timestamp) ? 1 : -1, this.props.measurements);
 
         const columns = [{
-                id: 'benchmark',
-                Header: 'Benchmark',
-                accessor: (m: Measurement) => m.benchmark
-            }, {
-                id: 'timestamp',
-                Header: 'Date',
-                accessor: (m: Measurement) => m.timestamp.format(DATETIME_FORMAT)
+            id: 'benchmark',
+            Header: 'Benchmark',
+            filterable: true,
+            accessor: (m: Measurement) => m.benchmark
+        }, {
+            id: 'timestamp',
+            Header: 'Date',
+            accessor: (m: Measurement) => m.timestamp.format(DATETIME_FORMAT)
+        }, {
+            id: 'delete',
+            Header: 'Delete',
+            Cell: (data: {original: Measurement}) => {
+                return <Button bsStyle='danger' onClick={() => this.deleteMeasurement(data.original)}>Delete</Button>;
+            },
+            accessor: (m: Measurement) => m,
+            sortable: false,
+            width: 80
         }];
 
         return (
@@ -70,11 +85,12 @@ class MeasurementListComponent extends PureComponent<Props>
                 data={measurements}
                 noDataText='No measurements found'
                 columns={columns}
-                loading={this.props.loadMeasurementsRequest.loading}
+                loading={this.props.measurementRequests.loading}
                 showPageSizeOptions={false}
                 defaultPageSize={MEASUREMENT_PAGE_SIZE}
                 minRows={0}
-                filterable={true}
+                sortable={true}
+                filterable={false}
                 pages={Math.ceil(this.props.totalMeasurements / MEASUREMENT_PAGE_SIZE)}
                 manual={true}
                 multiSort={false}
@@ -115,6 +131,13 @@ class MeasurementListComponent extends PureComponent<Props>
             page
         }));
     }
+    deleteMeasurement = (measurement: Measurement) =>
+    {
+        this.props.deleteMeasurement({
+            user: this.props.user,
+            measurement
+        });
+    }
 }
 
 export const MeasurementList = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
@@ -122,7 +145,11 @@ export const MeasurementList = withRouter(connect<StateProps, DispatchProps>((st
     project: getSelectedProject(state),
     measurements: getMeasurements(state),
     totalMeasurements: getTotalMeasurements(state),
-    loadMeasurementsRequest: state.measurement.loadMeasurementsRequest
+    measurementRequests: combineRequests(
+        state.measurement.loadMeasurementsRequest,
+        state.measurement.deleteMeasurementRequest
+    )
 }), ({
-    loadMeasurements: loadMeasurements.started
+    loadMeasurements: loadMeasurements.started,
+    deleteMeasurement: deleteMeasurement.started
 }))(MeasurementListComponent));
