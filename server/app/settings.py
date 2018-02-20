@@ -176,7 +176,8 @@ DOMAIN = {
     },
     'measurements': {
         'schema': measurement_schema,
-        'resource_methods': ['GET', 'POST']
+        'resource_methods': ['GET', 'POST'],
+        'item_methods': ['GET', 'DELETE']
     },
     'views': {
         'schema': view_schema,

@@ -14,7 +14,13 @@ export interface LoadMeasurementParams
     filters: Filter[];
     reload: boolean;
 }
-
 export const loadMeasurements = actionCreator.async<LoadMeasurementParams, FetchResult<Measurement>>('load');
+
+export interface DeleteMeasurementParams
+{
+    user: User;
+    measurement: Measurement;
+}
+export const deleteMeasurement = actionCreator.async<DeleteMeasurementParams, boolean>('delete');
 
 export const clearMeasurements = actionCreator('clear');

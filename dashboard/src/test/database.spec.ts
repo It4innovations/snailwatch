@@ -1,4 +1,4 @@
-import {createDatabase, getDatabaseItems, mergeDatabase} from '../util/database';
+import {createDatabase, deleteFromDatabase, getDatabaseItems, mergeDatabase} from '../util/database';
 
 describe('Database', () =>
 {
@@ -70,5 +70,25 @@ describe('Database', () =>
         expect(newDb.items['2'].data).toEqual(80);
         expect(newDb.items['3'].data).toEqual(5);
         expect(newDb.items['4'].data).toEqual(50);
+    });
+
+    it('Delete removes the given key and item', () =>
+    {
+        const items = [{
+            id: '1',
+            data: 1
+        }, {
+            id: '2',
+            data: 8
+        }, {
+            id: '3',
+            data: 5
+        }];
+        const db = createDatabase(items);
+        const deleted = deleteFromDatabase(db, '2');
+        expect(deleted.keys.length).toEqual(2);
+        expect(Object.keys(deleted.items).length).toEqual(2);
+        expect(deleted.keys).not.toContain('2');
+        expect(Object.keys(deleted.items)).not.toContain('2');
     });
 });

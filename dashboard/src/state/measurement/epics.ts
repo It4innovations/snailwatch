@@ -6,10 +6,10 @@ import {Action} from 'typescript-fsa';
 import '../../util/redux-observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/if';
-import {LoadMeasurementParams, loadMeasurements} from './actions';
+import {deleteMeasurement, LoadMeasurementParams, loadMeasurements} from './actions';
 import {getMeasurements} from './reducer';
 import {getPage} from '../../lib/api/pagination';
-import {mapRequestToActions} from '../../util/request';
+import {createRequestEpic, mapRequestToActions} from '../../util/request';
 
 const loadMeasurementsForProject = (action$: ActionsObservable<ReduxAction>,
                                     store: Store<AppState>,
@@ -27,6 +27,11 @@ const loadMeasurementsForProject = (action$: ActionsObservable<ReduxAction>,
             }
         );
 
+const deleteMeasurementEpic = createRequestEpic(deleteMeasurement, (action, state, deps) =>
+     deps.client.deleteMeasurement(action.payload.user, action.payload.measurement)
+);
+
 export const measurementEpics = combineEpics(
-    loadMeasurementsForProject
+    loadMeasurementsForProject,
+    deleteMeasurementEpic
 );

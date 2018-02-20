@@ -1,4 +1,4 @@
-import {Dictionary, zipObj, uniq} from 'ramda';
+import {Dictionary, zipObj, uniq, dissoc} from 'ramda';
 
 export interface Database<T>
 {
@@ -25,6 +25,14 @@ export function mergeDatabase<T>(database: Database<T>, items: T[], keyFn: (t: T
     return {
         items: {...database.items, ...dict},
         keys: uniq([...database.keys, ...keys])
+    };
+}
+
+export function deleteFromDatabase<T>(database: Database<T>, id: string): Database<T>
+{
+    return {
+        items: dissoc(id, database.items),
+        keys: database.keys.filter(k => k !== id)
     };
 }
 

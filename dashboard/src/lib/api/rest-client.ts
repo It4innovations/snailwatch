@@ -9,7 +9,7 @@ import moment from 'moment';
 import {Filter} from '../view/filter';
 import {buildRequestFilter} from './filter';
 import {DAO, MeasurementDAO, ProjectDAO, ViewDAO} from './dao';
-import {createView, View} from '../view/view';
+import {View} from '../view/view';
 
 interface ArrayResponse<T>
 {
@@ -109,6 +109,12 @@ export class RestClient implements SnailClient
             })
         );
     }
+    deleteMeasurement(user: User, measurement: Measurement): Observable<boolean>
+    {
+        return this.call(`/measurements/${measurement.id}`, 'DELETE', {}, {
+            token: user.token
+        }).map(() => true);
+    }
 
     loadViews(user: User, project: Project): Observable<View[]>
     {
@@ -148,8 +154,7 @@ export class RestClient implements SnailClient
     {
         return this.call(`/views/${view.id}`, 'DELETE', {}, {
             token: user.token
-        })
-        .map(() => true);
+        }).map(() => true);
     }
     updateView(user: User, view: View): Observable<boolean>
     {

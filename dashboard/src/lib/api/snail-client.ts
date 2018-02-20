@@ -24,6 +24,8 @@ export interface SnailClient
                      sortBy: string,
                      page: number,
                      count: number): Observable<FetchResult<Measurement>>;
+    deleteMeasurement(user: User, measurement: Measurement): Observable<boolean>;
+
 
     loadViews(user: User, project: Project): Observable<View[]>;
     createView(user: User, project: Project, view: View): Observable<View>;

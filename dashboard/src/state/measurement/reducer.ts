@@ -2,8 +2,8 @@ import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {createRequest, hookRequestActions, Request} from '../../util/request';
 import {AppState} from '../app/reducers';
 import {Measurement} from '../../lib/measurement/measurement';
-import {clearMeasurements, loadMeasurements} from './actions';
-import {createDatabase, Database, getDatabaseItems, mergeDatabase} from '../../util/database';
+import {clearMeasurements, deleteMeasurement, loadMeasurements} from './actions';
+import {createDatabase, Database, deleteFromDatabase, getDatabaseItems, mergeDatabase} from '../../util/database';
 import {compose} from 'ramda';
 
 export interface MeasurementState
@@ -11,12 +11,14 @@ export interface MeasurementState
     measurements: Database<Measurement>;
     totalMeasurements: number;
     loadMeasurementsRequest: Request;
+    deleteMeasurementRequest: Request;
 }
 
 let reducer = reducerWithInitialState<MeasurementState>({
     measurements: createDatabase(),
     totalMeasurements: 0,
-    loadMeasurementsRequest: createRequest()
+    loadMeasurementsRequest: createRequest(),
+    deleteMeasurementRequest: createRequest()
 })
 .case(clearMeasurements, (state) => ({
     ...state,
@@ -31,6 +33,12 @@ reducer = compose(
                 createDatabase(action.payload.result.items) :
                 mergeDatabase(state.measurements, action.payload.result.items),
             totalMeasurements: action.payload.result.total
+        })
+), (r: typeof reducer) => hookRequestActions(r, deleteMeasurement,
+        (state: MeasurementState) => state.deleteMeasurementRequest,
+        (state: MeasurementState, action) => ({
+            measurements: deleteFromDatabase(state.measurements, action.payload.params.measurement.id),
+            totalMeasurements: state.totalMeasurements - 1
         })
 ))(reducer);
 
