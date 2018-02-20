@@ -1,1 +1,3 @@
-export const API_SERVER = window['API_HOST'] || 'http://localhost:5000';
+const apiHost = window['API_HOST'];
+
+export const API_SERVER = apiHost !== undefined && apiHost !== '{{API_HOST}}' ? apiHost : 'http://localhost:5000';
