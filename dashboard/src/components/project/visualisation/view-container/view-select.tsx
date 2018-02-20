@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import {View} from '../../../../lib/view/view';
-import {find, sort} from 'ramda';
+import {find} from 'ramda';
 
 interface Props
 {

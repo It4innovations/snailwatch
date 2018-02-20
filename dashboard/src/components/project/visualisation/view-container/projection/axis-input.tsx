@@ -1,7 +1,6 @@
 import React, {PureComponent} from 'react';
 import Autosuggest, {
-    OnSuggestionSelected, RenderSuggestionParams, SuggestionSelectedEventData,
-    SuggestionsFetchRequestedParams
+    RenderSuggestionParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams
 } from 'react-autosuggest';
 import {Measurement} from '../../../../../lib/measurement/measurement';
 import {getAllKeysRecursive} from '../../../../../util/object';
