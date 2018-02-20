@@ -18,7 +18,8 @@ const operators: Operator[] = [
     '<',
     '<=',
     '>',
-    '>='
+    '>=',
+    'contains'
 ];
 
 const Row = styled.div`

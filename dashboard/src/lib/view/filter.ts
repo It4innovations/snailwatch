@@ -1,7 +1,7 @@
 import {Filter} from './filter';
 import {lensPath, view, contains} from 'ramda';
 
-export type Operator = '==' | '!=' | '<' | '<=' | '>' | '>=';
+export type Operator = '==' | '!=' | '<' | '<=' | '>' | '>=' | 'contains';
 
 export interface Filter
 {
@@ -49,6 +49,12 @@ export function testFilter<T>(data: T, filter: Filter): boolean
     {
         throw new BadValueFilteredError(
             `Trying to filter integer with string (${filter.path}: ${actual}, ${expected})`);
+    }
+
+    if (filter.operator === 'contains' && !isString(actual))
+    {
+        throw new BadValueFilteredError(
+        `Trying to use contains operator on non-string (${filter.path}: ${actual}, ${expected})`);
     }
 
     return evaluateOperator(filter.operator,

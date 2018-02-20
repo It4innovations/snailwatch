@@ -41,6 +41,7 @@ PAGINATION_DEFAULT = 50
 RENDERERS = ['eve.render.JSONRenderer']
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 ENFORCE_IF_MATCH = False
+MONGO_QUERY_BLACKLIST = []
 
 
 # schemas

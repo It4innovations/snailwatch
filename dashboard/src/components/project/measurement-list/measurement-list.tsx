@@ -100,7 +100,7 @@ class MeasurementListComponent extends PureComponent<Props>
     fetchData = (state: ControlledStateOverrideProps, instance: {}) =>
     {
         const sortParam = state.sorted.map(s => (s.desc ? '-' : '') + s.id);
-        const filters = state.filtered.map(filter => createFilter(filter.id, '==', filter.value));  // TODO change to IN
+        const filters = state.filtered.map(filter => createFilter(filter.id, 'contains', filter.value));
 
         this.loadMeasurements(filters, sortParam.length > 0 ? sortParam[0] : '', state.page);
     }
