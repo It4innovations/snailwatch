@@ -1,11 +1,8 @@
-FROM node:carbon-slim
+FROM node:carbon-slim as build
 
 WORKDIR /dashboard
-
-COPY . .
-
-# install npm dependencies
-RUN npm install &&      \
-    npm install serve
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . ./
 
 CMD rm -rf build && npm run build && ./node_modules/.bin/serve -p 3000 -s build
