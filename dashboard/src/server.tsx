@@ -1,6 +1,7 @@
 import express from 'express';
+import expressStaticGzip from 'express-static-gzip';
 import path from 'path';
-import fs from 'fs';
+import {readFile} from 'fs';
 import {promisify} from 'util';
 
 const app = express();
@@ -10,12 +11,12 @@ const apiHost = process.env.SW_API_SERVER || 'http://localhost:5000';
 
 console.log(`Serving from ${webDir} on port ${port}, API address: ${apiHost}`);
 
-const readFile = promisify(fs.readFile);
+const readFileAsync = promisify(readFile);
 
-app.use(express.static(webDir));
+app.use(expressStaticGzip(webDir));
 app.get('/*', async (req, res) =>
 {
-    const html = await readFile(path.join(webDir, 'index.html'));
+    const html = await readFileAsync(path.join(webDir, 'index.html'));
     const modified = html.toString().replace('{{API_HOST}}', apiHost);
     res.send(modified);
 });

@@ -140,14 +140,14 @@ module.exports = {
           },
           // Compile .tsx?
           {
-            test: /\.(ts|tsx)$/,
-            include: paths.appSrc,
+              test: /\.(ts|tsx)$/,
+              include: paths.appSrc,
               use: [
                   {
                       loader: 'babel-loader',
                       options: {
                           babelrc: false,
-                          plugins: ['react-hot-loader/babel'],
+                          plugins: ['react-hot-loader/babel', 'syntax-dynamic-import'],
                       },
                   },
                   {
