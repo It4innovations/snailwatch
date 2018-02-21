@@ -10,7 +10,9 @@ import {getValueWithPath} from '../../../../lib/view/filter';
 import ellipsize from 'ellipsize';
 import {sort} from 'ramda';
 import {Moment} from 'moment';
-import styled from 'styled-components';
+import {PointTooltip} from './point-tooltip';
+import {DataPoint} from './data-point';
+import {compareDate} from '../../../../util/date';
 
 interface Props
 {
@@ -24,18 +26,7 @@ interface State
     error: string;
 }
 
-interface DataPoint
-{
-    x: string;
-    y: number;
-    deviation: number[];
-    measurements: Measurement[];
-}
-
-const TooltipWrapper = styled.div`
-  background: rgba(180, 180, 180, 0.5);
-  padding: 5px;
-`;
+const DATE_FORMAT = 'DD. MM. YYYY HH:mm:ss';
 
 export class LineChart extends PureComponent<Props, State>
 {
@@ -95,27 +86,11 @@ export class LineChart extends PureComponent<Props, State>
             </>
         );
     }
-
     renderTooltip = (props: TooltipProps): JSX.Element =>
     {
-        if (props.payload === null ||
-            props.payload === undefined ||
-            props.payload.length < 1) return null;
-
-        const point = (props.payload[0] as {} as {payload: DataPoint}).payload;
-        const content = this.props.groupByEnvironment ?
-            <>
-                <div>Avg: {point.y}</div>
-                <div>Deviation: [{point.deviation[0]}, {point.deviation[1]}]</div>
-            </> :
-            <div>Value: {point.y}</div>;
-        return (
-            <TooltipWrapper>
-                <div>Label: {point.x.toString()}</div>
-                {content}
-            </TooltipWrapper>
-        );
+        return <PointTooltip {...props} groupByEnvironment={this.props.groupByEnvironment} />;
     }
+
     formatX = (value: string): string =>
     {
         return ellipsize(value, 18);
@@ -132,10 +107,7 @@ export class LineChart extends PureComponent<Props, State>
     generateData = (measurements: Measurement[], view: View): DataPoint[] =>
     {
         const points = this.generatePoints(measurements, view);
-        return sort((a, b) => {
-            const before = !a.measurements[0].timestamp.isAfter(b.measurements[0].timestamp);
-            return before ? -1 : 1;
-        }, points);
+        return sort((a, b) => compareDate(a.measurements[0].timestamp, b.measurements[0].timestamp), points);
     }
     generatePoints = (measurements: Measurement[], view: View): DataPoint[] =>
     {
@@ -173,7 +145,7 @@ export class LineChart extends PureComponent<Props, State>
         const value = getValueWithPath(group[0], view.projection.xAxis);
         if (view.projection.xAxis === 'timestamp')
         {
-            return (value as {} as Moment).format('DD. MM. YYYY HH:mm:ss');
+            return (value as {} as Moment).format(DATE_FORMAT);
         }
         return value;
     }

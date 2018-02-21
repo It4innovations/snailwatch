@@ -73,7 +73,7 @@ class ChartsPageComponent extends PureComponent<Props, State>
                     totalMeasurements={this.props.totalMeasurements}
                     loadMore={this.loadMoreMeasurements} />
                 {this.props.selectedView &&
-                    <div>
+                    <div style={{'flexGrow': 1}}>
                         <ChartSettings
                             groupByEnvironment={this.state.groupByEnvironment}
                             onChangeGroup={this.handleChangeGroup} />

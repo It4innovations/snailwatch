@@ -4,7 +4,7 @@ import {toString} from 'ramda';
 interface MeasurementRecord
 {
     type: 'time' | 'size' | 'integer' | 'string';
-    value: string | number;
+    value: string;
 }
 
 export interface Measurement
