@@ -45,6 +45,7 @@ MONGO_QUERY_BLACKLIST = []
 
 
 # schemas
+filter_operators = ['==', '!=', '<', '<=', '>', '>=', 'contains']
 user_schema = {
     'username': {
         'type': 'string',
@@ -145,7 +146,7 @@ view_schema = {
                 'operator': {
                     'type': 'string',
                     'required': True,
-                    'allowed': ['==', '!=', '<', '<=', '>', '>=']
+                    'allowed': filter_operators
                 },
                 'value': {
                     'type': 'string',
