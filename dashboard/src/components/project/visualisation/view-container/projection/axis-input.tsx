@@ -31,7 +31,6 @@ export class AxisInput extends PureComponent<Props, State>
 
     render()
     {
-        console.log(this.props.value, this.state.suggestions);
         return <Autosuggest
                 inputProps={{
                     value: this.props.value,
@@ -95,6 +94,7 @@ export class AxisInput extends PureComponent<Props, State>
     {
         return reduce((acc, measurement) => {
             const keys = getAllKeysRecursive({
+                timestamp: '',
                 benchmark: measurement.benchmark,
                 environment: measurement.environment,
                 result: measurement.result

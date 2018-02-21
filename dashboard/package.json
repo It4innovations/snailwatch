@@ -10,6 +10,7 @@
     "chalk": "1.1.3",
     "css-loader": "0.28.7",
     "dotenv": "4.0.0",
+    "ellipsize": "0.0.3",
     "express": "^4.16.2",
     "express-static-gzip": "^0.3.2",
     "extract-text-webpack-plugin": "3.0.2",

@@ -13,7 +13,6 @@
     "no-shadowed-variable": [true, {
       "typeParameter": false
     }],
-    "no-unused-variable": true,
     "no-reference": true,
     "switch-default": true,
     "use-isnan": true,

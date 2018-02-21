@@ -23,7 +23,7 @@ export function createLoadMeasurementParams(params: Partial<LoadMeasurementParam
         user: params.user,
         project: params.project,
         filters: params.filters || [],
-        sort: params.sort || '',
+        sort: params.sort === undefined ? '-timestamp' : params.sort,
         reload: params.reload === undefined ? true : params.reload,
         page: params.page === undefined ? null : params.page
     };

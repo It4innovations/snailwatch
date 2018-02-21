@@ -15,6 +15,7 @@ import {Project} from '../../../lib/project/project';
 import {User} from '../../../lib/user/user';
 import {getUser} from '../../../state/user/reducer';
 import {getSelectedProject} from '../../../state/project/reducer';
+import {ChartSettings} from './chart/chart-settings';
 
 interface StateProps
 {
@@ -32,12 +33,36 @@ interface DispatchProps
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
+interface State
+{
+    groupByEnvironment: boolean;
+}
+
 const Container = styled.div`
   display: flex;
 `;
 
-class ChartsPageComponent extends PureComponent<Props>
+class ChartsPageComponent extends PureComponent<Props, State>
 {
+    constructor(props: Props)
+    {
+        super(props);
+
+        this.state = {
+            groupByEnvironment: true
+        };
+    }
+
+    componentDidMount()
+    {
+        this.props.loadMeasurements(createLoadMeasurementParams({
+            user: this.props.user,
+            project: this.props.project,
+            filters: this.props.selectedView !== null ? this.props.selectedView.filters : [],
+            reload: true
+        }));
+    }
+
     render()
     {
         return (
@@ -48,9 +73,16 @@ class ChartsPageComponent extends PureComponent<Props>
                     totalMeasurements={this.props.totalMeasurements}
                     loadMore={this.loadMoreMeasurements} />
                 {this.props.selectedView &&
-                    <LineChart
-                        measurements={this.props.measurements}
-                        view={this.props.selectedView} />}
+                    <div>
+                        <ChartSettings
+                            groupByEnvironment={this.state.groupByEnvironment}
+                            onChangeGroup={this.handleChangeGroup} />
+                        <LineChart
+                            measurements={this.props.measurements}
+                            view={this.props.selectedView}
+                            groupByEnvironment={this.state.groupByEnvironment} />
+                    </div>
+                }
             </Container>
         );
     }
@@ -62,6 +94,13 @@ class ChartsPageComponent extends PureComponent<Props>
             project: this.props.project,
             filters: this.props.selectedView.filters,
             reload: false
+        }));
+    }
+
+    handleChangeGroup = (groupByEnvironment: boolean) =>
+    {
+        this.setState(() => ({
+            groupByEnvironment
         }));
     }
 }
