@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react';
 import {Filter, Operator} from '../../../../../lib/view/filter';
 import styled from 'styled-components';
 import {Button} from 'react-bootstrap';
+import {SuggestInput} from '../suggest-input';
 
 interface Props
 {
@@ -10,6 +11,7 @@ interface Props
     editable: boolean;
     onRemove(index: number): void;
     onChange(index: number, filter: Filter): void;
+    calculatePathSuggestions(input: string): string[];
 }
 
 const operators: Operator[] = [
@@ -41,9 +43,10 @@ export class FilterComponent extends PureComponent<Props>
     {
         return (
             <>
-                <input type='text' name='path'
-                       value={this.props.filter.path}
-                       onChange={val => this.change('path', val.currentTarget.value)} />
+                <SuggestInput
+                    value={this.props.filter.path}
+                    onChange={val => this.change('path', val)}
+                    calculateSuggestions={this.props.calculatePathSuggestions} />
                 <select name='operator'
                         value={this.props.filter.operator}
                         onChange={val =>

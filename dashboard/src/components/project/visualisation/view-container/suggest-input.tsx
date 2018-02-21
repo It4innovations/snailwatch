@@ -2,15 +2,13 @@ import React, {PureComponent} from 'react';
 import Autosuggest, {
     RenderSuggestionParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams
 } from 'react-autosuggest';
-import {Measurement} from '../../../../../lib/measurement/measurement';
-import {getAllKeysRecursive} from '../../../../../util/object';
-import {reduce, uniq, chain} from 'ramda';
+import {chain} from 'ramda';
 
 interface Props
 {
     value: string;
-    measurements: Measurement[];
     onChange(value: string): void;
+    calculateSuggestions(input: string): string[];
 }
 
 interface State
@@ -18,7 +16,7 @@ interface State
     suggestions: string[];
 }
 
-export class AxisInput extends PureComponent<Props, State>
+export class SuggestInput extends PureComponent<Props, State>
 {
     constructor(props: Props)
     {
@@ -75,9 +73,7 @@ export class AxisInput extends PureComponent<Props, State>
     calculateSuggestions = (params: SuggestionsFetchRequestedParams) =>
     {
         const value = params.value.trim().toLowerCase();
-        const keys = this.getKeys(this.props.measurements);
-        const suggestions: string[] = keys.filter(k => k.includes(value));
-        suggestions.sort();
+        const suggestions = this.props.calculateSuggestions(value);
 
         this.setState(() => ({
             suggestions
@@ -88,19 +84,5 @@ export class AxisInput extends PureComponent<Props, State>
         this.setState(() => ({
             suggestions: []
         }));
-    }
-
-    getKeys = (measurements: Measurement[]): string[] =>
-    {
-        return reduce((acc, measurement) => {
-            const keys = getAllKeysRecursive({
-                timestamp: '',
-                benchmark: measurement.benchmark,
-                environment: measurement.environment,
-                result: measurement.result
-            });
-
-            return uniq(acc.concat(keys));
-        }, [], measurements);
     }
 }

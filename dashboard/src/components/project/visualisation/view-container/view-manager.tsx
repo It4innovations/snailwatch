@@ -10,6 +10,7 @@ import {Projection} from '../../../../lib/view/projection';
 import {Request} from '../../../../util/request';
 import {sort, equals} from 'ramda';
 import {Measurement} from '../../../../lib/measurement/measurement';
+import {getAllKeysMerged} from '../../../../util/object';
 
 interface Props
 {
@@ -30,6 +31,7 @@ interface State
     editing: boolean;
     createdNamePending: string;
     view: View;
+    measurementKeys: string[];
 }
 
 export class ViewManager extends PureComponent<Props, State>
@@ -41,7 +43,8 @@ export class ViewManager extends PureComponent<Props, State>
         this.state = {
             editing: false,
             view: createView(),
-            createdNamePending: null
+            createdNamePending: null,
+            measurementKeys: this.calculateKeys(props.measurements)
         };
     }
 
@@ -70,6 +73,13 @@ export class ViewManager extends PureComponent<Props, State>
         {
             const views = this.sortViews(props.views);
             this.selectView(views[0]);
+        }
+
+        if (props.measurements !== this.props.measurements)
+        {
+            this.setState(() => ({
+                measurementKeys: this.calculateKeys(props.measurements)
+            }));
         }
     }
 
@@ -118,6 +128,8 @@ export class ViewManager extends PureComponent<Props, State>
                     <h2>Filters</h2>
                     <FilterList
                         filters={view.filters}
+                        measurementKeys={this.state.measurementKeys}
+                        measurements={this.props.measurements}
                         editable={this.canEdit()}
                         onChange={this.handleFilterChange} />
                 </div>
@@ -125,7 +137,7 @@ export class ViewManager extends PureComponent<Props, State>
                     <h2>Projection</h2>
                     <ViewProjection
                         projection={view.projection}
-                        measurements={this.props.measurements}
+                        measurementKeys={this.state.measurementKeys}
                         editable={this.canEdit()}
                         onChange={this.handleProjectionChange} />
                 </div>
@@ -238,5 +250,15 @@ export class ViewManager extends PureComponent<Props, State>
     sortViews = (views: View[]): View[] =>
     {
         return sort((a, b) => a.name.localeCompare(b.name), views);
+    }
+
+    calculateKeys = (measurements: Measurement[]): string[] =>
+    {
+        return getAllKeysMerged(measurements, m => ({
+            timestamp: '',
+            benchmark: m.benchmark,
+            environment: m.environment,
+            result: m.result
+        }));
     }
 }

@@ -48,21 +48,17 @@ class ViewContainerComponent extends PureComponent<Props>
 {
     render()
     {
-        return (
-            <div>
-                <ViewManager
-                    views={this.props.views}
-                    viewRequest={this.props.viewRequest}
-                    measurements={this.props.measurements}
-                    selectedView={this.props.selectedView}
-                    loadViews={this.loadViews}
-                    selectView={this.selectView}
-                    createView={this.createView}
-                    updateView={this.updateView}
-                    deleteView={this.deleteView}
-                    loadMeasurements={this.loadMeasurements} />
-            </div>
-        );
+        return <ViewManager
+                views={this.props.views}
+                viewRequest={this.props.viewRequest}
+                measurements={this.props.measurements}
+                selectedView={this.props.selectedView}
+                loadViews={this.loadViews}
+                selectView={this.selectView}
+                createView={this.createView}
+                updateView={this.updateView}
+                deleteView={this.deleteView}
+                loadMeasurements={this.loadMeasurements} />;
     }
 
     loadMeasurements = (filters: Filter[]) =>
