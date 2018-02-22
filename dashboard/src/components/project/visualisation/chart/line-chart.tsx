@@ -6,13 +6,13 @@ import {
 import {hashMeasurement, Measurement} from '../../../../lib/measurement/measurement';
 import {View} from '../../../../lib/view/view';
 import {groupBy, values, sum, reduce, min, max, all} from 'ramda';
-import {getValueWithPath} from '../../../../lib/view/filter';
 import ellipsize from 'ellipsize';
 import {sort} from 'ramda';
 import {Moment} from 'moment';
 import {PointTooltip} from './point-tooltip';
 import {DataPoint} from './data-point';
 import {compareDate} from '../../../../util/date';
+import {getValueWithPath} from '../../../../util/object';
 
 interface Props
 {

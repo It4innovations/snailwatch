@@ -12,6 +12,7 @@ interface Props
     onRemove(index: number): void;
     onChange(index: number, filter: Filter): void;
     calculatePathSuggestions(input: string): string[];
+    calculateValueSuggestions(filter: Filter, input: string): string[];
 }
 
 const operators: Operator[] = [
@@ -53,9 +54,10 @@ export class FilterComponent extends PureComponent<Props>
                             this.change('operator', val.currentTarget.value)}>
                     {operators.map(this.renderOperator)}
                 </select>
-                <input type='text' name='value'
-                       value={this.props.filter.value}
-                       onChange={val => this.change('value', val.currentTarget.value)} />
+            <SuggestInput
+                value={this.props.filter.value}
+                onChange={val => this.change('value', val)}
+                calculateSuggestions={this.calculateValueSuggestions} />
                 {this.props.editable && <Button bsStyle='danger' onClick={this.remove}>Remove</Button>}
             </>
         );
@@ -88,5 +90,16 @@ export class FilterComponent extends PureComponent<Props>
     remove = () =>
     {
         this.props.onRemove(this.props.index);
+    }
+
+    calculateValueSuggestions = (value: string): string[] =>
+    {
+        if (this.props.filter.operator === '==' &&
+            this.props.filter.path.length > 0)
+        {
+            return this.props.calculateValueSuggestions(this.props.filter, value);
+        }
+
+        return [];
     }
 }

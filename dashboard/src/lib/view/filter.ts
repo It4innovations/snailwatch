@@ -1,5 +1,6 @@
 import {Filter} from './filter';
-import {lensPath, view, contains} from 'ramda';
+import {contains} from 'ramda';
+import {getValueWithPath} from '../../util/object';
 
 export type Operator = '==' | '!=' | '<' | '<=' | '>' | '>=' | 'contains';
 
@@ -115,10 +116,4 @@ function convert(value: string): string | number
 {
     if (isInt(value)) return Number(value);
     return value;
-}
-
-export function getValueWithPath<T>(data: T, path: string): string | undefined
-{
-    const lens = lensPath(path.split('.'));
-    return view<T, string>(lens, data);
 }

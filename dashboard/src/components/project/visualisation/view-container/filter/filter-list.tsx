@@ -4,6 +4,7 @@ import {FilterComponent} from './filter-component';
 import {Button} from 'react-bootstrap';
 import {update, remove} from 'ramda';
 import {Measurement} from '../../../../../lib/measurement/measurement';
+import {getValuesWithPath} from '../../../../../util/object';
 
 interface Props
 {
@@ -28,7 +29,8 @@ export class FilterList extends PureComponent<Props>
                         editable={this.props.editable}
                         onRemove={this.removeFilter}
                         onChange={this.changeFilter}
-                        calculatePathSuggestions={this.calculatePathSuggestions} />)}
+                        calculatePathSuggestions={this.calculatePathSuggestions}
+                        calculateValueSuggestions={this.calculateValueSuggestions} />)}
                 {this.props.editable && <Button bsStyle='success' onClick={this.addFilter}>Add filter</Button>}
             </div>
         );
@@ -52,5 +54,10 @@ export class FilterList extends PureComponent<Props>
         const suggestions = this.props.measurementKeys.filter(k => k.includes(input));
         suggestions.sort();
         return suggestions;
+    }
+    // TODO: get values from server?
+    calculateValueSuggestions = (filter: Filter, input: string): string[] =>
+    {
+        return getValuesWithPath(this.props.measurements, filter.path).filter(k => k.includes(input));
     }
 }
