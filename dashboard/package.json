@@ -140,7 +140,7 @@
     ],
     "globals": {
       "ts-jest": {
-        "tsConfigFile": "/home/kobzol/projects/snailwatch/dashboard/tsconfig.test.json"
+        "tsConfigFile": "tsconfig.test.json"
       }
     }
   },

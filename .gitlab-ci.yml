@@ -1,0 +1,61 @@
+stages:
+  - test
+  - publish
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+test:dashboard:
+  image: node:carbon-slim
+  stage: test
+  before_script:
+    - cd dashboard
+    - npm install
+  script:
+    - npm run lint
+    - npm run test
+    - CI=false npm run build
+
+test:server:
+  image: python:3.5-slim
+  stage: test
+  before_script:
+    - cd server
+    - pip install flake8
+  script:
+    - flake8 .
+
+publish:dashboard:
+  image: docker:latest
+  stage: publish
+  only:
+    - master
+  before_script:
+    - cd dashboard
+  script:
+    - echo $CI_DOCKERHUB_PW | docker login -u kobzol --password-stdin
+    - docker build -t kobzol/snailwatch:dashboard .
+    - docker push kobzol/snailwatch:dashboard
+
+publish:server:
+  image: docker:latest
+  stage: publish
+  only:
+      - master
+  before_script:
+    - cd server
+  script:
+    - echo $CI_DOCKERHUB_PW | docker login -u kobzol --password-stdin
+    - docker build -t kobzol/snailwatch:server .
+    - docker push kobzol/snailwatch:server
+
+deploy:
+  image: deployer
+  stage: deploy
+  only:
+      - master
+  before_script:
+    - cd /deploy
+  script:
+    - ssh -o StrictHostKeyChecking=no -i ./cert root@172.17.0.1 "cd webserver && ./restart.sh"
