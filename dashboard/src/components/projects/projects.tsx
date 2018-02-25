@@ -12,7 +12,7 @@ import {AppState} from '../../state/app/reducers';
 import {getProjects} from '../../state/project/reducer';
 import {Link} from 'react-router-dom';
 import {projectRoute} from '../../state/nav/routes';
-import {Button} from 'react-bootstrap';
+import {Button} from 'reactstrap';
 import {CreateProject} from './create-project';
 import {Request} from '../../util/request';
 
@@ -94,7 +94,9 @@ class ProjectsComponent extends PureComponent<Props, State>
                     </div>
                 )}
                 {this.state.creatingProject ? this.renderProjectCreation() :
-                    <Button bsStyle='success' onClick={this.startProjectCreate}>Create project</Button>}
+                    <Button
+                        onClick={this.startProjectCreate}
+                        color='success'>Create project</Button>}
             </div>
         );
     }

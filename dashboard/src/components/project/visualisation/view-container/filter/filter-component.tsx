@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {Filter, Operator} from '../../../../../lib/view/filter';
 import styled from 'styled-components';
-import {Button} from 'react-bootstrap';
+import {Button} from 'reactstrap';
 import {SuggestInput} from '../suggest-input';
 
 interface Props
@@ -58,7 +58,9 @@ export class FilterComponent extends PureComponent<Props>
                 value={this.props.filter.value}
                 onChange={val => this.change('value', val)}
                 calculateSuggestions={this.calculateValueSuggestions} />
-                {this.props.editable && <Button bsStyle='danger' onClick={this.remove}>Remove</Button>}
+                {this.props.editable &&
+                    <Button onClick={this.remove} color='danger'>Remove</Button>
+                }
             </>
         );
     }

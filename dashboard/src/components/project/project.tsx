@@ -5,7 +5,7 @@ import {User} from '../../lib/user/user';
 import {AppState} from '../../state/app/reducers';
 import {getUser} from '../../state/user/reducer';
 import {Route, RouteComponentProps, withRouter} from 'react-router';
-import {Tab, Tabs} from 'react-bootstrap';
+import {TabContent, TabPane, Nav, NavItem, NavLink} from 'reactstrap';
 import {push} from 'react-router-redux';
 import {MeasurementList} from './measurement-list/measurement-list';
 import {clearMeasurements} from '../../state/measurement/actions';
@@ -15,6 +15,9 @@ import {Request} from '../../util/request';
 import {getSelectedProject} from '../../state/project/reducer';
 import {selectProject} from '../../state/project/actions';
 import {ChartsPage} from './visualisation/charts-page';
+import classNames from 'classnames';
+
+import style from './project.scss';
 
 interface StateProps
 {
@@ -73,25 +76,35 @@ class ProjectComponent extends PureComponent<Props & RouteComponentProps<{name: 
 
     renderTabs = (path: RouteComponentProps<{tab: string}>): JSX.Element =>
     {
+        const activeTab = path.match.params.tab || TAB_ROUTES.measurements;
+        const navLink = (name: string, key: keyof typeof TAB_ROUTES) =>
+            <NavItem onClick={() => this.selectTab(key)}>
+                <NavLink className={classNames(style.link, {
+                    [style.activeLink]: activeTab === key
+                })} title={name}>
+                    {name}
+                </NavLink>
+            </NavItem>;
+
         return (
-            <Tabs activeKey={path.match.params.tab || TAB_ROUTES.measurements} id='project-view-menu'
-                  onSelect={this.selectTab}
-                  animation={false}
-                  mountOnEnter={true}
-                  unmountOnExit={true}>
-                <Tab eventKey='measurements'
-                     title='Measurements'>
-                    <MeasurementList />
-                </Tab>
-                <Tab eventKey='charts'
-                     title='Charts'>
-                    <ChartsPage />
-                </Tab>
-            </Tabs>
+            <>
+                <Nav tabs={true}>
+                    {navLink('Measurements', 'measurements')}
+                    {navLink('Charts', 'charts')}
+                </Nav>
+                <TabContent activeTab={activeTab}>
+                    <TabPane tabId='measurements'>
+                        <MeasurementList />
+                    </TabPane>
+                    <TabPane tabId='charts'>
+                        <ChartsPage />
+                    </TabPane>
+                </TabContent>
+            </>
         );
     }
 
-    selectTab = (key: React.SyntheticEvent<{}>) =>
+    selectTab = (key: keyof typeof TAB_ROUTES) =>
     {
         this.props.push(`${this.props.match.url}/${key}`);
     }

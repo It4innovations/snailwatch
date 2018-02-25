@@ -1,5 +1,5 @@
 import React, {FormEvent, PureComponent} from 'react';
-import {Button} from 'react-bootstrap';
+import {Button} from 'reactstrap';
 
 interface Props
 {
@@ -17,7 +17,7 @@ export class CreateProject extends PureComponent<Props>
                 <form onSubmit={this.handleSubmit}>
                     <label>Name</label>
                     <input type='text' name='name' required ref={name => this.name = name} />
-                    <Button type='submit' bsStyle='success'>Create project</Button>
+                    <Button type='submit' color='success'>Create project</Button>
                 </form>
             </div>
         );

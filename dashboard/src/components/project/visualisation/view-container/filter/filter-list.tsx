@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {createFilter, Filter} from '../../../../../lib/view/filter';
 import {FilterComponent} from './filter-component';
-import {Button} from 'react-bootstrap';
+import {Button} from 'reactstrap';
 import {update, remove} from 'ramda';
 import {Measurement} from '../../../../../lib/measurement/measurement';
 import {getValuesWithPath} from '../../../../../util/object';
@@ -31,7 +31,7 @@ export class FilterList extends PureComponent<Props>
                         onChange={this.changeFilter}
                         calculatePathSuggestions={this.calculatePathSuggestions}
                         calculateValueSuggestions={this.calculateValueSuggestions} />)}
-                {this.props.editable && <Button bsStyle='success' onClick={this.addFilter}>Add filter</Button>}
+                {this.props.editable && <Button onClick={this.addFilter}>Add filter</Button>}
             </div>
         );
     }

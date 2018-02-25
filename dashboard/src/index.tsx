@@ -4,7 +4,6 @@ import {App} from './app';
 
 // CSS
 import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/css/bootstrap-theme.css';
 import 'react-table/react-table.css';
 
 ReactDOM.render(

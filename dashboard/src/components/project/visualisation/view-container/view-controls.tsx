@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Button} from 'react-bootstrap';
+import {Button, ButtonGroup} from 'reactstrap';
 
 interface Props
 {
@@ -19,13 +19,13 @@ export class ViewControls extends PureComponent<Props>
     render()
     {
         return (
-            <div>
+            <ButtonGroup>
                 {this.renderEditButton()}
                 {this.renderEditCancelButton()}
                 {this.renderCreateButton()}
                 {this.renderCopyButton()}
                 {this.renderDeleteButton()}
-            </div>
+            </ButtonGroup>
         );
     }
 
@@ -42,6 +42,7 @@ export class ViewControls extends PureComponent<Props>
 
         return (
             <Button key='edit'
+                    color='primary'
                     disabled={disabled}
                     onClick={callback}>{label}</Button>
         );
@@ -55,6 +56,7 @@ export class ViewControls extends PureComponent<Props>
 
         return (
             <Button key='edit-cancel'
+                    color='secondary'
                     onClick={this.props.onCancelEdit}>Cancel</Button>
         );
     }
@@ -67,6 +69,7 @@ export class ViewControls extends PureComponent<Props>
 
         return (
             <Button key='create'
+                    color='success'
                     onClick={this.props.onCreate}>Create</Button>
         );
     }
@@ -79,6 +82,7 @@ export class ViewControls extends PureComponent<Props>
 
         return (
             <Button key='copy'
+                    color='info'
                     onClick={this.props.onCopy}>Copy</Button>
         );
     }
@@ -91,6 +95,7 @@ export class ViewControls extends PureComponent<Props>
 
         return (
             <Button key='delete'
+                    color='danger'
                     onClick={this.props.onDelete}>Delete</Button>
         );
     }

@@ -16,7 +16,7 @@ import {getMeasurements, getTotalMeasurements, MEASUREMENT_PAGE_SIZE} from '../.
 import {RouteComponentProps, withRouter} from 'react-router';
 import ReactTable, {ControlledStateOverrideProps, RowInfo} from 'react-table';
 import {createFilter, Filter} from '../../../lib/view/filter';
-import {Button} from 'react-bootstrap';
+import {Button} from 'reactstrap';
 
 interface StateProps
 {
@@ -73,7 +73,9 @@ class MeasurementListComponent extends PureComponent<Props>
             id: 'delete',
             Header: 'Delete',
             Cell: (data: {original: Measurement}) => {
-                return <Button bsStyle='danger' onClick={() => this.deleteMeasurement(data.original)}>Delete</Button>;
+                return <Button
+                    onClick={() => this.deleteMeasurement(data.original)}
+                    color='danger'>Delete</Button>;
             },
             accessor: (m: Measurement) => m,
             sortable: false,

@@ -1,5 +1,5 @@
 import React, {FormEvent, PureComponent} from 'react';
-import {Button} from 'react-bootstrap';
+import {Button, Input, Label} from 'reactstrap';
 
 interface Props
 {
@@ -29,18 +29,24 @@ export class LoginForm extends PureComponent<Props, State>
             <div>
                 <form onSubmit={this.handleSubmit}>
                     <div>
-                        <label htmlFor='username'>Username</label>
-                        <input name='username' type='text' required={true}
+                        <Label htmlFor='username'>Username</Label>
+                        <Input name='username'
+                               id='username'
+                               type='text'
+                               required={true}
                                value={this.state.username}
                                onChange={e => this.change('username', e.currentTarget.value)} />
                     </div>
                     <div>
-                        <label htmlFor='password'>Password</label>
-                        <input name='password' type='password' required={true}
+                        <Label htmlFor='password'>Password</Label>
+                        <Input name='password'
+                               id='password'
+                               type='password'
+                               required={true}
                                value={this.state.password}
                                onChange={e => this.change('password', e.currentTarget.value)} />
                     </div>
-                    <Button bsStyle='primary' type='submit'>Login</Button>
+                    <Button type='submit' color='success'>Login</Button>
                 </form>
             </div>
         );
