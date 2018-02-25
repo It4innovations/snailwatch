@@ -1,6 +1,7 @@
 from eve import Eve
 from flask_cors import CORS
 
+from .configuration import get_server_port
 from .callbacks import set_app_callbacks
 from .auth import TokenAuthenticator
 from .database import init_database
@@ -16,4 +17,4 @@ def start():
         init_database(app)
 
     setup_routes(app)
-    app.run(threaded=True, host='0.0.0.0')
+    app.run(threaded=True, host='0.0.0.0', port=get_server_port())

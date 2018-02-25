@@ -28,6 +28,8 @@ storage. It can be configured with the following environment variables:
 +--------------------+------------+------------------+--------------------------------------------------------+
 | SW_MONGO_PASSWORD  | False      |                  | Auth password for MongoDB server.                      |
 +--------------------+------------+------------------+--------------------------------------------------------+
+| SW_PORT            | False      | 5000             | TCP port used by the API server.                       |
++--------------------+------------+------------------+--------------------------------------------------------+
 
 .. [#t] If you don't specify the admin token, a random one will be generated and printed to the standard output during server startup.
 
@@ -40,10 +42,6 @@ configured and afterwards you can launch the server itself using::
 
 The server can be launched under both Python 2 and 3.
 
-.. note::
-    The server starts by default on ``localhost:5000``, you can modify this
-    by setting host and port in the configuration.json (TODO).
-
 Creating users
 ---------------
 Measurement data in Snailwatch is always associated with a user account.
@@ -52,5 +50,22 @@ configured before the server launch. The API endpoint for creating users
 is documented :api:`here <#/Admin/post_users>`.
 You have to pass the admin token in the ``Authorization`` HTTP header.
 
+Example request for creating a user using curl: ::
+
+    $ curl -H "Content-Type: application/json" -H "Authorization: <admin-token>" http://localhost:5000/users -d '{"username": "user", "password": "12345"}'
+
+You can also use the helper script ``server/scripts/createuser.py`` to create a
+user: ::
+
+    $ python scripts/createuser.py <server-address> <admin-token> <username> <password>
+
 Once you create user accounts for your users, they can then login using the
 :doc:`dashboard <dashboard>`.
+
+Docker
+------
+We provide a docker image with the API server. ::
+
+    $ docker pull kobzol/snailwatch:server
+
+More information about the image can be found `here <https://hub.docker.com/r/kobzol/snailwatch>`_.

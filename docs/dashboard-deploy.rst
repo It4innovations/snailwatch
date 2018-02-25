@@ -9,7 +9,7 @@ You can install dependencies of the dashboard using npm::
 
 Configuration
 -------------
-Before launching the dashboard, you have to provide address of the server.
+Before launching the dashboard, you have to provide address of the API server.
 It is passed through an environment variable:
 
 +----------------+------------+-----------------------+-------------------------------------+
@@ -20,10 +20,16 @@ It is passed through an environment variable:
 
 Starting the dashboard
 ----------------------
-After you fill in the configuration, you can start the dashboard in development mode::
+After you fill in the configuration you can build it and then serve it
+from the ``build`` directory::
 
-    $ SW_API_SERVER=... npm run start
+    $ npm run build
+    $ SW_API_SERVER=http://localhost:5000 node build/server.js
 
-or you can build it in production mode and then serve it from the ``build`` directory::
+Docker
+------
+We provide a docker image with the dashboard. ::
 
-    $ SW_API_SERVER=... npm run build
+    $ docker pull kobzol/snailwatch:dashboard
+
+More information about the image can be found `here <https://hub.docker.com/r/kobzol/snailwatch>`_.

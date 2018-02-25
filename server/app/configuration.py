@@ -5,6 +5,10 @@ def get_option(name, default=None):
     return os.environ.get('SW_' + name, default)
 
 
+def get_server_port():
+    return int(get_option('PORT', 5000))
+
+
 def get_admin_token():
     return get_option('ADMIN_TOKEN')
 

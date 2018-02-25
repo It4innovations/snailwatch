@@ -11,6 +11,12 @@ else:
 
 
 def create_context(server, project, session):
+    """
+    Creates context for measurements uploads.
+    :param server: Address of the Snailwatch server
+    :param project: Project id
+    :param session: Session token
+    """
     return {
         'server': server,
         'project': project,
@@ -19,6 +25,15 @@ def create_context(server, project, session):
 
 
 def send_measurement(context, benchmark, environment, result, timestamp=None):
+    """
+    Sends a measurement to the server.
+    :param context: Context created by create_context function.
+    :param benchmark: Benchmark name
+    :param environment: Environment of the measurement
+    :param result: Result of the measurement
+    :param timestamp: Optional time of the measurement (if not given
+    the current time is recorded)
+    """
     if timestamp is None:
         timestamp = datetime.utcnow()
     else:
