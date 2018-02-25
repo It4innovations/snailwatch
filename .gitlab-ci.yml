@@ -29,6 +29,8 @@ test:server:
 publish:dashboard:
   image: docker:latest
   stage: publish
+  tags:
+    - deployment
   only:
     - master
   before_script:
@@ -41,8 +43,10 @@ publish:dashboard:
 publish:server:
   image: docker:latest
   stage: publish
+  tags:
+    - deployment
   only:
-      - master
+    - master
   before_script:
     - cd server
   script:
@@ -53,8 +57,10 @@ publish:server:
 deploy:
   image: deployer
   stage: deploy
+  tags:
+    - deployment
   only:
-      - master
+    - master
   before_script:
     - cd /deploy
   script:
