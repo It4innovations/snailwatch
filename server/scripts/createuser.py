@@ -35,3 +35,19 @@ def create_user(server, admin_token, username, password):
         raise Exception('Error while creating user, '
                         'response status: {}, error: {}', response.status,
                         data)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 5:
+        print("Usage:")
+        print("python createuser.py <server-address> <admin-token> "
+              "<username> <password>")
+        exit(1)
+
+    server = sys.argv[1]
+    token = sys.argv[2]
+    username = sys.argv[3]
+    password = sys.argv[4]
+
+    create_user(server, token, username, password)
+    print("User {} successfully created".format(username))
