@@ -3,8 +3,7 @@ import Autosuggest, {
     RenderSuggestionParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams
 } from 'react-autosuggest';
 import {chain} from 'ramda';
-import {Input, ListGroupItem} from 'reactstrap';
-import classNames from 'classnames';
+import {Input} from 'reactstrap';
 
 import theme from './suggest-input.scss';
 
