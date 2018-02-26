@@ -79,15 +79,15 @@ class ProjectComponent extends PureComponent<Props & RouteComponentProps<{name: 
         const activeTab = path.match.params.tab || TAB_ROUTES.measurements;
         const navLink = (name: string, key: keyof typeof TAB_ROUTES) =>
             <NavItem onClick={() => this.selectTab(key)}>
-                <NavLink className={classNames(style.link, {
-                    [style.activeLink]: activeTab === key
-                })} title={name}>
+                <NavLink className={classNames(style.link)}
+                         active={activeTab === key} title={name}>
                     {name}
                 </NavLink>
             </NavItem>;
 
         return (
             <>
+                <h2>{this.props.project.name}</h2>
                 <Nav tabs={true}>
                     {navLink('Measurements', 'measurements')}
                     {navLink('Charts', 'charts')}

@@ -41,6 +41,9 @@ interface State
 const Container = styled.div`
   display: flex;
 `;
+const Expander = styled.div`
+  flex-grow: 1;
+`;
 
 class ChartsPageComponent extends PureComponent<Props, State>
 {
@@ -67,22 +70,24 @@ class ChartsPageComponent extends PureComponent<Props, State>
     {
         return (
             <Container>
-                <ViewContainer />
-                <MeasurementInfo
-                    measurements={this.props.measurements}
-                    totalMeasurements={this.props.totalMeasurements}
-                    loadMore={this.loadMoreMeasurements} />
+                <Expander>
+                    <ViewContainer />
+                </Expander>
                 {this.props.selectedView &&
-                    <div style={{'flexGrow': 1}}>
-                        <ChartSettings
-                            groupByEnvironment={this.state.groupByEnvironment}
-                            onChangeGroup={this.handleChangeGroup} />
+                    <Expander>
                         <LineChart
                             measurements={this.props.measurements}
                             view={this.props.selectedView}
                             groupByEnvironment={this.state.groupByEnvironment} />
-                    </div>
+                        <ChartSettings
+                            groupByEnvironment={this.state.groupByEnvironment}
+                            onChangeGroup={this.handleChangeGroup} />
+                    </Expander>
                 }
+                <MeasurementInfo
+                    measurements={this.props.measurements}
+                    totalMeasurements={this.props.totalMeasurements}
+                    loadMore={this.loadMoreMeasurements} />
             </Container>
         );
     }

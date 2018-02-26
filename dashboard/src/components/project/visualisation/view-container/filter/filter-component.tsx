@@ -3,6 +3,7 @@ import {Filter, Operator} from '../../../../../lib/view/filter';
 import styled from 'styled-components';
 import {Button} from 'reactstrap';
 import {SuggestInput} from '../suggest-input';
+import Input from 'reactstrap/lib/Input';
 
 interface Props
 {
@@ -48,12 +49,13 @@ export class FilterComponent extends PureComponent<Props>
                     value={this.props.filter.path}
                     onChange={val => this.change('path', val)}
                     calculateSuggestions={this.props.calculatePathSuggestions} />
-                <select name='operator'
-                        value={this.props.filter.operator}
-                        onChange={val =>
-                            this.change('operator', val.currentTarget.value)}>
+                <Input
+                    type='select'
+                    name='operator'
+                    value={this.props.filter.operator}
+                    onChange={val => this.change('operator', val.currentTarget.value)}>
                     {operators.map(this.renderOperator)}
-                </select>
+                </Input>
             <SuggestInput
                 value={this.props.filter.value}
                 onChange={val => this.change('value', val)}

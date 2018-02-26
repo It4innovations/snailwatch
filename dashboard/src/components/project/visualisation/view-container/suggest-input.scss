@@ -1,0 +1,22 @@
+$border-radius: 8px;
+
+.suggestionsList {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  border: 1px solid #AAAAAA;
+  border-bottom-left-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+  z-index: 2;
+}
+.suggestionsContainer {
+  overflow-y: auto;
+  max-height: 200px;
+}
+.suggestion {
+  cursor: pointer;
+  padding: 5px 10px;
+}
+.suggestionHighlighted {
+  background-color: #DDDDDD;
+}

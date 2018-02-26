@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import {hashMeasurement, Measurement} from '../../../../lib/measurement/measurement';
 import {View} from '../../../../lib/view/view';
-import {groupBy, values, sum, reduce, min, max, all} from 'ramda';
+import {groupBy, values, sum, reduce, min, max} from 'ramda';
 import ellipsize from 'ellipsize';
 import {sort} from 'ramda';
 import {Moment} from 'moment';
@@ -13,6 +13,7 @@ import {PointTooltip} from './point-tooltip';
 import {DataPoint} from './data-point';
 import {compareDate} from '../../../../util/date';
 import {getValueWithPath} from '../../../../util/object';
+import {Alert} from 'reactstrap';
 
 interface Props
 {
@@ -23,7 +24,7 @@ interface Props
 
 interface State
 {
-    error: string;
+    errors: string[];
 }
 
 const DATE_FORMAT = 'DD. MM. YYYY HH:mm:ss';
@@ -35,7 +36,7 @@ export class LineChart extends PureComponent<Props, State>
         super(props);
 
         this.state = {
-            error: ''
+            errors: []
         };
     }
 
@@ -46,7 +47,7 @@ export class LineChart extends PureComponent<Props, State>
         {
             const errors = this.checkViewValidity(props.measurements, props.view);
             this.setState(() => ({
-                error: errors.join(' ')
+                errors
             }));
         }
     }
@@ -63,7 +64,9 @@ export class LineChart extends PureComponent<Props, State>
 
         return (
             <>
-                {this.state.error && <div>{this.state.error}</div>}
+                <Alert color='danger' isOpen={this.state.errors.length > 0}>
+                    {this.state.errors.map((error, index) => <div key={index}>{error}</div>)}
+                </Alert>
                 <ResponsiveContainer width='100%' height={400}>
                     <ReLineChart width={400}
                                  data={measurements}
@@ -153,15 +156,18 @@ export class LineChart extends PureComponent<Props, State>
     checkViewValidity = (measurements: Measurement[], view: View): string[] =>
     {
         const errors = [];
-        if (!all(m => this.isAxisXValid(getValueWithPath(m, view.projection.xAxis)), measurements))
+        const invalidX = measurements.filter(m => !this.isAxisXValid(getValueWithPath(m, view.projection.xAxis)));
+        if (invalidX.length > 0)
         {
             errors.push(
-                `Some measurements were left out because of x projection: ${view.projection.xAxis}`);
+                `${invalidX.length} measurements were left out because of x projection: ${view.projection.xAxis}`);
         }
-        if (!all(m => this.isAxisYValid(getValueWithPath(m, view.projection.yAxis)), measurements))
+
+        const invalidY = measurements.filter(m => !this.isAxisYValid(getValueWithPath(m, view.projection.yAxis)));
+        if (invalidY.length > 0)
         {
             errors.push(
-                `Some measurements were left out because of y projection: ${view.projection.yAxis}`);
+                `${invalidY.length} measurements were left out because of y projection: ${view.projection.yAxis}`);
         }
 
         return errors;

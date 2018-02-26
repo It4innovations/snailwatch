@@ -1,8 +1,9 @@
 import React, {PureComponent} from 'react';
 import {Navigation} from '../../state/nav/routes';
-import {Link} from 'react-router-dom';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {Button} from 'reactstrap';
+import {Button, Navbar, NavbarBrand, NavItem, NavLink, Nav} from 'reactstrap';
+
+import style from './menu.scss';
 
 interface Props
 {
@@ -15,11 +16,14 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
     render()
     {
         return (
-            <ul className='nav nav-pills'>
-                {this.publicLink('Login', Navigation.Login)}
-                {this.authLink('Projects', Navigation.Projects)}
+            <Navbar expand='md' className={style.navbar}>
+                <NavbarBrand>Snailwatch</NavbarBrand>
+                <Nav navbar>
+                    {this.publicLink('Login', Navigation.Login)}
+                    {this.authLink('Projects', Navigation.Projects)}
+                </Nav>
                 {this.props.authenticated && <Button onClick={this.props.onLogout}>Sign out</Button>}
-            </ul>
+            </Navbar>
         );
     }
 
@@ -37,9 +41,9 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
     link(name: string, path: string): JSX.Element
     {
         return (
-            <li>
-                <Link to={path}>{name}</Link>
-            </li>
+            <NavItem>
+                <NavLink href={path}>{name}</NavLink>
+            </NavItem>
         );
     }
 }

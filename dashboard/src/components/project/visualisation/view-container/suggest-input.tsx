@@ -3,6 +3,10 @@ import Autosuggest, {
     RenderSuggestionParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams
 } from 'react-autosuggest';
 import {chain} from 'ramda';
+import {Input, ListGroupItem} from 'reactstrap';
+import classNames from 'classnames';
+
+import theme from './suggest-input.scss';
 
 interface Props
 {
@@ -30,10 +34,12 @@ export class SuggestInput extends PureComponent<Props, State>
     render()
     {
         return <Autosuggest
+                theme={theme}
                 inputProps={{
                     value: this.props.value,
                     onChange: this.handleChange
                 }}
+                renderInputComponent={props => <Input {...props} type='text' />}
                 suggestions={this.state.suggestions}
                 getSuggestionValue={s => s}
                 renderSuggestion={this.renderSuggestion}
@@ -43,11 +49,6 @@ export class SuggestInput extends PureComponent<Props, State>
     }
     renderSuggestion = (suggestion: string, params: RenderSuggestionParams): JSX.Element =>
     {
-        if (params.query.length === 0)
-        {
-            return <div>{suggestion}</div>;
-        }
-
         const parts = suggestion.split(params.query);
         let i = 0;
         const html = chain(p => [

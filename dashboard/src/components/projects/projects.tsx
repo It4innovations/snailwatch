@@ -15,6 +15,8 @@ import {projectRoute} from '../../state/nav/routes';
 import {Button} from 'reactstrap';
 import {CreateProject} from './create-project';
 import {Request} from '../../util/request';
+import ListGroup from 'reactstrap/lib/ListGroup';
+import ListGroupItem from 'reactstrap/lib/ListGroupItem';
 
 interface State
 {
@@ -86,13 +88,15 @@ class ProjectsComponent extends PureComponent<Props, State>
                 {this.props.loadProjectsRequest.loading && <div>Loading...</div>}
                 {this.props.createProjectRequest.error && <div>{this.props.createProjectRequest.error.toString()}</div>}
                 {this.props.createProjectRequest.loading && <div>Creating project...</div>}
-                {projects.map(project =>
-                    <div key={project.id}>
-                        <Link to={projectRoute(project.name)}>
-                            {project.name}
-                        </Link>
-                    </div>
-                )}
+                <ListGroup>
+                    {projects.map(project =>
+                        <ListGroupItem key={project.id}>
+                            <Link to={projectRoute(project.name)}>
+                                {project.name}
+                            </Link>
+                        </ListGroupItem>
+                    )}
+                </ListGroup>
                 {this.state.creatingProject ? this.renderProjectCreation() :
                     <Button
                         onClick={this.startProjectCreate}

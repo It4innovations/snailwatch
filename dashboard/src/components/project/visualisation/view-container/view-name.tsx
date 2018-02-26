@@ -1,5 +1,6 @@
 import React, {PureComponent} from 'react';
 import {View} from '../../../../lib/view/view';
+import Input from 'reactstrap/lib/Input';
 
 interface Props
 {
@@ -27,7 +28,10 @@ export class ViewName extends PureComponent<Props>
             return <span>{this.props.view.name}</span>;
         }
 
-        return <input type='text' value={this.props.view.name} onChange={this.handleChange} required={true} />;
+        return <Input type='text'
+                      required={true}
+                      value={this.props.view.name}
+                      onChange={this.handleChange} />;
     }
 
     handleChange = (e: React.FormEvent<HTMLInputElement>) =>
