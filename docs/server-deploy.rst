@@ -50,12 +50,17 @@ configured before the server launch. The API endpoint for creating users
 is documented :api:`here <#/Admin/post_users>`.
 You have to pass the admin token in the ``Authorization`` HTTP header.
 
-Example request for creating a user using curl: ::
+Example request for creating a user using curl:
 
-    $ curl -H "Content-Type: application/json" -H "Authorization: <admin-token>" http://localhost:5000/users -d '{"username": "user", "password": "12345"}'
+.. code-block:: bash
+
+    $ curl -H "Content-Type: application/json" -H "Authorization: <admin-token>" \
+    <server>/users -d '{"username": "user", "password": "12345"}'
 
 You can also use the helper script ``server/scripts/createuser.py`` to create a
-user: ::
+user:
+
+.. code-block:: bash
 
     $ python scripts/createuser.py <server-address> <admin-token> <username> <password>
 
@@ -64,7 +69,9 @@ Once you create user accounts for your users, they can then login using the
 
 Docker
 ------
-We provide a docker image with the API server. ::
+We provide a docker image with the API server.
+
+.. code-block:: bash
 
     $ docker pull kobzol/snailwatch:server
 
