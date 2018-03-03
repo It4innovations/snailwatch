@@ -47,14 +47,9 @@ const Expander = styled.div`
 
 class ChartsPageComponent extends PureComponent<Props, State>
 {
-    constructor(props: Props)
-    {
-        super(props);
-
-        this.state = {
-            groupByEnvironment: true
-        };
-    }
+    state: State = {
+        groupByEnvironment: true
+    };
 
     componentDidMount()
     {

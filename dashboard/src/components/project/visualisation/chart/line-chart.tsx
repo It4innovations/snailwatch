@@ -31,14 +31,9 @@ const DATE_FORMAT = 'DD. MM. YYYY HH:mm:ss';
 
 export class LineChart extends PureComponent<Props, State>
 {
-    constructor(props: Props)
-    {
-        super(props);
-
-        this.state = {
-            errors: []
-        };
-    }
+    state: State = {
+        errors: []
+    };
 
     componentWillReceiveProps(props: Props)
     {

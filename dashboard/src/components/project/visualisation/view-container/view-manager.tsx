@@ -36,17 +36,12 @@ interface State
 
 export class ViewManager extends PureComponent<Props, State>
 {
-    constructor(props: Props)
-    {
-        super(props);
-
-        this.state = {
-            editing: false,
-            view: createView(),
-            createdNamePending: null,
-            measurementKeys: this.calculateKeys(props.measurements)
-        };
-    }
+    state: State = {
+        editing: false,
+        view: createView(),
+        createdNamePending: null,
+        measurementKeys: this.calculateKeys(props.measurements)
+    };
 
     componentDidMount()
     {

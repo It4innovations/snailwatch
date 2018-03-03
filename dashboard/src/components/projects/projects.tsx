@@ -41,13 +41,9 @@ type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
 class ProjectsComponent extends PureComponent<Props, State>
 {
-    constructor(props: Props)
-    {
-        super(props);
-        this.state = {
-            creatingProject: false
-        };
-    }
+    state: State = {
+        creatingProject: false
+    };
 
     componentDidMount()
     {

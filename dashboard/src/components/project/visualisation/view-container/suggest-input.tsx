@@ -21,14 +21,9 @@ interface State
 
 export class SuggestInput extends PureComponent<Props, State>
 {
-    constructor(props: Props)
-    {
-        super(props);
-
-        this.state = {
-            suggestions: []
-        };
-    }
+    state: State = {
+        suggestions: []
+    };
 
     render()
     {
