@@ -1,12 +1,5 @@
-import json
 import sys
-
-py2 = sys.version_info[0] < 3
-
-if py2:
-    import httplib
-else:
-    import http.client as httplib
+import requests
 
 
 def create_user(server, admin_token, username, password):
@@ -27,14 +20,15 @@ def create_user(server, admin_token, username, password):
         'Authorization': admin_token
     }
 
-    conn = httplib.HTTPConnection(server)
-    conn.request('POST', '/users', json.dumps(payload), hdr)
-    response = conn.getresponse()
-    data = response.read()
-    if response.status != 201:
+    response = requests.post("{}/users".format(server), json=payload,
+                             headers=hdr)
+    data = response.content
+    if response.status_code != 201:
         raise Exception('Error while creating user, '
-                        'response status: {}, error: {}', response.status,
+                        'response status: {}, error: {}', response.status_code,
                         data)
+    else:
+        return response.json()
 
 
 if __name__ == "__main__":
@@ -49,5 +43,5 @@ if __name__ == "__main__":
     username = sys.argv[3]
     password = sys.argv[4]
 
-    create_user(server, token, username, password)
-    print("User {} successfully created".format(username))
+    user = create_user(server, token, username, password)
+    print("User {} successfully created, id: {}".format(username, user["_id"]))

@@ -1,13 +1,5 @@
-import json
-import sys
 from datetime import datetime
-
-py2 = sys.version_info[0] < 3
-
-if py2:
-    import httplib
-else:
-    import http.client as httplib
+import requests
 
 
 def create_context(server, project, session):
@@ -52,11 +44,10 @@ def send_measurement(context, benchmark, environment, result, timestamp=None):
         'Authorization': context['session']
     }
 
-    conn = httplib.HTTPConnection(context['server'])
-    conn.request('POST', '/measurements', json.dumps(payload), hdr)
-    response = conn.getresponse()
-    data = response.read()
-    if response.status != 201:
+    response = requests.post("{}/measurements".format(context['server']),
+                             json=payload,
+                             headers=hdr)
+    if response.status_code != 201:
         raise Exception('Error while sending measurement, '
-                        'response status: {}, error: {}', response.status,
-                        data)
+                        'response status: {}, error: {}', response.status_code,
+                        response.content)
