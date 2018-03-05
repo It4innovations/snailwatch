@@ -56,7 +56,7 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
         return (
             <div>
                 <div>
-                    <h4>Project details</h4>
+                    <h4>Project overview</h4>
                     <InputGroup>
                         <InputGroupAddon addonType='prepend'>Name</InputGroupAddon>
                         <Input value={this.props.project.name} disabled />
@@ -88,7 +88,7 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
                     simplify measurement results uploads.<br />
                     You can use the following snippet as an example how to use it.
                     <SyntaxHighlighter language='python' style={dracula}>
-                        {`from collect import create_context, send_measurements
+                        {`from collect import create_context, send_measurement
 
 ctx = create_context(
     "${API_SERVER}", # server address
