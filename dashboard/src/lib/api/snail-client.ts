@@ -14,6 +14,7 @@ export interface FetchResult<T>
 export interface SnailClient
 {
     loginUser(username: string, password: string): Observable<User>;
+    changePassword(user: User, oldPassword: string, newPassword: string): Observable<boolean>;
 
     createProject(user: User, name: string): Observable<boolean>;
     loadProjects(user: User): Observable<Project[]>;

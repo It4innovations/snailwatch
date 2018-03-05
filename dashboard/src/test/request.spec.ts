@@ -1,11 +1,12 @@
 import actionCreatorFactory, {Action, Failure, Success} from 'typescript-fsa';
-import {createRequestEpic, mapRequestToActions} from '../util/request';
+import {createRequest, createRequestEpic, hookRequestActions, mapRequestToActions} from '../util/request';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import {ActionsObservable} from 'redux-observable';
-import {Store} from 'redux';
+import {createStore, Store} from 'redux';
 import {AppState} from '../state/app/reducers';
+import {reducerWithInitialState} from 'typescript-fsa-reducers';
 
 const factory = actionCreatorFactory('request-test');
 const creator = factory.async<string, number>('action');
@@ -70,5 +71,51 @@ describe('createRequestEpic', () => {
         } as Store<AppState>, null).subscribe(() => {
             done();
         });
+    });
+});
+
+describe('hookRequestActions', () => {
+    const createReducer = () =>
+    {
+        let reducer = reducerWithInitialState({
+            request: createRequest()
+        });
+
+        return hookRequestActions(reducer,
+            creator,
+            r => r.request,
+        );
+    };
+    const makeStore = () => createStore(createReducer());
+
+    it('Set\'s request loading to true after start', () => {
+        const store = makeStore();
+        store.dispatch(creator.started(''));
+
+        expect(store.getState().request.completed).toEqual(false);
+        expect(store.getState().request.loading).toEqual(true);
+        expect(store.getState().request.error).toEqual(null);
+    });
+    it('Set\'s completed after error', () => {
+        const store = makeStore();
+        store.dispatch(creator.failed({
+            params: '',
+            error: 'error'
+        }));
+
+        expect(store.getState().request.completed).toEqual(true);
+        expect(store.getState().request.loading).toEqual(false);
+        expect(store.getState().request.error).toEqual('error');
+    });
+    it('Set\'s completed after success', () => {
+        const store = makeStore();
+        store.dispatch(creator.done({
+            params: '',
+            result: 0
+        }));
+
+        expect(store.getState().request.completed).toEqual(true);
+        expect(store.getState().request.loading).toEqual(false);
+        expect(store.getState().request.error).toEqual(null);
     });
 });

@@ -9,5 +9,12 @@ export interface LoginUserParams
     password: string;
 }
 export const loginUser = actionCreator.async<LoginUserParams, User>('login');
-
 export const logoutUser = actionCreator('logout');
+
+export interface ChangePasswordParams
+{
+    user: User;
+    oldPassword: string;
+    newPassword: string;
+}
+export const changePassword = actionCreator.async<ChangePasswordParams, boolean>('change-password');

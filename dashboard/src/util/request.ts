@@ -13,34 +13,39 @@ export interface Request
 {
     loading: boolean;
     error: string;
+    completed: boolean;
 }
 
 export function createRequest(): Request
 {
     return {
         loading: false,
-        error: null
+        error: null,
+        completed: false
     };
 }
 export function requestStarted(): Request
 {
     return {
         loading: true,
-        error: null
+        error: null,
+        completed: false
     };
 }
 export function requestErrored(error: string): Request
 {
     return {
         loading: false,
-        error
+        error,
+        completed: true
     };
 }
 export function requestDone(): Request
 {
     return {
         loading: false,
-        error: null
+        error: null,
+        completed: true
     };
 }
 
@@ -48,7 +53,8 @@ export function combineRequests(...requests: Request[]): Request
 {
     return {
         loading: any(r => r.loading, requests),
-        error: requests.map(r => r.error).find(r => r !== null) || null
+        error: requests.map(r => r.error).find(r => r !== null) || null,
+        completed: any(r => r.completed, requests)
     };
 }
 

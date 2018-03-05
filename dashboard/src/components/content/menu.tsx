@@ -1,30 +1,51 @@
 import React, {PureComponent} from 'react';
-import {Navigation} from '../../state/nav/routes';
+import {Navigation, projectRoute} from '../../state/nav/routes';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {Button, Navbar, NavbarBrand, NavItem, NavLink, Nav} from 'reactstrap';
-
-import style from './menu.scss';
+import {Button, Navbar, NavbarBrand, NavItem, Nav} from 'reactstrap';
+import {Project} from '../../lib/project/project';
+import {Link} from 'react-router-dom';
+import styled from 'styled-components';
 
 interface Props
 {
     authenticated: boolean;
+    selectedProject: Project | null;
     onLogout(): void;
 }
+
+const Appbar = styled(Navbar)`
+  margin-bottom: 5px;
+  border-bottom: 1px solid #000000;
+`;
 
 class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
 {
     render()
     {
         return (
-            <Navbar expand='md' className={style.navbar}>
+            <Appbar expand='md'>
                 <NavbarBrand>Snailwatch</NavbarBrand>
                 <Nav navbar>
                     {this.publicLink('Login', Navigation.Login)}
-                    {this.authLink('Projects', Navigation.Projects)}
+                    {this.props.authenticated && this.createAuthenticatedLinks()}
                 </Nav>
                 {this.props.authenticated && <Button onClick={this.props.onLogout}>Sign out</Button>}
-            </Navbar>
+            </Appbar>
         );
+    }
+
+    createAuthenticatedLinks = (): JSX.Element =>
+    {
+        const links: JSX.Element[] = [];
+        links.push(this.authLink('Profile', Navigation.Profile));
+
+        if (this.props.selectedProject === null)
+        {
+            links.push(this.authLink('Projects', Navigation.Projects));
+        }
+        else links.push(this.authLink('Overview', projectRoute(this.props.selectedProject.name)));
+
+        return <>{links}</>;
     }
 
     authLink(name: string, path: string): JSX.Element
@@ -41,8 +62,8 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
     link(name: string, path: string): JSX.Element
     {
         return (
-            <NavItem>
-                <NavLink href={path}>{name}</NavLink>
+            <NavItem key={name}>
+                <Link to={path}>{name}</Link>
             </NavItem>
         );
     }

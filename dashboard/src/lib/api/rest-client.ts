@@ -41,6 +41,15 @@ export class RestClient implements SnailClient
             token
         }));
     }
+    changePassword(user: User, oldPassword: string, newPassword: string): Observable<boolean>
+    {
+        return this.call('/change-password', 'POST', {
+            oldPassword,
+            newPassword
+        }, {
+            token: user.token
+        }).map(() => true);
+    }
 
     createProject(user: User, name: string): Observable<boolean>
     {

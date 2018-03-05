@@ -1,5 +1,5 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {loginUser, logoutUser} from './actions';
+import {changePassword, loginUser, logoutUser} from './actions';
 import {AppState} from '../app/reducers';
 import {User} from '../../lib/user/user';
 import {createSelector} from 'reselect';
@@ -10,11 +10,13 @@ export interface UserState
 {
     user: User;
     loginRequest: Request;
+    changePasswordRequest: Request;
 }
 
 let reducer = reducerWithInitialState<UserState>({
     user: null,
-    loginRequest: createRequest()
+    loginRequest: createRequest(),
+    changePasswordRequest: createRequest()
 })
 .case(logoutUser, (state) => ({
     ...state,
@@ -27,6 +29,8 @@ reducer = compose(
         (state: UserState, action) => ({
             user: action.payload.result
         })
+), (r: typeof reducer) => hookRequestActions(r, changePassword,
+        (state: UserState) => state.changePasswordRequest
 ))(reducer);
 
 export const getUser = (state: AppState) => state.user.user;

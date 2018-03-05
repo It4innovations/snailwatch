@@ -15,9 +15,7 @@ import {Request} from '../../util/request';
 import {getSelectedProject} from '../../state/project/reducer';
 import {selectProject} from '../../state/project/actions';
 import {ChartsPage} from './visualisation/charts-page';
-import classNames from 'classnames';
-
-import style from './project.scss';
+import styled from 'styled-components';
 
 interface StateProps
 {
@@ -39,6 +37,10 @@ const TAB_ROUTES = {
     measurements: 'measurements',
     charts: 'charts'
 };
+
+const TabLink = styled(NavLink)`
+  cursor: pointer;
+`;
 
 class ProjectComponent extends PureComponent<Props & RouteComponentProps<{name: string}>>
 {
@@ -79,10 +81,10 @@ class ProjectComponent extends PureComponent<Props & RouteComponentProps<{name: 
         const activeTab = path.match.params.tab || TAB_ROUTES.measurements;
         const navLink = (name: string, key: keyof typeof TAB_ROUTES) =>
             <NavItem onClick={() => this.selectTab(key)}>
-                <NavLink className={classNames(style.link)}
+                <TabLink
                          active={activeTab === key} title={name}>
                     {name}
-                </NavLink>
+                </TabLink>
             </NavItem>;
 
         return (

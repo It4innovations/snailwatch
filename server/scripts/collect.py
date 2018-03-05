@@ -4,7 +4,7 @@ import requests
 
 def create_context(server, project, session):
     """
-    Creates context for measurements uploads.
+    Creates context for measurement results uploads.
     :param server: Address of the Snailwatch server
     :param project: Project id
     :param session: Session token
@@ -44,7 +44,7 @@ def send_measurement(context, benchmark, environment, result, timestamp=None):
         'Authorization': context['session']
     }
 
-    response = requests.post("{}/measurements".format(context['server']),
+    response = requests.post('{}/measurements'.format(context['server']),
                              json=payload,
                              headers=hdr)
     if response.status_code != 201:

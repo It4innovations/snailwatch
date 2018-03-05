@@ -2,15 +2,17 @@ export class Routes
 {
     static Login = '/login';
     static Projects = '/projects';
+    static Profile = '/profile';
 }
 
 export class Navigation
 {
-    static Login = '/login';
-    static Projects = '/projects';
+    static Login = Routes.Login;
+    static Projects = Routes.Projects;
+    static Profile = Routes.Profile;
 }
 
-export function projectRoute(id: string)
+export function projectRoute(name: string)
 {
-    return `${Navigation.Projects}/${id}`;
+    return `${Navigation.Projects}/${name}`;
 }

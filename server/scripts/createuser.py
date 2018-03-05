@@ -20,7 +20,7 @@ def create_user(server, admin_token, username, password):
         'Authorization': admin_token
     }
 
-    response = requests.post("{}/users".format(server), json=payload,
+    response = requests.post('{}/users'.format(server), json=payload,
                              headers=hdr)
     data = response.content
     if response.status_code != 201:
@@ -31,11 +31,11 @@ def create_user(server, admin_token, username, password):
         return response.json()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     if len(sys.argv) < 5:
-        print("Usage:")
-        print("python createuser.py <server-address> <admin-token> "
-              "<username> <password>")
+        print('Usage:')
+        print('python createuser.py <server-address> <admin-token> '
+              '<username> <password>')
         exit(1)
 
     server = sys.argv[1]
@@ -44,4 +44,4 @@ if __name__ == "__main__":
     password = sys.argv[4]
 
     user = create_user(server, token, username, password)
-    print("User {} successfully created, id: {}".format(username, user["_id"]))
+    print('User {} successfully created, id: {}'.format(username, user['_id']))

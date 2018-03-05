@@ -1,6 +1,6 @@
 import {ActionsObservable, combineEpics} from 'redux-observable';
 import {Action as ReduxAction} from 'redux';
-import {loginUser, logoutUser} from './actions';
+import {changePassword, loginUser, logoutUser} from './actions';
 import {Observable} from 'rxjs/Observable';
 import '../../util/redux-observable';
 import 'rxjs/add/observable/of';
@@ -12,6 +12,9 @@ import {clearViews} from '../view/actions';
 
 const loginUserEpic = createRequestEpic(loginUser, (action, state, deps) =>
     deps.client.loginUser(action.payload.username, action.payload.password)
+);
+const changePasswordEpic = createRequestEpic(changePassword, (action, state, deps) =>
+    deps.client.changePassword(action.payload.user, action.payload.oldPassword, action.payload.newPassword)
 );
 
 const clearDataAfterLogout: AppEpic = (action$: ActionsObservable<ReduxAction>) =>
@@ -27,5 +30,6 @@ const clearDataAfterLogout: AppEpic = (action$: ActionsObservable<ReduxAction>) 
 
 export const userEpics = combineEpics(
     loginUserEpic,
+    changePasswordEpic,
     clearDataAfterLogout
 );
