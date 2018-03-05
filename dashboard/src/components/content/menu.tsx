@@ -20,6 +20,18 @@ const Appbar = styled(Navbar)`
   margin-bottom: 5px;
   border-bottom: 1px solid #000000;
 `;
+const SidePanel = styled.div`
+  display: flex;
+  flex-grow: 1;
+  justify-content: flex-end;
+  align-content: center;
+`;
+const ProjectName = styled.div`
+  font-weight: bold;
+  font-size: 22px;
+  align-self: center;
+  margin-right: 20px;
+`;
 
 class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
 {
@@ -31,9 +43,36 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
                 <Nav navbar>
                     {this.publicLink('Login', Navigation.Login)}
                     {this.props.authenticated && this.renderAuthenticatedLinks()}
-                    {this.props.authenticated && this.renderExpandableMenu()}
                 </Nav>
+                {this.props.authenticated && this.renderSidePanel()}
             </Appbar>
+        );
+    }
+    renderAuthenticatedLinks = (): JSX.Element =>
+    {
+        const links: JSX.Element[] = [];
+        links.push(this.authLink('Profile', Navigation.Profile));
+
+        if (this.props.selectedProject === null)
+        {
+            links.push(this.authLink('Projects', Navigation.Projects));
+        }
+        else
+        {
+            links.push(this.authLink('Project', Navigation.Overview));
+            links.push(this.authLink('Measurements', Navigation.MeasurementList));
+            links.push(this.authLink('Charts', Navigation.Charts));
+        }
+
+        return <>{links}</>;
+    }
+    renderSidePanel = (): JSX.Element =>
+    {
+        return (
+            <SidePanel>
+                {this.props.selectedProject !== null && <ProjectName>{this.props.selectedProject.name}</ProjectName>}
+                {this.renderExpandableMenu()}
+            </SidePanel>
         );
     }
     renderExpandableMenu = (): JSX.Element =>
@@ -66,24 +105,6 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
                 </DropdownMenu>
             </UncontrolledDropdown>
         );
-    }
-    renderAuthenticatedLinks = (): JSX.Element =>
-    {
-        const links: JSX.Element[] = [];
-        links.push(this.authLink('Profile', Navigation.Profile));
-
-        if (this.props.selectedProject === null)
-        {
-            links.push(this.authLink('Projects', Navigation.Projects));
-        }
-        else
-        {
-            links.push(this.authLink('Overview', Navigation.Overview));
-            links.push(this.authLink('Measurements', Navigation.MeasurementList));
-            links.push(this.authLink('Charts', Navigation.Charts));
-        }
-
-        return <>{links}</>;
     }
 
     authLink(name: string, path: string): JSX.Element

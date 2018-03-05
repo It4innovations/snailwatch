@@ -4,7 +4,7 @@ export class Routes
     static Logout = '/logout';
     static Profile = '/profile';
     static Projects = '/projects';
-    static Overview = '/overview';
+    static Overview = '/project';
     static MeasurementList = '/measurements';
     static Charts = '/charts';
 }
