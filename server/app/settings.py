@@ -119,12 +119,6 @@ measurement_schema = {
     }
 }
 view_schema = {
-    'name': {
-        'type': 'string',
-        'empty': False,
-        'required': True,
-        'unique_to_user': True
-    },
     'project': {
         'type': 'objectid',
         'required': True,
@@ -132,6 +126,11 @@ view_schema = {
             'resource': 'projects',
             'field': '_id'
         }
+    },
+    'name': {
+        'type': 'string',
+        'empty': False,
+        'required': True
     },
     'filters': {
         'type': 'list',
