@@ -13,12 +13,22 @@ console.log(`Serving from ${webDir} on port ${port}, API address: ${apiHost}`);
 
 const readFileAsync = promisify(readFile);
 
-app.use(expressStaticGzip(webDir));
-app.get('/*', async (req, res) =>
+async function readIndexFile(): Promise<string>
 {
     const html = await readFileAsync(path.join(webDir, 'index.html'));
-    const modified = html.toString().replace('{{API_HOST}}', apiHost);
-    res.send(modified);
+    return html.toString().replace('{{API_HOST}}', apiHost);
+}
+
+const indexFile = readIndexFile();
+
+app.use(expressStaticGzip(webDir, {
+    index: false,
+    indexFromEmptyFile: false
+}));
+app.get('/*', async (req, res) =>
+{
+    const index = await indexFile;
+    res.send(index);
 });
 
 app.listen(port);
