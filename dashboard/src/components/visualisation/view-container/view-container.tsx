@@ -1,26 +1,26 @@
 import React, {PureComponent} from 'react';
-import {Measurement} from '../../../../lib/measurement/measurement';
-import {Project} from '../../../../lib/project/project';
-import {User} from '../../../../lib/user/user';
-import {Filter} from '../../../../lib/view/filter';
+import {Measurement} from '../../../lib/measurement/measurement';
+import {Project} from '../../../lib/project/project';
+import {User} from '../../../lib/user/user';
+import {Filter} from '../../../lib/view/filter';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {View} from '../../../../lib/view/view';
-import {getUser} from '../../../../state/user/reducer';
-import {getSelectedProject} from '../../../../state/project/reducer';
-import {AppState} from '../../../../state/app/reducers';
-import {getMeasurements} from '../../../../state/measurement/reducer';
-import {getSelectedView, getViews} from '../../../../state/view/reducer';
+import {View} from '../../../lib/view/view';
+import {getUser} from '../../../state/user/reducer';
+import {getSelectedProject} from '../../../state/project/reducer';
+import {AppState} from '../../../state/app/reducers';
+import {getMeasurements} from '../../../state/measurement/reducer';
+import {getSelectedView, getViews} from '../../../state/view/reducer';
 import {ViewManager} from './view-manager';
 import {
     createView as createViewActino, CreateViewParams, deleteView, DeleteViewParams, loadViews, LoadViewsParams,
     selectView, updateView, UpdateViewParams
-} from '../../../../state/view/actions';
-import {Request} from '../../../../util/request';
+} from '../../../state/view/actions';
+import {Request} from '../../../util/request';
 import {
     createLoadMeasurementParams, LoadMeasurementParams,
     loadMeasurements
-} from '../../../../state/measurement/actions';
+} from '../../../state/measurement/actions';
 
 interface StateProps
 {

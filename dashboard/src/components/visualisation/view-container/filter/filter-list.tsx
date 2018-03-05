@@ -1,10 +1,10 @@
 import React, {PureComponent} from 'react';
-import {createFilter, Filter} from '../../../../../lib/view/filter';
+import {createFilter, Filter} from '../../../../lib/view/filter';
 import {FilterComponent} from './filter-component';
 import {Button} from 'reactstrap';
 import {update, remove} from 'ramda';
-import {Measurement} from '../../../../../lib/measurement/measurement';
-import {getValuesWithPath} from '../../../../../util/object';
+import {Measurement} from '../../../../lib/measurement/measurement';
+import {getValuesWithPath} from '../../../../util/object';
 
 interface Props
 {

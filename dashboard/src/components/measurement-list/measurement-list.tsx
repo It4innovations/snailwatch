@@ -1,21 +1,21 @@
 import React, {PureComponent} from 'react';
-import {Project} from '../../../lib/project/project';
-import {Measurement} from '../../../lib/measurement/measurement';
-import {User} from '../../../lib/user/user';
+import {Project} from '../../lib/project/project';
+import {Measurement} from '../../lib/measurement/measurement';
+import {User} from '../../lib/user/user';
 import {sort} from 'ramda';
 import {
     LoadMeasurementParams, loadMeasurements, createLoadMeasurementParams,
     DeleteMeasurementParams, deleteMeasurement
-} from '../../../state/measurement/actions';
+} from '../../state/measurement/actions';
 import {connect} from 'react-redux';
-import {Request, combineRequests} from '../../../util/request';
-import {getUser} from '../../../state/user/reducer';
-import {AppState} from '../../../state/app/reducers';
-import {getSelectedProject} from '../../../state/project/reducer';
-import {getMeasurements, getTotalMeasurements, MEASUREMENT_PAGE_SIZE} from '../../../state/measurement/reducer';
+import {Request, combineRequests} from '../../util/request';
+import {getUser} from '../../state/user/reducer';
+import {AppState} from '../../state/app/reducers';
+import {getSelectedProject} from '../../state/project/reducer';
+import {getMeasurements, getTotalMeasurements, MEASUREMENT_PAGE_SIZE} from '../../state/measurement/reducer';
 import {RouteComponentProps, withRouter} from 'react-router';
 import ReactTable, {ControlledStateOverrideProps, RowInfo} from 'react-table';
-import {createFilter, Filter} from '../../../lib/view/filter';
+import {createFilter, Filter} from '../../lib/view/filter';
 import {Button} from 'reactstrap';
 
 interface StateProps

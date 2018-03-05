@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {View} from '../../../../lib/view/view';
+import {View} from '../../../lib/view/view';
 import {find} from 'ramda';
 import Input from 'reactstrap/lib/Input';
 

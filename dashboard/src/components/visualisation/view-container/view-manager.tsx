@@ -1,16 +1,16 @@
 import React, {PureComponent} from 'react';
 import {ViewProjection} from './projection/view-projection';
 import {FilterList} from './filter/filter-list';
-import {createView, View} from '../../../../lib/view/view';
+import {createView, View} from '../../../lib/view/view';
 import {ViewSelect} from './view-select';
 import {ViewControls} from './view-controls';
 import {ViewName} from './view-name';
-import {Filter} from '../../../../lib/view/filter';
-import {Projection} from '../../../../lib/view/projection';
-import {Request} from '../../../../util/request';
+import {Filter} from '../../../lib/view/filter';
+import {Projection} from '../../../lib/view/projection';
+import {Request} from '../../../util/request';
 import {sort, equals} from 'ramda';
-import {Measurement} from '../../../../lib/measurement/measurement';
-import {getAllKeysMerged} from '../../../../util/object';
+import {Measurement} from '../../../lib/measurement/measurement';
+import {getAllKeysMerged} from '../../../util/object';
 
 interface Props
 {

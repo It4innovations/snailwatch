@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Filter, Operator} from '../../../../../lib/view/filter';
+import {Filter, Operator} from '../../../../lib/view/filter';
 import styled from 'styled-components';
 import {Button} from 'reactstrap';
 import {SuggestInput} from '../suggest-input';

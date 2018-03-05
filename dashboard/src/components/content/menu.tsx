@@ -1,16 +1,19 @@
 import React, {PureComponent} from 'react';
 import {Navigation, projectRoute} from '../../state/nav/routes';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {Button, Navbar, NavbarBrand, NavItem, Nav} from 'reactstrap';
+import {
+    Navbar, NavbarBrand, NavItem, Nav,
+    UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem
+} from 'reactstrap';
 import {Project} from '../../lib/project/project';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
+import MdSettings from 'react-icons/lib/md/settings';
 
 interface Props
 {
     authenticated: boolean;
     selectedProject: Project | null;
-    onLogout(): void;
 }
 
 const Appbar = styled(Navbar)`
@@ -27,14 +30,44 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
                 <NavbarBrand>Snailwatch</NavbarBrand>
                 <Nav navbar>
                     {this.publicLink('Login', Navigation.Login)}
-                    {this.props.authenticated && this.createAuthenticatedLinks()}
+                    {this.props.authenticated && this.renderAuthenticatedLinks()}
+                    {this.props.authenticated && this.renderExpandableMenu()}
                 </Nav>
-                {this.props.authenticated && <Button onClick={this.props.onLogout}>Sign out</Button>}
             </Appbar>
         );
     }
+    renderExpandableMenu = (): JSX.Element =>
+    {
+        const items: JSX.Element[] = [];
 
-    createAuthenticatedLinks = (): JSX.Element =>
+        if (this.props.selectedProject !== null)
+        {
+            items.push(
+                <DropdownItem>
+                    <Link to={Navigation.Projects}>Switch project</Link>
+                </DropdownItem>
+            );
+            items.push(<DropdownItem divider />);
+        }
+
+        items.push(
+            <DropdownItem>
+                <Link to={Navigation.Logout}>Sign out</Link>
+            </DropdownItem>
+        );
+
+        return (
+            <UncontrolledDropdown>
+                <DropdownToggle>
+                    <MdSettings />
+                </DropdownToggle>
+                <DropdownMenu>
+                    {items}
+                </DropdownMenu>
+            </UncontrolledDropdown>
+        );
+    }
+    renderAuthenticatedLinks = (): JSX.Element =>
     {
         const links: JSX.Element[] = [];
         links.push(this.authLink('Profile', Navigation.Profile));
@@ -63,7 +96,7 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
     {
         return (
             <NavItem key={name}>
-                <Link to={path}>{name}</Link>
+                <Link to={path} className='nav-link'>{name}</Link>
             </NavItem>
         );
     }

@@ -1,4 +1,4 @@
-import {Measurement} from '../../../../lib/measurement/measurement';
+import {Measurement} from '../../../lib/measurement/measurement';
 
 export interface DataPoint
 {

@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Projection} from '../../../../../lib/view/projection';
+import {Projection} from '../../../../lib/view/projection';
 import {SuggestInput} from '../suggest-input';
 
 interface Props

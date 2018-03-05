@@ -21,7 +21,7 @@ interface StateProps
 }
 interface DispatchProps
 {
-    onLogout(): void;
+    logoutUser(): void;
 }
 
 const Wrapper = styled.div`
@@ -37,13 +37,13 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
         return (
             <Wrapper>
                 <Menu authenticated={this.props.authenticated}
-                      selectedProject={this.props.selectedProject}
-                      onLogout={this.props.onLogout} />
+                      selectedProject={this.props.selectedProject} />
                 <Switch>
                     <SwitchRoute path={Routes.Login} component={Login}
                                  usePrimaryRoute={!this.props.authenticated} redirect={Navigation.Projects} />
                     {this.authRoute(Routes.Projects, Projects)}
                     {this.authRoute(Routes.Profile, Profile)}
+                    {this.authRoute(Routes.Logout, this.logoutUser)}
                     {this.getAuthenticatedRedirect()}
                     {!this.props.authenticated && <Redirect to={Navigation.Login} />}
                 </Switch>
@@ -70,11 +70,17 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
         return <SwitchRoute path={path} component={component}
                      usePrimaryRoute={this.props.authenticated} redirect={Navigation.Login} />;
     }
+
+    logoutUser = (): JSX.Element =>
+    {
+        this.props.logoutUser();
+        return <Redirect to={Navigation.Login} />;
+    }
 }
 
 export const Content = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     authenticated: isUserAuthenticated(state),
     selectedProject: getSelectedProject(state)
 }), {
-    onLogout: logoutUser
+    logoutUser
 })(ContentComponent));

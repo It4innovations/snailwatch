@@ -2,8 +2,8 @@ import React, {PureComponent} from 'react';
 import {TooltipProps} from 'recharts';
 import styled from 'styled-components';
 import {DataPoint} from './data-point';
-import {Measurement} from '../../../../lib/measurement/measurement';
-import {compareDate} from '../../../../util/date';
+import {Measurement} from '../../../lib/measurement/measurement';
+import {compareDate} from '../../../util/date';
 import {sort} from 'ramda';
 
 const TooltipWrapper = styled.div`

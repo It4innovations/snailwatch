@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Measurement} from '../../../lib/measurement/measurement';
+import {Measurement} from '../../lib/measurement/measurement';
 import {Button} from 'reactstrap';
 
 interface Props

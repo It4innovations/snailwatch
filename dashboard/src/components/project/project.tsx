@@ -7,14 +7,14 @@ import {getUser} from '../../state/user/reducer';
 import {Route, RouteComponentProps, withRouter} from 'react-router';
 import {TabContent, TabPane, Nav, NavItem, NavLink} from 'reactstrap';
 import {push} from 'react-router-redux';
-import {MeasurementList} from './measurement-list/measurement-list';
+import {MeasurementList} from '../measurement-list/measurement-list';
 import {clearMeasurements} from '../../state/measurement/actions';
 import {Measurement} from '../../lib/measurement/measurement';
 import {getMeasurements} from '../../state/measurement/reducer';
 import {Request} from '../../util/request';
 import {getSelectedProject} from '../../state/project/reducer';
 import {selectProject} from '../../state/project/actions';
-import {ChartsPage} from './visualisation/charts-page';
+import {ChartsPage} from '../visualisation/charts-page';
 import styled from 'styled-components';
 
 interface StateProps
