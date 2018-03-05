@@ -13,15 +13,10 @@ interface State
 
 export class LoginForm extends PureComponent<Props, State>
 {
-    constructor(props: Props)
-    {
-        super(props);
-
-        this.state = {
-            username: '1',
-            password: '1'
-        };
-    }
+    state: State = {
+        username: '',
+        password: ''
+    };
 
     render()
     {

@@ -1,8 +1,7 @@
 import React, {PureComponent} from 'react';
-import {Route, RouteComponentProps, Switch, withRouter} from 'react-router';
+import {RouteComponentProps, withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {Project} from '../../lib/project/project';
-import {ProjectDetail} from '../project/project';
 import {User} from '../../lib/user/user';
 import {
     createProject, CreateProjectParams, loadProjects, selectProject
@@ -10,13 +9,14 @@ import {
 import {getUser} from '../../state/user/reducer';
 import {AppState} from '../../state/app/reducers';
 import {getProjects} from '../../state/project/reducer';
-import {Link} from 'react-router-dom';
-import {projectRoute} from '../../state/nav/routes';
 import {Button} from 'reactstrap';
 import {CreateProject} from './create-project';
 import {Request} from '../../util/request';
 import ListGroup from 'reactstrap/lib/ListGroup';
 import ListGroupItem from 'reactstrap/lib/ListGroupItem';
+import {push} from 'react-router-redux';
+import {Navigation} from '../../state/nav/routes';
+import styled from 'styled-components';
 
 interface State
 {
@@ -35,9 +35,17 @@ interface DispatchProps
     loadProjects(user: User): void;
     selectProject(name: string): void;
     createProject(params: CreateProjectParams): void;
+    push(path: string): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
+
+const ProjectLink = styled.span`
+  cursor: pointer;
+  :hover {
+    text-decoration: underline;
+  }
+`;
 
 class ProjectsComponent extends PureComponent<Props, State>
 {
@@ -65,17 +73,6 @@ class ProjectsComponent extends PureComponent<Props, State>
 
     render()
     {
-        const match = this.props.match;
-        return (
-            <Switch>
-                <Route path={`${match.url}/:name`} render={() => <ProjectDetail />} />
-                <Route exact path={match.url} render={() => this.renderProjects()} />
-            </Switch>
-        );
-    }
-
-    renderProjects = (): JSX.Element =>
-    {
         const projects = this.props.projects;
         return (
             <div>
@@ -87,9 +84,9 @@ class ProjectsComponent extends PureComponent<Props, State>
                 <ListGroup>
                     {projects.map(project =>
                         <ListGroupItem key={project.id}>
-                            <Link to={projectRoute(project.name)}>
+                            <ProjectLink onClick={() => this.selectProject(project)}>
                                 {project.name}
-                            </Link>
+                            </ProjectLink>
                         </ListGroupItem>
                     )}
                 </ListGroup>
@@ -119,6 +116,12 @@ class ProjectsComponent extends PureComponent<Props, State>
             name
         });
     }
+
+    selectProject = (project: Project) =>
+    {
+        this.props.selectProject(project.name);
+        this.props.push(Navigation.Overview);
+    }
 }
 
 export const Projects = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
@@ -130,5 +133,6 @@ export const Projects = withRouter(connect<StateProps, DispatchProps>((state: Ap
 }), {
     loadProjects: (user: User) => loadProjects.started({ user, force: false }),
     selectProject,
-    createProject: createProject.started
+    createProject: createProject.started,
+    push
 })(ProjectsComponent));

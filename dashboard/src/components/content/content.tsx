@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {Projects} from '../projects/projects';
 import {Login} from '../login/login';
-import {Navigation, projectRoute, Routes} from '../../state/nav/routes';
+import {Navigation, Routes} from '../../state/nav/routes';
 import {Redirect, RouteComponentProps, Switch, withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {AppState} from '../../state/app/reducers';
@@ -13,6 +13,9 @@ import styled from 'styled-components';
 import {Profile} from '../profile/profile';
 import {Project} from '../../lib/project/project';
 import {getSelectedProject} from '../../state/project/reducer';
+import {MeasurementList} from '../measurement-list/measurement-list';
+import {ChartsPage} from '../visualisation/charts-page';
+import {ProjectOverview} from '../project/project-overview';
 
 interface StateProps
 {
@@ -41,23 +44,26 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
                 <Switch>
                     <SwitchRoute path={Routes.Login} component={Login}
                                  usePrimaryRoute={!this.props.authenticated} redirect={Navigation.Projects} />
-                    {this.authRoute(Routes.Projects, Projects)}
                     {this.authRoute(Routes.Profile, Profile)}
+                    {this.isProjectSelected() && this.authRoute(Routes.Overview, ProjectOverview)}
+                    {this.isProjectSelected() && this.authRoute(Routes.MeasurementList, MeasurementList)}
+                    {this.isProjectSelected() && this.authRoute(Routes.Charts, ChartsPage)}
+                    {this.authRoute(Routes.Projects, Projects)}
                     {this.authRoute(Routes.Logout, this.logoutUser)}
-                    {this.getAuthenticatedRedirect()}
+                    {this.getAuthenticatedFallback()}
                     {!this.props.authenticated && <Redirect to={Navigation.Login} />}
                 </Switch>
             </Wrapper>
         );
     }
 
-    getAuthenticatedRedirect = (): JSX.Element =>
+    getAuthenticatedFallback = (): JSX.Element =>
     {
         if (this.props.authenticated)
         {
-            if (this.props.selectedProject !== null)
+            if (this.isProjectSelected())
             {
-                return <Redirect to={projectRoute(this.props.selectedProject.name)} />;
+                return <Redirect to={Navigation.Overview} />;
             }
             else return <Redirect to={Navigation.Projects} />;
         }
@@ -75,6 +81,11 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
     {
         this.props.logoutUser();
         return <Redirect to={Navigation.Login} />;
+    }
+
+    isProjectSelected = (): boolean =>
+    {
+        return this.props.selectedProject !== null;
     }
 }
 

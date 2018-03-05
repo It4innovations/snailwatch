@@ -34,14 +34,20 @@ const epic = createEpicMiddleware(rootEpic, {
         client: new RestClient(API_SERVER)
     }
 });
-const persistConfig = {
-    key: 'auth',
+const authPersist = {
+    key: 'user',
     storage,
     whitelist: ['user']
 };
+const projectPersist = {
+    key: 'project',
+    storage,
+    whitelist: ['projects', 'selectedProject']
+};
 const rootReducer = combineReducers({
     ...reducers,
-    user: persistReducer(persistConfig, reducers.user),
+    user: persistReducer(authPersist, reducers.user),
+    project: persistReducer(projectPersist, reducers.project),
     router: routerReducer
 });
 

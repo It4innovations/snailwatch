@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Navigation, projectRoute} from '../../state/nav/routes';
+import {Navigation} from '../../state/nav/routes';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {
     Navbar, NavbarBrand, NavItem, Nav,
@@ -43,15 +43,15 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
         if (this.props.selectedProject !== null)
         {
             items.push(
-                <DropdownItem>
+                <DropdownItem key='switch-project'>
                     <Link to={Navigation.Projects}>Switch project</Link>
                 </DropdownItem>
             );
-            items.push(<DropdownItem divider />);
+            items.push(<DropdownItem divider key='divider' />);
         }
 
         items.push(
-            <DropdownItem>
+            <DropdownItem key='logout'>
                 <Link to={Navigation.Logout}>Sign out</Link>
             </DropdownItem>
         );
@@ -76,7 +76,12 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
         {
             links.push(this.authLink('Projects', Navigation.Projects));
         }
-        else links.push(this.authLink('Overview', projectRoute(this.props.selectedProject.name)));
+        else
+        {
+            links.push(this.authLink('Overview', Navigation.Overview));
+            links.push(this.authLink('Measurements', Navigation.MeasurementList));
+            links.push(this.authLink('Charts', Navigation.Charts));
+        }
 
         return <>{links}</>;
     }

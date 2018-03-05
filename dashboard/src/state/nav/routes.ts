@@ -2,19 +2,20 @@ export class Routes
 {
     static Login = '/login';
     static Logout = '/logout';
-    static Projects = '/projects';
     static Profile = '/profile';
+    static Projects = '/projects';
+    static Overview = '/overview';
+    static MeasurementList = '/measurements';
+    static Charts = '/charts';
 }
 
 export class Navigation
 {
     static Login = Routes.Login;
     static Logout = Routes.Logout;
-    static Projects = Routes.Projects;
     static Profile = Routes.Profile;
-}
-
-export function projectRoute(name: string)
-{
-    return `${Navigation.Projects}/${name}`;
+    static Projects = Routes.Projects;
+    static Overview = Routes.Overview;
+    static MeasurementList = Routes.MeasurementList;
+    static Charts = Routes.Charts;
 }
