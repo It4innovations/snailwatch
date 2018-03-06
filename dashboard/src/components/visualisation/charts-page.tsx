@@ -68,22 +68,34 @@ class ChartsPageComponent extends PureComponent<Props, State>
                 <Expander>
                     <ViewContainer />
                 </Expander>
-                {this.props.selectedView &&
-                    <Expander>
-                        <LineChart
-                            measurements={this.props.measurements}
-                            view={this.props.selectedView}
-                            groupByEnvironment={this.state.groupByEnvironment} />
-                        <ChartSettings
-                            groupByEnvironment={this.state.groupByEnvironment}
-                            onChangeGroup={this.handleChangeGroup} />
-                    </Expander>
-                }
+                {this.renderChart()}
                 <MeasurementInfo
                     measurements={this.props.measurements}
                     totalMeasurements={this.props.totalMeasurements}
                     loadMore={this.loadMoreMeasurements} />
             </Container>
+        );
+    }
+    renderChart = (): JSX.Element =>
+    {
+        if (this.props.selectedView === null) return null;
+
+        if (this.props.selectedView.projection.xAxis.trim() === '' ||
+            this.props.selectedView.projection.yAxis.trim() === '')
+        {
+            return <>Select x and y projections in the view panel.</>;
+        }
+
+        return (
+            <Expander>
+                <LineChart
+                    measurements={this.props.measurements}
+                    view={this.props.selectedView}
+                    groupByEnvironment={this.state.groupByEnvironment} />
+                <ChartSettings
+                    groupByEnvironment={this.state.groupByEnvironment}
+                    onChangeGroup={this.handleChangeGroup} />
+            </Expander>
         );
     }
 
