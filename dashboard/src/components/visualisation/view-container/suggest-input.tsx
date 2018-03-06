@@ -1,8 +1,8 @@
 import React, {PureComponent} from 'react';
 import Autosuggest, {
-    RenderSuggestionParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams
+    InputProps, RenderSuggestionParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams
 } from 'react-autosuggest';
-import {chain} from 'ramda';
+import {chain, dissoc} from 'ramda';
 import {Input} from 'reactstrap';
 
 import theme from './suggest-input.scss';
@@ -33,7 +33,7 @@ export class SuggestInput extends PureComponent<Props, State>
                     value: this.props.value,
                     onChange: this.handleChange
                 }}
-                renderInputComponent={props => <Input {...props} type='text' />}
+                renderInputComponent={this.renderInput}
                 suggestions={this.state.suggestions}
                 getSuggestionValue={s => s}
                 renderSuggestion={this.renderSuggestion}
@@ -53,6 +53,14 @@ export class SuggestInput extends PureComponent<Props, State>
         html.pop();
 
         return <div>{html}</div>;
+    }
+    renderInput = (props: InputProps<string>): JSX.Element =>
+    {
+        // https://github.com/moroshko/react-autosuggest/issues/318
+        const ref = props.ref;
+        const properties = dissoc('ref', props);
+
+        return <Input {...properties} type='text' innerRef={ref} />;
     }
 
     handleChange = (e: React.FormEvent<HTMLInputElement>) =>
