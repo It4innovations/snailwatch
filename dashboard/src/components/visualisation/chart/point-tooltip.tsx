@@ -13,7 +13,7 @@ const TooltipWrapper = styled.div`
 
 interface Props
 {
-    groupByEnvironment: boolean;
+    grouped: boolean;
 }
 
 const DATE_FORMAT = 'DD. MM. YYYY HH:mm:ss';
@@ -27,7 +27,7 @@ export class PointTooltip extends PureComponent<TooltipProps & Props>
             this.props.payload.length < 1) return null;
 
         const point = (this.props.payload[0] as {} as {payload: DataPoint}).payload;
-        const content = this.props.groupByEnvironment ?
+        const content = this.props.grouped ?
             <>
                 <div>Avg: {point.y}</div>
                 <div>Deviation: [{point.deviation[0]}, {point.deviation[1]}]</div>

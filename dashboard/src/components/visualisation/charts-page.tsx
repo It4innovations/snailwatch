@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {ViewContainer} from './view-container/view-container';
 import styled from 'styled-components';
-import {LineChart} from './chart/line-chart';
+import {GroupMode, LineChart} from './chart/line-chart';
 import {Measurement} from '../../lib/measurement/measurement';
 import {View} from '../../lib/view/view';
 import {connect} from 'react-redux';
@@ -35,7 +35,7 @@ type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
 interface State
 {
-    groupByEnvironment: boolean;
+    groupMode: GroupMode;
 }
 
 const Container = styled.div`
@@ -48,7 +48,7 @@ const Expander = styled.div`
 class ChartsPageComponent extends PureComponent<Props, State>
 {
     state: State = {
-        groupByEnvironment: true
+        groupMode: GroupMode.None
     };
 
     componentDidMount()
@@ -91,10 +91,10 @@ class ChartsPageComponent extends PureComponent<Props, State>
                 <LineChart
                     measurements={this.props.measurements}
                     view={this.props.selectedView}
-                    groupByEnvironment={this.state.groupByEnvironment} />
+                    groupMode={this.state.groupMode} />
                 <ChartSettings
-                    groupByEnvironment={this.state.groupByEnvironment}
-                    onChangeGroup={this.handleChangeGroup} />
+                    groupMode={this.state.groupMode}
+                    onChangeGroupMode={this.changeGroupMode} />
             </Expander>
         );
     }
@@ -109,11 +109,9 @@ class ChartsPageComponent extends PureComponent<Props, State>
         }));
     }
 
-    handleChangeGroup = (groupByEnvironment: boolean) =>
+    changeGroupMode = (groupMode: GroupMode) =>
     {
-        this.setState(() => ({
-            groupByEnvironment
-        }));
+        this.setState(() => ({ groupMode }));
     }
 }
 

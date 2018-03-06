@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement';
 import {View} from '../../../lib/view/view';
-import {groupBy, values, sum, reduce, min, max} from 'ramda';
+import {groupBy, values, sum, reduce, min, max, Dictionary} from 'ramda';
 import ellipsize from 'ellipsize';
 import {sort} from 'ramda';
 import {Moment} from 'moment';
@@ -15,11 +15,18 @@ import {compareDate} from '../../../util/date';
 import {getValueWithPath} from '../../../util/object';
 import {Alert} from 'reactstrap';
 
+export enum GroupMode
+{
+    None,
+    Benchmark,
+    Environment
+}
+
 interface Props
 {
     measurements: Measurement[];
     view: View;
-    groupByEnvironment: boolean;
+    groupMode: GroupMode;
 }
 
 interface State
@@ -76,7 +83,7 @@ export class LineChart extends PureComponent<Props, State>
                         <Line isAnimationActive={false} type='linear'
                               dataKey='y'
                               stroke='#8884d8'>
-                            {this.props.groupByEnvironment &&
+                            {this.isGrouped() &&
                             <ErrorBar dataKey='deviation' stroke='red' strokeWidth={4} />}
                         </Line>
                     </ReLineChart>
@@ -86,7 +93,7 @@ export class LineChart extends PureComponent<Props, State>
     }
     renderTooltip = (props: TooltipProps): JSX.Element =>
     {
-        return <PointTooltip {...props} groupByEnvironment={this.props.groupByEnvironment} />;
+        return <PointTooltip {...props} grouped={this.isGrouped()} />;
     }
 
     formatX = (value: string): string =>
@@ -109,9 +116,9 @@ export class LineChart extends PureComponent<Props, State>
     }
     generatePoints = (measurements: Measurement[], view: View): DataPoint[] =>
     {
-        if (this.props.groupByEnvironment)
+        if (this.isGrouped())
         {
-            const groups = groupBy(hashMeasurement, measurements);
+            const groups = this.group(measurements);
             return values(groups)
                 .map(group => {
                     const x = this.getXValue(group, view);
@@ -148,6 +155,15 @@ export class LineChart extends PureComponent<Props, State>
         return value;
     }
 
+    group = (measurements: Measurement[]): Dictionary<Measurement[]> =>
+    {
+        if (this.props.groupMode === GroupMode.Environment)
+        {
+            return groupBy(hashMeasurement, measurements);
+        }
+        else return groupBy(m => m.benchmark, measurements);
+    }
+
     checkViewValidity = (measurements: Measurement[], view: View): string[] =>
     {
         const errors = [];
@@ -166,6 +182,11 @@ export class LineChart extends PureComponent<Props, State>
         }
 
         return errors;
+    }
+
+    isGrouped = (): boolean =>
+    {
+        return this.props.groupMode !== GroupMode.None;
     }
 
     isAxisXValid = (value: {}): boolean =>

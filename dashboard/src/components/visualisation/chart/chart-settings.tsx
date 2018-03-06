@@ -1,9 +1,11 @@
 import React, {PureComponent} from 'react';
+import {GroupMode} from './line-chart';
+import Input from 'reactstrap/lib/Input';
 
 interface Props
 {
-    groupByEnvironment: boolean;
-    onChangeGroup(value: boolean): void;
+    groupMode: GroupMode;
+    onChangeGroupMode(value: GroupMode): void;
 }
 
 export class ChartSettings extends PureComponent<Props>
@@ -12,16 +14,20 @@ export class ChartSettings extends PureComponent<Props>
     {
         return (
             <div>
-                <label>Group by environment:</label>
-                <input type='checkbox'
-                       checked={this.props.groupByEnvironment}
-                       onChange={this.handleChangeGroup} />
+                <label>Group by:</label>
+                <Input type='select'
+                       value={this.props.groupMode.toString()}
+                       onChange={this.handleChangeGroup}>
+                    <option value={GroupMode.None}>None</option>
+                    <option value={GroupMode.Benchmark}>Benchmark</option>
+                    <option value={GroupMode.Environment}>Environment</option>
+                </Input>
             </div>
         );
     }
 
     handleChangeGroup = (e: React.FormEvent<HTMLInputElement>) =>
     {
-        this.props.onChangeGroup(e.currentTarget.checked);
+        this.props.onChangeGroupMode(Number(e.currentTarget.value) as GroupMode);
     }
 }
