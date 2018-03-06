@@ -73,7 +73,11 @@ reducer = compose(
 ))(reducer);
 
 export const getViews = (state: AppState) => state.view.views;
-export const getSelectedView = (state: AppState) =>
-    state.view.selectedView !== null ? find(v => v.id === state.view.selectedView, getViews(state)) : null;
+export const getSelectedView = (state: AppState) => {
+    if (state.view.selectedView === null) return null;
+    const view = find(v => v.id === state.view.selectedView, getViews(state));
+    if (view === undefined) return null;
+    return view;
+};
 
 export const viewReducer = reducer;
