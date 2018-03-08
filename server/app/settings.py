@@ -27,8 +27,8 @@ X_HEADERS = ['Authorization', 'Content-Type']
 
 token = get_admin_token()
 if not token:
-    token = str(uuid.uuid4().hex)
-    print('Generated admin token: {}'.format(token))
+    raise Exception("You have to specify an admin token via "
+                    "the environment variable ADMIN_TOKEN")
 
 ADMIN_AUTH_TOKEN = token
 

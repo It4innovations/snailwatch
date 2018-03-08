@@ -15,7 +15,7 @@ It is passed through an environment variable:
 +----------------+------------+-----------------------+-------------------------------------+
 | Name           | Required   | Default               | Description                         |
 +================+============+=======================+=====================================+
-| SW_API_SERVER  | True       | http://localhost:5000 | Address of the Snailwatch server.   |
+| API_SERVER     | True       | http://localhost:5000 | Address of the Snailwatch server.   |
 +----------------+------------+-----------------------+-------------------------------------+
 
 Starting the dashboard

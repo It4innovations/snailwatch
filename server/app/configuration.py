@@ -2,7 +2,7 @@ import os
 
 
 def get_option(name, default=None):
-    return os.environ.get('SW_' + name, default)
+    return os.environ.get(name, default)
 
 
 def get_server_port():

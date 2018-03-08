@@ -7,7 +7,7 @@ import {promisify} from 'util';
 const app = express();
 const port = process.env.PORT || 3000;
 const webDir = process.env.WEB_PATH || path.join(__dirname, 'web');
-const apiHost = process.env.SW_API_SERVER || 'http://localhost:5000';
+const apiHost = process.env.API_SERVER || 'http://localhost:5000';
 
 console.log(`Serving from ${webDir} on port ${port}, API address: ${apiHost}`);
 

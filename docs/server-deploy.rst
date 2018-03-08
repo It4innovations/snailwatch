@@ -16,22 +16,20 @@ storage. It can be configured with the following environment variables:
 +--------------------+------------+------------------+--------------------------------------------------------+
 | Name               | Required   | Default          | Description                                            |
 +====================+============+==================+========================================================+
-| SW_ADMIN_TOKEN     | True       |(generated) [#t]_ | Authentication token used for administrative actions.  |
+| ADMIN_TOKEN        | True       |                  | Authentication token used for administrative actions.  |
 +--------------------+------------+------------------+--------------------------------------------------------+
-| SW_MONGO_HOST      | True       | localhost        | Address of MongoDB server.                             |
+| MONGO_HOST         | True       | localhost        | Address of MongoDB server.                             |
 +--------------------+------------+------------------+--------------------------------------------------------+
-| SW_MONGO_PORT      | True       | 27017            | Port of MongoDB server.                                |
+| MONGO_PORT         | True       | 27017            | Port of MongoDB server.                                |
 +--------------------+------------+------------------+--------------------------------------------------------+
-| SW_MONGO_DB        | True       | snailwatch       | Name of MongoDB database.                              |
+| MONGO_DB           | True       | snailwatch       | Name of MongoDB database.                              |
 +--------------------+------------+------------------+--------------------------------------------------------+
-| SW_MONGO_USERNAME  | False      |                  | Auth username for MongoDB server.                      |
+| MONGO_USERNAME     | False      |                  | Auth username for MongoDB server.                      |
 +--------------------+------------+------------------+--------------------------------------------------------+
-| SW_MONGO_PASSWORD  | False      |                  | Auth password for MongoDB server.                      |
+| MONGO_PASSWORD     | False      |                  | Auth password for MongoDB server.                      |
 +--------------------+------------+------------------+--------------------------------------------------------+
-| SW_PORT            | False      | 5000             | TCP port used by the API server.                       |
+| PORT               | False      | 5000             | TCP port used by the API server.                       |
 +--------------------+------------+------------------+--------------------------------------------------------+
-
-.. [#t] If you don't specify the admin token, a random one will be generated and printed to the standard output during server startup.
 
 Running the server
 ------------------
