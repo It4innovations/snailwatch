@@ -1,6 +1,6 @@
 import uuid
 
-from app.auth import AdminAuthenticator
+from app.auth import AdminAuthenticator, MeasurementAuthenticator
 from app.configuration import get_mongo_db, get_mongo_host, get_mongo_port, \
     get_mongo_username, get_mongo_password, get_admin_token
 
@@ -42,6 +42,7 @@ RENDERERS = ['eve.render.JSONRenderer']
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 ENFORCE_IF_MATCH = False
 MONGO_QUERY_BLACKLIST = []
+BANDWIDTH_SAVER = False
 
 
 # schemas
@@ -70,7 +71,7 @@ project_schema = {
 measurement_schema = {
     'project': {
         'type': 'objectid',
-        'required': True,
+        'required': False,
         'data_relation': {
             'resource': 'projects',
             'field': '_id'
@@ -163,6 +164,20 @@ view_schema = {
         'required': True
     }
 }
+upload_session_schema = {
+    'project': {
+        'type': 'objectid',
+        'required': True,
+        'data_relation': {
+            'resource': 'projects',
+            'field': '_id'
+        }
+    },
+    'token': {
+        'type': 'string',
+        'required': False
+    }
+}
 
 # endpoints
 DOMAIN = {
@@ -178,11 +193,18 @@ DOMAIN = {
     'measurements': {
         'schema': measurement_schema,
         'resource_methods': ['GET', 'POST'],
-        'item_methods': ['GET', 'DELETE']
+        'item_methods': ['GET', 'DELETE'],
+        'authentication': MeasurementAuthenticator
     },
     'views': {
         'schema': view_schema,
         'resource_methods': ['GET', 'POST'],
         'item_methods': ['GET', 'PATCH', 'DELETE']
+    },
+    'uploadsessions': {
+        'schema': upload_session_schema,
+        'extra_response_fields': ['token'],
+        'resource_methods': ['GET', 'POST'],
+        'item_methods': ['GET', 'DELETE']
     }
 }

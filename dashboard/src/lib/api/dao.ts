@@ -28,3 +28,7 @@ export interface ViewDAO extends DAO
         value: string;
     }>;
 }
+export interface UploadTokenDAO extends DAO
+{
+    token: string;
+}

@@ -2,17 +2,15 @@ from datetime import datetime
 import requests
 
 
-def create_context(server, project, session):
+def create_context(server, upload_token):
     """
     Creates context for measurement results uploads.
     :param server: Address of the Snailwatch server
-    :param project: Project id
-    :param session: Session token
+    :param upload_token: Upload token
     """
     return {
         'server': server,
-        'project': project,
-        'session': session
+        'upload_token': upload_token
     }
 
 
@@ -32,7 +30,6 @@ def send_measurement(context, benchmark, environment, result, timestamp=None):
         timestamp = timestamp.replace(microsecond=0)
 
     payload = {
-        'project': context['project'],
         'benchmark': benchmark,
         'timestamp': timestamp.isoformat(),
         'environment': environment,
@@ -41,7 +38,7 @@ def send_measurement(context, benchmark, environment, result, timestamp=None):
 
     hdr = {
         'Content-Type': 'application/json',
-        'Authorization': context['session']
+        'Authorization': context['upload_token']
     }
 
     response = requests.post('{}/measurements'.format(context['server']),

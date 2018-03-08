@@ -4,7 +4,7 @@ import {ServiceContainer} from '../app/di';
 import {AppState} from '../app/reducers';
 import {
     createProject, CreateProjectParams, LoadProjectsParams, loadProjects, loadProject,
-    LoadProjectParams, selectProject
+    LoadProjectParams, selectProject, generateUploadToken
 } from './actions';
 import {Observable} from 'rxjs/Observable';
 import '../../util/redux-observable';
@@ -17,7 +17,7 @@ import {getProjectByName, getProjects} from './reducer';
 import {getUser} from '../user/reducer';
 import {Action} from 'typescript-fsa';
 import {AppEpic} from '../app/app-epic';
-import {mapRequestToActions} from '../../util/request';
+import {createRequestEpic, mapRequestToActions} from '../../util/request';
 import {clearMeasurements} from '../measurement/actions';
 import {clearViews} from '../view/actions';
 
@@ -109,10 +109,15 @@ const clearDataAfterProjectSelect: AppEpic = (action$: ActionsObservable<ReduxAc
             clearViews()
         ]));
 
+const generateUploadTokenEpic = createRequestEpic(generateUploadToken, (action, state, deps) =>
+    deps.client.generateUploadToken(action.payload.user, action.payload.project)
+);
+
 export const projectEpics = combineEpics(
     loadProjectsEpic,
     loadProjectEpic,
     createProjectEpic,
     loadProjectAfterSelectEpic,
-    clearDataAfterProjectSelect
+    clearDataAfterProjectSelect,
+    generateUploadTokenEpic
 );

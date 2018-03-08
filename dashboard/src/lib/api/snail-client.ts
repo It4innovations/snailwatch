@@ -19,6 +19,7 @@ export interface SnailClient
     createProject(user: User, name: string): Observable<boolean>;
     loadProjects(user: User): Observable<Project[]>;
     loadProject(user: User, name: string): Observable<Project>;
+    generateUploadToken(user: User, project: Project): Observable<string>;
 
     loadMeasurements(user: User, project: Project,
                      filters: Filter[],

@@ -1,7 +1,7 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {AppState} from '../app/reducers';
 import {Project} from '../../lib/project/project';
-import {clearProjects, createProject, loadProject, loadProjects, selectProject} from './actions';
+import {clearProjects, createProject, loadProject, loadProjects, selectProject, generateUploadToken} from './actions';
 import {createRequest, hookRequestActions, Request} from '../../util/request';
 import {createSelector} from 'reselect';
 import {compose} from 'ramda';
@@ -10,29 +10,37 @@ export interface ProjectState
 {
     projects: Project[];
     selectedProject: string | null;
+    uploadToken: string | null;
+
     loadProjectsRequest: Request;
     loadProjectRequest: Request;
     createProjectRequest: Request;
+    generateUploadTokenRequest: Request;
 }
 
 let reducer = reducerWithInitialState<ProjectState>({
     projects: [],
     selectedProject: null,
+    uploadToken: null,
     loadProjectsRequest: createRequest(),
     loadProjectRequest: createRequest(),
-    createProjectRequest: createRequest()
+    createProjectRequest: createRequest(),
+    generateUploadTokenRequest: createRequest()
 })
 .case(clearProjects, state => ({
     ...state,
     loadProjectRequest: createRequest(),
     loadProjectsRequest: createRequest(),
     createProjectRequest: createRequest(),
+    generateUploadTokenRequest: createRequest(),
     projects: [],
-    selectedProject: null
+    selectedProject: null,
+    uploadToken: null
 }))
 .case(selectProject, (state, selectedProject) => ({
     ...state,
-    selectedProject
+    selectedProject,
+    uploadToken: null
 }));
 
 reducer = compose(
@@ -52,7 +60,13 @@ reducer = compose(
     ),
     (r: typeof reducer) => hookRequestActions(r,
         createProject,
-        (state: ProjectState) => state.createProjectRequest
+        (state: ProjectState) => state.createProjectRequest),
+    (r: typeof reducer) => hookRequestActions(r,
+        generateUploadToken,
+        state => state.generateUploadTokenRequest,
+        (state: ProjectState, action) => ({
+            uploadToken: action.payload.result
+        })
 ))(reducer);
 
 export const getProjects = (state: AppState) => state.project.projects;
@@ -61,5 +75,6 @@ export const getProjectByName = (projects: Project[], name: string) => projects.
 export const getSelectedProject = createSelector(getProjects, getSelectedProjectName,
     (projects: Project[], name: string) => name === null ? null : getProjectByName(projects, name)
 );
+export const getUploadToken = (state: AppState) => state.project.uploadToken;
 
 export const projectReducer = reducer;

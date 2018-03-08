@@ -1,7 +1,9 @@
 import werkzeug.security
-import uuid
 from eve.auth import TokenAuth
 from flask import current_app as app
+
+from .db.uploadsession import UploadSessionRepo
+from .db.loginsession import LoginSessionRepo
 
 
 class AdminAuthenticator(TokenAuth):
@@ -12,7 +14,8 @@ class AdminAuthenticator(TokenAuth):
 
 class TokenAuthenticator(TokenAuth):
     def check_auth(self, token, allowed_roles, resource, method):
-        session = find_session(token)
+        repo = LoginSessionRepo(app)
+        session = repo.find_session(token)
         if session:
             self.set_request_auth_value(session['user_id'])
             return True
@@ -20,52 +23,19 @@ class TokenAuthenticator(TokenAuth):
         return False
 
 
-def find_session(token):
-    sessions = app.data.driver.db['sessions']
-    session = sessions.find_one({
-        'token': token
-    })
-    return session
+class MeasurementAuthenticator(TokenAuth):
+    def check_auth(self, token, allowed_roles, resource, method):
+        if method == "POST":
+            repo = UploadSessionRepo(app)
+            session = repo.find_session(token)
+            if session:
+                self.set_request_auth_value(session['owner'])
+                return True
 
-
-def create_session(user_id):
-    token = str(uuid.uuid4().hex)
-    session = {
-        'user_id': user_id,
-        'token': token
-    }
-
-    sessions = app.data.driver.db['sessions']
-    sessions.insert_one(session)
-    return token
-
-
-def find_user_by_username(username):
-    users = app.data.driver.db['users']
-    user = users.find_one({
-        'username': username
-    })
-    return user
-
-
-def find_user_by_id(id):
-    users = app.data.driver.db['users']
-    user = users.find_one({
-        '_id': id
-    })
-    return user
-
-
-def update_user_password(user, password):
-    hash = hash_password(password)
-    users = app.data.driver.db['users']
-    users.update({
-        '_id': user['_id']
-    }, {
-        '$set': {
-            'password': hash
-        }
-    })
+            return False
+        else:
+            return TokenAuthenticator().check_auth(token, allowed_roles,
+                                                   resource, method)
 
 
 def hash_password(password):

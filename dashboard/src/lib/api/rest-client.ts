@@ -8,7 +8,7 @@ import {Measurement} from '../measurement/measurement';
 import moment from 'moment';
 import {Filter} from '../view/filter';
 import {buildRequestFilter} from './filter';
-import {DAO, MeasurementDAO, ProjectDAO, ViewDAO} from './dao';
+import {DAO, MeasurementDAO, ProjectDAO, UploadTokenDAO, ViewDAO} from './dao';
 import {View} from '../view/view';
 
 interface ArrayResponse<T>
@@ -89,6 +89,15 @@ export class RestClient implements SnailClient
                 }
                 return projects[0];
             });
+    }
+
+    generateUploadToken(user: User, project: Project): Observable<string>
+    {
+        return this.call('/uploadsessions', 'POST', {
+            project: project.id
+        }, {
+            token: user.token
+        }).map((data: UploadTokenDAO) => data.token);
     }
 
     loadMeasurements(user: User, project: Project,

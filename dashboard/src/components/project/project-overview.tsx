@@ -9,12 +9,18 @@ import {clearMeasurements} from '../../state/measurement/actions';
 import {Measurement} from '../../lib/measurement/measurement';
 import {getMeasurements} from '../../state/measurement/reducer';
 import {Request} from '../../util/request';
-import {getSelectedProject} from '../../state/project/reducer';
+import {getSelectedProject, getUploadToken} from '../../state/project/reducer';
 import {Button, Card, CardBody, Collapse, Input, InputGroup, InputGroupAddon} from 'reactstrap';
 import SyntaxHighlighter, { registerLanguage } from 'react-syntax-highlighter/light';
 import python from 'react-syntax-highlighter/languages/hljs/python';
 import {dracula} from 'react-syntax-highlighter/styles/hljs';
 import {API_SERVER} from '../../configuration';
+import Badge from 'reactstrap/lib/Badge';
+import {generateUploadToken, GenerateUploadTokenParams} from '../../state/project/actions';
+import styled from 'styled-components';
+import CopyToClipboard from 'react-copy-to-clipboard';
+import {toast, ToastContainer} from 'react-toastify';
+import MdContentCopy from 'react-icons/lib/md/content-copy';
 
 registerLanguage('python', python);
 
@@ -24,10 +30,13 @@ interface StateProps
     project: Project;
     measurements: Measurement[];
     loadProjectRequest: Request;
+    uploadToken: string | null;
+    generateUploadTokenRequest: Request;
 }
 interface DispatchProps
 {
     clearMeasurements(): void;
+    generateUploadToken(params: GenerateUploadTokenParams): void;
 }
 interface State
 {
@@ -35,6 +44,10 @@ interface State
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
+
+const UploadTokenWrapper = styled.div`
+  font-size: 20px;
+`;
 
 class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps<void>, State>
 {
@@ -55,6 +68,7 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
 
         return (
             <div>
+                <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={false} />
                 <div>
                     <h4>Project overview</h4>
                     <InputGroup>
@@ -84,16 +98,22 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
         return (
             <Card>
                 <CardBody>
-                    We provide a simple Python script located at <code>server/scripts/collect.py</code> to
-                    simplify measurement results uploads.<br />
-                    You can use the following snippet as an example how to use it.
+                    <div>
+                        To upload measurements, you need an upload token that is paired with this project.
+                    </div>
+                    {this.renderGenerateButton()}
+
+                    <div>
+                        We provide a simple Python script located at <code>server/scripts/collect.py</code> to
+                        simplify measurement results uploads.<br />
+                        You can use the following snippet as an example how to use it.
+                    </div>
                     <SyntaxHighlighter language='python' style={dracula}>
-                        {`from collect import create_context, send_measurement
+{`from collect import create_context, send_measurement
 
 ctx = create_context(
     "${API_SERVER}", # server address
-    "${this.props.project.id}", # project id
-    "${this.props.user.token}" # session token
+    "${this.getUploadToken()}" # upload token
 )
 
 send_measurement(ctx,
@@ -113,6 +133,48 @@ send_measurement(ctx,
             </Card>
         );
     }
+    renderGenerateButton = (): JSX.Element =>
+    {
+        if (this.props.generateUploadTokenRequest.loading)
+        {
+            return <div>Loading...</div>;
+        }
+        if (this.props.uploadToken !== null)
+        {
+            return (
+                <UploadTokenWrapper>
+                    <Badge color='info'>
+                        {this.props.uploadToken}
+                    </Badge>
+                    <CopyToClipboard text={this.props.uploadToken}
+                                     onCopy={() => toast.info('Upload token copied to clipboard!')}>
+                        <span title='Copy upload token to clipboard'>
+                            <MdContentCopy size={22} />
+                        </span>
+                    </CopyToClipboard>
+                </UploadTokenWrapper>
+            );
+        }
+
+        return <Button color='success' onClick={this.generateUploadToken}>Generate upload token</Button>;
+    }
+
+    getUploadToken = (): string =>
+    {
+        if (this.props.uploadToken !== null)
+        {
+            return this.props.uploadToken;
+        }
+        return '<upload-token>';
+    }
+
+    generateUploadToken = () =>
+    {
+        this.props.generateUploadToken({
+            user: this.props.user,
+            project: this.props.project
+        });
+    }
 
     toggleMeasurementOpened = () =>
     {
@@ -126,7 +188,10 @@ export const ProjectOverview = withRouter(connect<StateProps, DispatchProps>((st
     user: getUser(state),
     project: getSelectedProject(state),
     measurements: getMeasurements(state),
-    loadProjectRequest: state.project.loadProjectRequest
+    loadProjectRequest: state.project.loadProjectRequest,
+    uploadToken: getUploadToken(state),
+    generateUploadTokenRequest: state.project.generateUploadTokenRequest
 }), {
-    clearMeasurements
+    clearMeasurements,
+    generateUploadToken: generateUploadToken.started
 })(ProjectOverviewComponent));

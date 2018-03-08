@@ -27,3 +27,10 @@ export const createProject = actionCreator.async<CreateProjectParams, boolean>('
 
 export const selectProject = actionCreator<string>('select');
 export const clearProjects = actionCreator('clear');
+
+export interface GenerateUploadTokenParams
+{
+    user: User;
+    project: Project;
+}
+export const generateUploadToken = actionCreator.async<GenerateUploadTokenParams, string>('generate-upload-token');

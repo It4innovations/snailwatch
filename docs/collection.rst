@@ -1,8 +1,8 @@
 Measurement collection
 ======================
-Measurements are grouped into projects that belong to a single user. Therefore
-before you can upload data to the server, you have to generate a session token
-for your user account and create a project. You can do both either using the
+Measurements are grouped into projects that belong to a single user.
+Before you can upload data to the server, you have to create a project and
+generate an upload token for the project. You can do both either using the
 web :doc:`dashboard <dashboard>` or using the REST :api:`API <>`.
 
 For now let's assume you chose the latter. You can generate a session token
@@ -30,10 +30,21 @@ Example curl request to create a project:
     <server>/projects -d '{"name": "MyAwesomeProject"}'
 
 You will get back a JSON object with the project's id which will be required
-for uploading measurements. The project id will be stored in a key named ``_id``
-in the returned object.
+for creating an upload token.
+The project id will be stored in a key named ``_id`` in the returned object.
 
-After you have a session token and project id, you can upload measurements to
+After you are logged in and you know the id of your project, you can finally
+generate an upload token for uploading the data.
+
+.. code-block:: bash
+
+    $ curl -H "Content-Type: application/json" -H "Authorization: <session-token>" \
+    <server>/collectsessions -d '{"project": <project-id>}'
+
+You will get back a JSON object. It's ``token`` key corresponds to the
+generated upload_token.
+
+After you have an upload token, you can upload measurements for
 the given project. If you don't feel like creating HTTP requests manually,
 you can use the helper scripts that we prepared (they are located in the
 ``server/scripts`` folder). For using the uploading API directly look
@@ -43,9 +54,8 @@ Example curl request to upload a measurement to a project:
 
 .. code-block:: bash
 
-    $ curl -H "Content-Type: application/json" -H "Authorization: <session-token>" \
+    $ curl -H "Content-Type: application/json" -H "Authorization: <upload-token>" \
     <server>/measurements -d '{
-        "project": <project id as string>,
         "benchmark": "MyFirstBenchmark",
         "environment": {
             "commit": "abcdef..."

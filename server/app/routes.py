@@ -1,8 +1,9 @@
 from eve import ID_FIELD
 from flask import request, abort, jsonify
 
-from .auth import find_user_by_username, check_password, create_session, \
-    find_session, find_user_by_id, update_user_password
+from .db.loginsession import LoginSessionRepo
+from .db.user import UserRepo
+from .auth import check_password
 
 
 def setup_routes(app):
@@ -13,12 +14,15 @@ def setup_routes(app):
         password = data.get('password', None)
 
         if username and password:
-            user = find_user_by_username(username)
+            user_repo = UserRepo(app)
+            login_repo = LoginSessionRepo(app)
+
+            user = user_repo.find_user_by_username(username)
             if not user:
                 abort(403)
 
             if check_password(user, password):
-                token = create_session(user[ID_FIELD])
+                token = login_repo.create_session(user[ID_FIELD])['token']
                 return jsonify(token)
             else:
                 abort(403)
@@ -30,14 +34,11 @@ def setup_routes(app):
         data = request.get_json()
         old_password = data.get('oldPassword', None)
         new_password = data.get('newPassword', None)
-        token = request.headers['Authorization']
+        token = request.headers.get('Authorization', None)
 
         if old_password and new_password and token:
-            session = find_session(token)
-            if not session:
-                abort(403)
-
-            user = find_user_by_id(session['user_id'])
+            user_repo = UserRepo(app)
+            user = user_repo.get_user_from_request(request)
             if not user:
                 abort(403)
 
@@ -47,7 +48,7 @@ def setup_routes(app):
             if len(new_password) < 8:
                 abort(400)
 
-            update_user_password(user, new_password)
+            user_repo.update_user_password(user, new_password)
             return jsonify()
         else:
             abort(400)
