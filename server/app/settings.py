@@ -1,5 +1,3 @@
-import uuid
-
 from app.auth import AdminAuthenticator, MeasurementAuthenticator
 from app.configuration import get_mongo_db, get_mongo_host, get_mongo_port, \
     get_mongo_username, get_mongo_password, get_admin_token
