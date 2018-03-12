@@ -28,9 +28,10 @@ export const createProject = actionCreator.async<CreateProjectParams, boolean>('
 export const selectProject = actionCreator<string>('select');
 export const clearProjects = actionCreator('clear');
 
-export interface GenerateUploadTokenParams
+export interface UploadTokenParams
 {
     user: User;
     project: Project;
 }
-export const generateUploadToken = actionCreator.async<GenerateUploadTokenParams, string>('generate-upload-token');
+export const loadUploadToken = actionCreator.async<UploadTokenParams, string>('load-upload-token');
+export const regenerateUploadToken = actionCreator.async<UploadTokenParams, string>('generate-upload-token');

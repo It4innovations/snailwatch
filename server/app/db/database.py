@@ -2,18 +2,19 @@ import datetime
 import uuid
 
 import pymongo
-from flask import request, current_app as app, abort
+from flask import request, current_app as app
 
-from app.db.uploadsession import UploadSessionRepo
+from .uploadtoken import UploadTokenRepo
 from .user import UserRepo
-from .project import ProjectRepo
 from ..auth import hash_password
 
 
 def init_database(app):
     app.data.driver.db['sessions'].create_index('token', unique=True)
-    app.data.driver.db['uploadsessions'].create_index(
+    app.data.driver.db['uploadtokens'].create_index(
         'token', unique=True)
+    app.data.driver.db['uploadtokens'].create_index(
+        'project', unique=True)
     app.data.driver.db['views'].create_index([
         ('project', pymongo.ASCENDING),
         ('name', pymongo.ASCENDING)
@@ -28,11 +29,18 @@ def before_insert_user(users):
     return users
 
 
+def after_insert_project(projects):
+    user_repo = UserRepo(app)
+    user = user_repo.get_user_from_request(request)
+    session_repo = UploadTokenRepo(app)
+
+    for project in projects:
+        session_repo.create_token(project, user, uuid.uuid4().hex)
+
+
 def before_insert_measurement(measurements):
-    session_repo = UploadSessionRepo(app)
-    session = session_repo.get_session_from_request(request)
-    if not session:
-        abort(403)
+    session_repo = UploadTokenRepo(app)
+    session = session_repo.get_token_from_request(request)
 
     project_id = session['project']
 
@@ -47,21 +55,7 @@ def before_insert_measurement(measurements):
             measurement['timestamp'] = datetime.datetime.utcnow()
 
 
-def before_insert_uploadsessions(sessions):
-    user_repo = UserRepo(app)
-
-    user = user_repo.get_user_from_request(request)
-    project_repo = ProjectRepo(app)
-
-    for session in sessions:
-        project = project_repo.find_project_by_id(session['project'])
-        if not project or project['owner'] != user['_id']:
-            abort(403)
-
-        session['token'] = uuid.uuid4().hex
-
-
 def set_db_callbacks(app):
     app.on_insert_users += before_insert_user
+    app.on_inserted_projects += after_insert_project
     app.on_insert_measurements += before_insert_measurement
-    app.on_insert_uploadsessions += before_insert_uploadsessions

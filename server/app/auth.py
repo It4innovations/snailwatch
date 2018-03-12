@@ -2,7 +2,7 @@ import werkzeug.security
 from eve.auth import TokenAuth
 from flask import current_app as app
 
-from .db.uploadsession import UploadSessionRepo
+from .db.uploadtoken import UploadTokenRepo
 from .db.loginsession import LoginSessionRepo
 
 
@@ -26,8 +26,8 @@ class TokenAuthenticator(TokenAuth):
 class MeasurementAuthenticator(TokenAuth):
     def check_auth(self, token, allowed_roles, resource, method):
         if method == "POST":
-            repo = UploadSessionRepo(app)
-            session = repo.find_session(token)
+            repo = UploadTokenRepo(app)
+            session = repo.find_token(token)
             if session:
                 self.set_request_auth_value(session['owner'])
                 return True

@@ -1,7 +1,8 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {AppState} from '../app/reducers';
 import {Project} from '../../lib/project/project';
-import {clearProjects, createProject, loadProject, loadProjects, selectProject, generateUploadToken} from './actions';
+import {clearProjects, createProject, loadProject, loadProjects, selectProject,
+    loadUploadToken, regenerateUploadToken} from './actions';
 import {createRequest, hookRequestActions, Request} from '../../util/request';
 import {createSelector} from 'reselect';
 import {compose} from 'ramda';
@@ -15,7 +16,7 @@ export interface ProjectState
     loadProjectsRequest: Request;
     loadProjectRequest: Request;
     createProjectRequest: Request;
-    generateUploadTokenRequest: Request;
+    uploadTokenRequest: Request;
 }
 
 let reducer = reducerWithInitialState<ProjectState>({
@@ -25,14 +26,14 @@ let reducer = reducerWithInitialState<ProjectState>({
     loadProjectsRequest: createRequest(),
     loadProjectRequest: createRequest(),
     createProjectRequest: createRequest(),
-    generateUploadTokenRequest: createRequest()
+    uploadTokenRequest: createRequest()
 })
 .case(clearProjects, state => ({
     ...state,
     loadProjectRequest: createRequest(),
     loadProjectsRequest: createRequest(),
     createProjectRequest: createRequest(),
-    generateUploadTokenRequest: createRequest(),
+    uploadTokenRequest: createRequest(),
     projects: [],
     selectedProject: null,
     uploadToken: null
@@ -62,8 +63,14 @@ reducer = compose(
         createProject,
         (state: ProjectState) => state.createProjectRequest),
     (r: typeof reducer) => hookRequestActions(r,
-        generateUploadToken,
-        state => state.generateUploadTokenRequest,
+        loadUploadToken,
+        state => state.uploadTokenRequest,
+        (state: ProjectState, action) => ({
+            uploadToken: action.payload.result
+        })),
+    (r: typeof reducer) => hookRequestActions(r,
+        regenerateUploadToken,
+        state => state.uploadTokenRequest,
         (state: ProjectState, action) => ({
             uploadToken: action.payload.result
         })

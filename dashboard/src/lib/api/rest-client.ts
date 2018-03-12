@@ -5,10 +5,10 @@ import axios from 'axios';
 import {User} from '../user/user';
 import {Project} from '../project/project';
 import {Measurement} from '../measurement/measurement';
-import moment from 'moment';
 import {Filter} from '../view/filter';
 import {buildRequestFilter} from './filter';
-import {DAO, MeasurementDAO, ProjectDAO, UploadTokenDAO, ViewDAO} from './dao';
+import {DAO, MeasurementDAO, ProjectDAO, UploadTokenDAO, ViewDAO,
+    parseMeasurement, parseView, parseProject} from './dao';
 import {View} from '../view/view';
 
 interface ArrayResponse<T>
@@ -66,7 +66,7 @@ export class RestClient implements SnailClient
         })
         .map((data: ArrayResponse<ProjectDAO>) =>
             data._items
-            .map(p => this.parseProject(p))
+            .map(p => parseProject(p))
         );
     }
     loadProject(user: User, name: string): Observable<Project>
@@ -80,7 +80,7 @@ export class RestClient implements SnailClient
         })
             .map((data: ArrayResponse<ProjectDAO>) =>
                 data._items
-                    .map(p => this.parseProject(p))
+                    .map(p => parseProject(p))
             )
             .map(projects => {
                 if (projects.length === 0)
@@ -91,13 +91,21 @@ export class RestClient implements SnailClient
             });
     }
 
-    generateUploadToken(user: User, project: Project): Observable<string>
+    loadUploadToken(user: User, project: Project): Observable<string>
     {
-        return this.call('/uploadsessions', 'POST', {
+        return this.call('/uploadtokens', 'GET', {
+            where: { project: project.id }
+        }, {
+            token: user.token
+        }).map((dao: ArrayResponse<UploadTokenDAO>) => dao._items[0].token);
+    }
+    regenerateUploadToken(user: User, project: Project): Observable<string>
+    {
+        return this.call('/revoke-upload-token', 'POST', {
             project: project.id
         }, {
             token: user.token
-        }).map((data: UploadTokenDAO) => data.token);
+        }).map((token: string) => token);
     }
 
     loadMeasurements(user: User, project: Project,
@@ -122,7 +130,7 @@ export class RestClient implements SnailClient
         })
             .map((data: PaginatedResponse<ArrayResponse<MeasurementDAO>>) => ({
                 items: data._items
-                    .map(m => this.parseMeasurement(m)),
+                    .map(m => parseMeasurement(m)),
                 total: data._meta.total
             })
         );
@@ -145,7 +153,7 @@ export class RestClient implements SnailClient
         })
             .map((data: ArrayResponse<ViewDAO>) =>
                 data._items
-                    .map(v => this.parseView(v))
+                    .map(v => parseView(v))
             );
     }
     createView(user: User, project: Project, view: View): Observable<View>
@@ -189,41 +197,6 @@ export class RestClient implements SnailClient
             token: user.token
         })
         .map(() => true);
-    }
-
-    private parseProject(project: ProjectDAO): Project
-    {
-        return {
-            id: project._id,
-            name: project.name,
-            createdAt: moment(project._created)
-        };
-    }
-    private parseMeasurement(measurement: MeasurementDAO): Measurement
-    {
-        return {
-            id: measurement._id,
-            benchmark: measurement.benchmark,
-            timestamp: moment(measurement.timestamp),
-            environment: {...measurement.environment},
-            result: {...measurement.result}
-        };
-    }
-    private parseView(view: ViewDAO): View
-    {
-        return {
-            id: view._id,
-            name: view.name,
-            projection: {
-                xAxis: view.xAxis,
-                yAxis: view.yAxis
-            },
-            filters: view.filters.map(f => ({
-                path: f.path,
-                operator: f.operator,
-                value: f.value
-            }))
-        };
     }
 
     private call<T>(path: string, method: 'GET' | 'POST' | 'DELETE' | 'PATCH',

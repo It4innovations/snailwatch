@@ -1,4 +1,3 @@
-from ..auth import hash_password
 from .loginsession import LoginSessionRepo
 
 
@@ -18,12 +17,11 @@ class UserRepo(object):
         })
 
     def update_user_password(self, user, password):
-        hash = hash_password(password)
         self.table.update({
             '_id': user['_id']
         }, {
             '$set': {
-                'password': hash
+                'password': password
             }
         })
 

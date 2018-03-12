@@ -162,7 +162,7 @@ view_schema = {
         'required': True
     }
 }
-upload_session_schema = {
+upload_token_schema = {
     'project': {
         'type': 'objectid',
         'required': True,
@@ -186,6 +186,7 @@ DOMAIN = {
     },
     'projects': {
         'schema': project_schema,
+        'extra_response_fields': ['owner'],
         'resource_methods': ['GET', 'POST']
     },
     'measurements': {
@@ -199,10 +200,8 @@ DOMAIN = {
         'resource_methods': ['GET', 'POST'],
         'item_methods': ['GET', 'PATCH', 'DELETE']
     },
-    'uploadsessions': {
-        'schema': upload_session_schema,
-        'extra_response_fields': ['token'],
-        'resource_methods': ['GET', 'POST'],
-        'item_methods': ['GET', 'DELETE']
+    'uploadtokens': {
+        'schema': upload_token_schema,
+        'resource_methods': ['GET']
     }
 }

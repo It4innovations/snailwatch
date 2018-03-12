@@ -1,9 +1,13 @@
+import uuid
+
+from bson import ObjectId
 from eve import ID_FIELD
 from flask import request, abort, jsonify
 
+from .db.uploadtoken import UploadTokenRepo
 from .db.loginsession import LoginSessionRepo
 from .db.user import UserRepo
-from .auth import check_password
+from .auth import check_password, hash_password
 
 
 def setup_routes(app):
@@ -48,7 +52,32 @@ def setup_routes(app):
             if len(new_password) < 8:
                 abort(400)
 
-            user_repo.update_user_password(user, new_password)
+            user_repo.update_user_password(user, hash_password(new_password))
             return jsonify()
+        else:
+            abort(400)
+
+    @app.route('/revoke-upload-token', methods=['POST'])
+    def revoke_upload_token():
+        data = request.get_json()
+        project_id = data.get('project', None)
+        token = request.headers.get('Authorization', None)
+
+        if project_id and token:
+            user_repo = UserRepo(app)
+            user = user_repo.get_user_from_request(request)
+            if not user:
+                abort(403)
+
+            token_repo = UploadTokenRepo(app)
+            old_token = token_repo.find_token_by_project(ObjectId(project_id))
+
+            if old_token['owner'] != user['_id']:
+                abort(403)
+
+            new_token = uuid.uuid4().hex
+            token_repo.update_token(old_token, new_token)
+
+            return jsonify(new_token)
         else:
             abort(400)
