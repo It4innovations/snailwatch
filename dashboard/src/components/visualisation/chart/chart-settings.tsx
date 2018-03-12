@@ -20,6 +20,7 @@ export class ChartSettings extends PureComponent<Props>
                        onChange={this.handleChangeGroup}>
                     <option value={GroupMode.None}>None</option>
                     <option value={GroupMode.Benchmark}>Benchmark</option>
+                    <option value={GroupMode.AxisX}>X axis</option>
                     <option value={GroupMode.Environment}>Environment</option>
                 </Input>
             </div>

@@ -19,7 +19,8 @@ export enum GroupMode
 {
     None,
     Benchmark,
-    Environment
+    Environment,
+    AxisX
 }
 
 interface Props
@@ -118,10 +119,10 @@ export class LineChart extends PureComponent<Props, State>
     {
         if (this.isGrouped())
         {
-            const groups = this.group(measurements);
+            const groups = this.group(measurements, view);
             return values(groups)
                 .map(group => {
-                    const x = this.getXValue(group, view);
+                    const x = this.getXValue(group[0], view);
                     const yValues: number[] = group.map(value =>
                         Number(getValueWithPath(value, view.projection.yAxis)));
                     const avg = sum(yValues) / yValues.length;
@@ -139,15 +140,15 @@ export class LineChart extends PureComponent<Props, State>
                 });
         }
         else return measurements.map(m => ({
-            x: this.getXValue([m], view).toString(),
+            x: this.getXValue(m, view).toString(),
             y: Number(getValueWithPath(m, view.projection.yAxis)),
             deviation: [],
             measurements: [m]
         }));
     }
-    getXValue = (group: Measurement[], view: View): string =>
+    getXValue = (measurement: Measurement, view: View): string =>
     {
-        const value = getValueWithPath(group[0], view.projection.xAxis);
+        const value = getValueWithPath(measurement, view.projection.xAxis);
         if (view.projection.xAxis === 'timestamp')
         {
             return (value as {} as Moment).format(DATE_FORMAT);
@@ -155,13 +156,19 @@ export class LineChart extends PureComponent<Props, State>
         return value;
     }
 
-    group = (measurements: Measurement[]): Dictionary<Measurement[]> =>
+    group = (measurements: Measurement[], view: View): Dictionary<Measurement[]> =>
     {
-        if (this.props.groupMode === GroupMode.Environment)
+        switch (this.props.groupMode)
         {
-            return groupBy(hashMeasurement, measurements);
+            case GroupMode.Benchmark:
+                return groupBy(m => m.benchmark, measurements);
+            case GroupMode.AxisX:
+                return groupBy(m => this.getXValue(m, view), measurements);
+            case GroupMode.Environment:
+                return groupBy(hashMeasurement, measurements);
+            default:
+                return groupBy(m => m.benchmark, measurements);
         }
-        else return groupBy(m => m.benchmark, measurements);
     }
 
     checkViewValidity = (measurements: Measurement[], view: View): string[] =>
