@@ -64,6 +64,17 @@ project_schema = {
         'empty': False,
         'required': True,
         'unique_to_user': True
+    },
+    'writers': {
+        'type': 'list',
+        'required': False,
+        'schema': {
+            'type': 'objectid',
+            'data_relation': {
+                'resource': 'users',
+                'field': '_id'
+            }
+        }
     }
 }
 measurement_schema = {
@@ -162,20 +173,6 @@ view_schema = {
         'required': True
     }
 }
-upload_token_schema = {
-    'project': {
-        'type': 'objectid',
-        'required': True,
-        'data_relation': {
-            'resource': 'projects',
-            'field': '_id'
-        }
-    },
-    'token': {
-        'type': 'string',
-        'required': False
-    }
-}
 
 # endpoints
 DOMAIN = {
@@ -186,7 +183,6 @@ DOMAIN = {
     },
     'projects': {
         'schema': project_schema,
-        'extra_response_fields': ['owner'],
         'resource_methods': ['GET', 'POST']
     },
     'measurements': {
@@ -199,9 +195,5 @@ DOMAIN = {
         'schema': view_schema,
         'resource_methods': ['GET', 'POST'],
         'item_methods': ['GET', 'PATCH', 'DELETE']
-    },
-    'uploadtokens': {
-        'schema': upload_token_schema,
-        'resource_methods': ['GET']
     }
 }

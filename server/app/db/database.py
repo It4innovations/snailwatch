@@ -1,8 +1,7 @@
 import datetime
 import uuid
-
 import pymongo
-from flask import request, current_app as app
+from flask import request, current_app as app, abort
 
 from .uploadtoken import UploadTokenRepo
 from .user import UserRepo
@@ -27,6 +26,14 @@ def before_insert_user(users):
     for user in users:
         user['password'] = hash_password(user['password'])
     return users
+
+
+def before_insert_project(projects):
+    user_repo = UserRepo(app)
+    user = user_repo.get_user_from_request(request)
+
+    for project in projects:
+        project['writers'] = [user['_id']]
 
 
 def after_insert_project(projects):
@@ -57,5 +64,6 @@ def before_insert_measurement(measurements):
 
 def set_db_callbacks(app):
     app.on_insert_users += before_insert_user
+    app.on_insert_projects += before_insert_project
     app.on_inserted_projects += after_insert_project
     app.on_insert_measurements += before_insert_measurement

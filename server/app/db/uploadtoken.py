@@ -1,7 +1,9 @@
 from bson import ObjectId
 
+from .repository import Repository
 
-class UploadTokenRepo(object):
+
+class UploadTokenRepo(Repository):
     def __init__(self, app):
         self.table = app.data.driver.db['uploadtokens']
 
@@ -19,7 +21,7 @@ class UploadTokenRepo(object):
 
     def find_token_by_project(self, project_id):
         return self.table.find_one({
-            'project': project_id
+            'project': self.normalize_id(project_id)
         })
 
     def get_token_from_request(self, request):

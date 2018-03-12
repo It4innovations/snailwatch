@@ -7,7 +7,7 @@ import {Project} from '../project/project';
 import {Measurement} from '../measurement/measurement';
 import {Filter} from '../view/filter';
 import {buildRequestFilter} from './filter';
-import {DAO, MeasurementDAO, ProjectDAO, UploadTokenDAO, ViewDAO,
+import {DAO, MeasurementDAO, ProjectDAO, ViewDAO,
     parseMeasurement, parseView, parseProject} from './dao';
 import {View} from '../view/view';
 
@@ -93,11 +93,9 @@ export class RestClient implements SnailClient
 
     loadUploadToken(user: User, project: Project): Observable<string>
     {
-        return this.call('/uploadtokens', 'GET', {
-            where: { project: project.id }
-        }, {
+        return this.call(`/get-upload-token/${project.id}`, 'GET', {}, {
             token: user.token
-        }).map((dao: ArrayResponse<UploadTokenDAO>) => dao._items[0].token);
+        }).map((token: string) => token);
     }
     regenerateUploadToken(user: User, project: Project): Observable<string>
     {

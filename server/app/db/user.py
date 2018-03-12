@@ -1,7 +1,8 @@
+from .repository import Repository
 from .loginsession import LoginSessionRepo
 
 
-class UserRepo(object):
+class UserRepo(Repository):
     def __init__(self, app):
         self.app = app
         self.table = app.data.driver.db['users']
@@ -13,7 +14,7 @@ class UserRepo(object):
 
     def find_user_by_id(self, id):
         return self.table.find_one({
-            '_id': id
+            '_id': self.normalize_id(id)
         })
 
     def update_user_password(self, user, password):

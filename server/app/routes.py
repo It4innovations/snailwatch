@@ -1,13 +1,13 @@
 import uuid
 
-from bson import ObjectId
 from eve import ID_FIELD
 from flask import request, abort, jsonify
 
-from .db.uploadtoken import UploadTokenRepo
-from .db.loginsession import LoginSessionRepo
-from .db.user import UserRepo
+from app.db.project import ProjectRepo
 from .auth import check_password, hash_password
+from .db.loginsession import LoginSessionRepo
+from .db.uploadtoken import UploadTokenRepo
+from .db.user import UserRepo
 
 
 def setup_routes(app):
@@ -69,15 +69,45 @@ def setup_routes(app):
             if not user:
                 abort(403)
 
-            token_repo = UploadTokenRepo(app)
-            old_token = token_repo.find_token_by_project(ObjectId(project_id))
+            project_repo = ProjectRepo(app)
+            project = project_repo.find_project_by_id(project_id)
+            if not project:
+                abort(404)
 
-            if old_token['owner'] != user['_id']:
+            token_repo = UploadTokenRepo(app)
+            old_token = token_repo.find_token_by_project(project_id)
+
+            if user['_id'] not in project['writers']:
                 abort(403)
 
             new_token = uuid.uuid4().hex
             token_repo.update_token(old_token, new_token)
 
             return jsonify(new_token)
+        else:
+            abort(400)
+
+    @app.route('/get-upload-token/<project_id>', methods=['GET'])
+    def get_upload_token(project_id):
+        token = request.headers.get('Authorization', None)
+
+        if project_id and token:
+            user_repo = UserRepo(app)
+            user = user_repo.get_user_from_request(request)
+            if not user:
+                abort(403)
+
+            project_repo = ProjectRepo(app)
+            project = project_repo.find_project_by_id(project_id)
+            if not project:
+                abort(404)
+
+            token_repo = UploadTokenRepo(app)
+            token = token_repo.find_token_by_project(project_id)
+
+            if user['_id'] not in project['writers']:
+                abort(403)
+
+            return jsonify(token["token"])
         else:
             abort(400)

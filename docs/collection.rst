@@ -33,16 +33,15 @@ You will get back a JSON object with the project's id which will be required
 for creating an upload token.
 The project id will be stored in a key named ``_id`` in the returned object.
 
-After you are logged in and you know the id of your project, you can finally
-generate an upload token for uploading the data.
+After you are logged in and you know the id of your project, you can get its
+upload token that is needed for uploading measurements.
 
 .. code-block:: bash
 
     $ curl -H "Content-Type: application/json" -H "Authorization: <session-token>" \
-    <server>/collectsessions -d '{"project": <project-id>}'
+    <server>/get-upload-token/<project-id>
 
-You will get back a JSON object. It's ``token`` key corresponds to the
-generated upload_token.
+You will get back a string containing the upload token.
 
 After you have an upload token, you can upload measurements for
 the given project. If you don't feel like creating HTTP requests manually,

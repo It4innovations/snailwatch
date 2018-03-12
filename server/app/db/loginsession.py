@@ -1,7 +1,9 @@
 import uuid
 
+from .repository import Repository
 
-class LoginSessionRepo(object):
+
+class LoginSessionRepo(Repository):
     def __init__(self, app):
         self.table = app.data.driver.db['sessions']
 
