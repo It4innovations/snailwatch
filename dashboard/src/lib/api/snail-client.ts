@@ -3,7 +3,7 @@ import {Project} from '../project/project';
 import {User} from '../user/user';
 import {Measurement} from '../measurement/measurement';
 import {Filter} from '../view/filter';
-import {View} from '../view/view';
+import {Selection} from '../view/view';
 
 export interface FetchResult<T>
 {
@@ -31,8 +31,8 @@ export interface SnailClient
     deleteMeasurement(user: User, measurement: Measurement): Observable<boolean>;
 
 
-    loadViews(user: User, project: Project): Observable<View[]>;
-    createView(user: User, project: Project, view: View): Observable<View>;
-    deleteView(user: User, view: View): Observable<boolean>;
-    updateView(user: User, view: View): Observable<boolean>;
+    loadSelections(user: User, project: Project): Observable<Selection[]>;
+    createSelection(user: User, project: Project, view: Selection): Observable<Selection>;
+    deleteSelection(user: User, view: Selection): Observable<boolean>;
+    updateSelection(user: User, view: Selection): Observable<boolean>;
 }

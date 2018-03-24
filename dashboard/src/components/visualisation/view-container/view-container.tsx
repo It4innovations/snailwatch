@@ -5,17 +5,17 @@ import {User} from '../../../lib/user/user';
 import {Filter} from '../../../lib/view/filter';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {View} from '../../../lib/view/view';
+import {Selection} from '../../../lib/view/view';
 import {getUser} from '../../../state/user/reducer';
 import {getSelectedProject} from '../../../state/project/reducer';
 import {AppState} from '../../../state/app/reducers';
 import {getMeasurements} from '../../../state/measurement/reducer';
-import {getSelectedView, getViews} from '../../../state/view/reducer';
+import {getSelectedView, getSelections} from '../../../state/selection/reducer';
 import {ViewManager} from './view-manager';
 import {
-    createView as createViewActino, CreateViewParams, deleteView, DeleteViewParams, loadViews, LoadViewsParams,
-    selectView, updateView, UpdateViewParams
-} from '../../../state/view/actions';
+    createSelectionAction as createViewActino, CreateSelectionParams, deleteSelectionAction, DeleteSelectionParams, loadSelectionsAction, LoadSelectionsParams,
+    selectView, updateSelectionAction, UpdateSelectionParams
+} from '../../../state/selection/actions';
 import {Request} from '../../../util/request';
 import {
     createLoadMeasurementParams, LoadMeasurementParams,
@@ -27,18 +27,18 @@ interface StateProps
     user: User;
     project: Project;
     measurements: Measurement[];
-    views: View[];
-    selectedView: View;
+    views: Selection[];
+    selectedView: Selection;
     viewRequest: Request;
 }
 
 interface DispatchProps
 {
     selectView(id: string): void;
-    createView(params: CreateViewParams): void;
-    deleteView(params: DeleteViewParams): void;
-    updateView(params: UpdateViewParams): void;
-    loadViews(params: LoadViewsParams): void;
+    createView(params: CreateSelectionParams): void;
+    deleteView(params: DeleteSelectionParams): void;
+    updateView(params: UpdateSelectionParams): void;
+    loadViews(params: LoadSelectionsParams): void;
     loadMeasurements(params: LoadMeasurementParams): void;
 }
 
@@ -76,7 +76,7 @@ class ViewContainerComponent extends PureComponent<Props>
             project: this.props.project
         });
     }
-    createView = (view: View) =>
+    createView = (view: Selection) =>
     {
         this.props.createView({
             user: this.props.user,
@@ -84,21 +84,21 @@ class ViewContainerComponent extends PureComponent<Props>
             view
         });
     }
-    updateView = (view: View) =>
+    updateView = (view: Selection) =>
     {
         this.props.updateView({
             user: this.props.user,
             view
         });
     }
-    deleteView = (view: View) =>
+    deleteView = (view: Selection) =>
     {
         this.props.deleteView({
             user: this.props.user,
             view
         });
     }
-    selectView = (view: View) =>
+    selectView = (view: Selection) =>
     {
         this.props.selectView(view.id);
     }
@@ -108,14 +108,14 @@ export const ViewContainer = withRouter(connect<StateProps, DispatchProps>((stat
     user: getUser(state),
     project: getSelectedProject(state),
     measurements: getMeasurements(state),
-    views: getViews(state),
+    views: getSelections(state),
     selectedView: getSelectedView(state),
-    viewRequest: state.view.viewRequest
+    viewRequest: state.selection.selectionRequest
 }), {
     selectView,
-    loadViews: loadViews.started,
+    loadViews: loadSelectionsAction.started,
     loadMeasurements: loadMeasurements.started,
     createView: createViewActino.started,
-    updateView: updateView.started,
-    deleteView: deleteView.started
+    updateView: updateSelectionAction.started,
+    deleteView: deleteSelectionAction.started
 })(ViewContainerComponent));

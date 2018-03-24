@@ -3,12 +3,12 @@ import {ViewContainer} from './view-container/view-container';
 import styled from 'styled-components';
 import {GroupMode, LineChart} from './chart/line-chart';
 import {Measurement} from '../../lib/measurement/measurement';
-import {View} from '../../lib/view/view';
+import {Selection} from '../../lib/view/view';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {getMeasurements, getTotalMeasurements} from '../../state/measurement/reducer';
 import {AppState} from '../../state/app/reducers';
-import {getSelectedView} from '../../state/view/reducer';
+import {getSelectedView} from '../../state/selection/reducer';
 import {MeasurementInfo} from './measurement-info';
 import {createLoadMeasurementParams, LoadMeasurementParams, loadMeasurements} from '../../state/measurement/actions';
 import {Project} from '../../lib/project/project';
@@ -21,9 +21,6 @@ interface StateProps
 {
     user: User;
     project: Project;
-    measurements: Measurement[];
-    totalMeasurements: number;
-    selectedView: View;
 }
 
 interface DispatchProps

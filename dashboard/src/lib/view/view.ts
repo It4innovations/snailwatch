@@ -1,22 +1,17 @@
 import {Filter} from './filter';
-import {Projection} from './projection';
 
-export interface View
+export interface Selection
 {
     id: string;
     name: string;
-    projection: Projection;
     filters: Filter[];
 }
 
-export function createView(id: string = '', name: string = '',
-                           projection: Projection = { xAxis: '', yAxis: '' },
-                           filters: Filter[] = [])
+export function createSelection(id: string = '', name: string = '', filters: Filter[] = [])
 {
     return {
         id,
         name,
-        projection,
         filters
     };
 }

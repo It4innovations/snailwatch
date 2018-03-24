@@ -9,7 +9,7 @@ import {Filter} from '../view/filter';
 import {buildRequestFilter} from './filter';
 import {DAO, MeasurementDAO, ProjectDAO, ViewDAO,
     parseMeasurement, parseView, parseProject} from './dao';
-import {View} from '../view/view';
+import {Selection} from '../view/view';
 
 interface ArrayResponse<T>
 {
@@ -140,9 +140,9 @@ export class RestClient implements SnailClient
         }).map(() => true);
     }
 
-    loadViews(user: User, project: Project): Observable<View[]>
+    loadSelections(user: User, project: Project): Observable<Selection[]>
     {
-        return this.call('/views', 'GET', {
+        return this.call('/selections', 'GET', {
             where: JSON.stringify({
                 project: project.id
             })
@@ -154,9 +154,9 @@ export class RestClient implements SnailClient
                     .map(v => parseView(v))
             );
     }
-    createView(user: User, project: Project, view: View): Observable<View>
+    createSelection(user: User, project: Project, view: Selection): Observable<Selection>
     {
-        return this.call('/views', 'POST', {
+        return this.call('/selections', 'POST', {
             name: view.name,
             project: project.id,
             filters: view.filters.map(f => ({
@@ -174,13 +174,13 @@ export class RestClient implements SnailClient
             id: data._id
         }));
     }
-    deleteView(user: User, view: View): Observable<boolean>
+    deleteSelection(user: User, view: Selection): Observable<boolean>
     {
         return this.call(`/views/${view.id}`, 'DELETE', {}, {
             token: user.token
         }).map(() => true);
     }
-    updateView(user: User, view: View): Observable<boolean>
+    updateSelection(user: User, view: Selection): Observable<boolean>
     {
         return this.call(`/views/${view.id}`, 'PATCH', {
             name: view.name,

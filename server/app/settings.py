@@ -128,7 +128,7 @@ measurement_schema = {
         }
     }
 }
-view_schema = {
+selection_schema = {
     'project': {
         'type': 'objectid',
         'required': True,
@@ -163,14 +163,6 @@ view_schema = {
                 }
             }
         }
-    },
-    'xAxis': {
-        'type': 'string',
-        'required': True
-    },
-    'yAxis': {
-        'type': 'string',
-        'required': True
     }
 }
 
@@ -191,8 +183,8 @@ DOMAIN = {
         'item_methods': ['GET', 'DELETE'],
         'authentication': MeasurementAuthenticator
     },
-    'views': {
-        'schema': view_schema,
+    'selections': {
+        'schema': selection_schema,
         'resource_methods': ['GET', 'POST'],
         'item_methods': ['GET', 'PATCH', 'DELETE']
     }

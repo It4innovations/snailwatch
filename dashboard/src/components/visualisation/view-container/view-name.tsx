@@ -1,10 +1,10 @@
 import React, {PureComponent} from 'react';
-import {View} from '../../../lib/view/view';
+import {Selection} from '../../../lib/view/view';
 import Input from 'reactstrap/lib/Input';
 
 interface Props
 {
-    view: View;
+    view: Selection;
     editable: boolean;
     onChange(name: string): void;
 }

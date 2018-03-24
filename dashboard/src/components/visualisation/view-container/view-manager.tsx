@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {ViewProjection} from './projection/view-projection';
 import {FilterList} from './filter/filter-list';
-import {createView, View} from '../../../lib/view/view';
+import {createSelection, Selection} from '../../../lib/view/view';
 import {ViewSelect} from './view-select';
 import {ViewControls} from './view-controls';
 import {ViewName} from './view-name';
@@ -14,15 +14,15 @@ import {getAllKeysMerged} from '../../../util/object';
 
 interface Props
 {
-    views: View[];
+    views: Selection[];
     viewRequest: Request;
-    selectedView: View;
+    selectedView: Selection;
     measurements: Measurement[];
     loadViews(): void;
-    selectView(view: View): void;
-    createView(view: View): void;
-    updateView(view: View): void;
-    deleteView(view: View): void;
+    selectView(view: Selection): void;
+    createView(view: Selection): void;
+    updateView(view: Selection): void;
+    deleteView(view: Selection): void;
     loadMeasurements(filters: Filter[]): void;
 }
 
@@ -30,7 +30,7 @@ interface State
 {
     editing: boolean;
     createdNamePending: string;
-    view: View;
+    view: Selection;
     measurementKeys: string[];
 }
 
@@ -42,7 +42,7 @@ export class ViewManager extends PureComponent<Props, State>
 
         this.state = {
             editing: false,
-            view: createView(),
+            view: createSelection(),
             createdNamePending: null,
             measurementKeys: this.calculateKeys(props.measurements)
         };
@@ -111,7 +111,7 @@ export class ViewManager extends PureComponent<Props, State>
         );
     }
 
-    renderViewContent = (view: View): JSX.Element =>
+    renderViewContent = (view: Selection): JSX.Element =>
     {
         if (view === null)
         {
@@ -145,13 +145,13 @@ export class ViewManager extends PureComponent<Props, State>
         );
     }
 
-    getSelectedView = (): View =>
+    getSelectedView = (): Selection =>
     {
         if (this.props.selectedView === null) return null;
 
         return this.state.editing ? this.state.view : this.props.selectedView;
     }
-    selectView = (view: View) =>
+    selectView = (view: Selection) =>
     {
         this.props.selectView(view);
         this.loadMeasurements(view);
@@ -170,7 +170,7 @@ export class ViewManager extends PureComponent<Props, State>
         }));
     }
 
-    loadMeasurements = (view: View) =>
+    loadMeasurements = (view: Selection) =>
     {
         this.props.loadMeasurements(view.filters);
     }
@@ -180,11 +180,11 @@ export class ViewManager extends PureComponent<Props, State>
         this.setState(() => ({
             createdNamePending: name
         }));
-        this.props.createView(createView(null, name));
+        this.props.createView(createSelection(null, name));
     }
     copyView = () =>
     {
-        const view: View = {
+        const view: Selection = {
             ...this.props.selectedView,
             id: null,
             name: `${this.props.selectedView.name} (copy)`
@@ -219,19 +219,19 @@ export class ViewManager extends PureComponent<Props, State>
     {
         this.changeView({ projection });
     }
-    handleViewSelect = (view: View) =>
+    handleViewSelect = (view: Selection) =>
     {
         this.stopEdit();
         this.selectView(view);
     }
-    changeView = (change: Partial<View>) =>
+    changeView = (change: Partial<Selection>) =>
     {
         this.setState(state => ({
             view: {...state.view, ...change}
         }));
     }
 
-    generateName = (views: View[]): string =>
+    generateName = (views: Selection[]): string =>
     {
         for (let i = 1; true; i++)
         {
@@ -247,7 +247,7 @@ export class ViewManager extends PureComponent<Props, State>
         return !this.props.viewRequest.loading && this.state.editing;
     }
 
-    sortViews = (views: View[]): View[] =>
+    sortViews = (views: Selection[]): Selection[] =>
     {
         return sort((a, b) => a.name.localeCompare(b.name), views);
     }

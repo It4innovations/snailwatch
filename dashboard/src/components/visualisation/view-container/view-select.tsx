@@ -1,13 +1,13 @@
 import React, {PureComponent} from 'react';
-import {View} from '../../../lib/view/view';
+import {Selection} from '../../../lib/view/view';
 import {find} from 'ramda';
 import Input from 'reactstrap/lib/Input';
 
 interface Props
 {
-    views: View[];
-    selectedView: View;
-    onSelect(view: View): void;
+    views: Selection[];
+    selectedView: Selection;
+    onSelect(view: Selection): void;
 }
 
 export class ViewSelect extends PureComponent<Props>

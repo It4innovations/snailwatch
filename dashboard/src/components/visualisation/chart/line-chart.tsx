@@ -4,7 +4,7 @@ import {
     XAxis, YAxis
 } from 'recharts';
 import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement';
-import {View} from '../../../lib/view/view';
+import {Selection} from '../../../lib/view/view';
 import {groupBy, values, sum, reduce, min, max, Dictionary} from 'ramda';
 import ellipsize from 'ellipsize';
 import {sort} from 'ramda';
@@ -23,10 +23,16 @@ export enum GroupMode
     AxisX
 }
 
+export interface LineChartView
+{
+    yAxis: string;
+    measurements: Measurement[];
+}
+
 interface Props
 {
-    measurements: Measurement[];
-    view: View;
+    views: LineChartView[];
+    xAxis: string;
     groupMode: GroupMode;
 }
 
@@ -45,21 +51,22 @@ export class LineChart extends PureComponent<Props, State>
 
     componentWillReceiveProps(props: Props)
     {
-        if (props.measurements !== this.props.measurements ||
-            props.view !== this.props.view)
+        /*if (props.selections !== this.props.selections ||
+            props.xAxis !== this.props.xAxis)
         {
-            const errors = this.checkViewValidity(props.measurements, props.view);
+            const errors = this.checkViewValidity(props.measurements, props.selection);
             this.setState(() => ({
                 errors
             }));
-        }
+        }*/
     }
 
     render()
     {
-        const measurements = this.generateData(
-            this.getValidMeasurements(this.props.measurements, this.props.view),
-            this.props.view
+        return "";
+        /*const measurements = this.generateData(
+            this.getValidMeasurements(this.props.measurements, this.props.selection),
+            this.props.selection
         );
         const margin = 20;
         const horizontalPadding = 20;
@@ -90,7 +97,7 @@ export class LineChart extends PureComponent<Props, State>
                     </ReLineChart>
                 </ResponsiveContainer>
             </>
-        );
+        );*/
     }
     renderTooltip = (props: TooltipProps): JSX.Element =>
     {
@@ -102,29 +109,30 @@ export class LineChart extends PureComponent<Props, State>
         return ellipsize(value, 18);
     }
 
-    getValidMeasurements(measurements: Measurement[], view: View): Measurement[]
+    getValidMeasurements(measurements: Measurement[], view: Selection): Measurement[]
     {
-        return measurements.filter(m =>
-            this.isAxisXValid(getValueWithPath(m, view.projection.xAxis)) &&
-            this.isAxisYValid(getValueWithPath(m, view.projection.yAxis))
-        );
+        return [];
+        /*return measurements.filter(m =>
+            this.isAxisXValid(getValueWithPath(m, selection.projection.xAxis)) &&
+            this.isAxisYValid(getValueWithPath(m, selection.projection.yAxis))
+        );*/
     }
 
-    generateData = (measurements: Measurement[], view: View): DataPoint[] =>
+    generateData = (measurements: Measurement[], view: Selection): DataPoint[] =>
     {
         const points = this.generatePoints(measurements, view);
         return sort((a, b) => compareDate(a.measurements[0].timestamp, b.measurements[0].timestamp), points);
     }
-    generatePoints = (measurements: Measurement[], view: View): DataPoint[] =>
+    generatePoints = (measurements: Measurement[], view: Selection): DataPoint[] =>
     {
-        if (this.isGrouped())
+        /*if (this.isGrouped())
         {
-            const groups = this.group(measurements, view);
+            const groups = this.group(measurements, selection);
             return values(groups)
                 .map(group => {
-                    const x = this.getXValue(group[0], view);
+                    const x = this.getXValue(group[0], selection);
                     const yValues: number[] = group.map(value =>
-                        Number(getValueWithPath(value, view.projection.yAxis)));
+                        Number(getValueWithPath(value, selection.projection.yAxis)));
                     const avg = sum(yValues) / yValues.length;
                     const range = [
                         avg - (reduce(min, yValues[0], yValues) as number),
@@ -140,23 +148,25 @@ export class LineChart extends PureComponent<Props, State>
                 });
         }
         else return measurements.map(m => ({
-            x: this.getXValue(m, view).toString(),
-            y: Number(getValueWithPath(m, view.projection.yAxis)),
+            x: this.getXValue(m, selection).toString(),
+            y: Number(getValueWithPath(m, selection.projection.yAxis)),
             deviation: [],
             measurements: [m]
-        }));
+        }));*/
+        return [];
     }
-    getXValue = (measurement: Measurement, view: View): string =>
+    getXValue = (measurement: Measurement, view: Selection): string =>
     {
-        const value = getValueWithPath(measurement, view.projection.xAxis);
-        if (view.projection.xAxis === 'timestamp')
+        /*const value = getValueWithPath(measurement, selection.projection.xAxis);
+        if (selection.projection.xAxis === 'timestamp')
         {
             return (value as {} as Moment).format(DATE_FORMAT);
         }
-        return value;
+        return value;*/
+        return '';
     }
 
-    group = (measurements: Measurement[], view: View): Dictionary<Measurement[]> =>
+    group = (measurements: Measurement[], view: Selection): Dictionary<Measurement[]> =>
     {
         switch (this.props.groupMode)
         {
@@ -171,22 +181,22 @@ export class LineChart extends PureComponent<Props, State>
         }
     }
 
-    checkViewValidity = (measurements: Measurement[], view: View): string[] =>
+    checkViewValidity = (measurements: Measurement[], view: Selection): string[] =>
     {
-        const errors = [];
-        const invalidX = measurements.filter(m => !this.isAxisXValid(getValueWithPath(m, view.projection.xAxis)));
+        const errors: string[] = [];
+        /*const invalidX = measurements.filter(m => !this.isAxisXValid(getValueWithPath(m, selection.projection.xAxis)));
         if (invalidX.length > 0)
         {
             errors.push(
-                `${invalidX.length} measurements were left out because of x projection: ${view.projection.xAxis}`);
+                `${invalidX.length} measurements were left out because of x projection: ${selection.projection.xAxis}`);
         }
 
-        const invalidY = measurements.filter(m => !this.isAxisYValid(getValueWithPath(m, view.projection.yAxis)));
+        const invalidY = measurements.filter(m => !this.isAxisYValid(getValueWithPath(m, selection.projection.yAxis)));
         if (invalidY.length > 0)
         {
             errors.push(
-                `${invalidY.length} measurements were left out because of y projection: ${view.projection.yAxis}`);
-        }
+                `${invalidY.length} measurements were left out because of y projection: ${selection.projection.yAxis}`);
+        }*/
 
         return errors;
     }

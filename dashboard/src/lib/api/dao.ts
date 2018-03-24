@@ -2,7 +2,7 @@ import {Operator} from '../view/filter';
 import {Measurement} from '../measurement/measurement';
 import moment from 'moment';
 import {Project} from '../project/project';
-import {View} from '../view/view';
+import {Selection} from '../view/view';
 
 export interface DAO
 {
@@ -51,7 +51,7 @@ export function parseMeasurement(measurement: MeasurementDAO): Measurement
         result: {...measurement.result}
     };
 }
-export function parseView(view: ViewDAO): View
+export function parseView(view: ViewDAO): Selection
 {
     return {
         id: view._id,
