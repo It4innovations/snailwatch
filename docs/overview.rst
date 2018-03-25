@@ -10,5 +10,5 @@ to use the web dashboard, you have to :doc:`connect it <dashboard-deploy>`
 to the server first. Usage instructions for the dashboard can be found
 :doc:`here <dashboard>`.
 
-The complete API documentation for the REST server can be found
-:api:`here <>`.
+Complete API documentation for the REST server can be found
+:doc:`here <api>`.

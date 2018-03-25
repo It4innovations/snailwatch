@@ -1,7 +1,8 @@
 import uuid
 
+import requests
 from eve import ID_FIELD
-from flask import request, abort, jsonify
+from flask import request, abort, jsonify, Response
 
 from app.db.project import ProjectRepo
 from .auth import check_password, hash_password
@@ -11,6 +12,18 @@ from .db.user import UserRepo
 
 
 def setup_routes(app):
+    @app.route('/schema', methods=['GET'])
+    def schema():
+        response = requests.get("https://app.swaggerhub.com/apiproxy/schema"
+                                "/file/IT4I/Snailwatch/0.0.2/swagger.json")
+        headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+            'Content-Disposition': 'attachment; filename=snailwatch.json'
+        }
+
+        return Response(response.content, response.status_code, headers)
+
     @app.route('/login', methods=['POST'])
     def login():
         data = request.get_json()

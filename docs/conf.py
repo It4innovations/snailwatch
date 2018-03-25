@@ -28,6 +28,7 @@ version = '0.0.2'
 # The full version, including alpha/beta/rc tags
 release = version
 
+API_URL = 'api.html'
 
 # -- General configuration ---------------------------------------------------
 
@@ -40,7 +41,19 @@ release = version
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.extlinks'
+    'sphinx.ext.extlinks',
+    'sphinxcontrib.redoc'
+]
+
+redoc = [
+    {
+        'name': 'Snailwatch API',
+        'page': 'api',
+        'spec': 'https://snailwatch.it4i.cz/api/schema',
+        'opts': {
+            'suppress-warnings': True
+        }
+    }
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -69,11 +82,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
-
-rst_prolog = """
-.. |api| replace:: ahoj
-"""
-
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -163,5 +171,5 @@ texinfo_documents = [
 
 # -- Extension configuration -------------------------------------------------
 extlinks = {
-    'api': ('https://app.swaggerhub.com/apis/IT4I/Snailwatch/0.0.2%s', None)
+    'api': (API_URL + '%s', None)
 }

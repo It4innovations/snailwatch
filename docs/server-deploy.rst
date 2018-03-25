@@ -45,7 +45,7 @@ Creating users
 Measurement data in Snailwatch is always associated with a user account.
 Those can only be created using an admin authentication token that was
 configured before the server launch. The API endpoint for creating users
-is documented :api:`here <#/Admin/post_users>`.
+is documented :api:`here <#tag/Admin/paths/~1users/post>`.
 You have to pass the admin token in the ``Authorization`` HTTP header.
 
 Example request for creating a user using curl:

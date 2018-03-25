@@ -24,7 +24,7 @@ After you fill in the configuration you can build it and then serve it
 from the ``build`` directory::
 
     $ npm run build
-    $ SW_API_SERVER=http://localhost:5000 node build/server.js
+    $ API_SERVER=http://localhost:5000 node build/server.js
 
 Docker
 ------

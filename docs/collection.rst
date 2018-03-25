@@ -3,10 +3,10 @@ Measurement collection
 Measurements are grouped into projects that belong to a single user.
 Before you can upload data to the server, you have to create a project and
 generate an upload token for the project. You can do both either using the
-web :doc:`dashboard <dashboard>` or using the REST :api:`API <>`.
+web :doc:`dashboard <dashboard>` or using the REST :doc:`API <api>`.
 
 For now let's assume you chose the latter. You can generate a session token
-by logging in (documented :api:`here <#/Users/post_login>`).
+by logging in (documented :api:`here <#tag/User/paths/~1login/post>`).
 You can generate as many session tokens as you want (for example one for manual
 uploads, one for automated continuous integration uploads etc.).
 
@@ -20,7 +20,7 @@ Example curl request to login and create a session token:
 This request will return a session token that you will use for subsequent
 requests.
 
-Projects can be created using :api:`this endpoint <#/Project/post_projects>`.
+Projects can be created using :api:`this endpoint <#tag/Project/paths/~1projects/post>`.
 
 Example curl request to create a project:
 
@@ -47,7 +47,7 @@ After you have an upload token, you can upload measurements for
 the given project. If you don't feel like creating HTTP requests manually,
 you can use the helper scripts that we prepared (they are located in the
 ``server/scripts`` folder). For using the uploading API directly look
-:api:`here <#/Measurement/post_measurements>`.
+:api:`here <#tag/Measurement/paths/~1measurements/post>`.
 
 Example curl request to upload a measurement to a project:
 

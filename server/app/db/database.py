@@ -1,7 +1,7 @@
 import datetime
 import uuid
 import pymongo
-from flask import request, current_app as app, abort
+from flask import request, current_app as app
 
 from .uploadtoken import UploadTokenRepo
 from .user import UserRepo
