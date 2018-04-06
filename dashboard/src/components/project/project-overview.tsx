@@ -5,9 +5,6 @@ import {User} from '../../lib/user/user';
 import {AppState} from '../../state/app/reducers';
 import {getUser} from '../../state/user/reducer';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {clearMeasurements} from '../../state/measurement/actions';
-import {Measurement} from '../../lib/measurement/measurement';
-import {getMeasurements} from '../../state/measurement/reducer';
 import {Request} from '../../util/request';
 import {getSelectedProject, getUploadToken} from '../../state/project/reducer';
 import {Button, Card, CardBody, Input, InputGroup, InputGroupAddon} from 'reactstrap';
@@ -29,14 +26,12 @@ interface StateProps
 {
     user: User;
     project: Project;
-    measurements: Measurement[];
     loadProjectRequest: Request;
     uploadToken: string | null;
     uploadTokenRequest: Request;
 }
 interface DispatchProps
 {
-    clearMeasurements(): void;
     loadUploadToken(params: UploadTokenParams): void;
     regenerateUploadToken(params: UploadTokenParams): void;
 }
@@ -200,12 +195,10 @@ send_measurement(ctx,
 export const ProjectOverview = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     user: getUser(state),
     project: getSelectedProject(state),
-    measurements: getMeasurements(state),
     loadProjectRequest: state.project.loadProjectRequest,
     uploadToken: getUploadToken(state),
     uploadTokenRequest: state.project.uploadTokenRequest
 }), {
-    clearMeasurements,
     loadUploadToken: loadUploadToken.started,
     regenerateUploadToken: regenerateUploadToken.started
 })(ProjectOverviewComponent));

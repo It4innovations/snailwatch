@@ -1,7 +1,6 @@
 import React, {PureComponent} from 'react';
 import {TooltipProps} from 'recharts';
 import styled from 'styled-components';
-import {DataPoint} from './data-point';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {compareDate} from '../../../util/date';
 import {sort} from 'ramda';
@@ -22,7 +21,7 @@ export class PointTooltip extends PureComponent<TooltipProps & Props>
 {
     render()
     {
-        if (this.props.payload === null ||
+        /*if (this.props.payload === null ||
             this.props.payload === undefined ||
             this.props.payload.length < 1) return null;
 
@@ -39,7 +38,8 @@ export class PointTooltip extends PureComponent<TooltipProps & Props>
                 <div>Timestamp: {this.generateTimestamp(point.measurements)}</div>
                 {content}
             </TooltipWrapper>
-        );
+        );*/
+        return '';
     }
 
     generateTimestamp = (measurements: Measurement[]): string =>

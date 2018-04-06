@@ -1,28 +1,23 @@
-import {FetchResult, SnailClient} from './snail-client';
+import {SnailClient} from './snail-client';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import axios from 'axios';
 import {User} from '../user/user';
 import {Project} from '../project/project';
 import {Measurement} from '../measurement/measurement';
-import {Filter} from '../view/filter';
+import {Filter} from '../measurement/selection/filter';
 import {buildRequestFilter} from './filter';
-import {DAO, MeasurementDAO, ProjectDAO, ViewDAO,
-    parseMeasurement, parseView, parseProject} from './dao';
-import {Selection} from '../view/view';
+import {
+    DAO, MeasurementDAO, ProjectDAO, SelectionDAO,
+    parseMeasurement, parseSelection, parseProject, serializeDate
+} from './dao';
+import {Selection} from '../measurement/selection/selection';
+import {RangeFilter} from '../measurement/selection/range-filter';
 
 interface ArrayResponse<T>
 {
     _items: T[];
 }
-
-type PaginatedResponse<T> = T & {
-    _meta: {
-        total: number;
-        max_results: number;
-        page: number;
-    }
-};
 
 export class RestClient implements SnailClient
 {
@@ -107,30 +102,52 @@ export class RestClient implements SnailClient
     }
 
     loadMeasurements(user: User, project: Project,
-                     filters: Filter[],
-                     sortBy: string,
-                     page: number,
-                     count: number): Observable<FetchResult<Measurement>>
+                     selection: Selection,
+                     range: RangeFilter): Observable<Measurement[]>
     {
-        const filter = buildRequestFilter([...filters, {
+        let filters: Filter[] = [];
+        if (selection !== null)
+        {
+            filters = [...filters, ...selection.filters];
+        }
+
+        filters = [...filters, {
             path: 'project',
             operator: '==',
             value: project.id
-        }]);
+        }];
 
-        return this.call('/measurements', 'GET', {
-            where: filter,
-            page: page.toString(),
-            max_results: count.toString(),
-            sort: sortBy
-        }, {
+        if (range.useDateFilter)
+        {
+            const from = range.from.startOf('date');
+            const to = range.to.startOf('date');
+
+            filters = [...filters, {
+                path: 'timestamp',
+                operator: '>=',
+                value: serializeDate(from)
+            }, {
+                path: 'timestamp',
+                operator: '<=',
+                value: serializeDate(to)
+            }];
+        }
+
+        let args: {} = {
+            where: JSON.stringify(buildRequestFilter(filters)),
+            sort: '-timestamp'
+        };
+
+        if (!range.useDateFilter)
+        {
+            args = {...args, max_results: range.entryCount };
+        }
+
+        return this.call('/measurements', 'GET', args, {
             token: user.token
         })
-            .map((data: PaginatedResponse<ArrayResponse<MeasurementDAO>>) => ({
-                items: data._items
-                    .map(m => parseMeasurement(m)),
-                total: data._meta.total
-            })
+            .map((data: ArrayResponse<MeasurementDAO>) =>
+                data._items.map(m => parseMeasurement(m))
         );
     }
     deleteMeasurement(user: User, measurement: Measurement): Observable<boolean>
@@ -149,48 +166,44 @@ export class RestClient implements SnailClient
         }, {
             token: user.token
         })
-            .map((data: ArrayResponse<ViewDAO>) =>
+            .map((data: ArrayResponse<SelectionDAO>) =>
                 data._items
-                    .map(v => parseView(v))
+                    .map(v => parseSelection(v))
             );
     }
-    createSelection(user: User, project: Project, view: Selection): Observable<Selection>
+    createSelection(user: User, project: Project, selection: Selection): Observable<Selection>
     {
         return this.call('/selections', 'POST', {
-            name: view.name,
+            name: selection.name,
             project: project.id,
-            filters: view.filters.map(f => ({
+            filters: selection.filters.map(f => ({
                 path: f.path,
                 operator: f.operator,
                 value: f.value
-            })),
-            xAxis: view.projection.xAxis,
-            yAxis: view.projection.yAxis
+            }))
         }, {
             token: user.token
         })
         .map((data: DAO) => ({
-            ...view,
+            ...selection,
             id: data._id
         }));
     }
-    deleteSelection(user: User, view: Selection): Observable<boolean>
+    deleteSelection(user: User, selection: Selection): Observable<boolean>
     {
-        return this.call(`/views/${view.id}`, 'DELETE', {}, {
+        return this.call(`/selections/${selection.id}`, 'DELETE', {}, {
             token: user.token
         }).map(() => true);
     }
-    updateSelection(user: User, view: Selection): Observable<boolean>
+    updateSelection(user: User, selection: Selection): Observable<boolean>
     {
-        return this.call(`/views/${view.id}`, 'PATCH', {
-            name: view.name,
-            filters: view.filters.map(f => ({
+        return this.call(`/selections/${selection.id}`, 'PATCH', {
+            name: selection.name,
+            filters: selection.filters.map(f => ({
                 path: f.path,
                 operator: f.operator,
                 value: f.value
-            })),
-            xAxis: view.projection.xAxis,
-            yAxis: view.projection.yAxis
+            }))
         }, {
             token: user.token
         })

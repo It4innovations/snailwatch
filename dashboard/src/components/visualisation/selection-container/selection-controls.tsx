@@ -14,7 +14,7 @@ interface Props
     onSave(): void;
 }
 
-export class ViewControls extends PureComponent<Props>
+export class SelectionControls extends PureComponent<Props>
 {
     render()
     {

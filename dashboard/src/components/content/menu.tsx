@@ -61,7 +61,7 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
         {
             links.push(this.authLink('Project', Navigation.Overview));
             links.push(this.authLink('Measurements', Navigation.MeasurementList));
-            links.push(this.authLink('Charts', Navigation.Charts));
+            links.push(this.authLink('Views', Navigation.Views));
         }
 
         return <>{links}</>;

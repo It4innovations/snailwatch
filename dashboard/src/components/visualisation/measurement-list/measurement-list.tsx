@@ -1,30 +1,23 @@
 import React, {PureComponent} from 'react';
-import {Project} from '../../lib/project/project';
-import {Measurement} from '../../lib/measurement/measurement';
-import {User} from '../../lib/user/user';
-import {sort} from 'ramda';
+import {Project} from '../../../lib/project/project';
+import {Measurement} from '../../../lib/measurement/measurement';
+import {User} from '../../../lib/user/user';
 import {
     LoadMeasurementParams, loadMeasurements, createLoadMeasurementParams,
     DeleteMeasurementParams, deleteMeasurement
-} from '../../state/measurement/actions';
+} from '../../../state/measurement/actions';
 import {connect} from 'react-redux';
-import {Request, combineRequests} from '../../util/request';
-import {getUser} from '../../state/user/reducer';
-import {AppState} from '../../state/app/reducers';
-import {getSelectedProject} from '../../state/project/reducer';
-import {getMeasurements, getTotalMeasurements, MEASUREMENT_PAGE_SIZE} from '../../state/measurement/reducer';
+import {getUser} from '../../../state/user/reducer';
+import {AppState} from '../../../state/app/reducers';
+import {getSelectedProject} from '../../../state/project/reducer';
 import {RouteComponentProps, withRouter} from 'react-router';
-import ReactTable, {ControlledStateOverrideProps, RowInfo} from 'react-table';
-import {createFilter, Filter} from '../../lib/view/filter';
-import {Button} from 'reactstrap';
+import {ControlledStateOverrideProps, RowInfo} from 'react-table';
+import {createFilter, Filter} from '../../../lib/measurement/selection/filter';
 
 interface StateProps
 {
     user: User;
     project: Project;
-    measurements: Measurement[];
-    totalMeasurements: number;
-    measurementRequests: Request;
 }
 
 interface DispatchProps
@@ -46,18 +39,19 @@ class MeasurementListComponent extends PureComponent<Props>
 
     render()
     {
-        const request = this.props.measurementRequests;
+        /*const request = this.props.measurementRequests;
         return (
             <div>
                 {this.renderMeasurements()}
                 {request.error && <div>{request.error}</div>}
             </div>
-        );
+        );*/
+        return '';
     }
 
     renderMeasurements = () =>
     {
-        const measurements = sort((m1: Measurement, m2: Measurement) =>
+        /*const measurements = sort((m1: Measurement, m2: Measurement) =>
             m1.timestamp.isBefore(m2.timestamp) ? 1 : -1, this.props.measurements);
 
         const columns = [{
@@ -98,7 +92,8 @@ class MeasurementListComponent extends PureComponent<Props>
                 multiSort={false}
                 onFetchData={this.fetchData}
                 SubComponent={this.renderSubcomponent} />
-        );
+        );*/
+        return '';
     }
     renderSubcomponent = (rowInfo: RowInfo): JSX.Element =>
     {
@@ -144,13 +139,7 @@ class MeasurementListComponent extends PureComponent<Props>
 
 export const MeasurementList = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     user: getUser(state),
-    project: getSelectedProject(state),
-    measurements: getMeasurements(state),
-    totalMeasurements: getTotalMeasurements(state),
-    measurementRequests: combineRequests(
-        state.measurement.loadMeasurementsRequest,
-        state.measurement.deleteMeasurementRequest
-    )
+    project: getSelectedProject(state)
 }), ({
     loadMeasurements: loadMeasurements.started,
     deleteMeasurement: deleteMeasurement.started

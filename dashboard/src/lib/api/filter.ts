@@ -1,5 +1,5 @@
-import {Filter, Operator} from '../view/filter';
-import {zipObj} from 'ramda';
+import {Filter} from '../measurement/selection/filter';
+import {groupBy, values, zipObj} from 'ramda';
 
 const table = {
     '!=': '$ne',
@@ -10,22 +10,26 @@ const table = {
     'contains': '$regex'
 };
 
-function serializeOperator(operator: Operator, value: string): {}
+function serializeFilters(filters: Filter[]): {}
 {
-    if (operator === '==')
+    const equals = filters.filter(f => f.operator === '==');
+    if (equals.length > 0)
     {
-        return value;
+        return equals[0].value;
     }
 
-    return {
-        [table[operator]]: value
-    };
+    const keys = filters.map(f => table[f.operator]);
+    const vals = filters.map(f => f.value);
+
+    return zipObj(keys, vals);
 }
 
-export function buildRequestFilter(filters: Filter[]): string
+export function buildRequestFilter(filters: Filter[]): {}
 {
-    const keys = filters.map(f => f.path);
-    const values = filters.map(f => serializeOperator(f.operator, f.value));
+    const byPath = groupBy(f => f.path, filters);
 
-    return JSON.stringify(zipObj(keys, values));
+    const keys = Object.keys(byPath);
+    const vals = values(byPath).map(serializeFilters);
+
+    return zipObj(keys, vals);
 }

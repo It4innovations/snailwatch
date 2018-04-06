@@ -1,8 +1,8 @@
-import {Operator} from '../view/filter';
+import {Operator} from '../measurement/selection/filter';
 import {Measurement} from '../measurement/measurement';
-import moment from 'moment';
+import moment, {Moment} from 'moment';
 import {Project} from '../project/project';
-import {Selection} from '../view/view';
+import {Selection} from '../measurement/selection/selection';
 
 export interface DAO
 {
@@ -21,11 +21,9 @@ export interface MeasurementDAO extends DAO
     environment: {};
     result: {};
 }
-export interface ViewDAO extends DAO
+export interface SelectionDAO extends DAO
 {
     name: string;
-    xAxis: string;
-    yAxis: string;
     filters: Array<{
         path: string;
         operator: Operator,
@@ -51,19 +49,20 @@ export function parseMeasurement(measurement: MeasurementDAO): Measurement
         result: {...measurement.result}
     };
 }
-export function parseView(view: ViewDAO): Selection
+export function parseSelection(selection: SelectionDAO): Selection
 {
     return {
-        id: view._id,
-        name: view.name,
-        projection: {
-            xAxis: view.xAxis,
-            yAxis: view.yAxis
-        },
-        filters: view.filters.map(f => ({
+        id: selection._id,
+        name: selection.name,
+        filters: selection.filters.map(f => ({
             path: f.path,
             operator: f.operator,
             value: f.value
         }))
     };
+}
+
+export function serializeDate(date: Moment): string
+{
+    return date.format('YYYY-MM-DDTHH:mm:ss');
 }

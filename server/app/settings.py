@@ -33,9 +33,7 @@ ADMIN_AUTH_TOKEN = token
 
 # settings
 HATEOAS = False
-PAGINATION = True
-PAGINATION_LIMIT = 500
-PAGINATION_DEFAULT = 50
+PAGINATION = False
 RENDERERS = ['eve.render.JSONRenderer']
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 ENFORCE_IF_MATCH = False

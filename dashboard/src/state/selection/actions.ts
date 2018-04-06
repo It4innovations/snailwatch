@@ -1,7 +1,7 @@
 import actionCreatorFactory from 'typescript-fsa';
 import {User} from '../../lib/user/user';
 import {Project} from '../../lib/project/project';
-import {Selection} from '../../lib/view/view';
+import {Selection} from '../../lib/measurement/selection/selection';
 
 const actionCreator = actionCreatorFactory('selection');
 
@@ -30,4 +30,4 @@ export const updateSelectionAction = actionCreator.async<UpdateSelectionParams, 
 export type DeleteSelectionParams = UpdateSelectionParams;
 export const deleteSelectionAction = actionCreator.async<DeleteSelectionParams, boolean>('delete');
 
-export const clearViews = actionCreator('clear');
+export const clearSelections = actionCreator('clear');

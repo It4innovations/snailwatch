@@ -1,27 +1,13 @@
 import React, {PureComponent} from 'react';
-import {
-    CartesianGrid, ErrorBar, Line, LineChart as ReLineChart, ResponsiveContainer, Tooltip, TooltipProps,
-    XAxis, YAxis
-} from 'recharts';
+import {TooltipProps} from 'recharts';
 import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement';
-import {Selection} from '../../../lib/view/view';
-import {groupBy, values, sum, reduce, min, max, Dictionary} from 'ramda';
+import {Selection} from '../../../lib/measurement/selection/selection';
+import {groupBy, Dictionary} from 'ramda';
 import ellipsize from 'ellipsize';
-import {sort} from 'ramda';
-import {Moment} from 'moment';
 import {PointTooltip} from './point-tooltip';
-import {DataPoint} from './data-point';
-import {compareDate} from '../../../util/date';
-import {getValueWithPath} from '../../../util/object';
-import {Alert} from 'reactstrap';
+import {GroupMode} from '../../../lib/measurement/group-mode';
 
-export enum GroupMode
-{
-    None,
-    Benchmark,
-    Environment,
-    AxisX
-}
+
 
 export interface LineChartView
 {
@@ -63,7 +49,7 @@ export class LineChart extends PureComponent<Props, State>
 
     render()
     {
-        return "";
+        return '';
         /*const measurements = this.generateData(
             this.getValidMeasurements(this.props.measurements, this.props.selection),
             this.props.selection
@@ -118,14 +104,14 @@ export class LineChart extends PureComponent<Props, State>
         );*/
     }
 
-    generateData = (measurements: Measurement[], view: Selection): DataPoint[] =>
+   /* generateData = (measurements: Measurement[], view: Selection): DataPoint[] =>
     {
         const points = this.generatePoints(measurements, view);
         return sort((a, b) => compareDate(a.measurements[0].timestamp, b.measurements[0].timestamp), points);
     }
     generatePoints = (measurements: Measurement[], view: Selection): DataPoint[] =>
     {
-        /*if (this.isGrouped())
+        if (this.isGrouped())
         {
             const groups = this.group(measurements, selection);
             return values(groups)
@@ -152,9 +138,9 @@ export class LineChart extends PureComponent<Props, State>
             y: Number(getValueWithPath(m, selection.projection.yAxis)),
             deviation: [],
             measurements: [m]
-        }));*/
+        }));
         return [];
-    }
+    }*/
     getXValue = (measurement: Measurement, view: Selection): string =>
     {
         /*const value = getValueWithPath(measurement, selection.projection.xAxis);
@@ -184,7 +170,9 @@ export class LineChart extends PureComponent<Props, State>
     checkViewValidity = (measurements: Measurement[], view: Selection): string[] =>
     {
         const errors: string[] = [];
-        /*const invalidX = measurements.filter(m => !this.isAxisXValid(getValueWithPath(m, selection.projection.xAxis)));
+        /*const invalidX = measurements.filter(m => !this.isAxisXValid(getValueWithPath(m,
+        selection.projection.xAxis)));
+        selection.projection.xAxis)));
         if (invalidX.length > 0)
         {
             errors.push(

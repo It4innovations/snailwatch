@@ -7,12 +7,13 @@ import thunk from 'redux-thunk';
 import {rootEpic} from './epics';
 import {AppState, reducers} from './reducers';
 import url from 'url';
-import {persistStore, persistReducer} from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import {persistReducer, persistStore} from 'redux-persist';
 import reduxCatch from 'redux-catch';
 import Raven from 'raven-js';
 import {RestClient} from '../../lib/api/rest-client';
 import {API_SERVER} from '../../configuration';
+import storage from 'redux-persist/lib/storage';
+import {uiReducer} from '../ui/reducer';
 
 function errorHandler(error: Error, getState: () => AppState, action: Action)
 {
@@ -34,6 +35,7 @@ const epic = createEpicMiddleware(rootEpic, {
         client: new RestClient(API_SERVER)
     }
 });
+
 const authPersist = {
     key: 'user',
     storage,
@@ -44,10 +46,21 @@ const projectPersist = {
     storage,
     whitelist: ['projects', 'selectedProject']
 };
+const barChartPersist = {
+    key: 'ui',
+    storage,
+    whitelist: ['selection', 'xAxis', 'yAxes']
+};
+
+const persistedUIReducer = combineReducers({
+    barChartPage: persistReducer(barChartPersist, uiReducer.barChartPage)
+});
+
 const rootReducer = combineReducers({
     ...reducers,
     user: persistReducer(authPersist, reducers.user),
     project: persistReducer(projectPersist, reducers.project),
+    ui: persistedUIReducer,
     router: routerReducer
 });
 

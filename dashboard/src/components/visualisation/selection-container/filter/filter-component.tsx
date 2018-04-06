@@ -1,8 +1,8 @@
 import React, {PureComponent} from 'react';
-import {Filter, Operator} from '../../../../lib/view/filter';
+import {Filter, Operator} from '../../../../lib/measurement/selection/filter';
 import styled from 'styled-components';
 import {Button} from 'reactstrap';
-import {SuggestInput} from '../suggest-input';
+import {SuggestInput} from '../../../global/suggest-input';
 import Input from 'reactstrap/lib/Input';
 
 interface Props
@@ -10,9 +10,9 @@ interface Props
     filter: Filter;
     index: number;
     editable: boolean;
+    pathKeys: string[];
     onRemove(index: number): void;
     onChange(index: number, filter: Filter): void;
-    calculatePathSuggestions(input: string): string[];
     calculateValueSuggestions(filter: Filter, input: string): string[];
 }
 
@@ -45,10 +45,14 @@ export class FilterComponent extends PureComponent<Props>
     {
         return (
             <>
-                <SuggestInput
+                <Input
+                    type='select'
                     value={this.props.filter.path}
-                    onChange={val => this.change('path', val)}
-                    calculateSuggestions={this.props.calculatePathSuggestions} />
+                    onChange={e => this.change('path', e.currentTarget.value)}>
+                    {this.props.pathKeys.map(key =>
+                        <option key={key} value={key}>{key}</option>
+                    )}
+                </Input>
                 <Input
                     type='select'
                     name='operator'

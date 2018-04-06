@@ -1,4 +1,5 @@
-import {BadValueFilteredError, createFilter, Operator, testFilter} from '../lib/view/filter';
+import {BadValueFilteredError, createFilter, Filter, Operator, testFilter} from '../lib/measurement/selection/filter';
+import {buildRequestFilter} from '../lib/api/filter';
 
 describe('Filter', () =>
 {
@@ -133,4 +134,41 @@ describe('Filter', () =>
             expect(testFilter(obj, filter)).toBe(data.result);
         });
     }
+});
+describe('buildRequestFilter', () => {
+    it('correctly groups multiple path entries', () => {
+        const filters: Filter[] = [{
+            path: 'a',
+            operator: '<',
+            value: '9'
+        }, {
+            path: 'a',
+            operator: '>=',
+            value: '8'
+        }];
+
+        const expected = {
+            a: {
+                $lt: '9',
+                $gte: '8'
+            }
+        };
+        expect(buildRequestFilter(filters)).toEqual(expected);
+    });
+    it('correctly selects equal operator', () => {
+        const filters: Filter[] = [{
+            path: 'a',
+            operator: '>=',
+            value: '9'
+        }, {
+            path: 'a',
+            operator: '==',
+            value: '8'
+        }];
+
+        const expected = {
+            a: '8'
+        };
+        expect(buildRequestFilter(filters)).toEqual(expected);
+    });
 });

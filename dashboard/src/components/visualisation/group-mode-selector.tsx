@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
-import {GroupMode} from './line-chart';
 import Input from 'reactstrap/lib/Input';
+import {GroupMode} from '../../lib/measurement/group-mode';
 
 interface Props
 {
@@ -8,7 +8,7 @@ interface Props
     onChangeGroupMode(value: GroupMode): void;
 }
 
-export class ChartSettings extends PureComponent<Props>
+export class GroupModeSelector extends PureComponent<Props>
 {
     render()
     {
@@ -16,6 +16,7 @@ export class ChartSettings extends PureComponent<Props>
             <div>
                 <label>Group by:</label>
                 <Input type='select'
+                       bsSize='sm'
                        value={this.props.groupMode.toString()}
                        onChange={this.handleChangeGroup}>
                     <option value={GroupMode.None}>None</option>

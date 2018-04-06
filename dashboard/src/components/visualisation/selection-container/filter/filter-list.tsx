@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {createFilter, Filter} from '../../../../lib/view/filter';
+import {createFilter, Filter} from '../../../../lib/measurement/selection/filter';
 import {FilterComponent} from './filter-component';
 import {Button} from 'reactstrap';
 import {update, remove} from 'ramda';
@@ -29,7 +29,7 @@ export class FilterList extends PureComponent<Props>
                         editable={this.props.editable}
                         onRemove={this.removeFilter}
                         onChange={this.changeFilter}
-                        calculatePathSuggestions={this.calculatePathSuggestions}
+                        pathKeys={this.calculatePathSuggestions()}
                         calculateValueSuggestions={this.calculateValueSuggestions} />)}
                 {this.props.editable && <Button onClick={this.addFilter}>Add filter</Button>}
             </div>
@@ -49,9 +49,9 @@ export class FilterList extends PureComponent<Props>
         this.props.onChange(update(index, filter, this.props.filters));
     }
 
-    calculatePathSuggestions = (input: string): string[] =>
+    calculatePathSuggestions = (): string[] =>
     {
-        const suggestions = this.props.measurementKeys.filter(k => k.includes(input));
+        const suggestions = [...this.props.measurementKeys];
         suggestions.sort();
         return suggestions;
     }

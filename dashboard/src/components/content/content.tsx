@@ -13,9 +13,11 @@ import styled from 'styled-components';
 import {Profile} from '../profile/profile';
 import {Project} from '../../lib/project/project';
 import {getSelectedProject} from '../../state/project/reducer';
-import {MeasurementList} from '../measurement-list/measurement-list';
-import {ChartsPage} from '../visualisation/charts-page';
+import {MeasurementList} from '../visualisation/measurement-list/measurement-list';
+import {ViewsPage} from '../visualisation/views-page';
 import {ProjectOverview} from '../project/project-overview';
+
+import './global.scss';
 
 interface StateProps
 {
@@ -47,7 +49,7 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
                     {this.authRoute(Routes.Profile, Profile)}
                     {this.isProjectSelected() && this.authRoute(Routes.Overview, ProjectOverview)}
                     {this.isProjectSelected() && this.authRoute(Routes.MeasurementList, MeasurementList)}
-                    {this.isProjectSelected() && this.authRoute(Routes.Charts, ChartsPage)}
+                    {this.isProjectSelected() && this.authRoute(Routes.Views, ViewsPage)}
                     {this.authRoute(Routes.Projects, Projects)}
                     {this.authRoute(Routes.Logout, this.logoutUser)}
                     {this.getAuthenticatedFallback()}

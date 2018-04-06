@@ -1,8 +1,8 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {clearViews, createSelectionAction, deleteSelectionAction, loadSelectionsAction,
+import {clearSelections, createSelectionAction, deleteSelectionAction, loadSelectionsAction,
     updateSelectionAction} from './actions';
 import {createRequest, hookRequestActions, Request} from '../../util/request';
-import {Selection} from '../../lib/view/view';
+import {Selection} from '../../lib/measurement/selection/selection';
 import {AppState} from '../app/reducers';
 import {compose} from 'ramda';
 
@@ -16,7 +16,7 @@ let reducer = reducerWithInitialState<SelectionState>({
     selections: [],
     selectionRequest: createRequest()
 })
-.case(clearViews, state => ({
+.case(clearSelections, state => ({
     ...state,
     selections: [],
     selectionRequest: createRequest()

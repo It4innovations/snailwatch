@@ -1,6 +1,6 @@
 import {Filter} from './filter';
 import {contains} from 'ramda';
-import {getValueWithPath} from '../../util/object';
+import {getValueWithPath} from '../../../util/object';
 
 export type Operator = '==' | '!=' | '<' | '<=' | '>' | '>=' | 'contains';
 

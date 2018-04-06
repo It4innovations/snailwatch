@@ -1,15 +1,15 @@
 import React, {PureComponent} from 'react';
-import {Selection} from '../../../lib/view/view';
+import {Selection} from '../../../lib/measurement/selection/selection';
 import Input from 'reactstrap/lib/Input';
 
 interface Props
 {
-    view: Selection;
+    selection: Selection;
     editable: boolean;
     onChange(name: string): void;
 }
 
-export class ViewName extends PureComponent<Props>
+export class SelectionName extends PureComponent<Props>
 {
     render()
     {
@@ -25,12 +25,12 @@ export class ViewName extends PureComponent<Props>
     {
         if (!this.props.editable)
         {
-            return <span>{this.props.view.name}</span>;
+            return <span>{this.props.selection.name}</span>;
         }
 
         return <Input type='text'
                       required={true}
-                      value={this.props.view.name}
+                      value={this.props.selection.name}
                       onChange={this.handleChange} />;
     }
 
