@@ -26,29 +26,29 @@ reducer = compose(
     (r: typeof reducer) => hookRequestActions(r,
         loadSelectionsAction,
         state => state.selectionRequest,
-        (state: SelectionState, action) => ({
+        (state, action) => ({
             selections: [...action.payload.result]
         })
     ),
     (r: typeof reducer) => hookRequestActions(r,
         createSelectionAction,
-        (state: SelectionState) => state.selectionRequest,
-        (state: SelectionState, action) => ({
+        state => state.selectionRequest,
+        (state, action) => ({
             selections: [...state.selections, action.payload.result]
         })
     ),
     (r: typeof reducer) => hookRequestActions(reducer,
         updateSelectionAction,
-        (state: SelectionState) => state.selectionRequest,
-        (state: SelectionState, action) => ({
+        state => state.selectionRequest,
+        (state, action) => ({
             selections: [...state.selections.filter(v => v.id !== action.payload.params.selection.id),
                 action.payload.params.selection]
         })
     ),
     (r: typeof reducer) => hookRequestActions(r,
         deleteSelectionAction,
-        (state: SelectionState) => state.selectionRequest,
-        (state: SelectionState, action) => {
+        state => state.selectionRequest,
+        (state, action) => {
             const selections = [...state.selections.filter(v => v.id !== action.payload.params.selection.id)];
 
             return {

@@ -29,6 +29,9 @@ const operators: Operator[] = [
 const Row = styled.div`
   display: flex;
 `;
+const Operator = styled(Input)`
+  width: 100px !important;
+`;
 
 export class FilterComponent extends PureComponent<Props>
 {
@@ -45,28 +48,25 @@ export class FilterComponent extends PureComponent<Props>
     {
         return (
             <>
-                <Input
-                    type='select'
+                <SuggestInput
                     value={this.props.filter.path}
-                    onChange={e => this.change('path', e.currentTarget.value)}>
-                    {this.props.pathKeys.map(key =>
-                        <option key={key} value={key}>{key}</option>
-                    )}
-                </Input>
-                <Input
+                    onChange={val => this.change('path', val)}
+                    calculateSuggestions={this.calculatePathSuggestions}>
+                </SuggestInput>
+                <Operator
                     type='select'
                     name='operator'
                     value={this.props.filter.operator}
                     onChange={val => this.change('operator', val.currentTarget.value)}>
                     {operators.map(this.renderOperator)}
-                </Input>
-            <SuggestInput
-                value={this.props.filter.value}
-                onChange={val => this.change('value', val)}
-                calculateSuggestions={this.calculateValueSuggestions} />
-                {this.props.editable &&
-                    <Button onClick={this.remove} color='danger'>Remove</Button>
-                }
+                </Operator>
+                <SuggestInput
+                    value={this.props.filter.value}
+                    onChange={val => this.change('value', val)}
+                    calculateSuggestions={this.calculateValueSuggestions} />
+                    {this.props.editable &&
+                        <Button onClick={this.remove} color='danger'>Remove</Button>
+                    }
             </>
         );
     }
@@ -100,6 +100,10 @@ export class FilterComponent extends PureComponent<Props>
         this.props.onRemove(this.props.index);
     }
 
+    calculatePathSuggestions = (input: string): string[] =>
+    {
+        return this.props.pathKeys.filter(key => key.includes(input));
+    }
     calculateValueSuggestions = (value: string): string[] =>
     {
         if (this.props.filter.operator === '==' &&

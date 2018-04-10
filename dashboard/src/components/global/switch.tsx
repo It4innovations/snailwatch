@@ -1,4 +1,6 @@
 import React, {PureComponent} from 'react';
+import ButtonGroup from 'reactstrap/lib/ButtonGroup';
+import Button from 'reactstrap/lib/Button';
 
 interface Props
 {
@@ -16,24 +18,33 @@ export class Switch extends PureComponent<Props>
     {
         return (
             <div>
-                <div>
-                    <input type='radio'
-                           value='first'
-                           required
-                           checked={this.props.useFirst}
-                           onChange={() => this.props.onChange(true)} />
-                    <span>{this.props.firstLabel}</span>
-                    <input type='radio'
-                           value='second'
-                           required
-                           checked={!this.props.useFirst}
-                           onChange={() => this.props.onChange(false)} />
-                    <span>{this.props.secondLabel}</span>
-                </div>
+                <ButtonGroup>
+                    <Button size='sm'
+                            active={this.props.useFirst}
+                            onClick={this.useFirst}>{this.props.firstLabel}</Button>
+                    <Button size='sm'
+                            active={!this.props.useFirst}
+                            onClick={this.useSecond}>{this.props.secondLabel}</Button>
+                </ButtonGroup>
                 <div>
                     {this.props.useFirst ? this.props.firstComponent : this.props.secondComponent}
                 </div>
             </div>
         );
+    }
+
+    useFirst = () =>
+    {
+        if (!this.props.useFirst)
+        {
+            this.props.onChange(true);
+        }
+    }
+    useSecond = () =>
+    {
+        if (this.props.useFirst)
+        {
+            this.props.onChange(false);
+        }
     }
 }

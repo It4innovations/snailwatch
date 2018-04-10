@@ -1,5 +1,6 @@
 import {Moment} from 'moment';
 import {toString} from 'ramda';
+import {getAllKeysMerged} from '../../util/object';
 
 interface MeasurementRecord
 {
@@ -22,4 +23,13 @@ export function hashMeasurement(measurement: Measurement): string
         benchmark: measurement.benchmark,
         environment: measurement.environment
     });
+}
+export function getMeasurementKeys(measurements: Measurement[]): string[]
+{
+    return getAllKeysMerged(measurements, m => ({
+        timestamp: '',
+        benchmark: m.benchmark,
+        environment: m.environment,
+        result: m.result
+    }));
 }

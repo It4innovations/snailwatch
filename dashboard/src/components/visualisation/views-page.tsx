@@ -8,8 +8,9 @@ import {User} from '../../lib/user/user';
 import {getUser} from '../../state/user/reducer';
 import {getSelectedProject} from '../../state/project/reducer';
 import {Nav, NavItem, NavLink, TabContent, TabPane} from 'reactstrap';
-import {BarChartPage} from './bar-chart/bar-chart-page';
 import styled from 'styled-components';
+import {LineChartPage} from './line-chart/line-chart-page';
+import {BarChartPage} from './bar-chart/bar-chart-page';
 
 interface StateProps
 {
@@ -54,10 +55,14 @@ class ViewsPageComponent extends PureComponent<Props, State>
         return (
             <>
                 <Nav tabs>
-                    {this.renderNav(0, 'Proportionate')}
+                    {this.renderNav(0, 'Absolute')}
+                    {this.renderNav(1, 'Proportionate')}
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId={0}>
+                        <LineChartPage />
+                    </TabPane>
+                    <TabPane tabId={1}>
                         <BarChartPage />
                     </TabPane>
                 </TabContent>

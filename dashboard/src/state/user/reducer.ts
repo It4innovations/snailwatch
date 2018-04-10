@@ -25,12 +25,12 @@ let reducer = reducerWithInitialState<UserState>({
 
 reducer = compose(
     (r: typeof reducer) => hookRequestActions(r, loginUser,
-        (state: UserState) => state.loginRequest,
-        (state: UserState, action) => ({
+        state => state.loginRequest,
+        (state, action) => ({
             user: action.payload.result
         })
 ), (r: typeof reducer) => hookRequestActions(r, changePassword,
-        (state: UserState) => state.changePasswordRequest
+        state => state.changePasswordRequest
 ))(reducer);
 
 export const getUser = (state: AppState) => state.user.user;

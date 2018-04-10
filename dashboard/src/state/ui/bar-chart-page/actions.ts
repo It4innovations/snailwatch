@@ -19,4 +19,4 @@ export const loadBarChartMeasurementsAction =
 
 export const setBarChartXAxisAction = actionCreator<string>('set-x-axis');
 export const setBarChartYAxesAction = actionCreator<string[]>('set-y-axes');
-export const setBarChartSelection = actionCreator<Selection>('set-selection');
+export const setBarChartSelection = actionCreator<string>('set-selection');

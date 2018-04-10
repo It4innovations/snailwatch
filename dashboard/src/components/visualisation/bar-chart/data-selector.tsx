@@ -2,8 +2,7 @@ import React, {PureComponent} from 'react';
 import {Selection} from '../../../lib/measurement/selection/selection';
 import {update} from 'ramda';
 import Button from 'reactstrap/lib/Button';
-import {Measurement} from '../../../lib/measurement/measurement';
-import {getAllKeysMerged} from '../../../util/object';
+import {getMeasurementKeys, Measurement} from '../../../lib/measurement/measurement';
 import MdDelete from 'react-icons/lib/md/delete';
 import styled from 'styled-components';
 import {Input} from 'reactstrap';
@@ -29,7 +28,7 @@ export class DataSelector extends PureComponent<Props>
 {
     render()
     {
-        const keys = this.getMeasurementKeys();
+        const keys = getMeasurementKeys(this.props.measurements);
         keys.sort();
 
         return (
@@ -56,6 +55,7 @@ export class DataSelector extends PureComponent<Props>
                    bsSize='sm'
                    value={value}
                    onChange={e => onChange(e.currentTarget.value)}>
+                <option key='' value='' />
                 {keys.map(key =>
                     <option key={key} value={key}>{key}</option>
                 )}
@@ -75,14 +75,5 @@ export class DataSelector extends PureComponent<Props>
     removeYAxis = (index: number) =>
     {
         this.props.onChangeYAxes(this.props.yAxes.filter((axis, i) => i !== index));
-    }
-    getMeasurementKeys = (): string[] =>
-    {
-        return getAllKeysMerged(this.props.measurements, m => ({
-            timestamp: '',
-            benchmark: m.benchmark,
-            environment: m.environment,
-            result: m.result
-        }));
     }
 }

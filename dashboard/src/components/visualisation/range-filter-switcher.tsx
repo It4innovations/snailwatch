@@ -3,6 +3,8 @@ import {RangeFilter} from '../../lib/measurement/selection/range-filter';
 import {Moment, default as moment} from 'moment';
 import Input from 'reactstrap/lib/Input';
 import {Switch} from '../global/switch';
+import InputGroup from 'reactstrap/lib/InputGroup';
+import InputGroupAddon from 'reactstrap/lib/InputGroupAddon';
 
 interface Props
 {
@@ -18,8 +20,8 @@ export class RangeFilterSwitcher extends PureComponent<Props>
             <>
                 <Switch
                     useFirst={!this.props.rangeFilter.useDateFilter}
-                    firstLabel={'Last N entries'}
-                    secondLabel={'Date'}
+                    firstLabel='Last N'
+                    secondLabel='Date'
                     firstComponent={this.renderRange()}
                     secondComponent={this.renderDate()}
                     onChange={this.changeRangeType} />
@@ -34,16 +36,23 @@ export class RangeFilterSwitcher extends PureComponent<Props>
 
         return (
             <div>
-                <span>From</span>
-                <Input type='date'
-                       max={to}
-                       value={from}
-                       onChange={e => this.changeDate(moment(e.currentTarget.value), this.props.rangeFilter.to)} />
-                <span>To</span>
-                <Input type='date'
-                       value={to}
-                       min={from}
-                       onChange={e => this.changeDate(this.props.rangeFilter.from, moment(e.currentTarget.value))} />
+                <InputGroup>
+                    <InputGroupAddon addonType='prepend'>From</InputGroupAddon>
+                    <Input type='date'
+                           max={to}
+                           value={from}
+                           onChange={e => this.changeDate(moment(e.currentTarget.value), this.props.rangeFilter.to)} />
+                </InputGroup>
+                <InputGroup>
+                    <InputGroupAddon addonType='prepend'>To</InputGroupAddon>
+                    <Input type='date'
+                           value={to}
+                           min={from}
+                           max={moment().format(dateFormat)}
+                           onChange={e =>
+                               this.changeDate(this.props.rangeFilter.from, moment(e.currentTarget.value))
+                           } />
+                </InputGroup>
             </div>
         );
     }

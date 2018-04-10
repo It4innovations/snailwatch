@@ -27,6 +27,9 @@ import {getSelections} from '../../../state/selection/reducer';
 import {loadSelectionsAction, LoadSelectionsParams} from '../../../state/selection/actions';
 import {Switch} from '../../global/switch';
 import {SelectionContainer} from '../selection-container/selection-container';
+import {getBarChartPageSelection} from '../../../state/ui/bar-chart-page/reducer';
+import {Request} from '../../../util/request';
+import {RequestComponent} from '../../global/request-component';
 
 interface OwnProps
 {
@@ -41,6 +44,7 @@ interface StateProps
     selection: Selection | null;
     xAxis: string;
     yAxes: string[];
+    measurementRequest: Request;
 }
 interface DispatchProps
 {
@@ -48,7 +52,7 @@ interface DispatchProps
     loadSelections(params: LoadSelectionsParams): void;
     setXAxis(axis: string): void;
     setYAxes(axes: string[]): void;
-    setSelection(selection: Selection): void;
+    setSelection(selectionId: string): void;
 }
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 
@@ -143,6 +147,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
                         onChangeSelection={this.changeSelection} />
                     <GroupModeSelector groupMode={this.state.groupMode}
                                        onChangeGroupMode={this.changeGroupMode} />
+                    <RequestComponent request={this.props.measurementRequest} />
                 </DatasetColumn>
                 <BarColumn>
                     <h4>Proportionate chart</h4>
@@ -180,7 +185,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
     }
     changeSelection = (selection: Selection) =>
     {
-        this.props.setSelection(selection);
+        this.props.setSelection(selection === null ? null : selection.id);
     }
     changeGroupMode = (groupMode: GroupMode) =>
     {
@@ -205,9 +210,10 @@ export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnPro
     project: getSelectedProject(state),
     selections: getSelections(state),
     measurements: state.ui.barChartPage.measurements,
+    measurementRequest: state.ui.barChartPage.measurementsRequest,
     xAxis: state.ui.barChartPage.xAxis,
     yAxes: state.ui.barChartPage.yAxes,
-    selection: state.ui.barChartPage.selection
+    selection: getBarChartPageSelection(state)
 }), {
     loadMeasurements: loadBarChartMeasurementsAction.started,
     loadSelections: loadSelectionsAction.started,

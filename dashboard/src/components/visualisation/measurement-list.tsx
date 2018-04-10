@@ -52,6 +52,7 @@ export class MeasurementList extends PureComponent<Props>
         return (
             <SyntaxHighlighter language='json' style={dracula}>
                 {JSON.stringify({
+                    id: measurement.id,
                     benchmark: measurement.benchmark,
                     timestamp: measurement.timestamp.format(DATETIME_FORMAT),
                     environment: measurement.environment,

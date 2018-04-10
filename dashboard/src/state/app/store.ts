@@ -47,13 +47,20 @@ const projectPersist = {
     whitelist: ['projects', 'selectedProject']
 };
 const barChartPersist = {
-    key: 'ui',
+    key: 'ui/bar-chart',
     storage,
     whitelist: ['selection', 'xAxis', 'yAxes']
 };
+const lineChartPersist = {
+    key: 'ui/line-chart',
+    storage,
+    whitelist: ['datasets', 'xAxis']
+};
 
 const persistedUIReducer = combineReducers({
-    barChartPage: persistReducer(barChartPersist, uiReducer.barChartPage)
+    ...uiReducer,
+    barChartPage: persistReducer(barChartPersist, uiReducer.barChartPage),
+    lineChartPage: persistReducer(lineChartPersist, uiReducer.lineChartPage)
 });
 
 const rootReducer = combineReducers({

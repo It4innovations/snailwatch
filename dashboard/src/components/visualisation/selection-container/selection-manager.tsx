@@ -7,8 +7,8 @@ import {SelectionName} from './selection-name';
 import {Filter} from '../../../lib/measurement/selection/filter';
 import {Request} from '../../../util/request';
 import {sort, equals} from 'ramda';
-import {Measurement} from '../../../lib/measurement/measurement';
-import {getAllKeysMerged} from '../../../util/object';
+import {getMeasurementKeys, Measurement} from '../../../lib/measurement/measurement';
+import {isBlank} from '../../../util/string';
 
 interface Props
 {
@@ -28,6 +28,7 @@ interface State
     createdNamePending: string;
     selection: Selection;
     measurementKeys: string[];
+    selectionError: string;
 }
 
 export class SelectionManager extends PureComponent<Props, State>
@@ -40,7 +41,8 @@ export class SelectionManager extends PureComponent<Props, State>
             editing: false,
             selection: createSelection(),
             createdNamePending: null,
-            measurementKeys: []
+            measurementKeys: [],
+            selectionError: ''
         };
     }
 
@@ -64,7 +66,7 @@ export class SelectionManager extends PureComponent<Props, State>
         if (this.props.measurements !== props.measurements)
         {
             this.setState(() => ({
-                measurementKeys: this.calculateKeys(props.measurements)
+                measurementKeys: getMeasurementKeys(props.measurements)
             }));
         }
     }
@@ -93,6 +95,7 @@ export class SelectionManager extends PureComponent<Props, State>
                     onCancelEdit={this.stopEdit} />
                 {this.props.selectionRequest.loading && <div>Loading...</div>}
                 {this.props.selectionRequest.error && <div>{this.props.selectionRequest.error}</div>}
+                {this.state.selectionError && <div>{this.state.selectionError}</div>}
             </div>
         );
     }
@@ -142,7 +145,8 @@ export class SelectionManager extends PureComponent<Props, State>
     stopEdit = () =>
     {
         this.setState(() => ({
-            editing: false
+            editing: false,
+            selectionError: ''
         }));
     }
 
@@ -175,8 +179,18 @@ export class SelectionManager extends PureComponent<Props, State>
     }
     updateSelection = () =>
     {
-        this.props.updateSelection(this.state.selection);
-        this.stopEdit();
+        try
+        {
+            this.checkSelection(this.state.selection);
+            this.props.updateSelection(this.state.selection);
+            this.stopEdit();
+        }
+        catch (e)
+        {
+            this.setState(() => ({
+                selectionError: e.message
+            }));
+        }
     }
 
     handleNameChange = (name: string) =>
@@ -220,13 +234,19 @@ export class SelectionManager extends PureComponent<Props, State>
         return sort((a, b) => a.name.localeCompare(b.name), selections);
     }
 
-    calculateKeys = (measurements: Measurement[]): string[] =>
+    checkSelection = (selection: Selection) =>
     {
-        return getAllKeysMerged(measurements, m => ({
-            timestamp: '',
-            benchmark: m.benchmark,
-            environment: m.environment,
-            result: m.result
-        }));
+        if (isBlank(selection.name))
+        {
+            throw Error('You have to fill in selection name');
+        }
+
+        for (const filter of selection.filters)
+        {
+            if (isBlank(filter.path))
+            {
+                throw Error('You have to fill in filter path');
+            }
+        }
     }
 }

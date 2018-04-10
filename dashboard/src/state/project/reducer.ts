@@ -48,30 +48,30 @@ reducer = compose(
     (r: typeof reducer) => hookRequestActions(r,
         loadProject,
         state => state.loadProjectRequest,
-        (state: ProjectState, action) => ({
+        (state, action) => ({
             projects: [...state.projects.filter(p => p.id !== action.payload.result.id), action.payload.result]
         })
     ),
     (r: typeof reducer) => hookRequestActions(r,
         loadProjects,
-        (state: ProjectState) => state.loadProjectsRequest,
-        (state: ProjectState, action) => ({
+        state => state.loadProjectsRequest,
+        (state, action) => ({
             projects: action.payload.result
         })
     ),
     (r: typeof reducer) => hookRequestActions(r,
         createProject,
-        (state: ProjectState) => state.createProjectRequest),
+        state => state.createProjectRequest),
     (r: typeof reducer) => hookRequestActions(r,
         loadUploadToken,
         state => state.uploadTokenRequest,
-        (state: ProjectState, action) => ({
+        (state, action) => ({
             uploadToken: action.payload.result
         })),
     (r: typeof reducer) => hookRequestActions(r,
         regenerateUploadToken,
         state => state.uploadTokenRequest,
-        (state: ProjectState, action) => ({
+        (state, action) => ({
             uploadToken: action.payload.result
         })
 ))(reducer);

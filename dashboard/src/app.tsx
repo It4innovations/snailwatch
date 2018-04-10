@@ -3,7 +3,7 @@ import {Provider} from 'react-redux';
 import {store, history, persistor} from './state/app/store';
 import {ConnectedRouter} from 'react-router-redux';
 import {Content} from './components/content/content';
-import {PersistGate} from 'redux-persist/lib/integration/react';
+import {PersistGate} from 'redux-persist/integration/react';
 import {hot} from 'react-hot-loader';
 
 class AppComponent extends PureComponent

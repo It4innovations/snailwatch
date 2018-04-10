@@ -8,35 +8,38 @@ import {
     setBarChartXAxisAction,
     setBarChartYAxesAction
 } from './actions';
-import {Selection} from '../../../lib/measurement/selection/selection';
+import {AppState} from '../../app/reducers';
 
 export interface BarChartPageState
 {
     measurements: Measurement[];
     measurementsRequest: Request;
-    selection: Selection | null;
+    selectionId: string | null;
     xAxis: string;
     yAxes: string[];
 }
 
-let reducer = reducerWithInitialState({
+let reducer = reducerWithInitialState<BarChartPageState>({
     measurements: [],
     measurementsRequest: createRequest(),
-    selection: null,
+    selectionId: null,
     xAxis: '',
     yAxes: []
 })
 .case(setBarChartXAxisAction, (state, xAxis) => ({...state, xAxis }))
 .case(setBarChartYAxesAction, (state, yAxes) => ({...state, yAxes }))
-.case(setBarChartSelection, (state, selection) => ({...state, selection }));
+.case(setBarChartSelection, (state, selectionId) => ({...state, selectionId }));
 
 reducer = compose(
     (r: typeof reducer) => hookRequestActions(r, loadBarChartMeasurementsAction,
-        (state: BarChartPageState) => state.measurementsRequest,
-        (state: BarChartPageState, action) => ({
+        state => state.measurementsRequest,
+        (state, action) => ({
             measurements: action.payload.result
         })
     )
 )(reducer);
+
+export const getBarChartPageSelection = (state: AppState) => state.selection.selections.find(sel =>
+    sel.id === state.ui.barChartPage.selectionId) || null;
 
 export const barChartReducer = reducer;

@@ -13,6 +13,7 @@ import {
 import {GroupMode} from '../../../lib/measurement/group-mode';
 import {groupMeasurements, MeasurementGroup} from '../../../lib/measurement/measurement-grouper';
 import ellipsize from 'ellipsize';
+import {ColorPalette} from '../color-palette';
 
 interface Props
 {
@@ -23,12 +24,12 @@ interface Props
     onMeasurementsSelected(measurements: Measurement[]): void;
 }
 
-const BAR_COLORS = [
+const BAR_COLORS = new ColorPalette([
     '#8884D8',
     '#DD5522',
     '#118844',
     '#02EECC'
-];
+]);
 
 export class BarChart extends PureComponent<Props>
 {
@@ -65,7 +66,7 @@ export class BarChart extends PureComponent<Props>
                              onClick={this.handleBarClick}
                              // label={(x: {}) => this.renderLabel(data, x as {}, axis)}
                              name={axis}
-                             fill={BAR_COLORS[index % BAR_COLORS.length]} />
+                             fill={BAR_COLORS.getColor(index)} />
                     )}
                 </ReBarChart>
             </ResponsiveContainer>

@@ -14,7 +14,7 @@ let reducer = reducerWithInitialState<MeasurementState>({
 
 reducer = compose(
     (r: typeof reducer) => hookRequestActions(r, deleteMeasurement,
-        (state: MeasurementState) => state.deleteMeasurementRequest
+        state => state.deleteMeasurementRequest
 ))(reducer);
 
 export const measurementReducer = reducer;
