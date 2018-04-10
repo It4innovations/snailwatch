@@ -2,7 +2,7 @@ import {hashMeasurement, Measurement} from './measurement';
 import {GroupMode} from './group-mode';
 import {groupBy, values, min, max, reduce, sum, zipObj, Dictionary, all} from 'ramda';
 import {getValueWithPath} from '../../util/object';
-import {Moment} from 'moment';
+import {Moment, isMoment} from 'moment';
 
 export interface MeasurementGroup
 {
@@ -78,7 +78,7 @@ function getXAxisValue(measurement: Measurement, axis: string): string
 {
     const DATE_FORMAT = 'DD. MM. YYYY HH:mm:ss';
     const value = getValueWithPath(measurement, axis);
-    if (axis === 'timestamp')
+    if (isMoment(value))
     {
         return (value as {} as Moment).format(DATE_FORMAT);
     }

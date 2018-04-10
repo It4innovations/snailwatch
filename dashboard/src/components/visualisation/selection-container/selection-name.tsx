@@ -1,6 +1,9 @@
 import React, {PureComponent} from 'react';
 import {Selection} from '../../../lib/measurement/selection/selection';
 import Input from 'reactstrap/lib/Input';
+import InputGroup from 'reactstrap/lib/InputGroup';
+import InputGroupAddon from 'reactstrap/lib/InputGroupAddon';
+import styled from 'styled-components';
 
 interface Props
 {
@@ -9,29 +12,30 @@ interface Props
     onChange(name: string): void;
 }
 
+const Wrapper = styled(InputGroup)`
+  margin-top: 5px;
+`;
+
 export class SelectionName extends PureComponent<Props>
 {
     render()
     {
         return (
-            <div>
-                <h2>Name</h2>
+            <Wrapper size='sm'>
+                <InputGroupAddon addonType='prepend'>Name</InputGroupAddon>
                 {this.renderName()}
-            </div>
+            </Wrapper>
         );
     }
 
     renderName = (): JSX.Element =>
     {
-        if (!this.props.editable)
-        {
-            return <span>{this.props.selection.name}</span>;
-        }
-
-        return <Input type='text'
+        return <Input bsSize='sm'
+                      type='text'
                       required={true}
                       value={this.props.selection.name}
-                      onChange={this.handleChange} />;
+                      onChange={this.handleChange}
+                      disabled={!this.props.editable} />;
     }
 
     handleChange = (e: React.FormEvent<HTMLInputElement>) =>

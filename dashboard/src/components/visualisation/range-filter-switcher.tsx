@@ -5,12 +5,22 @@ import Input from 'reactstrap/lib/Input';
 import {Switch} from '../global/switch';
 import InputGroup from 'reactstrap/lib/InputGroup';
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon';
+import styled from 'styled-components';
+import InputGroupText from 'reactstrap/lib/InputGroupText';
 
 interface Props
 {
     rangeFilter: RangeFilter;
     onFilterChange(filter: RangeFilter): void;
 }
+
+const RangeInput = styled(Input)`
+  width: 80px !important;
+`;
+const DateLabel = styled(InputGroupText)`
+  width: 50px;
+  justify-content: center;
+`;
 
 export class RangeFilterSwitcher extends PureComponent<Props>
 {
@@ -36,16 +46,22 @@ export class RangeFilterSwitcher extends PureComponent<Props>
 
         return (
             <div>
-                <InputGroup>
-                    <InputGroupAddon addonType='prepend'>From</InputGroupAddon>
-                    <Input type='date'
+                <InputGroup size='sm'>
+                    <InputGroupAddon addonType='prepend'>
+                        <DateLabel>From</DateLabel>
+                    </InputGroupAddon>
+                    <Input bsSize='sm'
+                           type='date'
                            max={to}
                            value={from}
                            onChange={e => this.changeDate(moment(e.currentTarget.value), this.props.rangeFilter.to)} />
                 </InputGroup>
-                <InputGroup>
-                    <InputGroupAddon addonType='prepend'>To</InputGroupAddon>
-                    <Input type='date'
+                <InputGroup size='sm'>
+                    <InputGroupAddon addonType='prepend'>
+                        <DateLabel>To</DateLabel>
+                    </InputGroupAddon>
+                    <Input bsSize='sm'
+                           type='date'
                            value={to}
                            min={from}
                            max={moment().format(dateFormat)}
@@ -59,7 +75,7 @@ export class RangeFilterSwitcher extends PureComponent<Props>
     renderRange = (): JSX.Element =>
     {
         return (
-            <Input type='select'
+            <RangeInput type='select'
                    bsSize='sm'
                    value={this.props.rangeFilter.entryCount}
                    onChange={this.changeRange}>
@@ -67,7 +83,7 @@ export class RangeFilterSwitcher extends PureComponent<Props>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
                 <option value={200}>200</option>
-            </Input>
+            </RangeInput>
         );
     }
 

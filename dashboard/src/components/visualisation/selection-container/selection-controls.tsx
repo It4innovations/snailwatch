@@ -41,7 +41,8 @@ export class SelectionControls extends PureComponent<Props>
         const disabled = this.props.editing && !this.props.dirty;
 
         return (
-            <Button key='edit'
+            <Button size='sm'
+                    key='edit'
                     color='primary'
                     disabled={disabled}
                     onClick={callback}>{label}</Button>
@@ -55,7 +56,8 @@ export class SelectionControls extends PureComponent<Props>
         }
 
         return (
-            <Button key='edit-cancel'
+            <Button size='sm'
+                    key='edit-cancel'
                     color='secondary'
                     onClick={this.props.onCancelEdit}>Cancel</Button>
         );
@@ -68,7 +70,8 @@ export class SelectionControls extends PureComponent<Props>
         }
 
         return (
-            <Button key='create'
+            <Button size='sm'
+                    key='create'
                     color='success'
                     onClick={this.props.onCreate}>Create</Button>
         );
@@ -81,7 +84,8 @@ export class SelectionControls extends PureComponent<Props>
         }
 
         return (
-            <Button key='copy'
+            <Button size='sm'
+                    key='copy'
                     color='info'
                     onClick={this.props.onCopy}>Copy</Button>
         );
@@ -94,7 +98,8 @@ export class SelectionControls extends PureComponent<Props>
         }
 
         return (
-            <Button key='delete'
+            <Button size='sm'
+                    key='delete'
                     color='danger'
                     onClick={this.props.onDelete}>Delete</Button>
         );

@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react';
 import ButtonGroup from 'reactstrap/lib/ButtonGroup';
 import Button from 'reactstrap/lib/Button';
+import styled from 'styled-components';
 
 interface Props
 {
@@ -11,6 +12,10 @@ interface Props
     secondComponent: JSX.Element;
     onChange(useFirst: boolean): void;
 }
+
+const Content = styled.div`
+  margin-top: 5px;
+`;
 
 export class Switch extends PureComponent<Props>
 {
@@ -26,9 +31,9 @@ export class Switch extends PureComponent<Props>
                             active={!this.props.useFirst}
                             onClick={this.useSecond}>{this.props.secondLabel}</Button>
                 </ButtonGroup>
-                <div>
+                <Content>
                     {this.props.useFirst ? this.props.firstComponent : this.props.secondComponent}
-                </div>
+                </Content>
             </div>
         );
     }

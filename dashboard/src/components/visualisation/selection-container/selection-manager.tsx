@@ -112,7 +112,7 @@ export class SelectionManager extends PureComponent<Props, State>
                     editable={this.canEdit()}
                     onChange={this.handleNameChange} />
                 <div>
-                    <h2>Filters</h2>
+                    <h4>Filters</h4>
                     <FilterList
                         filters={selection.filters}
                         measurementKeys={this.props.measurementKeys}

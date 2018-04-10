@@ -6,6 +6,7 @@ import {chain, dissoc} from 'ramda';
 import {Input} from 'reactstrap';
 
 import theme from './suggest-input.scss';
+import styled from 'styled-components';
 
 interface Props
 {
@@ -18,6 +19,10 @@ interface State
 {
     suggestions: string[];
 }
+
+const Suggestion = styled.div`
+  font-size: 12px;
+`;
 
 export class SuggestInput extends PureComponent<Props, State>
 {
@@ -43,16 +48,24 @@ export class SuggestInput extends PureComponent<Props, State>
     }
     renderSuggestion = (suggestion: string, params: RenderSuggestionParams): JSX.Element =>
     {
-        const parts = suggestion.split(params.query);
+        const parts = suggestion.split(new RegExp(params.query, 'i'));
+        const length = params.query.length;
+
+        let queryIndex = 0;
         let i = 0;
-        const html = chain(p => [
-                <span key={i++}>{p}</span>,
-                <b key={i++}>{params.query}</b>
-            ], parts
+        const html = chain(p => {
+            queryIndex += p.length;
+            const text = [
+                    <span key={i++}>{p}</span>,
+                    <b key={i++}>{suggestion.substr(queryIndex, length)}</b>
+            ];
+            queryIndex += length;
+            return text;
+            }, parts
         );
         html.pop();
 
-        return <div>{html}</div>;
+        return <Suggestion>{html}</Suggestion>;
     }
     renderInput = (props: InputProps<string>): JSX.Element =>
     {
@@ -60,7 +73,7 @@ export class SuggestInput extends PureComponent<Props, State>
         const ref = props.ref;
         const properties = dissoc('ref', props);
 
-        return <Input {...properties} type='text' innerRef={ref} />;
+        return <Input {...properties} type='text' bsSize='sm' innerRef={ref} />;
     }
 
     handleChange = (e: React.FormEvent<HTMLInputElement>) =>

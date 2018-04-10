@@ -12,7 +12,6 @@ import {
 } from 'recharts';
 import {GroupMode} from '../../../lib/measurement/group-mode';
 import {groupMeasurements, MeasurementGroup} from '../../../lib/measurement/measurement-grouper';
-import ellipsize from 'ellipsize';
 import {ColorPalette} from '../color-palette';
 import {sort} from 'ramda';
 
@@ -23,6 +22,19 @@ interface Props
     yAxes: string[];
     groupMode: GroupMode;
     onMeasurementsSelected(measurements: Measurement[]): void;
+}
+
+interface TickProps
+{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    fill: string;
+    textAnchor: string;
+    payload: {
+        value: string;
+    };
 }
 
 const BAR_COLORS = new ColorPalette([
@@ -53,7 +65,7 @@ export class BarChart extends PureComponent<Props>
                     <XAxis
                         dataKey='x'
                         height={40}
-                        tickFormatter={this.formatX}>
+                        tick={this.renderTick}>
                         <Label value={this.props.xAxis} position='bottom' />
                     </XAxis>
                     <YAxis />
@@ -65,7 +77,7 @@ export class BarChart extends PureComponent<Props>
                              dataKey={`items["${axis}"].average`}
                              stackId='0'
                              onClick={this.handleBarClick}
-                             // label={(x: {}) => this.renderLabel(data, x as {}, axis)}
+                             maxBarSize={60}
                              name={axis}
                              fill={BAR_COLORS.getColor(index)} />
                     )}
@@ -73,14 +85,28 @@ export class BarChart extends PureComponent<Props>
             </ResponsiveContainer>
         );
     }
+    renderTick = (props: TickProps): JSX.Element =>
+    {
+        const value = props.payload.value;
+        const formatted = this.formatX(value);
+        return (
+            <g>
+                <text width={props.width} height={props.height} x={props.x} y={props.y} fill={props.fill}
+                      textAnchor={props.textAnchor}>
+                    <tspan x={props.x} dy='0.71em'>{formatted}</tspan>
+                </text>
+                <title>{value}</title>
+            </g>
+         );
+    }
     renderLabel = (data: MeasurementGroup[], props: {}, axis: string): string =>
     {
-        return data[props['index']].items[axis].average.toString();
+        return data[props['index']].items[axis].average.toFixed(2).toString();
     }
 
     formatX = (value: string): string =>
     {
-        return ellipsize(value, 6);
+        return value;
     }
 
     handleBarClick = (data: {payload: MeasurementGroup}) =>

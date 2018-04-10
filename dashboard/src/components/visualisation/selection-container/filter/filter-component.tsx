@@ -1,10 +1,10 @@
 import React, {PureComponent} from 'react';
 import {Filter, Operator} from '../../../../lib/measurement/selection/filter';
 import styled from 'styled-components';
-import {Button} from 'reactstrap';
 import {SuggestInput} from '../../../global/suggest-input';
 import Input from 'reactstrap/lib/Input';
 import {sort} from 'ramda';
+import MdDelete from 'react-icons/lib/md/delete';
 
 interface Props
 {
@@ -30,8 +30,14 @@ const operators: Operator[] = [
 const Row = styled.div`
   display: flex;
 `;
+const VerticalAlignRow = Row.extend`
+  align-items: center;
+`;
 const Operator = styled(Input)`
   width: 100px !important;
+`;
+const Filter = styled.span`
+  font-size: 14px;
 `;
 
 export class FilterComponent extends PureComponent<Props>
@@ -48,37 +54,38 @@ export class FilterComponent extends PureComponent<Props>
     renderInputs = (): JSX.Element =>
     {
         return (
-            <>
-                <SuggestInput
-                    value={this.props.filter.path}
-                    onChange={val => this.change('path', val)}
-                    calculateSuggestions={this.calculatePathSuggestions}>
-                </SuggestInput>
-                <Operator
-                    type='select'
-                    name='operator'
-                    value={this.props.filter.operator}
-                    onChange={val => this.change('operator', val.currentTarget.value)}>
-                    {operators.map(this.renderOperator)}
-                </Operator>
-                <SuggestInput
-                    value={this.props.filter.value}
-                    onChange={val => this.change('value', val)}
-                    calculateSuggestions={this.calculateValueSuggestions} />
-                    {this.props.editable &&
-                        <Button onClick={this.remove} color='danger'>Remove</Button>
-                    }
-            </>
+            <VerticalAlignRow>
+                <Row>
+                    <SuggestInput
+                        value={this.props.filter.path}
+                        onChange={val => this.change('path', val)}
+                        calculateSuggestions={this.calculatePathSuggestions}>
+                    </SuggestInput>
+                    <Operator
+                        bsSize='sm'
+                        type='select'
+                        name='operator'
+                        value={this.props.filter.operator}
+                        onChange={val => this.change('operator', val.currentTarget.value)}>
+                        {operators.map(this.renderOperator)}
+                    </Operator>
+                    <SuggestInput
+                        value={this.props.filter.value}
+                        onChange={val => this.change('value', val)}
+                        calculateSuggestions={this.calculateValueSuggestions} />
+                </Row>
+                {this.props.editable &&
+                    <MdDelete size={26} onClick={this.remove} />
+                }
+            </VerticalAlignRow>
         );
     }
     renderReadonly = (): JSX.Element =>
     {
         return (
-            <>
-                <span>{this.props.filter.path}</span>
-                <span>&nbsp;{this.props.filter.operator}&nbsp;</span>
-                <span>{this.props.filter.value}</span>
-            </>
+            <Filter>
+                {this.props.filter.path}&nbsp;{this.props.filter.operator}&nbsp;{this.props.filter.value}
+            </Filter>
         );
     }
 
@@ -103,7 +110,11 @@ export class FilterComponent extends PureComponent<Props>
 
     calculatePathSuggestions = (input: string): string[] =>
     {
-        return sort((a, b) => a.localeCompare(b), this.props.pathKeys.filter(key => key.includes(input)));
+        const lowerCaseInput = input.toLocaleLowerCase();
+        return sort(
+            (a, b) => a.localeCompare(b),
+            this.props.pathKeys.filter(key => key.toLocaleLowerCase().includes(lowerCaseInput))
+        );
     }
     calculateValueSuggestions = (value: string): string[] =>
     {

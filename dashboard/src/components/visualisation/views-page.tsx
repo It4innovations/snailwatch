@@ -56,7 +56,7 @@ class ViewsPageComponent extends PureComponent<Props, State>
             <>
                 <Nav tabs>
                     {this.renderNav(0, 'Absolute')}
-                    {this.renderNav(1, 'Proportionate')}
+                    {this.renderNav(1, 'Bar chart')}
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId={0}>

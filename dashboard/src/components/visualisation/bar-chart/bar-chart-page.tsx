@@ -30,6 +30,7 @@ import {SelectionContainer} from '../selection-container/selection-container';
 import {getBarChartPageSelection} from '../../../state/ui/bar-chart-page/reducer';
 import {Request} from '../../../util/request';
 import {RequestComponent} from '../../global/request-component';
+import {Box} from '../../global/box';
 
 interface OwnProps
 {
@@ -68,12 +69,15 @@ const Row = styled.div`
   display: flex;
   width: 100%;
 `;
+const Wrapper = Row;
 const MeasurementsWrapper = styled.div`
   width: 900px;
 `;
 const DatasetColumn = styled.div`
   min-width: 240px;
   margin-right: 10px;
+  padding: 10px 10px 0 0;
+  border-right: 1px solid black;
 `;
 const BarColumn = styled.div`
   flex-grow: 1;
@@ -112,46 +116,51 @@ class BarChartPageComponent extends PureComponent<Props, State>
     render()
     {
         return (
-            <Row>
+            <Wrapper>
                 <DatasetColumn>
-                    <h4>Range</h4>
-                    <RangeFilterSwitcher
-                        rangeFilter={this.state.rangeFilter}
-                        onFilterChange={this.changeRangeFilter} />
-                    <h4>Selection</h4>
-                    <Switch
-                        useFirst={!this.state.selectionsEditing}
-                        firstLabel='Select'
-                        secondLabel='Edit'
-                        firstComponent={
-                            <SelectionSelect
-                                selections={this.props.selections}
-                                selection={this.props.selection}
-                                onSelect={this.changeSelection} />
-                        }
-                        secondComponent={
-                            <SelectionContainer
-                                measurements={this.props.measurements}
-                                selectedSelection={this.props.selection}
-                                selectSelection={this.changeSelection} />
-                        }
-                        onChange={this.changeSelectionsEditing} />
-                    <h4>Projections</h4>
-                    <DataSelector
-                        measurements={this.props.measurements}
-                        measurementKeys={this.props.project.measurementKeys}
-                        selection={this.props.selection}
-                        xAxis={this.props.xAxis}
-                        yAxes={this.props.yAxes}
-                        onChangeXAxis={this.changeXAxis}
-                        onChangeYAxes={this.changeYAxes}
-                        onChangeSelection={this.changeSelection} />
-                    <GroupModeSelector groupMode={this.state.groupMode}
-                                       onChangeGroupMode={this.changeGroupMode} />
+                    <Box title='Range'>
+                        <RangeFilterSwitcher
+                            rangeFilter={this.state.rangeFilter}
+                            onFilterChange={this.changeRangeFilter} />
+                    </Box>
+                    <Box title='Selection'>
+                        <Switch
+                            useFirst={!this.state.selectionsEditing}
+                            firstLabel='Select'
+                            secondLabel='Edit'
+                            firstComponent={
+                                <SelectionSelect
+                                    selections={this.props.selections}
+                                    selection={this.props.selection}
+                                    onSelect={this.changeSelection} />
+                            }
+                            secondComponent={
+                                <SelectionContainer
+                                    measurements={this.props.measurements}
+                                    selectedSelection={this.props.selection}
+                                    selectSelection={this.changeSelection} />
+                            }
+                            onChange={this.changeSelectionsEditing} />
+                    </Box>
+                    <Box title='Projections'>
+                        <DataSelector
+                            measurements={this.props.measurements}
+                            measurementKeys={this.props.project.measurementKeys}
+                            selection={this.props.selection}
+                            xAxis={this.props.xAxis}
+                            yAxes={this.props.yAxes}
+                            onChangeXAxis={this.changeXAxis}
+                            onChangeYAxes={this.changeYAxes}
+                            onChangeSelection={this.changeSelection} />
+                    </Box>
+                    <Box title='Group by'>
+                        <GroupModeSelector groupMode={this.state.groupMode}
+                                           onChangeGroupMode={this.changeGroupMode} />
+                    </Box>
                     <RequestComponent request={this.props.measurementRequest} />
                 </DatasetColumn>
                 <BarColumn>
-                    <h4>Proportionate chart</h4>
+                    <h4>Bar chart</h4>
                     <BarChart measurements={this.props.measurements}
                               xAxis={this.props.xAxis}
                               yAxes={this.props.yAxes}
@@ -162,7 +171,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
                         <MeasurementList measurements={this.state.selectedMeasurements} />
                     </MeasurementsWrapper>
                 </BarColumn>
-            </Row>
+            </Wrapper>
         );
     }
 

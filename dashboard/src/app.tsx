@@ -14,9 +14,7 @@ class AppComponent extends PureComponent
             <Provider store={store}>
                 <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
                     <ConnectedRouter history={history}>
-                        <React.StrictMode>
-                            <Content />
-                        </React.StrictMode>
+                        <Content />
                     </ConnectedRouter>
                 </PersistGate>
             </Provider>

@@ -24,6 +24,9 @@ const Row = styled.div`
   display: flex;
   align-items: center;
 `;
+const AddButton = styled(Button)`
+  margin-top: 5px;
+`;
 
 export class DataSelector extends PureComponent<Props>
 {
@@ -42,9 +45,12 @@ export class DataSelector extends PureComponent<Props>
                         <MdDelete size={26} onClick={() => this.removeYAxis(index)} />
                     </Row>
                 )}
-                <Button onClick={this.addYAxis}>
-                    <MdAddCircleOutline size={20} /> add axis
-                </Button>
+                <AddButton size='sm'
+                           color='success'
+                           title='Add axis'
+                           onClick={this.addYAxis}>
+                    <MdAddCircleOutline size={20} />
+                </AddButton>
             </div>
         );
     }

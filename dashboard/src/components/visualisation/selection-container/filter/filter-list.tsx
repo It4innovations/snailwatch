@@ -5,6 +5,7 @@ import {Button} from 'reactstrap';
 import {update, remove} from 'ramda';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {getValuesWithPath} from '../../../../util/object';
+import styled from 'styled-components';
 
 interface Props
 {
@@ -15,12 +16,19 @@ interface Props
     onChange(filters: Filter[]): void;
 }
 
+const Wrapper = styled.div`
+  margin-bottom: 5px;
+`;
+const AddButton = styled(Button)`
+  margin-top: 5px;
+`;
+
 export class FilterList extends PureComponent<Props>
 {
     render()
     {
         return (
-            <div>
+            <Wrapper>
                 {this.props.filters.map((filter, index) =>
                     <FilterComponent
                         key={index}
@@ -31,8 +39,12 @@ export class FilterList extends PureComponent<Props>
                         onChange={this.changeFilter}
                         pathKeys={this.props.measurementKeys}
                         calculateValueSuggestions={this.calculateValueSuggestions} />)}
-                {this.props.editable && <Button onClick={this.addFilter}>Add filter</Button>}
-            </div>
+                {this.props.editable &&
+                    <AddButton size='sm'
+                            color='success'
+                            onClick={this.addFilter}>Add filter</AddButton>
+                }
+            </Wrapper>
         );
     }
 
@@ -52,6 +64,8 @@ export class FilterList extends PureComponent<Props>
     // TODO: get values from server?
     calculateValueSuggestions = (filter: Filter, input: string): string[] =>
     {
-        return getValuesWithPath(this.props.measurements, filter.path).filter(k => k.includes(input));
+        const lowerCaseInput = input.toLocaleLowerCase();
+        return getValuesWithPath(this.props.measurements, filter.path).filter(k => k.toLocaleLowerCase()
+            .includes(lowerCaseInput));
     }
 }
