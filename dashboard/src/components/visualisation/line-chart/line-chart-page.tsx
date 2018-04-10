@@ -12,7 +12,6 @@ import {getSelectedProject} from '../../../state/project/reducer';
 import {AppState} from '../../../state/app/reducers';
 import {Selection} from '../../../lib/measurement/selection/selection';
 import styled from 'styled-components';
-import moment from 'moment';
 import {RangeFilterSwitcher} from '../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../measurement-list';
@@ -26,10 +25,13 @@ import {
     UpdateDatasetParams, updateLineChartDatasetAction
 } from '../../../state/ui/line-chart-page/actions';
 import {DatasetManager} from './dataset-manager';
+import {Box} from '../../global/box';
+import {ChartPage} from '../chart-page';
 
 interface OwnProps
 {
-
+    rangeFilter: RangeFilter;
+    onChangeRangeFilter(rangeFilter: RangeFilter): void;
 }
 interface StateProps
 {
@@ -51,35 +53,17 @@ type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 
 interface State
 {
-    rangeFilter: RangeFilter;
     groupMode: GroupMode;
     selectedMeasurements: Measurement[];
 }
 
-const Row = styled.div`
-  display: flex;
-  width: 100%;
-`;
 const MeasurementsWrapper = styled.div`
   width: 900px;
-`;
-const DatasetColumn = styled.div`
-  min-width: 240px;
-  margin-right: 10px;
-`;
-const BarColumn = styled.div`
-  flex-grow: 1;
 `;
 
 class LineChartPageComponent extends PureComponent<Props, State>
 {
     state: State = {
-        rangeFilter: {
-            from: moment().subtract(1, 'w'),
-            to: moment(),
-            entryCount: 50,
-            useDateFilter: false
-        },
         groupMode: GroupMode.AxisX,
         selectedMeasurements: []
     };
@@ -95,36 +79,48 @@ class LineChartPageComponent extends PureComponent<Props, State>
     render()
     {
         return (
-            <Row>
-                <DatasetColumn>
-                    <h4>Range</h4>
+            <ChartPage
+                renderOptions={this.renderOptions}
+                renderGraph={this.renderGraph} />
+        );
+    }
+    renderOptions = (): JSX.Element =>
+    {
+        return (
+            <>
+                <Box title='Range'>
                     <RangeFilterSwitcher
-                        rangeFilter={this.state.rangeFilter}
-                        onFilterChange={this.changeRangeFilter} />
-                    <h4>Projections</h4>
-                    <DatasetManager
-                        selections={this.props.selections}
-                        datasets={this.props.datasets}
-                        addDataset={this.addDataset}
-                        deleteDataset={this.props.deleteDataset}
-                        updateDataset={this.updateDataset} />
-                    <GroupModeSelector groupMode={this.state.groupMode}
-                                       onChangeGroupMode={this.changeGroupMode} />
-                </DatasetColumn>
-                <BarColumn>
-                    <h4>Absolute chart</h4>
-                    <LineChart
-                        xAxis={this.props.xAxis}
-                        groupMode={this.state.groupMode}
-                        connectPoints={true}
-                        onMeasurementsSelected={this.changeSelectedMeasurements}
-                        views={this.props.datasets} />
-                    <MeasurementsWrapper>
-                        <h4>Selected measurements</h4>
-                        <MeasurementList measurements={this.state.selectedMeasurements} />
-                    </MeasurementsWrapper>
-                </BarColumn>
-            </Row>
+                        rangeFilter={this.props.rangeFilter}
+                        onFilterChange={this.props.onChangeRangeFilter} />
+                </Box>
+                <h4>Projections</h4>
+                <DatasetManager
+                    selections={this.props.selections}
+                    datasets={this.props.datasets}
+                    addDataset={this.addDataset}
+                    deleteDataset={this.props.deleteDataset}
+                    updateDataset={this.updateDataset} />
+                <GroupModeSelector groupMode={this.state.groupMode}
+                                   onChangeGroupMode={this.changeGroupMode} />
+            </>
+        );
+    }
+    renderGraph = (): JSX.Element =>
+    {
+        return (
+            <>
+                <h4>Line chart</h4>
+                <LineChart
+                    xAxis={this.props.xAxis}
+                    groupMode={this.state.groupMode}
+                    connectPoints={true}
+                    onMeasurementsSelected={this.changeSelectedMeasurements}
+                    views={this.props.datasets} />
+                <MeasurementsWrapper>
+                    <h4>Selected measurements</h4>
+                    <MeasurementList measurements={this.state.selectedMeasurements} />
+                </MeasurementsWrapper>
+            </>
         );
     }
 
@@ -133,7 +129,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
         this.props.addDataset({
             user: this.props.user,
             project: this.props.project,
-            rangeFilter: this.state.rangeFilter
+            rangeFilter: this.props.rangeFilter
         });
     }
     updateDataset = (dataset: LineChartDataset, newDataset: LineChartDataset) =>
@@ -141,7 +137,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
         this.props.updateDataset({
             user: this.props.user,
             project: this.props.project,
-            rangeFilter: this.state.rangeFilter,
+            rangeFilter: this.props.rangeFilter,
             dataset,
             selection: newDataset.selection,
             yAxis: newDataset.yAxis
@@ -155,10 +151,6 @@ class LineChartPageComponent extends PureComponent<Props, State>
     changeGroupMode = (groupMode: GroupMode) =>
     {
         this.setState(() => ({ groupMode }));
-    }
-    changeRangeFilter = (rangeFilter: RangeFilter) =>
-    {
-        this.setState(() => ({ rangeFilter }));
     }
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
     {

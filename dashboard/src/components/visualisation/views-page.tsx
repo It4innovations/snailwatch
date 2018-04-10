@@ -7,10 +7,13 @@ import {Project} from '../../lib/project/project';
 import {User} from '../../lib/user/user';
 import {getUser} from '../../state/user/reducer';
 import {getSelectedProject} from '../../state/project/reducer';
-import {Nav, NavItem, NavLink, TabContent, TabPane} from 'reactstrap';
-import styled from 'styled-components';
-import {LineChartPage} from './line-chart/line-chart-page';
 import {BarChartPage} from './bar-chart/bar-chart-page';
+import {LineChartPage} from './line-chart/line-chart-page';
+import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
+import FaBarChart from 'react-icons/lib/fa/bar-chart';
+import FaLineChart from 'react-icons/lib/fa/line-chart';
+import moment from 'moment';
+import {RangeFilter} from '../../lib/measurement/selection/range-filter';
 
 interface StateProps
 {
@@ -25,20 +28,19 @@ interface DispatchProps
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
-interface State
-{
-    activeTab: number;
-}
-
-const TabLink = styled(NavLink)`
-  cursor: pointer;
-`;
+const initialState = {
+    rangeFilter: {
+        from: moment().subtract(1, 'w'),
+        to: moment(),
+        entryCount: 50,
+        useDateFilter: false
+    }
+};
+type State = Readonly<typeof initialState>;
 
 class ViewsPageComponent extends PureComponent<Props, State>
 {
-    state: State = {
-        activeTab: 0
-    };
+    readonly state = initialState;
 
     componentDidMount()
     {
@@ -53,39 +55,34 @@ class ViewsPageComponent extends PureComponent<Props, State>
     render()
     {
         return (
-            <>
-                <Nav tabs>
-                    {this.renderNav(0, 'Absolute')}
-                    {this.renderNav(1, 'Bar chart')}
-                </Nav>
-                <TabContent activeTab={this.state.activeTab}>
-                    <TabPane tabId={0}>
-                        <LineChartPage />
-                    </TabPane>
-                    <TabPane tabId={1}>
-                        <BarChartPage />
-                    </TabPane>
-                </TabContent>
-            </>
-        );
-    }
-    renderNav = (index: number, text: string): JSX.Element =>
-    {
-        return (
-            <NavItem>
-                <TabLink
-                    active={index === this.state.activeTab}
-                    onClick={() => this.changeTab(index)}
-                    title={text}>
-                    {text}
-                </TabLink>
-            </NavItem>
+            <Tabs>
+                <TabList>
+                    <Tab>
+                        <div title='Line chart'>
+                            <FaLineChart size={26} />
+                        </div>
+                    </Tab>
+                    <Tab>
+                        <div title='Stacked bar chart'>
+                            <FaBarChart size={26} />
+                        </div>
+                    </Tab>
+                </TabList>
+                <TabPanel>
+                    <LineChartPage rangeFilter={this.state.rangeFilter}
+                        onChangeRangeFilter={this.changeRangeFilter} />
+                </TabPanel>
+                <TabPanel>
+                    <BarChartPage rangeFilter={this.state.rangeFilter}
+                                  onChangeRangeFilter={this.changeRangeFilter} />
+                </TabPanel>
+            </Tabs>
         );
     }
 
-    changeTab = (activeTab: number) =>
+    changeRangeFilter = (rangeFilter: RangeFilter) =>
     {
-        this.setState(() => ({ activeTab }));
+        this.setState(() => ({ rangeFilter }));
     }
 }
 

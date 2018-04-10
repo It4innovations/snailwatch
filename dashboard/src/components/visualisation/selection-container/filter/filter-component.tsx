@@ -30,8 +30,8 @@ const operators: Operator[] = [
 const Row = styled.div`
   display: flex;
 `;
-const VerticalAlignRow = Row.extend`
-  align-items: center;
+const DeleteIcon = styled(MdDelete)`
+  padding-top: 3px;
 `;
 const Operator = styled(Input)`
   width: 100px !important;
@@ -54,30 +54,28 @@ export class FilterComponent extends PureComponent<Props>
     renderInputs = (): JSX.Element =>
     {
         return (
-            <VerticalAlignRow>
-                <Row>
-                    <SuggestInput
-                        value={this.props.filter.path}
-                        onChange={val => this.change('path', val)}
-                        calculateSuggestions={this.calculatePathSuggestions}>
-                    </SuggestInput>
-                    <Operator
-                        bsSize='sm'
-                        type='select'
-                        name='operator'
-                        value={this.props.filter.operator}
-                        onChange={val => this.change('operator', val.currentTarget.value)}>
-                        {operators.map(this.renderOperator)}
-                    </Operator>
-                    <SuggestInput
-                        value={this.props.filter.value}
-                        onChange={val => this.change('value', val)}
-                        calculateSuggestions={this.calculateValueSuggestions} />
-                </Row>
+            <Row>
+                <SuggestInput
+                    value={this.props.filter.path}
+                    onChange={val => this.change('path', val)}
+                    calculateSuggestions={this.calculatePathSuggestions}>
+                </SuggestInput>
+                <Operator
+                    bsSize='sm'
+                    type='select'
+                    name='operator'
+                    value={this.props.filter.operator}
+                    onChange={val => this.change('operator', val.currentTarget.value)}>
+                    {operators.map(this.renderOperator)}
+                </Operator>
+                <SuggestInput
+                    value={this.props.filter.value}
+                    onChange={val => this.change('value', val)}
+                    calculateSuggestions={this.calculateValueSuggestions} />
                 {this.props.editable &&
-                    <MdDelete size={26} onClick={this.remove} />
+                    <DeleteIcon size={26} onClick={this.remove} />
                 }
-            </VerticalAlignRow>
+            </Row>
         );
     }
     renderReadonly = (): JSX.Element =>

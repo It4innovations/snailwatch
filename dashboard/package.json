@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/react-tabs": "^1.0.4",
     "autoprefixer": "7.1.6",
     "axios": "^0.17.1",
     "bootstrap": "^4.1.0",
@@ -40,6 +41,7 @@
     "react-router-redux": "^5.0.0-alpha.9",
     "react-syntax-highlighter": "^7.0.1",
     "react-table": "^6.7.6",
+    "react-tabs": "^2.2.1",
     "react-toastify": "^3.3.4",
     "reactstrap": "^5.0.0-beta",
     "recharts": "^1.0.0-beta.10",

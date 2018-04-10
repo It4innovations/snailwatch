@@ -52,8 +52,9 @@ export class BarChart extends PureComponent<Props>
             groupMeasurements(this.props.measurements, this.props.groupMode,
                 this.props.xAxis, filledYAxes));
 
+        const height = 400;
         return (
-            <ResponsiveContainer width='98%' height={400}>
+            <ResponsiveContainer width='98%' height={height}>
                 <ReBarChart data={data}>
                     <CartesianGrid strokeDasharray='3 3' />
                     <XAxis

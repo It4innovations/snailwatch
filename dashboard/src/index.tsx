@@ -5,6 +5,7 @@ import {App} from './app';
 // CSS
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-table/react-table.css';
+import 'react-tabs/style/react-tabs.css';
 
 ReactDOM.render(
   <App />,
