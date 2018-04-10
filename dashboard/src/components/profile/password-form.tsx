@@ -32,29 +32,38 @@ export class PasswordForm extends PureComponent<Props, State>
         error: ''
     };
 
-    componentWillReceiveProps(props: Props)
+    static getDerivedStateFromProps(nextProps: Props, prevState: State): Partial<State>
     {
-        if (props.changePasswordRequest.completed)
+        if (nextProps.changePasswordRequest.completed)
         {
-            if (!props.changePasswordRequest.error)
+            if (!nextProps.changePasswordRequest.error)
             {
-                this.setState(() => ({
+                return {
                     form: {
                         old: '',
                         new: '',
                         newRepeated: ''
                     },
                     error: ''
-                }));
-
-                toast.success('Password successfully updated');
+                };
             }
             else
             {
-                this.setState(() => ({
-                    error: props.changePasswordRequest.error
-                }));
+                return {
+                    error: nextProps.changePasswordRequest.error
+                };
             }
+        }
+        return null;
+    }
+
+    componentDidUpdate(prevProps: Props, prevState: State)
+    {
+        if (this.props.changePasswordRequest.completed &&
+            !this.props.changePasswordRequest.error &&
+            !prevProps.changePasswordRequest.completed)
+        {
+            toast.success('Password successfully updated');
         }
     }
 

@@ -53,22 +53,23 @@ class ProjectsComponent extends PureComponent<Props, State>
         creatingProject: false
     };
 
+    static getDerivedStateFromProps(nextProps: Props, prevState: State): Partial<State>
+    {
+        if (prevState.creatingProject &&
+            !nextProps.createProjectRequest.loading &&
+            !nextProps.createProjectRequest.error)
+        {
+            return {
+                creatingProject: false
+            };
+        }
+
+        return null;
+    }
+
     componentDidMount()
     {
         this.props.loadProjects(this.props.user);
-    }
-
-    componentWillReceiveProps(props: Props)
-    {
-        if (this.state.creatingProject &&
-            this.props.createProjectRequest.loading &&
-            !props.createProjectRequest.loading &&
-            !props.createProjectRequest.error)
-        {
-            this.setState(() => ({
-                creatingProject: false
-            }));
-        }
     }
 
     render()

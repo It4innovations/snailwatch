@@ -46,28 +46,35 @@ export class SelectionManager extends PureComponent<Props, State>
         };
     }
 
-    componentWillReceiveProps(props: Props)
+    static getDerivedStateFromProps(nextProps: Props, prevState: State): Partial<State>
     {
-        if (this.state.createdNamePending !== null)
+        if (prevState.createdNamePending !== null)
         {
-            const selection = props.selections.find(s => s.name === this.state.createdNamePending);
+            const selection = nextProps.selections.find(s => s.name === prevState.createdNamePending);
             if (selection !== undefined)
             {
-                this.setState(() => ({
+                return {
                     editing: true,
                     selection: {...selection},
                     createdNamePending: null
-                }));
-
-                this.props.selectSelection(selection);
+                };
             }
         }
+        return null;
+    }
 
-        if (this.props.measurements !== props.measurements)
+    componentDidUpdate(oldProps: Props, prevState: State)
+    {
+        if (this.props.measurements !== oldProps.measurements)
         {
             this.setState(() => ({
-                measurementKeys: getMeasurementKeys(props.measurements)
+                measurementKeys: getMeasurementKeys(this.props.measurements)
             }));
+        }
+
+        if (prevState.createdNamePending !== null && this.state.createdNamePending === null)
+        {
+            this.props.selectSelection(this.state.selection);
         }
     }
 
