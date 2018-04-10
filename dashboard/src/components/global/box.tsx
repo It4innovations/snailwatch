@@ -10,7 +10,7 @@ const SlimCard = styled(Card)`
 export const Box: SFC<{title: JSX.Element | string}> = (props) =>
 {
     return (
-        <SlimCard body outline color='info'>
+        <SlimCard body outline color='secondary'>
             <CardTitle>{props.title}</CardTitle>
             <div>{props.children}</div>
         </SlimCard>

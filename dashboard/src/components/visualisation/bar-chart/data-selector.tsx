@@ -5,8 +5,8 @@ import Button from 'reactstrap/lib/Button';
 import {Measurement} from '../../../lib/measurement/measurement';
 import MdDelete from 'react-icons/lib/md/delete';
 import styled from 'styled-components';
-import {Input} from 'reactstrap';
 import MdAddCircleOutline from 'react-icons/lib/md/add-circle-outline';
+import {MeasurementKeys} from '../../global/measurement-keys';
 
 interface Props
 {
@@ -37,11 +37,15 @@ export class DataSelector extends PureComponent<Props>
         return (
             <div>
                 <div>X axis</div>
-                {this.renderMeasurementKeys(keys, this.props.xAxis, this.props.onChangeXAxis)}
+                <MeasurementKeys keys={keys}
+                                 value={this.props.xAxis}
+                                 onChange={this.props.onChangeXAxis} />
                 <div>Y axes</div>
                 {this.props.yAxes.map((axis, index) =>
                     <Row key={index}>
-                        {this.renderMeasurementKeys(keys, axis, (val) => this.changeYAxis(index, val))}
+                        <MeasurementKeys keys={keys}
+                                         value={axis}
+                                         onChange={(val) => this.changeYAxis(index, val)} />
                         <MdDelete size={26} onClick={() => this.removeYAxis(index)} />
                     </Row>
                 )}
@@ -52,20 +56,6 @@ export class DataSelector extends PureComponent<Props>
                     <MdAddCircleOutline size={20} />
                 </AddButton>
             </div>
-        );
-    }
-    renderMeasurementKeys = (keys: string[], value: string, onChange: (value: string) => void): JSX.Element =>
-    {
-        return (
-            <Input type='select'
-                   bsSize='sm'
-                   value={value}
-                   onChange={e => onChange(e.currentTarget.value)}>
-                <option key='' value='' />
-                {keys.map(key =>
-                    <option key={key} value={key}>{key}</option>
-                )}
-            </Input>
         );
     }
 

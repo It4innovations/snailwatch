@@ -1,19 +1,13 @@
 import React, {PureComponent} from 'react';
 import {Measurement} from '../../../lib/measurement/measurement';
-import {
-    Bar,
-    BarChart as ReBarChart,
-    CartesianGrid, Label,
-    Legend,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis
+import {Bar, BarChart as ReBarChart, CartesianGrid, Label,
+    Legend, ResponsiveContainer, Tooltip, XAxis, YAxis
 } from 'recharts';
 import {GroupMode} from '../../../lib/measurement/group-mode';
 import {groupMeasurements, MeasurementGroup} from '../../../lib/measurement/measurement-grouper';
 import {ColorPalette} from '../color-palette';
 import {sort} from 'ramda';
+import {formatKey} from '../../../util/measurement';
 
 interface Props
 {
@@ -78,7 +72,7 @@ export class BarChart extends PureComponent<Props>
                              stackId='0'
                              onClick={this.handleBarClick}
                              maxBarSize={60}
-                             name={axis}
+                             name={formatKey(axis)}
                              fill={BAR_COLORS.getColor(index)} />
                     )}
                 </ReBarChart>
