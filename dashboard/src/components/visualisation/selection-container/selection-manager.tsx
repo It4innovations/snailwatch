@@ -7,12 +7,13 @@ import {SelectionName} from './selection-name';
 import {Filter} from '../../../lib/measurement/selection/filter';
 import {Request} from '../../../util/request';
 import {sort, equals} from 'ramda';
-import {getMeasurementKeys, Measurement} from '../../../lib/measurement/measurement';
+import {Measurement} from '../../../lib/measurement/measurement';
 import {isBlank} from '../../../util/string';
 
 interface Props
 {
     measurements: Measurement[];
+    measurementKeys: string[];
     selections: Selection[];
     selectionRequest: Request;
     selectedSelection: Selection;
@@ -27,7 +28,6 @@ interface State
     editing: boolean;
     createdNamePending: string;
     selection: Selection;
-    measurementKeys: string[];
     selectionError: string;
 }
 
@@ -41,7 +41,6 @@ export class SelectionManager extends PureComponent<Props, State>
             editing: false,
             selection: createSelection(),
             createdNamePending: null,
-            measurementKeys: [],
             selectionError: ''
         };
     }
@@ -65,13 +64,6 @@ export class SelectionManager extends PureComponent<Props, State>
 
     componentDidUpdate(oldProps: Props, prevState: State)
     {
-        if (this.props.measurements !== oldProps.measurements)
-        {
-            this.setState(() => ({
-                measurementKeys: getMeasurementKeys(this.props.measurements)
-            }));
-        }
-
         if (prevState.createdNamePending !== null && this.state.createdNamePending === null)
         {
             this.props.selectSelection(this.state.selection);
@@ -123,7 +115,7 @@ export class SelectionManager extends PureComponent<Props, State>
                     <h2>Filters</h2>
                     <FilterList
                         filters={selection.filters}
-                        measurementKeys={this.state.measurementKeys}
+                        measurementKeys={this.props.measurementKeys}
                         measurements={this.props.measurements}
                         editable={this.canEdit()}
                         onChange={this.handleFilterChange} />

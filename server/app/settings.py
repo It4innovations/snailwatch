@@ -73,6 +73,13 @@ project_schema = {
                 'field': '_id'
             }
         }
+    },
+    'measurementkeys': {
+        'type': 'list',
+        'required': False,
+        'schema': {
+            'type': 'string'
+        }
     }
 }
 measurement_schema = {

@@ -29,7 +29,7 @@ export class FilterList extends PureComponent<Props>
                         editable={this.props.editable}
                         onRemove={this.removeFilter}
                         onChange={this.changeFilter}
-                        pathKeys={this.calculatePathSuggestions()}
+                        pathKeys={this.props.measurementKeys}
                         calculateValueSuggestions={this.calculateValueSuggestions} />)}
                 {this.props.editable && <Button onClick={this.addFilter}>Add filter</Button>}
             </div>
@@ -49,12 +49,6 @@ export class FilterList extends PureComponent<Props>
         this.props.onChange(update(index, filter, this.props.filters));
     }
 
-    calculatePathSuggestions = (): string[] =>
-    {
-        const suggestions = [...this.props.measurementKeys];
-        suggestions.sort();
-        return suggestions;
-    }
     // TODO: get values from server?
     calculateValueSuggestions = (filter: Filter, input: string): string[] =>
     {

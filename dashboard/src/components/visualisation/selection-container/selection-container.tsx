@@ -45,6 +45,7 @@ class SelectionContainerComponent extends PureComponent<Props>
         return (
             <SelectionManager
                 measurements={this.props.measurements}
+                measurementKeys={this.props.project.measurementKeys}
                 selections={this.props.selections}
                 selectionRequest={this.props.selectionRequest}
                 selectedSelection={this.props.selectedSelection}

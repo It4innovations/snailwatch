@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {Button} from 'reactstrap';
 import {SuggestInput} from '../../../global/suggest-input';
 import Input from 'reactstrap/lib/Input';
+import {sort} from 'ramda';
 
 interface Props
 {
@@ -102,7 +103,7 @@ export class FilterComponent extends PureComponent<Props>
 
     calculatePathSuggestions = (input: string): string[] =>
     {
-        return this.props.pathKeys.filter(key => key.includes(input));
+        return sort((a, b) => a.localeCompare(b), this.props.pathKeys.filter(key => key.includes(input)));
     }
     calculateValueSuggestions = (value: string): string[] =>
     {

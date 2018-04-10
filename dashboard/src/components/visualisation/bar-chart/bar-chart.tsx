@@ -14,6 +14,7 @@ import {GroupMode} from '../../../lib/measurement/group-mode';
 import {groupMeasurements, MeasurementGroup} from '../../../lib/measurement/measurement-grouper';
 import ellipsize from 'ellipsize';
 import {ColorPalette} from '../color-palette';
+import {sort} from 'ramda';
 
 interface Props
 {
@@ -41,9 +42,9 @@ export class BarChart extends PureComponent<Props>
             return 'No data available';
         }
 
-        const data = groupMeasurements(this.props.measurements, this.props.groupMode,
-            this.props.xAxis, filledYAxes);
-        data.sort((a, b) => a.x.localeCompare(b.x));
+        const data = sort((a, b) => a.x.localeCompare(b.x),
+            groupMeasurements(this.props.measurements, this.props.groupMode,
+                this.props.xAxis, filledYAxes));
 
         return (
             <ResponsiveContainer width='98%' height={400}>

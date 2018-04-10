@@ -7,6 +7,9 @@ class LoginSessionRepo(Repository):
     def __init__(self, app):
         self.table = app.data.driver.db['sessions']
 
+    def create_indices(self):
+        self.table.create_index('token', unique=True)
+
     def find_session(self, token):
         return self.table.find_one({
             'token': token

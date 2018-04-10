@@ -1,6 +1,6 @@
 import {hashMeasurement, Measurement} from './measurement';
 import {GroupMode} from './group-mode';
-import {groupBy, values, min, max, reduce, sum, zipObj, Dictionary} from 'ramda';
+import {groupBy, values, min, max, reduce, sum, zipObj, Dictionary, all} from 'ramda';
 import {getValueWithPath} from '../../util/object';
 import {Moment} from 'moment';
 
@@ -26,7 +26,7 @@ export function groupMeasurements(measurements: Measurement[], groupMode: GroupM
     MeasurementGroup[]
 {
     const batches = batchMeasurement(measurements, groupMode, axisX);
-    return values(batches)
+    return cleanGroups(values(batches)
         .map(batch => {
             const x = getXAxisValue(batch[0], axisX);
             const yValues = axisY.map(axis => {
@@ -50,7 +50,12 @@ export function groupMeasurements(measurements: Measurement[], groupMode: GroupM
                 measurements: batch,
                 items: zipObj(axisY, yValues)
             };
-        });
+        }));
+}
+
+function cleanGroups(groups: MeasurementGroup[]): MeasurementGroup[]
+{
+    return groups.filter(g => g.x && all(item => !isNaN(item.average), values(g.items)));
 }
 
 function batchMeasurement(measurements: Measurement[], groupMode: GroupMode, axis: string = ''):

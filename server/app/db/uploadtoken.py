@@ -7,6 +7,10 @@ class UploadTokenRepo(Repository):
     def __init__(self, app):
         self.table = app.data.driver.db['uploadtokens']
 
+    def create_indices(self):
+        self.table.create_index('token', unique=True)
+        self.table.create_index('project', unique=True)
+
     def create_token(self, project, user, token):
         self.table.insert_one({
             'project': project['_id'],

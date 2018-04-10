@@ -13,6 +13,7 @@ export interface DAO
 export interface ProjectDAO extends DAO
 {
     name: string;
+    measurementkeys: string[];
 }
 export interface MeasurementDAO extends DAO
 {
@@ -36,6 +37,7 @@ export function parseProject(project: ProjectDAO): Project
     return {
         id: project._id,
         name: project.name,
+        measurementKeys: project.measurementkeys,
         createdAt: moment(project._created)
     };
 }

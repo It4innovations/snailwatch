@@ -1,8 +1,8 @@
 import React, {PureComponent} from 'react';
 import {Selection} from '../../../lib/measurement/selection/selection';
-import {update} from 'ramda';
+import {update, sort} from 'ramda';
 import Button from 'reactstrap/lib/Button';
-import {getMeasurementKeys, Measurement} from '../../../lib/measurement/measurement';
+import {Measurement} from '../../../lib/measurement/measurement';
 import MdDelete from 'react-icons/lib/md/delete';
 import styled from 'styled-components';
 import {Input} from 'reactstrap';
@@ -11,6 +11,7 @@ import MdAddCircleOutline from 'react-icons/lib/md/add-circle-outline';
 interface Props
 {
     measurements: Measurement[];
+    measurementKeys: string[];
     selection: Selection | null;
     xAxis: string;
     yAxes: string[];
@@ -28,8 +29,7 @@ export class DataSelector extends PureComponent<Props>
 {
     render()
     {
-        const keys = getMeasurementKeys(this.props.measurements);
-        keys.sort();
+        const keys = sort((a, b) => a.localeCompare(b), this.props.measurementKeys);
 
         return (
             <div>

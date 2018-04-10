@@ -132,7 +132,7 @@ export const Projects = withRouter(connect<StateProps, DispatchProps>((state: Ap
     user: getUser(state),
     projects: getProjects(state)
 }), {
-    loadProjects: (user: User) => loadProjects.started({ user, force: false }),
+    loadProjects: (user: User) => loadProjects.started({ user, force: true }),
     selectProject,
     createProject: createProject.started,
     push

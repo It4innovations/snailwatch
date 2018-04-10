@@ -139,6 +139,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
                     <h4>Projections</h4>
                     <DataSelector
                         measurements={this.props.measurements}
+                        measurementKeys={this.props.project.measurementKeys}
                         selection={this.props.selection}
                         xAxis={this.props.xAxis}
                         yAxes={this.props.yAxes}

@@ -26,8 +26,7 @@ def send_measurement(context, benchmark, environment, result, timestamp=None):
     """
     if timestamp is None:
         timestamp = datetime.utcnow()
-    else:
-        timestamp = timestamp.replace(microsecond=0)
+    timestamp = timestamp.replace(microsecond=0)
 
     payload = {
         'benchmark': benchmark,
