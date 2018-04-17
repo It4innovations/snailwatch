@@ -39,8 +39,7 @@ export class LineChart extends PureComponent<Props>
             return 'You have to use a group mode with multiple datasets';
         }
 
-        const verticalPadding = 20;
-
+        const padding = 20;
         const datasets = this.props.views.map(v =>
             groupMeasurements(v.measurements, this.props.groupMode, this.props.xAxis, [v.yAxis])
         );
@@ -50,12 +49,13 @@ export class LineChart extends PureComponent<Props>
             <>
                 <ResponsiveContainer width='98%' height={400}>
                     <ReLineChart data={points}>
-                        <CartesianGrid stroke='#ccc' />
+                        <CartesianGrid stroke='#CCCCCC' />
                         <XAxis
+                            dataKey='x'
                             tick={props => <Tick {...props} />}
-                            dataKey='x' />
-                        <YAxis padding={{bottom: verticalPadding, top: verticalPadding}} />
-                        <Tooltip content={<PointTooltip />} />
+                            padding={{left: padding, right: padding}} />
+                        <YAxis padding={{bottom: padding, top: padding}} />
+                        <Tooltip content={<PointTooltip xAxis={this.props.xAxis} />} />
                         <Legend />
                         {datasets.map((scatter, index) =>
                             <Line
