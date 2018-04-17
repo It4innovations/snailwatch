@@ -7,13 +7,15 @@ import thunk from 'redux-thunk';
 import {rootEpic} from './epics';
 import {AppState, reducers} from './reducers';
 import url from 'url';
-import {persistReducer, persistStore} from 'redux-persist';
+import {persistReducer, persistStore, createTransform} from 'redux-persist';
 import reduxCatch from 'redux-catch';
 import Raven from 'raven-js';
 import {RestClient} from '../../lib/api/rest-client';
 import {API_SERVER} from '../../configuration';
 import storage from 'redux-persist/lib/storage';
 import {uiReducer} from '../ui/reducer';
+import moment from 'moment';
+import {LineChartDataset} from '../../components/visualisation/chart/line-chart/line-chart-dataset';
 
 function errorHandler(error: Error, getState: () => AppState, action: Action)
 {
@@ -54,6 +56,21 @@ const barChartPersist = {
 const lineChartPersist = {
     key: 'ui/line-chart',
     storage,
+    transforms: [createTransform(
+        null,
+        (datasets: LineChartDataset[]) => {
+            return datasets.map((dataset: LineChartDataset) => {
+                return {
+                    ...dataset,
+                    measurements: dataset.measurements.map(m => ({
+                        ...m,
+                        timestamp: moment(m.timestamp)
+                    }))
+                };
+            });
+        },
+        { whitelist: ['datasets'] }
+    )],
     whitelist: ['datasets', 'xAxis']
 };
 
@@ -70,7 +87,6 @@ const rootReducer = combineReducers({
     ui: persistedUIReducer,
     router: routerReducer
 });
-
 const middleware = [
     router,
     epic,

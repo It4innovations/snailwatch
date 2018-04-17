@@ -76,7 +76,7 @@ export class SelectionManager extends PureComponent<Props, State>
         const selections = this.sortSelections(this.props.selections);
 
         return (
-            <div>
+            <>
                 <SelectionSelect
                     selections={selections}
                     selection={this.props.selectedSelection}
@@ -95,7 +95,7 @@ export class SelectionManager extends PureComponent<Props, State>
                 {this.props.selectionRequest.loading && <div>Loading...</div>}
                 {this.props.selectionRequest.error && <div>{this.props.selectionRequest.error}</div>}
                 {this.state.selectionError && <div>{this.state.selectionError}</div>}
-            </div>
+            </>
         );
     }
     renderSelectionContent = (selection: Selection): JSX.Element =>

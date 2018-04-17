@@ -2,8 +2,7 @@ import actionCreatorFactory from 'typescript-fsa';
 import {User} from '../../../lib/user/user';
 import {Project} from '../../../lib/project/project';
 import {RangeFilter} from '../../../lib/measurement/selection/range-filter';
-import {LineChartDataset} from '../../../components/visualisation/line-chart/line-chart-dataset';
-import {Selection} from '../../../lib/measurement/selection/selection';
+import {LineChartDataset} from '../../../components/visualisation/chart/line-chart/line-chart-dataset';
 
 const actionCreator = actionCreatorFactory('line-chart-page');
 
@@ -24,7 +23,15 @@ export interface UpdateDatasetParams
     project: Project;
     rangeFilter: RangeFilter;
     dataset: LineChartDataset;
-    selection: Selection | null;
+    selectionId: string;
     yAxis: string;
 }
 export const updateLineChartDatasetAction = actionCreator.async<UpdateDatasetParams, LineChartDataset>('update');
+
+export interface ReloadDatasetsParams
+{
+    user: User;
+    project: Project;
+    rangeFilter: RangeFilter;
+}
+export const reloadDatasetsAction = actionCreator.async<ReloadDatasetsParams, LineChartDataset[]>('reload');

@@ -1,13 +1,13 @@
 import React, {PureComponent} from 'react';
-import {Measurement} from '../../../lib/measurement/measurement';
+import {Measurement} from '../../../../lib/measurement/measurement';
 import {Bar, BarChart as ReBarChart, CartesianGrid, Label,
     Legend, ResponsiveContainer, Tooltip, XAxis, YAxis
 } from 'recharts';
-import {GroupMode} from '../../../lib/measurement/group-mode';
-import {groupMeasurements, MeasurementGroup} from '../../../lib/measurement/measurement-grouper';
-import {ColorPalette} from '../color-palette';
-import {sort} from 'ramda';
-import {formatKey} from '../../../util/measurement';
+import {GroupMode} from '../../../../lib/measurement/group-mode';
+import {groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
+import {ColorPalette} from '../../color-palette';
+import {formatKey} from '../../../../util/measurement';
+import {Tick} from '../tick';
 
 interface Props
 {
@@ -16,19 +16,6 @@ interface Props
     yAxes: string[];
     groupMode: GroupMode;
     onMeasurementsSelected(measurements: Measurement[]): void;
-}
-
-interface TickProps
-{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    fill: string;
-    textAnchor: string;
-    payload: {
-        value: string;
-    };
 }
 
 const BAR_COLORS = new ColorPalette([
@@ -48,9 +35,9 @@ export class BarChart extends PureComponent<Props>
             return 'No data available';
         }
 
-        const data = sort((a, b) => a.x.localeCompare(b.x),
-            groupMeasurements(this.props.measurements, this.props.groupMode,
-                this.props.xAxis, filledYAxes));
+        const data = linearizeGroups(
+            groupMeasurements(this.props.measurements, this.props.groupMode, this.props.xAxis, filledYAxes)
+        );
 
         const height = 400;
         return (
@@ -60,7 +47,7 @@ export class BarChart extends PureComponent<Props>
                     <XAxis
                         dataKey='x'
                         height={40}
-                        tick={this.renderTick}>
+                        tick={props => <Tick {...props} />}>
                         <Label value={this.props.xAxis} position='bottom' />
                     </XAxis>
                     <YAxis />
@@ -80,28 +67,9 @@ export class BarChart extends PureComponent<Props>
             </ResponsiveContainer>
         );
     }
-    renderTick = (props: TickProps): JSX.Element =>
-    {
-        const value = props.payload.value;
-        const formatted = this.formatX(value);
-        return (
-            <g>
-                <text width={props.width} height={props.height} x={props.x} y={props.y} fill={props.fill}
-                      textAnchor={props.textAnchor}>
-                    <tspan x={props.x} dy='0.71em'>{formatted}</tspan>
-                </text>
-                <title>{value}</title>
-            </g>
-         );
-    }
     renderLabel = (data: MeasurementGroup[], props: {}, axis: string): string =>
     {
         return data[props['index']].items[axis].average.toFixed(2).toString();
-    }
-
-    formatX = (value: string): string =>
-    {
-        return value;
     }
 
     handleBarClick = (data: {payload: MeasurementGroup}) =>

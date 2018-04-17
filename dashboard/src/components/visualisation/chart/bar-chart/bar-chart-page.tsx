@@ -1,36 +1,33 @@
 import React, {PureComponent} from 'react';
-import {RangeFilter} from '../../../lib/measurement/selection/range-filter';
+import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
 import {BarChart} from './bar-chart';
-import {GroupMode} from '../../../lib/measurement/group-mode';
-import {GroupModeSelector} from '../group-mode-selector';
-import {Measurement} from '../../../lib/measurement/measurement';
-import {User} from '../../../lib/user/user';
-import {Project} from '../../../lib/project/project';
+import {GroupMode} from '../../../../lib/measurement/group-mode';
+import {Measurement} from '../../../../lib/measurement/measurement';
+import {User} from '../../../../lib/user/user';
+import {Project} from '../../../../lib/project/project';
 import {
     loadBarChartMeasurementsAction,
     LoadMeasurementParams, setBarChartSelection,
     setBarChartXAxisAction, setBarChartYAxesAction
-} from '../../../state/ui/bar-chart-page/actions';
+} from '../../../../state/ui/bar-chart-page/actions';
 import {connect} from 'react-redux';
-import {getUser} from '../../../state/user/reducer';
-import {getSelectedProject} from '../../../state/project/reducer';
-import {AppState} from '../../../state/app/reducers';
+import {getUser} from '../../../../state/user/reducer';
+import {getSelectedProject} from '../../../../state/project/reducer';
+import {AppState} from '../../../../state/app/reducers';
 import {DataSelector} from './data-selector';
-import {Selection} from '../../../lib/measurement/selection/selection';
+import {Selection} from '../../../../lib/measurement/selection/selection';
 import styled from 'styled-components';
-import {RangeFilterSwitcher} from '../range-filter-switcher';
+import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {MeasurementList} from '../measurement-list';
-import {SelectionSelect} from '../selection-container/selection-select';
-import {getSelections} from '../../../state/selection/reducer';
-import {loadSelectionsAction, LoadSelectionsParams} from '../../../state/selection/actions';
-import {Switch} from '../../global/switch';
-import {SelectionContainer} from '../selection-container/selection-container';
-import {getBarChartPageSelection} from '../../../state/ui/bar-chart-page/reducer';
-import {Request} from '../../../util/request';
-import {RequestComponent} from '../../global/request-component';
-import {Box} from '../../global/box';
+import {MeasurementList} from '../../measurement-list';
+import {getSelections} from '../../../../state/selection/reducer';
+import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/selection/actions';
+import {getBarChartPageSelection} from '../../../../state/ui/bar-chart-page/reducer';
+import {Request} from '../../../../util/request';
+import {RequestComponent} from '../../../global/request-component';
+import {Box} from '../../../global/box';
 import {ChartPage} from '../chart-page';
+import {SelectionSelectEditor} from '../../selection-container/selection-select-editor';
 
 interface OwnProps
 {
@@ -62,7 +59,6 @@ interface State
 {
     groupMode: GroupMode;
     selectedMeasurements: Measurement[];
-    selectionsEditing: boolean;
 }
 
 const MeasurementsWrapper = styled.div`
@@ -73,8 +69,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
 {
     state: State = {
         groupMode: GroupMode.AxisX,
-        selectedMeasurements: [],
-        selectionsEditing: false
+        selectedMeasurements: []
     };
 
     componentDidMount()
@@ -111,23 +106,11 @@ class BarChartPageComponent extends PureComponent<Props, State>
                         onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
                 <Box title='Selection'>
-                    <Switch
-                        useFirst={!this.state.selectionsEditing}
-                        firstLabel='Select'
-                        secondLabel='Edit'
-                        firstComponent={
-                            <SelectionSelect
-                                selections={this.props.selections}
-                                selection={this.props.selection}
-                                onSelect={this.changeSelection} />
-                        }
-                        secondComponent={
-                            <SelectionContainer
-                                measurements={this.props.measurements}
-                                selectedSelection={this.props.selection}
-                                selectSelection={this.changeSelection} />
-                        }
-                        onChange={this.changeSelectionsEditing} />
+                    <SelectionSelectEditor
+                        selections={this.props.selections}
+                        selection={this.props.selection}
+                        measurements={this.props.measurements}
+                        onSelectSelection={this.changeSelection} />
                 </Box>
                 <Box title='Projections'>
                     <DataSelector
@@ -139,10 +122,6 @@ class BarChartPageComponent extends PureComponent<Props, State>
                         onChangeXAxis={this.changeXAxis}
                         onChangeYAxes={this.changeYAxes}
                         onChangeSelection={this.changeSelection} />
-                </Box>
-                <Box title='Group by'>
-                    <GroupModeSelector groupMode={this.state.groupMode}
-                                       onChangeGroupMode={this.changeGroupMode} />
                 </Box>
                 <RequestComponent request={this.props.measurementRequest} />
             </>
@@ -188,17 +167,9 @@ class BarChartPageComponent extends PureComponent<Props, State>
     {
         this.props.setSelection(selection === null ? null : selection.id);
     }
-    changeGroupMode = (groupMode: GroupMode) =>
-    {
-        this.setState(() => ({ groupMode }));
-    }
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
     {
         this.setState(() => ({ selectedMeasurements  }));
-    }
-    changeSelectionsEditing = (select: boolean) =>
-    {
-        this.setState(() => ({ selectionsEditing: !select }));
     }
 }
 

@@ -1,12 +1,12 @@
 import React, {PureComponent} from 'react';
-import {Selection} from '../../../lib/measurement/selection/selection';
+import {Selection} from '../../../../lib/measurement/selection/selection';
 import {update, sort} from 'ramda';
 import Button from 'reactstrap/lib/Button';
-import {Measurement} from '../../../lib/measurement/measurement';
+import {Measurement} from '../../../../lib/measurement/measurement';
 import MdDelete from 'react-icons/lib/md/delete';
 import styled from 'styled-components';
 import MdAddCircleOutline from 'react-icons/lib/md/add-circle-outline';
-import {MeasurementKeys} from '../../global/measurement-keys';
+import {MeasurementKeys} from '../../../global/measurement-keys';
 
 interface Props
 {

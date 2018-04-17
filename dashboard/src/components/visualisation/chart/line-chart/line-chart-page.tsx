@@ -1,32 +1,33 @@
 import React, {PureComponent} from 'react';
-import {RangeFilter} from '../../../lib/measurement/selection/range-filter';
+import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
 import {LineChart} from './line-chart';
-import {GroupMode} from '../../../lib/measurement/group-mode';
-import {GroupModeSelector} from '../group-mode-selector';
-import {Measurement} from '../../../lib/measurement/measurement';
-import {User} from '../../../lib/user/user';
-import {Project} from '../../../lib/project/project';
+import {GroupMode} from '../../../../lib/measurement/group-mode';
+import {Measurement} from '../../../../lib/measurement/measurement';
+import {User} from '../../../../lib/user/user';
+import {Project} from '../../../../lib/project/project';
 import {connect} from 'react-redux';
-import {getUser} from '../../../state/user/reducer';
-import {getSelectedProject} from '../../../state/project/reducer';
-import {AppState} from '../../../state/app/reducers';
-import {Selection} from '../../../lib/measurement/selection/selection';
+import {getUser} from '../../../../state/user/reducer';
+import {getSelectedProject} from '../../../../state/project/reducer';
+import {AppState} from '../../../../state/app/reducers';
+import {Selection} from '../../../../lib/measurement/selection/selection';
 import styled from 'styled-components';
-import {RangeFilterSwitcher} from '../range-filter-switcher';
+import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {MeasurementList} from '../measurement-list';
-import {getSelections} from '../../../state/selection/reducer';
-import {loadSelectionsAction, LoadSelectionsParams} from '../../../state/selection/actions';
+import {MeasurementList} from '../../measurement-list';
+import {getSelections} from '../../../../state/selection/reducer';
+import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/selection/actions';
 import {LineChartDataset} from './line-chart-dataset';
 import {
     AddDatasetParams,
     addLineChartDatasetAction,
     deleteLineChartDatasetAction, setLineChartXAxisAction,
-    UpdateDatasetParams, updateLineChartDatasetAction
-} from '../../../state/ui/line-chart-page/actions';
+    UpdateDatasetParams, updateLineChartDatasetAction, ReloadDatasetsParams, reloadDatasetsAction
+} from '../../../../state/ui/line-chart-page/actions';
 import {DatasetManager} from './dataset-manager';
-import {Box} from '../../global/box';
+import {Box} from '../../../global/box';
 import {ChartPage} from '../chart-page';
+import {MeasurementKeys} from '../../../global/measurement-keys';
+import {sort} from 'ramda';
 
 interface OwnProps
 {
@@ -48,6 +49,7 @@ interface DispatchProps
     addDataset(params: AddDatasetParams): void;
     deleteDataset(dataset: LineChartDataset): void;
     updateDataset(params: UpdateDatasetParams): void;
+    reloadDatasets(params: ReloadDatasetsParams): void;
 }
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 
@@ -74,6 +76,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
             user: this.props.user,
             project: this.props.project
         });
+        this.reloadDatasets(this.props.rangeFilter);
     }
 
     render()
@@ -86,22 +89,28 @@ class LineChartPageComponent extends PureComponent<Props, State>
     }
     renderOptions = (): JSX.Element =>
     {
+        const keys = sort((a, b) => a.localeCompare(b), this.props.project.measurementKeys);
         return (
             <>
                 <Box title='Range'>
                     <RangeFilterSwitcher
                         rangeFilter={this.props.rangeFilter}
-                        onFilterChange={this.props.onChangeRangeFilter} />
+                        onFilterChange={this.changeRangeFilter} />
                 </Box>
-                <h4>Projections</h4>
-                <DatasetManager
-                    selections={this.props.selections}
-                    datasets={this.props.datasets}
-                    addDataset={this.addDataset}
-                    deleteDataset={this.props.deleteDataset}
-                    updateDataset={this.updateDataset} />
-                <GroupModeSelector groupMode={this.state.groupMode}
-                                   onChangeGroupMode={this.changeGroupMode} />
+                <Box title='Datasets'>
+                    <div>X axis</div>
+                    <MeasurementKeys keys={keys}
+                                     value={this.props.xAxis}
+                                     onChange={this.props.setXAxis} />
+                    <DatasetManager
+                        selections={this.props.selections}
+                        measurementKeys={keys}
+                        datasets={this.props.datasets}
+                        maxDatasetCount={4}
+                        addDataset={this.addDataset}
+                        deleteDataset={this.props.deleteDataset}
+                        updateDataset={this.updateDataset} />
+                </Box>
             </>
         );
     }
@@ -139,22 +148,27 @@ class LineChartPageComponent extends PureComponent<Props, State>
             project: this.props.project,
             rangeFilter: this.props.rangeFilter,
             dataset,
-            selection: newDataset.selection,
+            selectionId: newDataset.selectionId,
             yAxis: newDataset.yAxis
         });
     }
 
-    changeXAxis = (xAxis: string) =>
-    {
-        this.props.setXAxis(xAxis);
-    }
-    changeGroupMode = (groupMode: GroupMode) =>
-    {
-        this.setState(() => ({ groupMode }));
-    }
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
     {
         this.setState(() => ({ selectedMeasurements  }));
+    }
+    changeRangeFilter = (rangeFilter: RangeFilter) =>
+    {
+        this.props.onChangeRangeFilter(rangeFilter);
+        this.reloadDatasets(rangeFilter);
+    }
+    reloadDatasets = (rangeFilter: RangeFilter) =>
+    {
+        this.props.reloadDatasets({
+            user: this.props.user,
+            project: this.props.project,
+            rangeFilter
+        });
     }
 }
 
@@ -169,5 +183,6 @@ export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnPr
     setXAxis: setLineChartXAxisAction,
     addDataset: addLineChartDatasetAction.started,
     deleteDataset: deleteLineChartDatasetAction,
-    updateDataset: updateLineChartDatasetAction.started
+    updateDataset: updateLineChartDatasetAction.started,
+    reloadDatasets: reloadDatasetsAction.started
 })(LineChartPageComponent));

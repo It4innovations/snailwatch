@@ -58,5 +58,6 @@ reducer = compose(
 ))(reducer);
 
 export const getSelections = (state: AppState) => state.selection.selections;
+export const getSelectionById = (selections: Selection[], id: string) => selections.find(sel => sel.id === id) || null;
 
 export const selectionReducer = reducer;

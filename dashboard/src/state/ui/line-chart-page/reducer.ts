@@ -1,19 +1,29 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {createRequest, hookRequestActions, Request} from '../../../util/request';
-import {LineChartDataset} from '../../../components/visualisation/line-chart/line-chart-dataset';
+import {LineChartDataset} from '../../../components/visualisation/chart/line-chart/line-chart-dataset';
 import {
     deleteLineChartDatasetAction,
     setLineChartXAxisAction,
     updateLineChartDatasetAction,
-    addLineChartDatasetAction
+    addLineChartDatasetAction, reloadDatasetsAction
 } from './actions';
-import {compose, update} from 'ramda';
+import {compose, update, max, reduce} from 'ramda';
 
 export interface LineChartPageState
 {
     measurementsRequest: Request;
     datasets: LineChartDataset[];
     xAxis: string;
+}
+
+function assignDatasetName(datasets: LineChartDataset[], dataset: LineChartDataset): LineChartDataset
+{
+    const highest = reduce<number, number>(max, 0, datasets.map(d => Number(d.name)));
+
+    return {
+        ...dataset,
+        name: (highest + 1).toString()
+    };
 }
 
 let reducer = reducerWithInitialState<LineChartPageState>({
@@ -40,7 +50,14 @@ reducer = compose(
         state => state.measurementsRequest,
         (state, action) => ({
             ...state,
-            datasets: [...state.datasets, action.payload.result]
+            datasets: [...state.datasets, assignDatasetName(state.datasets, action.payload.result)]
+        })
+    ),
+    (r: typeof reducer) => hookRequestActions(r, reloadDatasetsAction,
+        state => state.measurementsRequest,
+        (state, action) => ({
+            ...state,
+            datasets: action.payload.result
         })
     )
 )(reducer);

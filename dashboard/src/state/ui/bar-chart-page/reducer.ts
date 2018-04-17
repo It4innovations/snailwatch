@@ -9,6 +9,7 @@ import {
     setBarChartYAxesAction
 } from './actions';
 import {AppState} from '../../app/reducers';
+import {getSelectionById} from '../../selection/reducer';
 
 export interface BarChartPageState
 {
@@ -39,7 +40,7 @@ reducer = compose(
     )
 )(reducer);
 
-export const getBarChartPageSelection = (state: AppState) => state.selection.selections.find(sel =>
-    sel.id === state.ui.barChartPage.selectionId) || null;
+export const getBarChartPageSelection = (state: AppState) => getSelectionById(state.selection.selections,
+    state.ui.barChartPage.selectionId);
 
 export const barChartReducer = reducer;
