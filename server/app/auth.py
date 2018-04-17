@@ -1,18 +1,25 @@
 import werkzeug.security
 from eve.auth import TokenAuth
-from flask import current_app as app
+from flask import current_app as app, Response, abort
 
 from .db.uploadtoken import UploadTokenRepo
 from .db.loginsession import LoginSessionRepo
 
 
-class AdminAuthenticator(TokenAuth):
+class Authenticator(TokenAuth):
+    def authenticate(self):
+        resp = Response(None, 401)
+        abort(401, description='Provide token in the Authorization header',
+              response=resp)
+
+
+class AdminAuthenticator(Authenticator):
     def check_auth(self, token, allowed_roles, resource, method):
         from app.settings import ADMIN_AUTH_TOKEN
         return token == ADMIN_AUTH_TOKEN
 
 
-class TokenAuthenticator(TokenAuth):
+class TokenAuthenticator(Authenticator):
     def check_auth(self, token, allowed_roles, resource, method):
         repo = LoginSessionRepo(app)
         session = repo.find_session(token)
@@ -23,7 +30,7 @@ class TokenAuthenticator(TokenAuth):
         return False
 
 
-class MeasurementAuthenticator(TokenAuth):
+class MeasurementAuthenticator(Authenticator):
     def check_auth(self, token, allowed_roles, resource, method):
         if method == "POST":
             repo = UploadTokenRepo(app)
