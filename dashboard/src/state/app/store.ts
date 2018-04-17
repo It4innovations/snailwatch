@@ -1,6 +1,6 @@
 import createHistory from 'history/createBrowserHistory';
 import {routerMiddleware, routerReducer} from 'react-router-redux';
-import {Action, applyMiddleware, combineReducers, compose, createStore} from 'redux';
+import {Action, applyMiddleware, combineReducers, compose, createStore, Reducer} from 'redux';
 import {createLogger} from 'redux-logger';
 import {createEpicMiddleware} from 'redux-observable';
 import thunk from 'redux-thunk';
@@ -47,6 +47,11 @@ const projectPersist = {
     storage,
     whitelist: ['projects', 'selectedProject']
 };
+const selectionPersist = {
+    key: 'selection',
+    storage,
+    whitelist: ['selections']
+};
 const barChartPersist = {
     key: 'ui/bar-chart',
     storage,
@@ -79,13 +84,14 @@ const persistedUIReducer = combineReducers({
     lineChartPage: persistReducer(lineChartPersist, uiReducer.lineChartPage)
 });
 
-const rootReducer = combineReducers({
+const rootReducer: {[K in keyof AppState]: Reducer<{}>} = {
     ...reducers,
     user: persistReducer(authPersist, reducers.user),
     project: persistReducer(projectPersist, reducers.project),
+    selection: persistReducer(selectionPersist, reducers.selection),
     ui: persistedUIReducer,
     router: routerReducer
-});
+};
 const middleware = [
     router,
     epic,
@@ -102,7 +108,7 @@ if (process.env.NODE_ENV === 'production')
 else middleware.push(createLogger());
 
 export const store = createStore(
-    rootReducer,
+    combineReducers(rootReducer),
     composeEnhancers(applyMiddleware(...middleware))
 );
 export const persistor = persistStore(store);
