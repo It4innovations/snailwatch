@@ -17,7 +17,7 @@ const Row = styled.div`
 const DatasetColumn = styled.div`
   min-width: 240px;
   margin-right: 10px;
-  padding: 10px 10px 0 0;
+  padding: 0 10px 0 0;
   border-right: 1px solid black;
 `;
 const BarColumn = styled.div`

@@ -4,7 +4,7 @@ import {Card, CardTitle} from 'reactstrap';
 
 const SlimCard = styled(Card)`
   padding: 10px !important;
-  margin-bottom: 5px;
+  margin-top: 5px;
 `;
 
 export const Box: SFC<{title: ReactNode | string}> = (props) =>

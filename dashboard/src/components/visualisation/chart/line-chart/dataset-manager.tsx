@@ -24,6 +24,12 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+const AddButton = styled(Button)`
+  margin-top: 5px;
+`;
+const SelectWrapper = styled.div`
+  margin-top: 5px;
+`;
 
 export class DatasetManager extends PureComponent<Props>
 {
@@ -33,10 +39,10 @@ export class DatasetManager extends PureComponent<Props>
             <div>
                 {this.props.datasets.map(this.renderDataset)}
                 {this.props.datasets.length < this.props.maxDatasetCount &&
-                    <Button
+                    <AddButton
                         size='sm'
                         color='success'
-                        onClick={this.props.addDataset}>Add dataset</Button>
+                        onClick={this.props.addDataset}>Add dataset</AddButton>
                 }
             </div>
         );
@@ -49,11 +55,13 @@ export class DatasetManager extends PureComponent<Props>
                 <MeasurementKeys keys={this.props.measurementKeys}
                                  value={dataset.yAxis}
                                  onChange={(value) => this.changeYAxis(dataset, value)} />
-                <SelectionSelectEditor
-                    selections={this.props.selections}
-                    selection={getSelectionById(this.props.selections, dataset.selectionId)}
-                    measurements={dataset.measurements}
-                    onSelectSelection={(selection) => this.changeSelection(dataset, selection)} />
+                <SelectWrapper>
+                    <SelectionSelectEditor
+                        selections={this.props.selections}
+                        selection={getSelectionById(this.props.selections, dataset.selectionId)}
+                        measurements={dataset.measurements}
+                        onSelectSelection={(selection) => this.changeSelection(dataset, selection)} />
+                </SelectWrapper>
             </Box>
         );
     }
