@@ -32,13 +32,12 @@ publish:dashboard:
   tags:
     - deployment
   only:
+    - dev
     - master
   before_script:
     - cd dashboard
   script:
-    - echo $CI_DOCKERHUB_PW | docker login -u kobzol --password-stdin
-    - docker build -t kobzol/snailwatch:dashboard .
-    - docker push kobzol/snailwatch:dashboard
+    - docker build -t snailwatch-dashboard-${CI_COMMIT_REF_SLUG} .
 
 publish:server:
   image: docker:latest
@@ -46,13 +45,12 @@ publish:server:
   tags:
     - deployment
   only:
+    - dev
     - master
   before_script:
     - cd server
   script:
-    - echo $CI_DOCKERHUB_PW | docker login -u kobzol --password-stdin
-    - docker build -t kobzol/snailwatch:server .
-    - docker push kobzol/snailwatch:server
+    - docker build -t snailwatch-server-${CI_COMMIT_REF_SLUG} .
 
 deploy:
   image: deployer
@@ -60,6 +58,7 @@ deploy:
   tags:
     - deployment
   only:
+    - dev
     - master
   before_script:
     - cd /deploy
