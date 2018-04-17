@@ -29,6 +29,7 @@ import {ChartPage} from '../chart-page';
 import {MeasurementKeys} from '../../../global/measurement-keys';
 import {sort} from 'ramda';
 import {LineChartSettings} from './line-chart-settings';
+import {LineChartSettingsComponent} from './line-chart-settings-component';
 
 interface OwnProps
 {
@@ -58,7 +59,7 @@ interface State
 {
     groupMode: GroupMode;
     selectedMeasurements: Measurement[];
-    showDeviation: boolean;
+    settings: LineChartSettings;
 }
 
 const MeasurementsWrapper = styled.div`
@@ -70,7 +71,10 @@ class LineChartPageComponent extends PureComponent<Props, State>
     state: State = {
         groupMode: GroupMode.AxisX,
         selectedMeasurements: [],
-        showDeviation: false
+        settings: {
+            connectPoints: true,
+            showDeviation: false
+        }
     };
 
     componentDidMount()
@@ -115,9 +119,9 @@ class LineChartPageComponent extends PureComponent<Props, State>
                         updateDataset={this.updateDataset} />
                 </Box>
                 <Box title='Settings'>
-                    <LineChartSettings
-                        showDeviation={this.state.showDeviation}
-                        onChangeShowDeviation={this.changeShowDeviation} />
+                    <LineChartSettingsComponent
+                        settings={this.state.settings}
+                        onChangeSettings={this.changeSettings} />
                 </Box>
             </>
         );
@@ -130,8 +134,8 @@ class LineChartPageComponent extends PureComponent<Props, State>
                 <LineChart
                     xAxis={this.props.xAxis}
                     groupMode={this.state.groupMode}
-                    connectPoints={true}
-                    showDeviation={this.state.showDeviation}
+                    connectPoints={this.state.settings.connectPoints}
+                    showDeviation={this.state.settings.showDeviation}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     views={this.props.datasets} />
                 <MeasurementsWrapper>
@@ -171,9 +175,9 @@ class LineChartPageComponent extends PureComponent<Props, State>
         this.props.onChangeRangeFilter(rangeFilter);
         this.reloadDatasets(rangeFilter);
     }
-    changeShowDeviation = (showDeviation: boolean) =>
+    changeSettings = (settings: LineChartSettings) =>
     {
-        this.setState(() => ({ showDeviation }));
+        this.setState(() => ({ settings }));
     }
     reloadDatasets = (rangeFilter: RangeFilter) =>
     {
