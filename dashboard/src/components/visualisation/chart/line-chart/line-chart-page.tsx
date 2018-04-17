@@ -123,6 +123,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     xAxis={this.props.xAxis}
                     groupMode={this.state.groupMode}
                     connectPoints={true}
+                    showDeviation={false}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     views={this.props.datasets} />
                 <MeasurementsWrapper>
