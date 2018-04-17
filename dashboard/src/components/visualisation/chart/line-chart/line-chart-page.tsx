@@ -28,6 +28,7 @@ import {Box} from '../../../global/box';
 import {ChartPage} from '../chart-page';
 import {MeasurementKeys} from '../../../global/measurement-keys';
 import {sort} from 'ramda';
+import {LineChartSettings} from './line-chart-settings';
 
 interface OwnProps
 {
@@ -57,6 +58,7 @@ interface State
 {
     groupMode: GroupMode;
     selectedMeasurements: Measurement[];
+    showDeviation: boolean;
 }
 
 const MeasurementsWrapper = styled.div`
@@ -67,7 +69,8 @@ class LineChartPageComponent extends PureComponent<Props, State>
 {
     state: State = {
         groupMode: GroupMode.AxisX,
-        selectedMeasurements: []
+        selectedMeasurements: [],
+        showDeviation: false
     };
 
     componentDidMount()
@@ -111,6 +114,11 @@ class LineChartPageComponent extends PureComponent<Props, State>
                         deleteDataset={this.props.deleteDataset}
                         updateDataset={this.updateDataset} />
                 </Box>
+                <Box title='Settings'>
+                    <LineChartSettings
+                        showDeviation={this.state.showDeviation}
+                        onChangeShowDeviation={this.changeShowDeviation} />
+                </Box>
             </>
         );
     }
@@ -123,7 +131,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     xAxis={this.props.xAxis}
                     groupMode={this.state.groupMode}
                     connectPoints={true}
-                    showDeviation={false}
+                    showDeviation={this.state.showDeviation}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     views={this.props.datasets} />
                 <MeasurementsWrapper>
@@ -162,6 +170,10 @@ class LineChartPageComponent extends PureComponent<Props, State>
     {
         this.props.onChangeRangeFilter(rangeFilter);
         this.reloadDatasets(rangeFilter);
+    }
+    changeShowDeviation = (showDeviation: boolean) =>
+    {
+        this.setState(() => ({ showDeviation }));
     }
     reloadDatasets = (rangeFilter: RangeFilter) =>
     {

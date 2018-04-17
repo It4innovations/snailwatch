@@ -24,10 +24,10 @@ interface Props
 }
 
 const DATASET_COLORS = new ColorPalette([
-    '#DD0000',
-    '#00DD00',
-    '#0000DD',
-    '#DD2288'
+    '#DD551D',
+    '#A14CDD',
+    '#DD2288',
+    '#46DDA6'
 ]);
 
 export class LineChart extends PureComponent<Props>
@@ -64,7 +64,7 @@ export class LineChart extends PureComponent<Props>
                                 isAnimationActive={false}
                                 dataKey={`data[${index}].value`}
                                 connectNulls={true}
-                                dot={false}
+                                dot={!this.props.connectPoints}
                                 activeDot={{
                                     onClick: (data: {payload: LinePoint}) => this.selectMeasurements(data, index)
                                 }}
