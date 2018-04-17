@@ -48,13 +48,9 @@ reducer = compose(
     (r: typeof reducer) => hookRequestActions(r,
         deleteSelectionAction,
         state => state.selectionRequest,
-        (state, action) => {
-            const selections = [...state.selections.filter(v => v.id !== action.payload.params.selection.id)];
-
-            return {
-                selections
-            };
-        }
+        (state, action) => ({
+            selections: state.selections.filter(v => v.id !== action.payload.params.selection.id)
+        })
 ))(reducer);
 
 export const getSelections = (state: AppState) => state.selection.selections;

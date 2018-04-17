@@ -63,18 +63,12 @@ reducer = compose(
         createProject,
         state => state.createProjectRequest),
     (r: typeof reducer) => hookRequestActions(r,
-        loadUploadToken,
+        [loadUploadToken, regenerateUploadToken],
         state => state.uploadTokenRequest,
         (state, action) => ({
             uploadToken: action.payload.result
-        })),
-    (r: typeof reducer) => hookRequestActions(r,
-        regenerateUploadToken,
-        state => state.uploadTokenRequest,
-        (state, action) => ({
-            uploadToken: action.payload.result
-        })
-))(reducer);
+        }))
+)(reducer);
 
 export const getProjects = (state: AppState) => state.project.projects;
 export const getSelectedProjectName = (state: AppState) => state.project.selectedProject;

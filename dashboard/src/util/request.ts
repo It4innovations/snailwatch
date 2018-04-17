@@ -71,24 +71,30 @@ function replaceKey<T, Value>(obj: T, valueSelector: (obj: T) => Value, value: V
     }
 }
 export function hookRequestActions<T extends {}, P, S, E>(reducer: ReducerBuilder<T, T>,
-                                                          action: AsyncActionCreators<P, S, E>,
+                                                          action: AsyncActionCreators<P, S, E> |
+                                                              AsyncActionCreators<P, S, E>[],
                                                           requestSelector: (state: T) => Request,
                                                           mapData: (state: T, result: Action<Success<P, S>>)
                                                               => Partial<T> = null)
 : ReducerBuilder<T, T>
 {
+    if (!Array.isArray(action))
+    {
+        action = [action];
+    }
+
     return reducer
-        .case(action.started, (state: T) => {
+        .cases(action.map(a => a.started), (state: T) => {
             let nextstate = {...(state as object)};
             replaceKey(nextstate, requestSelector, requestStarted());
             return nextstate as T;
         })
-        .case(action.failed, (state: T, response) => {
+        .cases(action.map(a => a.failed), (state: T, response) => {
             let nextstate = {...(state as object)};
             replaceKey(nextstate, requestSelector, requestErrored(response.error.toString()));
             return nextstate as T;
         })
-        .caseWithAction(action.done, (state: T, response) => {
+        .casesWithAction(action.map(a => a.done), (state: T, response) => {
             let nextstate = {...(state as object)};
             replaceKey(nextstate, requestSelector, requestDone());
 
