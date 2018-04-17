@@ -6,12 +6,11 @@ import {createEpicMiddleware} from 'redux-observable';
 import thunk from 'redux-thunk';
 import {rootEpic} from './epics';
 import {AppState, reducers} from './reducers';
-import url from 'url';
 import {persistReducer, persistStore, createTransform} from 'redux-persist';
 import reduxCatch from 'redux-catch';
 import Raven from 'raven-js';
 import {RestClient} from '../../lib/api/rest-client';
-import {API_SERVER} from '../../configuration';
+import {API_SERVER, URL_PREFIX} from '../../configuration';
 import storage from 'redux-persist/lib/storage';
 import {uiReducer} from '../ui/reducer';
 import moment from 'moment';
@@ -27,7 +26,7 @@ function errorHandler(error: Error, getState: () => AppState, action: Action)
 }
 
 export const history = createHistory({
-    basename: url.parse(process.env.PUBLIC_URL || 'http://localhost').pathname
+    basename: URL_PREFIX
 });
 
 const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;

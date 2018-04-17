@@ -8,15 +8,18 @@ const app = express();
 const port = process.env.PORT || 3000;
 const webDir = process.env.WEB_PATH || path.join(__dirname, 'web');
 const apiHost = process.env.API_SERVER || 'http://localhost:5000';
+const urlPrefix = process.env.URL_PREFIX || '/';
 
-console.log(`Serving from ${webDir} on port ${port}, API address: ${apiHost}`);
+console.log(`Serving from ${webDir} on port ${port}, API address: ${apiHost}, URL prefix: ${urlPrefix}`);
 
 const readFileAsync = promisify(readFile);
 
 async function readIndexFile(): Promise<string>
 {
     const html = await readFileAsync(path.join(webDir, 'index.html'));
-    return html.toString().replace('{{API_HOST}}', apiHost);
+    return html.toString()
+        .replace('{{API_HOST}}', apiHost)
+        .replace('{{URL_PREFIX}}', urlPrefix);
 }
 
 const indexFile = readIndexFile();
