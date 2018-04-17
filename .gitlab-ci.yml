@@ -63,4 +63,4 @@ deploy:
   before_script:
     - cd /deploy
   script:
-    - ssh -o StrictHostKeyChecking=no -i ./cert root@172.17.0.1 "cd webserver && ./restart.sh"
+    - ssh -o StrictHostKeyChecking=no -i ./cert root@172.17.0.1 "cd service && ./restart.sh"
