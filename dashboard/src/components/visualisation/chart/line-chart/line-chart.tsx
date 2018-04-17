@@ -12,6 +12,7 @@ import {Tick} from '../tick';
 import {Dictionary, chain, uniq, sort} from 'ramda';
 import {PointTooltip} from './point-tooltip';
 import {LinePoint} from './line-point';
+import {LineLegend} from './line-legend';
 
 interface Props
 {
@@ -56,7 +57,7 @@ export class LineChart extends PureComponent<Props>
                             padding={{left: padding, right: padding}} />
                         <YAxis padding={{bottom: padding, top: padding}} />
                         <Tooltip content={<PointTooltip xAxis={this.props.xAxis} />} />
-                        <Legend />
+                        <Legend content={<LineLegend palette={DATASET_COLORS} />} />
                         {datasets.map((scatter, index) =>
                             <Line
                                 key={`line.${index}`}
