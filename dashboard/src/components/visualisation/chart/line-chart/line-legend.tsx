@@ -30,8 +30,7 @@ export class LineLegend extends PureComponent<LegendProps & Props>
                 {payload.map((entry, index) => (
                     <Entry key={index}>
                         <Icon height='12' width='12'>
-                            <circle cx='6' cy='6' r='6' stroke='#000000'
-                                    fill={this.props.palette.getColor(index)} />
+                            <circle cx='6' cy='6' r='6' fill={this.props.palette.getColor(index)} />
                         </Icon>
                         {entry.value}
                     </Entry>
