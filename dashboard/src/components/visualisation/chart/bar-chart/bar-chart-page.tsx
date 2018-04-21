@@ -9,10 +9,10 @@ import {
     loadBarChartMeasurementsAction,
     LoadMeasurementParams, setBarChartSelection,
     setBarChartXAxisAction, setBarChartYAxesAction
-} from '../../../../state/ui/bar-chart-page/actions';
+} from '../../../../state/session/views/bar-chart-page/actions';
 import {connect} from 'react-redux';
-import {getUser} from '../../../../state/user/reducer';
-import {getSelectedProject} from '../../../../state/project/reducer';
+import {getUser} from '../../../../state/session/user/reducer';
+import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {AppState} from '../../../../state/app/reducers';
 import {DataSelector} from './data-selector';
 import {Selection} from '../../../../lib/measurement/selection/selection';
@@ -20,9 +20,9 @@ import styled from 'styled-components';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../../measurement-list';
-import {getSelections} from '../../../../state/selection/reducer';
-import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/selection/actions';
-import {getBarChartPageSelection} from '../../../../state/ui/bar-chart-page/reducer';
+import {getSelections} from '../../../../state/session/selection/reducer';
+import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/session/selection/actions';
+import {getBarChartPageSelection} from '../../../../state/session/views/bar-chart-page/reducer';
 import {Request} from '../../../../util/request';
 import {RequestComponent} from '../../../global/request-component';
 import {Box} from '../../../global/box';
@@ -177,10 +177,10 @@ export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnPro
     user: getUser(state),
     project: getSelectedProject(state),
     selections: getSelections(state),
-    measurements: state.ui.barChartPage.measurements,
-    measurementRequest: state.ui.barChartPage.measurementsRequest,
-    xAxis: state.ui.barChartPage.xAxis,
-    yAxes: state.ui.barChartPage.yAxes,
+    measurements: state.session.views.barChartPage.measurements,
+    measurementRequest: state.session.views.barChartPage.measurementsRequest,
+    xAxis: state.session.views.barChartPage.xAxis,
+    yAxes: state.session.views.barChartPage.yAxes,
     selection: getBarChartPageSelection(state)
 }), {
     loadMeasurements: loadBarChartMeasurementsAction.started,

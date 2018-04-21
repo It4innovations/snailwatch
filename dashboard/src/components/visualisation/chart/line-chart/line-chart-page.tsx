@@ -6,23 +6,23 @@ import {Measurement} from '../../../../lib/measurement/measurement';
 import {User} from '../../../../lib/user/user';
 import {Project} from '../../../../lib/project/project';
 import {connect} from 'react-redux';
-import {getUser} from '../../../../state/user/reducer';
-import {getSelectedProject} from '../../../../state/project/reducer';
+import {getUser} from '../../../../state/session/user/reducer';
+import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {AppState} from '../../../../state/app/reducers';
 import {Selection} from '../../../../lib/measurement/selection/selection';
 import styled from 'styled-components';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../../measurement-list';
-import {getSelections} from '../../../../state/selection/reducer';
-import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/selection/actions';
+import {getSelections} from '../../../../state/session/selection/reducer';
+import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/session/selection/actions';
 import {LineChartDataset} from './line-chart-dataset';
 import {
     AddDatasetParams,
     addLineChartDatasetAction,
     deleteLineChartDatasetAction, setLineChartXAxisAction,
     UpdateDatasetParams, updateLineChartDatasetAction, ReloadDatasetsParams, reloadDatasetsAction
-} from '../../../../state/ui/line-chart-page/actions';
+} from '../../../../state/session/views/line-chart-page/actions';
 import {DatasetManager} from './dataset-manager';
 import {Box} from '../../../global/box';
 import {ChartPage} from '../chart-page';
@@ -193,8 +193,8 @@ export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnPr
     user: getUser(state),
     project: getSelectedProject(state),
     selections: getSelections(state),
-    xAxis: state.ui.lineChartPage.xAxis,
-    datasets: state.ui.lineChartPage.datasets
+    xAxis: state.session.views.lineChartPage.xAxis,
+    datasets: state.session.views.lineChartPage.datasets
 }), {
     loadSelections: loadSelectionsAction.started,
     setXAxis: setLineChartXAxisAction,

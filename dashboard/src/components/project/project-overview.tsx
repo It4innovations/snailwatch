@@ -3,17 +3,17 @@ import {connect} from 'react-redux';
 import {Project} from '../../lib/project/project';
 import {User} from '../../lib/user/user';
 import {AppState} from '../../state/app/reducers';
-import {getUser} from '../../state/user/reducer';
+import {getUser} from '../../state/session/user/reducer';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {Request} from '../../util/request';
-import {getSelectedProject, getUploadToken} from '../../state/project/reducer';
+import {getSelectedProject, getUploadToken} from '../../state/session/project/reducer';
 import {Button, Card, CardBody, Input, InputGroup, InputGroupAddon} from 'reactstrap';
 import SyntaxHighlighter, { registerLanguage } from 'react-syntax-highlighter/light';
 import python from 'react-syntax-highlighter/languages/hljs/python';
 import {dracula} from 'react-syntax-highlighter/styles/hljs';
 import {API_SERVER} from '../../configuration';
 import Badge from 'reactstrap/lib/Badge';
-import {loadUploadToken, regenerateUploadToken, UploadTokenParams} from '../../state/project/actions';
+import {loadUploadToken, regenerateUploadToken, UploadTokenParams} from '../../state/session/project/actions';
 import styled from 'styled-components';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import {toast, ToastContainer} from 'react-toastify';
@@ -195,9 +195,9 @@ send_measurement(ctx,
 export const ProjectOverview = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     user: getUser(state),
     project: getSelectedProject(state),
-    loadProjectRequest: state.project.loadProjectRequest,
+    loadProjectRequest: state.session.project.loadProjectRequest,
     uploadToken: getUploadToken(state),
-    uploadTokenRequest: state.project.uploadTokenRequest
+    uploadTokenRequest: state.session.project.uploadTokenRequest
 }), {
     loadUploadToken: loadUploadToken.started,
     regenerateUploadToken: regenerateUploadToken.started

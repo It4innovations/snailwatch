@@ -4,15 +4,15 @@ import {User} from '../../../lib/user/user';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {Selection} from '../../../lib/measurement/selection/selection';
-import {getUser} from '../../../state/user/reducer';
-import {getSelectedProject} from '../../../state/project/reducer';
+import {getUser} from '../../../state/session/user/reducer';
+import {getSelectedProject} from '../../../state/session/project/reducer';
 import {AppState} from '../../../state/app/reducers';
-import {getSelections} from '../../../state/selection/reducer';
+import {getSelections} from '../../../state/session/selection/reducer';
 import {SelectionManager} from './selection-manager';
 import {
     createSelectionAction, CreateSelectionParams, deleteSelectionAction, DeleteSelectionParams,
     updateSelectionAction, UpdateSelectionParams
-} from '../../../state/selection/actions';
+} from '../../../state/session/selection/actions';
 import {Request} from '../../../util/request';
 import {Measurement} from '../../../lib/measurement/measurement';
 
@@ -84,7 +84,7 @@ export const SelectionContainer = withRouter(connect<StateProps, DispatchProps, 
     user: getUser(state),
     project: getSelectedProject(state),
     selections: getSelections(state),
-    selectionRequest: state.selection.selectionRequest
+    selectionRequest: state.session.selection.selectionRequest
 }), {
     createSelection: createSelectionAction.started,
     updateSelection: updateSelectionAction.started,

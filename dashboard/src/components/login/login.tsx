@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {LoginForm} from './login-form';
 import {connect} from 'react-redux';
-import {loginUser} from '../../state/user/actions';
+import {loginUser} from '../../state/session/user/actions';
 import {AppState} from '../../state/app/reducers';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {Request} from '../../util/request';
@@ -38,7 +38,7 @@ class LoginComponent extends PureComponent<StateProps & DispatchProps & RouteCom
 }
 
 export const Login = withRouter(connect<StateProps, DispatchProps, {}>((state: AppState) => ({
-    loginRequest: state.user.loginRequest
+    loginRequest: state.session.user.loginRequest
 }), {
     loginUser: loginUser.started
 })(LoginComponent));

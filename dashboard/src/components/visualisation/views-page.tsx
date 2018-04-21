@@ -2,56 +2,34 @@ import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {AppState} from '../../state/app/reducers';
-import {createLoadMeasurementParams, LoadMeasurementParams, loadMeasurements} from '../../state/measurement/actions';
 import {Project} from '../../lib/project/project';
 import {User} from '../../lib/user/user';
-import {getUser} from '../../state/user/reducer';
-import {getSelectedProject} from '../../state/project/reducer';
+import {getUser} from '../../state/session/user/reducer';
+import {getSelectedProject} from '../../state/session/project/reducer';
 import {BarChartPage} from './chart/bar-chart/bar-chart-page';
 import {LineChartPage} from './chart/line-chart/line-chart-page';
 import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 import FaBarChart from 'react-icons/lib/fa/bar-chart';
 import FaLineChart from 'react-icons/lib/fa/line-chart';
-import moment from 'moment';
 import {RangeFilter} from '../../lib/measurement/selection/range-filter';
+import {getRangeFilter} from '../../state/session/views/reducers';
+import {changeRangeFilterAction} from '../../state/session/views/actions';
 
 interface StateProps
 {
     user: User;
     project: Project;
+    rangeFilter: RangeFilter;
 }
-
 interface DispatchProps
 {
-    loadMeasurements(params: LoadMeasurementParams): void;
+    changeRangeFilter(rangeFilter: RangeFilter): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
-const initialState = {
-    rangeFilter: {
-        from: moment().subtract(1, 'w'),
-        to: moment(),
-        entryCount: 50,
-        useDateFilter: false
-    }
-};
-type State = Readonly<typeof initialState>;
-
-class ViewsPageComponent extends PureComponent<Props, State>
+class ViewsPageComponent extends PureComponent<Props>
 {
-    readonly state = initialState;
-
-    componentDidMount()
-    {
-        this.props.loadMeasurements(createLoadMeasurementParams({
-            user: this.props.user,
-            project: this.props.project,
-            filters: [],
-            reload: true
-        }));
-    }
-
     render()
     {
         return (
@@ -69,26 +47,22 @@ class ViewsPageComponent extends PureComponent<Props, State>
                     </Tab>
                 </TabList>
                 <TabPanel>
-                    <LineChartPage rangeFilter={this.state.rangeFilter}
-                        onChangeRangeFilter={this.changeRangeFilter} />
+                    <LineChartPage rangeFilter={this.props.rangeFilter}
+                                   onChangeRangeFilter={this.props.changeRangeFilter} />
                 </TabPanel>
                 <TabPanel>
-                    <BarChartPage rangeFilter={this.state.rangeFilter}
-                                  onChangeRangeFilter={this.changeRangeFilter} />
+                    <BarChartPage rangeFilter={this.props.rangeFilter}
+                                  onChangeRangeFilter={this.props.changeRangeFilter} />
                 </TabPanel>
             </Tabs>
         );
-    }
-
-    changeRangeFilter = (rangeFilter: RangeFilter) =>
-    {
-        this.setState(() => ({ rangeFilter }));
     }
 }
 
 export const ViewsPage = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     user: getUser(state),
-    project: getSelectedProject(state)
+    project: getSelectedProject(state),
+    rangeFilter: getRangeFilter(state)
 }), {
-    loadMeasurements: loadMeasurements.started
+    changeRangeFilter: changeRangeFilterAction
 })(ViewsPageComponent));

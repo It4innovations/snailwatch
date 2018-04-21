@@ -3,14 +3,14 @@ import {Project} from '../../lib/project/project';
 import {Input, InputGroup} from 'reactstrap';
 import {User} from '../../lib/user/user';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {getUser} from '../../state/user/reducer';
-import { getSelectedProject} from '../../state/project/reducer';
+import {getUser} from '../../state/session/user/reducer';
+import { getSelectedProject} from '../../state/session/project/reducer';
 import {AppState} from '../../state/app/reducers';
 import {connect} from 'react-redux';
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon';
 import styled from 'styled-components';
 import {PasswordForm} from './password-form';
-import {changePassword, ChangePasswordParams} from '../../state/user/actions';
+import {changePassword, ChangePasswordParams} from '../../state/session/user/actions';
 import {Request} from '../../util/request';
 
 interface StateProps
@@ -56,7 +56,6 @@ class ProfileComponent extends PureComponent<Props>
     onChangePassword = (oldPassword: string, newPassword: string) =>
     {
         this.props.changePassword({
-            user: this.props.user,
             oldPassword,
             newPassword
         });
@@ -66,7 +65,7 @@ class ProfileComponent extends PureComponent<Props>
 export const Profile = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     user: getUser(state),
     selectedProject: getSelectedProject(state),
-    changePasswordRequest: state.user.changePasswordRequest
+    changePasswordRequest: state.session.user.changePasswordRequest
 }), {
     changePassword: changePassword.started
 })(ProfileComponent));

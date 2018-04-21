@@ -7,7 +7,7 @@ import {SelectionSelectEditor} from '../../selection-container/selection-select-
 import {Box} from '../../../global/box';
 import MdDelete from 'react-icons/lib/md/delete';
 import styled from 'styled-components';
-import {getSelectionById} from '../../../../state/selection/reducer';
+import {getSelectionById} from '../../../../state/session/selection/reducer';
 
 interface Props
 {

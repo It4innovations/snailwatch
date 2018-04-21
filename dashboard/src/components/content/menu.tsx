@@ -14,6 +14,7 @@ interface Props
 {
     authenticated: boolean;
     selectedProject: Project | null;
+    deselectProject(): void;
 }
 
 const Appbar = styled(Navbar)`
@@ -31,6 +32,13 @@ const ProjectName = styled.div`
   font-size: 22px;
   align-self: center;
   margin-right: 20px;
+`;
+const MenuLink = styled.div`
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+  color: #007BFF;
 `;
 
 class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
@@ -60,7 +68,6 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
         else
         {
             links.push(this.authLink('Project', Navigation.Overview));
-            links.push(this.authLink('Measurements', Navigation.MeasurementList));
             links.push(this.authLink('Views', Navigation.Views));
         }
 
@@ -82,8 +89,8 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
         if (this.props.selectedProject !== null)
         {
             items.push(
-                <DropdownItem key='switch-project'>
-                    <Link to={Navigation.Projects}>Switch project</Link>
+                <DropdownItem key='switch-project' onClick={this.props.deselectProject}>
+                    <MenuLink>Switch project</MenuLink>
                 </DropdownItem>
             );
             items.push(<DropdownItem divider key='divider' />);

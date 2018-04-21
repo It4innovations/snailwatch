@@ -1,6 +1,6 @@
 import {combineEpics} from 'redux-observable';
-import '../../../util/redux-observable';
-import {createRequestEpic} from '../../../util/request';
+import '../../../../util/redux-observable';
+import {createRequestEpic} from '../../../../util/request';
 import {loadBarChartMeasurementsAction} from './actions';
 
 const loadMeasurementsEpics = createRequestEpic(loadBarChartMeasurementsAction, (action, state, deps) => {

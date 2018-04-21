@@ -5,17 +5,15 @@ import {Project} from '../../lib/project/project';
 import {User} from '../../lib/user/user';
 import {
     createProject, CreateProjectParams, loadProjects, selectProject
-} from '../../state/project/actions';
-import {getUser} from '../../state/user/reducer';
+} from '../../state/session/project/actions';
+import {getUser} from '../../state/session/user/reducer';
 import {AppState} from '../../state/app/reducers';
-import {getProjects} from '../../state/project/reducer';
+import {getProjects} from '../../state/session/project/reducer';
 import {Button} from 'reactstrap';
 import {CreateProject} from './create-project';
 import {Request} from '../../util/request';
 import ListGroup from 'reactstrap/lib/ListGroup';
 import ListGroupItem from 'reactstrap/lib/ListGroupItem';
-import {push} from 'react-router-redux';
-import {Navigation} from '../../state/nav/routes';
 import styled from 'styled-components';
 
 interface State
@@ -35,7 +33,6 @@ interface DispatchProps
     loadProjects(user: User): void;
     selectProject(name: string): void;
     createProject(params: CreateProjectParams): void;
-    push(path: string): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
@@ -121,19 +118,17 @@ class ProjectsComponent extends PureComponent<Props, State>
     selectProject = (project: Project) =>
     {
         this.props.selectProject(project.name);
-        this.props.push(Navigation.Overview);
     }
 }
 
 export const Projects = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
-    loadProjectsRequest: state.project.loadProjectsRequest,
-    loadProjectRequest: state.project.loadProjectRequest,
-    createProjectRequest: state.project.createProjectRequest,
+    loadProjectsRequest: state.session.project.loadProjectsRequest,
+    loadProjectRequest: state.session.project.loadProjectRequest,
+    createProjectRequest: state.session.project.createProjectRequest,
     user: getUser(state),
     projects: getProjects(state)
 }), {
     loadProjects: (user: User) => loadProjects.started({ user, force: true }),
-    selectProject,
-    createProject: createProject.started,
-    push
+    selectProject: selectProject.started,
+    createProject: createProject.started
 })(ProjectsComponent));

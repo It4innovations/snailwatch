@@ -5,19 +5,20 @@ import {Navigation, Routes} from '../../state/nav/routes';
 import {Redirect, RouteComponentProps, Switch, withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {AppState} from '../../state/app/reducers';
-import {isUserAuthenticated} from '../../state/user/reducer';
+import {isUserAuthenticated} from '../../state/session/user/reducer';
 import {Menu} from './menu';
-import {logoutUser} from '../../state/user/actions';
 import {SwitchRoute} from '../../state/nav/switch-route';
 import styled from 'styled-components';
 import {Profile} from '../profile/profile';
 import {Project} from '../../lib/project/project';
-import {getSelectedProject} from '../../state/project/reducer';
+import {getSelectedProject} from '../../state/session/project/reducer';
 import {MeasurementList} from '../visualisation/measurement-list/measurement-list';
 import {ViewsPage} from '../visualisation/views-page';
 import {ProjectOverview} from '../project/project-overview';
 
 import './global.scss';
+import {clearSession} from '../../state/session/actions';
+import {deselectProject} from '../../state/session/project/actions';
 
 interface StateProps
 {
@@ -26,7 +27,8 @@ interface StateProps
 }
 interface DispatchProps
 {
-    logoutUser(): void;
+    clearSession(): void;
+    deselectProject(): void;
 }
 
 const Wrapper = styled.div`
@@ -42,7 +44,8 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
         return (
             <Wrapper>
                 <Menu authenticated={this.props.authenticated}
-                      selectedProject={this.props.selectedProject} />
+                      selectedProject={this.props.selectedProject}
+                      deselectProject={this.props.deselectProject} />
                 <Switch>
                     <SwitchRoute path={Routes.Login} component={Login}
                                  usePrimaryRoute={!this.props.authenticated} redirect={Navigation.Projects} />
@@ -81,7 +84,7 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
 
     logoutUser = (): JSX.Element =>
     {
-        this.props.logoutUser();
+        this.props.clearSession();
         return <Redirect to={Navigation.Login} />;
     }
 
@@ -95,5 +98,6 @@ export const Content = withRouter(connect<StateProps, DispatchProps>((state: App
     authenticated: isUserAuthenticated(state),
     selectedProject: getSelectedProject(state)
 }), {
-    logoutUser
+    clearSession,
+    deselectProject
 })(ContentComponent));

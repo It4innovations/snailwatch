@@ -1,8 +1,8 @@
 import {combineEpics} from 'redux-observable';
 import {createSelectionAction, deleteSelectionAction, loadSelectionsAction, updateSelectionAction} from './actions';
-import '../../util/redux-observable';
+import '../../../util/redux-observable';
 import 'rxjs/add/observable/of';
-import {createRequestEpic} from '../../util/request';
+import {createRequestEpic} from '../../../util/request';
 
 const loadSelections = createRequestEpic(loadSelectionsAction, (action, state, deps) =>
     deps.client.loadSelections(action.payload.user, action.payload.project)
@@ -17,7 +17,7 @@ const deleteSelection = createRequestEpic(deleteSelectionAction, (action, state,
     deps.client.deleteSelection(action.payload.user, action.payload.selection)
 );
 
-export const viewEpics = combineEpics(
+export const selectionEpics = combineEpics(
     loadSelections,
     createSelection,
     updateSelection,

@@ -2,14 +2,10 @@ import React, {PureComponent} from 'react';
 import {Project} from '../../../lib/project/project';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {User} from '../../../lib/user/user';
-import {
-    LoadMeasurementParams, loadMeasurements, createLoadMeasurementParams,
-    DeleteMeasurementParams, deleteMeasurement
-} from '../../../state/measurement/actions';
 import {connect} from 'react-redux';
-import {getUser} from '../../../state/user/reducer';
+import {getUser} from '../../../state/session/user/reducer';
 import {AppState} from '../../../state/app/reducers';
-import {getSelectedProject} from '../../../state/project/reducer';
+import {getSelectedProject} from '../../../state/session/project/reducer';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {ControlledStateOverrideProps, RowInfo} from 'react-table';
 import {createFilter, Filter} from '../../../lib/measurement/selection/filter';
@@ -22,8 +18,7 @@ interface StateProps
 
 interface DispatchProps
 {
-    loadMeasurements(params: LoadMeasurementParams): void;
-    deleteMeasurement(params: DeleteMeasurementParams): void;
+
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
@@ -120,27 +115,24 @@ class MeasurementListComponent extends PureComponent<Props>
 
     loadMeasurements = (filters: Filter[] = [], sortParam: string = '', page: number = null) =>
     {
-        this.props.loadMeasurements(createLoadMeasurementParams({
+        /*this.props.loadMeasurements(createLoadMeasurementParams({
             user: this.props.user,
             project: this.props.project,
             filters,
             sort: sortParam,
             page
-        }));
+        }));*/
     }
     deleteMeasurement = (measurement: Measurement) =>
     {
-        this.props.deleteMeasurement({
+        /*this.props.deleteMeasurement({
             user: this.props.user,
             measurement
-        });
+        });*/
     }
 }
 
 export const MeasurementList = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     user: getUser(state),
     project: getSelectedProject(state)
-}), ({
-    loadMeasurements: loadMeasurements.started,
-    deleteMeasurement: deleteMeasurement.started
-}))(MeasurementListComponent));
+}), ({}))(MeasurementListComponent));

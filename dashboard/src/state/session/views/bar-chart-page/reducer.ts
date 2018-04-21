@@ -1,6 +1,6 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {Measurement} from '../../../lib/measurement/measurement';
-import {createRequest, hookRequestActions, Request} from '../../../util/request';
+import {Measurement} from '../../../../lib/measurement/measurement';
+import {createRequest, hookRequestActions, Request} from '../../../../util/request';
 import {compose} from 'ramda';
 import {
     loadBarChartMeasurementsAction,
@@ -8,8 +8,9 @@ import {
     setBarChartXAxisAction,
     setBarChartYAxesAction
 } from './actions';
-import {AppState} from '../../app/reducers';
+import {AppState} from '../../../app/reducers';
 import {getSelectionById} from '../../selection/reducer';
+import {clearSession} from '../../actions';
 
 export interface BarChartPageState
 {
@@ -20,13 +21,16 @@ export interface BarChartPageState
     yAxes: string[];
 }
 
-let reducer = reducerWithInitialState<BarChartPageState>({
+const initialState: BarChartPageState = {
     measurements: [],
     measurementsRequest: createRequest(),
     selectionId: null,
     xAxis: '',
     yAxes: []
-})
+};
+
+let reducer = reducerWithInitialState<BarChartPageState>({ ...initialState })
+.case(clearSession, () => ({ ...initialState }))
 .case(setBarChartXAxisAction, (state, xAxis) => ({...state, xAxis }))
 .case(setBarChartYAxesAction, (state, yAxes) => ({...state, yAxes }))
 .case(setBarChartSelection, (state, selectionId) => ({...state, selectionId }));
@@ -40,7 +44,7 @@ reducer = compose(
     )
 )(reducer);
 
-export const getBarChartPageSelection = (state: AppState) => getSelectionById(state.selection.selections,
-    state.ui.barChartPage.selectionId);
+export const getBarChartPageSelection = (state: AppState) => getSelectionById(state.session.selection.selections,
+    state.session.views.barChartPage.selectionId);
 
 export const barChartReducer = reducer;

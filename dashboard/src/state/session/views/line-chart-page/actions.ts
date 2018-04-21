@@ -1,8 +1,8 @@
 import actionCreatorFactory from 'typescript-fsa';
-import {User} from '../../../lib/user/user';
-import {Project} from '../../../lib/project/project';
-import {RangeFilter} from '../../../lib/measurement/selection/range-filter';
-import {LineChartDataset} from '../../../components/visualisation/chart/line-chart/line-chart-dataset';
+import {User} from '../../../../lib/user/user';
+import {Project} from '../../../../lib/project/project';
+import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
+import {LineChartDataset} from '../../../../components/visualisation/chart/line-chart/line-chart-dataset';
 
 const actionCreator = actionCreatorFactory('line-chart-page');
 

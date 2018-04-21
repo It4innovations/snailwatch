@@ -12,9 +12,7 @@ import Raven from 'raven-js';
 import {RestClient} from '../../lib/api/rest-client';
 import {API_SERVER, URL_PREFIX} from '../../configuration';
 import storage from 'redux-persist/lib/storage';
-import {uiReducer} from '../ui/reducer';
-import moment from 'moment';
-import {LineChartDataset} from '../../components/visualisation/chart/line-chart/line-chart-dataset';
+import {deserializeDates, serializeDates} from '../../util/date';
 
 function errorHandler(error: Error, getState: () => AppState, action: Action)
 {
@@ -37,59 +35,18 @@ const epic = createEpicMiddleware(rootEpic, {
     }
 });
 
-const authPersist = {
-    key: 'user',
-    storage,
-    whitelist: ['user']
-};
-const projectPersist = {
-    key: 'project',
-    storage,
-    whitelist: ['projects', 'selectedProject']
-};
-const selectionPersist = {
-    key: 'selection',
-    storage,
-    whitelist: ['selections']
-};
-const barChartPersist = {
-    key: 'ui/bar-chart',
-    storage,
-    whitelist: ['selection', 'xAxis', 'yAxes']
-};
-const lineChartPersist = {
-    key: 'ui/line-chart',
+const sessionPersist = {
+    key: 'session',
     storage,
     transforms: [createTransform(
-        null,
-        (datasets: LineChartDataset[]) => {
-            return datasets.map((dataset: LineChartDataset) => {
-                return {
-                    ...dataset,
-                    measurements: dataset.measurements.map(m => ({
-                        ...m,
-                        timestamp: moment(m.timestamp)
-                    }))
-                };
-            });
-        },
-        { whitelist: ['datasets'] }
-    )],
-    whitelist: ['datasets', 'xAxis']
+        serializeDates,
+        deserializeDates
+    )]
 };
-
-const persistedUIReducer = combineReducers({
-    ...uiReducer,
-    barChartPage: persistReducer(barChartPersist, uiReducer.barChartPage),
-    lineChartPage: persistReducer(lineChartPersist, uiReducer.lineChartPage)
-});
 
 const rootReducer: {[K in keyof AppState]: Reducer<{}>} = {
     ...reducers,
-    user: persistReducer(authPersist, reducers.user),
-    project: persistReducer(projectPersist, reducers.project),
-    selection: persistReducer(selectionPersist, reducers.selection),
-    ui: persistedUIReducer,
+    session: persistReducer(sessionPersist, reducers.session),
     router: routerReducer
 };
 const middleware = [

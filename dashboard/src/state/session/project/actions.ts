@@ -1,6 +1,6 @@
 import actionCreatorFactory from 'typescript-fsa';
-import {User} from '../../lib/user/user';
-import {Project} from '../../lib/project/project';
+import {User} from '../../../lib/user/user';
+import {Project} from '../../../lib/project/project';
 
 const actionCreator = actionCreatorFactory('project');
 
@@ -25,8 +25,8 @@ export interface CreateProjectParams
 }
 export const createProject = actionCreator.async<CreateProjectParams, boolean>('create');
 
-export const selectProject = actionCreator<string>('select');
-export const clearProjects = actionCreator('clear');
+export const selectProject = actionCreator.async<string, Project>('select');
+export const deselectProject = actionCreator('deselect');
 
 export interface UploadTokenParams
 {

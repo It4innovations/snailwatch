@@ -1,9 +1,9 @@
 import actionCreatorFactory from 'typescript-fsa';
-import {User} from '../../../lib/user/user';
-import {Project} from '../../../lib/project/project';
-import {Measurement} from '../../../lib/measurement/measurement';
-import {RangeFilter} from '../../../lib/measurement/selection/range-filter';
-import {Selection} from '../../../lib/measurement/selection/selection';
+import {User} from '../../../../lib/user/user';
+import {Project} from '../../../../lib/project/project';
+import {Measurement} from '../../../../lib/measurement/measurement';
+import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
+import {Selection} from '../../../../lib/measurement/selection/selection';
 
 const actionCreator = actionCreatorFactory('bar-chart-page');
 

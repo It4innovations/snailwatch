@@ -1,6 +1,6 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {createRequest, hookRequestActions, Request} from '../../../util/request';
-import {LineChartDataset} from '../../../components/visualisation/chart/line-chart/line-chart-dataset';
+import {createRequest, hookRequestActions, Request} from '../../../../util/request';
+import {LineChartDataset} from '../../../../components/visualisation/chart/line-chart/line-chart-dataset';
 import {
     deleteLineChartDatasetAction,
     setLineChartXAxisAction,
@@ -8,6 +8,7 @@ import {
     addLineChartDatasetAction, reloadDatasetsAction
 } from './actions';
 import {compose, update, max, reduce} from 'ramda';
+import {clearSession} from '../../actions';
 
 export interface LineChartPageState
 {
@@ -26,11 +27,14 @@ function assignDatasetName(datasets: LineChartDataset[], dataset: LineChartDatas
     };
 }
 
-let reducer = reducerWithInitialState<LineChartPageState>({
+const initialState: LineChartPageState = {
     measurementsRequest: createRequest(),
     datasets: [],
     xAxis: ''
-})
+};
+
+let reducer = reducerWithInitialState<LineChartPageState>({ ...initialState })
+.case(clearSession, () => ({ ...initialState }))
 .case(setLineChartXAxisAction, (state, xAxis) => ({ ...state, xAxis }))
 .case(deleteLineChartDatasetAction, (state, dataset) => ({
     ...state,

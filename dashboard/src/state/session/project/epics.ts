@@ -1,13 +1,13 @@
 import {ActionsObservable, combineEpics} from 'redux-observable';
 import {Store, Action as ReduxAction} from 'redux';
-import {ServiceContainer} from '../app/di';
-import {AppState} from '../app/reducers';
+import {ServiceContainer} from '../../app/di';
+import {AppState} from '../../app/reducers';
 import {
     createProject, CreateProjectParams, LoadProjectsParams, loadProjects, loadProject,
     LoadProjectParams, selectProject, loadUploadToken, regenerateUploadToken
 } from './actions';
 import {Observable} from 'rxjs/Observable';
-import '../../util/redux-observable';
+import '../../../util/redux-observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/if';
 import 'rxjs/add/observable/from';
@@ -16,10 +16,11 @@ import {isEmpty} from 'ramda';
 import {getProjectByName, getProjects} from './reducer';
 import {getUser} from '../user/reducer';
 import {Action} from 'typescript-fsa';
-import {AppEpic} from '../app/app-epic';
-import {createRequestEpic, mapRequestToActions} from '../../util/request';
-import {clearMeasurements} from '../measurement/actions';
-import {clearSelections} from '../selection/actions';
+import {AppEpic} from '../../app/app-epic';
+import {createRequestEpic, mapRequestToActions} from '../../../util/request';
+import {loadSelectionsAction} from '../selection/actions';
+import {push} from 'react-router-redux';
+import {Navigation} from '../../nav/routes';
 
 const loadProjectsEpic = (action$: ActionsObservable<ReduxAction>,
                           store: Store<AppState>,
@@ -79,35 +80,35 @@ const createProjectEpic = (action$: ActionsObservable<ReduxAction>,
         );
 
 const loadProjectAfterSelectEpic: AppEpic = (action$: ActionsObservable<ReduxAction>,
-                                             store: Store<AppState>) =>
+                                             store: Store<AppState>,
+                                             deps) =>
     action$
-        .ofAction(selectProject)
-        .switchMap((action: Action<string>): Observable<ReduxAction> => {
-            const user = getUser(store.getState());
-            const params = {
-                user: user,
-                name: action.payload
-            };
-            const project = getProjectByName(getProjects(store.getState()), action.payload);
-
-            if (project === null)
+        .ofAction(selectProject.started)
+        .switchMap((action: Action<string>) => {
+            async function load(): Promise<ReduxAction[]>
             {
-                return Observable.of(loadProject.started(params));
+                const user = getUser(store.getState());
+                const project = await deps.client.loadProject(user, action.payload).toPromise();
+                const selections = await deps.client.loadSelections(user, project).toPromise();
+
+                return [
+                    loadSelectionsAction.done({
+                        params: {
+                            user,
+                            project
+                        },
+                        result: selections
+                    }),
+                    selectProject.done({
+                        params: action.payload,
+                        result: project
+                    }),
+                    push(Navigation.Overview)
+                ];
             }
 
-            return Observable.of(loadProject.done({
-                params: params,
-                result: project
-            }));
+            return Observable.fromPromise(load()).switchMap(actions => Observable.from(actions));
         });
-
-const clearDataAfterProjectSelect: AppEpic = (action$: ActionsObservable<ReduxAction>) =>
-    action$
-        .ofAction(selectProject)
-        .switchMap(() => Observable.from([
-            clearMeasurements(),
-            clearSelections()
-        ]));
 
 const loadUploadTokenEpic = createRequestEpic(loadUploadToken, (action, state, deps) =>
     deps.client.loadUploadToken(action.payload.user, action.payload.project)
@@ -121,7 +122,6 @@ export const projectEpics = combineEpics(
     loadProjectEpic,
     createProjectEpic,
     loadProjectAfterSelectEpic,
-    clearDataAfterProjectSelect,
     loadUploadTokenEpic,
     regenerateUploadTokenEpic
 );

@@ -1,10 +1,11 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {clearSelections, createSelectionAction, deleteSelectionAction, loadSelectionsAction,
+import {createSelectionAction, deleteSelectionAction, loadSelectionsAction,
     updateSelectionAction} from './actions';
-import {createRequest, hookRequestActions, Request} from '../../util/request';
-import {Selection} from '../../lib/measurement/selection/selection';
-import {AppState} from '../app/reducers';
+import {createRequest, hookRequestActions, Request} from '../../../util/request';
+import {Selection} from '../../../lib/measurement/selection/selection';
+import {AppState} from '../../app/reducers';
 import {compose} from 'ramda';
+import {clearSession} from '../actions';
 
 export interface SelectionState
 {
@@ -12,15 +13,13 @@ export interface SelectionState
     selectionRequest: Request;
 }
 
-let reducer = reducerWithInitialState<SelectionState>({
+const initialState: SelectionState = {
     selections: [],
     selectionRequest: createRequest()
-})
-.case(clearSelections, state => ({
-    ...state,
-    selections: [],
-    selectionRequest: createRequest()
-}));
+};
+
+let reducer = reducerWithInitialState<SelectionState>({ ...initialState })
+.case(clearSession, () => ({ ...initialState }));
 
 reducer = compose(
     (r: typeof reducer) => hookRequestActions(r,
@@ -53,7 +52,7 @@ reducer = compose(
         })
 ))(reducer);
 
-export const getSelections = (state: AppState) => state.selection.selections;
+export const getSelections = (state: AppState) => state.session.selection.selections;
 export const getSelectionById = (selections: Selection[], id: string) => selections.find(sel => sel.id === id) || null;
 
 export const selectionReducer = reducer;
