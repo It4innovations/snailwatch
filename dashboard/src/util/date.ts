@@ -2,6 +2,8 @@ import {isMoment, default as moment, Moment} from 'moment';
 import {isArray, isObject, isString} from 'util';
 import {map} from 'ramda';
 
+const SERIALIZATION_FORMAT = 'DD.MM.YYYYTHH:mm:ss';
+
 export function compareDate(a: Moment, b: Moment): number
 {
     const before = !a.isAfter(b);
@@ -11,7 +13,7 @@ export function serializeDates(obj: {}): {}
 {
     if (isMoment(obj))
     {
-        return (obj as {} as Moment).toISOString();
+        return (obj as {} as Moment).format(SERIALIZATION_FORMAT);
     }
 
     if (isArray(obj) || isObject(obj))
@@ -23,9 +25,9 @@ export function serializeDates(obj: {}): {}
 }
 export function deserializeDates(obj: {}): {}
 {
-    if (isString(obj) && obj.match(/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)$/))
+    if (isString(obj) && obj.match(/^\d{2}\.\d{2}\.\d{4}T\d{2}:\d{2}:\d{2}$/))
     {
-        return moment(obj);
+        return moment(obj, SERIALIZATION_FORMAT);
     }
 
     if (isArray(obj) || isObject(obj))

@@ -8,16 +8,16 @@ describe('serializeDates', () =>
         const data = {
             a: moment('2013-02-08 09:30:26'),
             b: [
-                moment('2013-01-03 09:30:26'),
-                moment('2013-02-04 09:30:26')
+                moment('2013-01-03 04:30:26'),
+                moment('2013-02-04 11:38:37')
             ]
         };
 
         expect(serializeDates(data)).toEqual({
-            a: '2013-02-08T08:30:26.000Z',
+            a: '08.02.2013T09:30:26',
             b: [
-                '2013-01-03T08:30:26.000Z',
-                '2013-02-04T08:30:26.000Z'
+                '03.01.2013T04:30:26',
+                '04.02.2013T11:38:37'
             ]
         });
     });
@@ -28,10 +28,10 @@ describe('deserializeDates', () =>
     it('Should deserialize moment.js dates recursively', () =>
     {
         const data = {
-            a: '2013-02-08T08:30:26.000Z',
+            a: '08.02.2013T09:30:26',
             b: [
-                '2013-01-03T08:30:26.000Z',
-                '2013-02-04T08:30:26.000Z'
+                '03.01.2013T04:30:26',
+                '04.02.2013T11:38:37'
             ]
         };
 
@@ -40,6 +40,6 @@ describe('deserializeDates', () =>
         expect(isMoment(deserialized['b'][0]));
         expect(isMoment(deserialized['b'][1]));
 
-        expect(deserialized['a'].toISOString()).toEqual(data.a);
+        expect(deserialized['a'].format('DD.MM.YYYY HH:mm:ss')).toEqual('08.02.2013 09:30:26');
     });
 });
