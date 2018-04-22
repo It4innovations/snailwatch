@@ -119,6 +119,10 @@ export function compareXValue(a: string, b: string): number
     {
         return (a as {} as Moment).isBefore(b as {} as Moment) ? -1 : 1;
     }
+    if (!isNaN(Number(a)) && !isNaN(Number(b)))
+    {
+        return Number(a) - Number(b);
+    }
 
     return a.localeCompare(b);
 }
