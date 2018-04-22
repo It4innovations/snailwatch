@@ -19,14 +19,14 @@ import {Selection} from '../../../../lib/measurement/selection/selection';
 import styled from 'styled-components';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {MeasurementList} from '../../measurement-list';
+import {MeasurementList} from '../measurement-list';
 import {getSelections} from '../../../../state/session/selection/reducer';
 import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/session/selection/actions';
 import {getBarChartPageSelection} from '../../../../state/session/views/bar-chart-page/reducer';
 import {Request} from '../../../../util/request';
 import {RequestComponent} from '../../../global/request-component';
 import {Box} from '../../../global/box';
-import {ChartPage} from '../chart-page';
+import {TwoColumnPage} from '../../../global/two-column-page';
 import {SelectionSelectEditor} from '../../selection-container/selection-select-editor';
 
 interface OwnProps
@@ -91,9 +91,9 @@ class BarChartPageComponent extends PureComponent<Props, State>
     render()
     {
         return (
-            <ChartPage
-                renderOptions={this.renderOptions}
-                renderGraph={this.renderGraph} />
+            <TwoColumnPage
+                menu={this.renderOptions}
+                content={this.renderGraph} />
         );
     }
     renderOptions = (): JSX.Element =>

@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import {Profile} from '../profile/profile';
 import {Project} from '../../lib/project/project';
 import {getSelectedProject} from '../../state/session/project/reducer';
-import {MeasurementList} from '../visualisation/measurement-list/measurement-list';
+import {MeasurementList} from '../visualisation/measurements/measurement-list';
 import {ViewsPage} from '../visualisation/views-page';
 import {ProjectOverview} from '../project/project-overview';
 

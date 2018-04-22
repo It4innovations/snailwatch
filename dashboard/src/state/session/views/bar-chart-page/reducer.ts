@@ -9,7 +9,7 @@ import {
     setBarChartYAxesAction
 } from './actions';
 import {AppState} from '../../../app/reducers';
-import {getSelectionById} from '../../selection/reducer';
+import {getSelectionById, getSelections} from '../../selection/reducer';
 import {clearSession} from '../../actions';
 
 export interface BarChartPageState
@@ -44,7 +44,7 @@ reducer = compose(
     )
 )(reducer);
 
-export const getBarChartPageSelection = (state: AppState) => getSelectionById(state.session.selection.selections,
+export const getBarChartPageSelection = (state: AppState) => getSelectionById(getSelections(state),
     state.session.views.barChartPage.selectionId);
 
 export const barChartReducer = reducer;

@@ -6,6 +6,7 @@ import {BarChartPageState, barChartReducer} from './bar-chart-page/reducer';
 import {LineChartPageState, lineChartReducer} from './line-chart-page/reducer';
 import {combineReducers} from 'redux';
 import {AppState} from '../../app/reducers';
+import {MeasurementsPageState, measurementsReducer} from './measurements-page/reducer';
 
 interface GlobalState
 {
@@ -16,6 +17,7 @@ export interface ViewsState
 {
     barChartPage: BarChartPageState;
     lineChartPage: LineChartPageState;
+    measurementsPage: MeasurementsPageState;
     global: GlobalState;
 }
 
@@ -38,5 +40,6 @@ export const getRangeFilter = (state: AppState) => state.session.views.global.ra
 export const viewsReducer = combineReducers({
     barChartPage: barChartReducer,
     lineChartPage: lineChartReducer,
+    measurementsPage: measurementsReducer,
     global: reducer
 });

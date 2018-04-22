@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Measurement} from '../../lib/measurement/measurement';
+import {Measurement} from '../../../lib/measurement/measurement';
 import ReactTable, {RowInfo} from 'react-table';
 import {sort} from 'ramda';
 import SyntaxHighlighter, { registerLanguage } from 'react-syntax-highlighter/light';

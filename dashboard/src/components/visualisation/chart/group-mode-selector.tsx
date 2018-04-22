@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import Input from 'reactstrap/lib/Input';
-import {GroupMode} from '../../lib/measurement/group-mode';
+import {GroupMode} from '../../../lib/measurement/group-mode';
 
 interface Props
 {

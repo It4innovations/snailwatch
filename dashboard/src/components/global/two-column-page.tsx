@@ -6,25 +6,25 @@ type Element = JSX.Element | (() => JSX.Element);
 
 interface Props
 {
-    renderOptions: Element;
-    renderGraph: Element;
+    menu: Element;
+    content: Element;
 }
 
 const Row = styled.div`
   display: flex;
   width: 100%;
 `;
-const DatasetColumn = styled.div`
+const MenuColumn = styled.div`
   min-width: 240px;
   margin-right: 10px;
   padding: 0 10px 0 0;
   border-right: 1px solid black;
 `;
-const BarColumn = styled.div`
+const ContentColumn = styled.div`
   flex-grow: 1;
 `;
 
-export class ChartPage extends Component<Props>
+export class TwoColumnPage extends Component<Props>
 {
     render()
     {
@@ -39,8 +39,8 @@ export class ChartPage extends Component<Props>
 
         return (
             <Row>
-                <DatasetColumn>{render(this.props.renderOptions)}</DatasetColumn>
-                <BarColumn>{render(this.props.renderGraph)}</BarColumn>
+                <MenuColumn>{render(this.props.menu)}</MenuColumn>
+                <ContentColumn>{render(this.props.content)}</ContentColumn>
             </Row>
         );
     }

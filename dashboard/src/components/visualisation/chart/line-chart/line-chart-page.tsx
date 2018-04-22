@@ -13,7 +13,7 @@ import {Selection} from '../../../../lib/measurement/selection/selection';
 import styled from 'styled-components';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {MeasurementList} from '../../measurement-list';
+import {MeasurementList} from '../measurement-list';
 import {getSelections} from '../../../../state/session/selection/reducer';
 import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/session/selection/actions';
 import {LineChartDataset} from './line-chart-dataset';
@@ -25,7 +25,7 @@ import {
 } from '../../../../state/session/views/line-chart-page/actions';
 import {DatasetManager} from './dataset-manager';
 import {Box} from '../../../global/box';
-import {ChartPage} from '../chart-page';
+import {TwoColumnPage} from '../../../global/two-column-page';
 import {MeasurementKeys} from '../../../global/measurement-keys';
 import {sort} from 'ramda';
 import {LineChartSettings} from './line-chart-settings';
@@ -89,9 +89,9 @@ class LineChartPageComponent extends PureComponent<Props, State>
     render()
     {
         return (
-            <ChartPage
-                renderOptions={this.renderOptions}
-                renderGraph={this.renderGraph} />
+            <TwoColumnPage
+                menu={this.renderOptions}
+                content={this.renderGraph} />
         );
     }
     renderOptions = (): JSX.Element =>
