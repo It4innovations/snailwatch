@@ -21,7 +21,7 @@ import {
     AddDatasetParams,
     addLineChartDatasetAction,
     deleteLineChartDatasetAction, setLineChartXAxisAction,
-    UpdateDatasetParams, updateLineChartDatasetAction, ReloadDatasetsParams, reloadDatasetsAction
+    UpdateDatasetParams, updateLineChartDatasetAction, ReloadDatasetsParams, reloadLineChartDatasetsAction
 } from '../../../../state/session/views/line-chart-page/actions';
 import {DatasetManager} from './dataset-manager';
 import {Box} from '../../../global/box';
@@ -205,5 +205,5 @@ export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnPr
     addDataset: addLineChartDatasetAction.started,
     deleteDataset: deleteLineChartDatasetAction,
     updateDataset: updateLineChartDatasetAction.started,
-    reloadDatasets: reloadDatasetsAction.started
+    reloadDatasets: reloadLineChartDatasetsAction.started
 })(LineChartPageComponent));

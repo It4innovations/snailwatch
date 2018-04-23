@@ -16,9 +16,10 @@ const loadDatasets = createRequestEpic(loadGridChartDatasetsAction, (action, sta
     const selections = getSelections(state);
     const rangeFilter = getRangeFilter(state);
 
-    return selections.length === 0 ? Observable.of([]) : Observable.forkJoin(selections.map(selection => {
+    return selections.length === 0 ? Observable.of([]) : Observable.forkJoin(selections.map((selection, index) => {
         return deps.client.loadMeasurements(user, project, selection, rangeFilter)
             .map(measurements => ({
+                id: index.toString(),
                 selectionId: selection.id,
                 yAxis: '',
                 measurements

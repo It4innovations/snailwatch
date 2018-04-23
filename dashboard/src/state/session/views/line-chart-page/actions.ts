@@ -34,4 +34,11 @@ export interface ReloadDatasetsParams
     project: Project;
     rangeFilter: RangeFilter;
 }
-export const reloadDatasetsAction = actionCreator.async<ReloadDatasetsParams, LineChartDataset[]>('reload');
+export const reloadLineChartDatasetsAction = actionCreator.async<ReloadDatasetsParams, LineChartDataset[]>('reload');
+
+export interface SelectDatasetParams
+{
+    dataset: LineChartDataset;
+    xAxis: string;
+}
+export const selectLineChartDatasetAction = actionCreator<SelectDatasetParams>('select');

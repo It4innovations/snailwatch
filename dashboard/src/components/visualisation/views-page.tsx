@@ -16,6 +16,7 @@ import {getRangeFilter} from '../../state/session/views/reducers';
 import {changeRangeFilterAction} from '../../state/session/views/actions';
 import FaTh from 'react-icons/lib/fa/th';
 import {GridChartPage} from './chart/grid-page/grid-chart-page';
+import {SelectDatasetParams, selectLineChartDatasetAction} from '../../state/session/views/line-chart-page/actions';
 
 interface StateProps
 {
@@ -26,16 +27,24 @@ interface StateProps
 interface DispatchProps
 {
     changeRangeFilter(rangeFilter: RangeFilter): void;
+    selectDataset(params: SelectDatasetParams): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
-class ViewsPageComponent extends PureComponent<Props>
+const initialState = {
+    selectedTab: 0
+};
+
+class ViewsPageComponent extends PureComponent<Props, Readonly<typeof initialState>>
 {
+    readonly state = { ...initialState };
+
     render()
     {
         return (
-            <Tabs>
+            <Tabs selectedIndex={this.state.selectedTab}
+                  onSelect={this.changeTab}>
                 <TabList>
                     <Tab>
                         <div title='Chart overview'>
@@ -55,7 +64,8 @@ class ViewsPageComponent extends PureComponent<Props>
                 </TabList>
                 <TabPanel>
                     <GridChartPage rangeFilter={this.props.rangeFilter}
-                                   onChangeRangeFilter={this.props.changeRangeFilter} />
+                                   onChangeRangeFilter={this.props.changeRangeFilter}
+                                   selectDataset={this.selectDataset} />
                 </TabPanel>
                 <TabPanel>
                     <LineChartPage rangeFilter={this.props.rangeFilter}
@@ -68,6 +78,20 @@ class ViewsPageComponent extends PureComponent<Props>
             </Tabs>
         );
     }
+
+    changeTab = (selectedTab: number) =>
+    {
+        this.setState(() => ({ selectedTab }));
+    }
+    selectDataset = (params: SelectDatasetParams) =>
+    {
+        this.props.selectDataset(params);
+        this.moveToLineChart();
+    }
+    moveToLineChart = () =>
+    {
+        this.changeTab(1);
+    }
 }
 
 export const ViewsPage = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
@@ -75,5 +99,6 @@ export const ViewsPage = withRouter(connect<StateProps, DispatchProps>((state: A
     project: getSelectedProject(state),
     rangeFilter: getRangeFilter(state)
 }), {
-    changeRangeFilter: changeRangeFilterAction
+    changeRangeFilter: changeRangeFilterAction,
+    selectDataset: selectLineChartDatasetAction
 })(ViewsPageComponent));

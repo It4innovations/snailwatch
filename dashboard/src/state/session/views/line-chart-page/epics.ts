@@ -3,7 +3,7 @@ import '../../../../util/redux-observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/forkJoin';
 import {createRequestEpic} from '../../../../util/request';
-import {addLineChartDatasetAction, reloadDatasetsAction, updateLineChartDatasetAction} from './actions';
+import {addLineChartDatasetAction, reloadLineChartDatasetsAction, updateLineChartDatasetAction} from './actions';
 import {Observable} from 'rxjs/Observable';
 import {getSelectionById, getSelections} from '../../selection/reducer';
 import {AppState} from '../../../app/reducers';
@@ -46,7 +46,7 @@ const updateDataset = createRequestEpic(updateLineChartDatasetAction, (action, s
     });
 });
 
-const reloadDatasets = createRequestEpic(reloadDatasetsAction, (action, state, deps) => {
+const reloadDatasets = createRequestEpic(reloadLineChartDatasetsAction, (action, state, deps) => {
     const {user, project, rangeFilter} = action.payload;
     const datasets = state.session.views.lineChartPage.datasets;
 

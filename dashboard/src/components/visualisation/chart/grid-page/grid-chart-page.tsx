@@ -25,11 +25,13 @@ import {Project} from '../../../../lib/project/project';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import styled from 'styled-components';
 import {SelectionContainer} from '../../selection-container/selection-container';
+import {SelectDatasetParams} from '../../../../state/session/views/line-chart-page/actions';
 
 interface OwnProps
 {
     rangeFilter: RangeFilter;
     onChangeRangeFilter(rangeFilter: RangeFilter): void;
+    selectDataset(dataset: SelectDatasetParams): void;
 }
 interface StateProps
 {
@@ -57,7 +59,17 @@ const Grid = styled.div`
   display: flex;
 `;
 const Dataset = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 20px;
   margin-left: 10px;
+  border: 1px solid #00000000;
+  
+  &:hover {
+    border: 1px solid #000000;
+    border-radius: 5px;
+  }
 `;
 const Label = styled.div`
   text-align: center;
@@ -139,7 +151,7 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
         }, this.props.selections);
 
         return (
-            <Dataset key={mapped.name}>
+            <Dataset key={mapped.name} title={`Select ${mapped.name}`} onClick={() => this.selectDataset(dataset)}>
                 <Label>{mapped.name}</Label>
                 <LineChart
                     datasets={[mapped]}
@@ -153,6 +165,17 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
                     showDeviation={false} />
             </Dataset>
         );
+    }
+
+    selectDataset = (dataset: LineChartDataset) =>
+    {
+        this.props.selectDataset({
+            dataset: {
+                ...dataset,
+                yAxis: this.props.yAxis
+            },
+            xAxis: this.props.xAxis
+        });
     }
 
     changeSelection = (selection: Selection) =>

@@ -5,7 +5,7 @@ import {
     deleteLineChartDatasetAction,
     setLineChartXAxisAction,
     updateLineChartDatasetAction,
-    addLineChartDatasetAction, reloadDatasetsAction
+    addLineChartDatasetAction, reloadLineChartDatasetsAction, selectLineChartDatasetAction
 } from './actions';
 import {compose, update} from 'ramda';
 import {clearSession} from '../../actions';
@@ -29,6 +29,11 @@ let reducer = reducerWithInitialState<LineChartPageState>({ ...initialState })
 .case(deleteLineChartDatasetAction, (state, dataset) => ({
     ...state,
     datasets: state.datasets.filter(d => d.id !== dataset.id)
+}))
+.case(selectLineChartDatasetAction, (state, action) => ({
+    ...state,
+    datasets: [action.dataset],
+    xAxis: action.xAxis
 }));
 
 reducer = compose(
@@ -47,7 +52,7 @@ reducer = compose(
             datasets: [...state.datasets, action.payload.result]
         })
     ),
-    (r: typeof reducer) => hookRequestActions(r, reloadDatasetsAction,
+    (r: typeof reducer) => hookRequestActions(r, reloadLineChartDatasetsAction,
         state => state.measurementsRequest,
         (state, action) => ({
             ...state,
