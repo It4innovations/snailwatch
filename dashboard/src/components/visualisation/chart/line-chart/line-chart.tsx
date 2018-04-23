@@ -1,15 +1,14 @@
 import React, {PureComponent} from 'react';
 import {
-    CartesianGrid, ResponsiveContainer, Tooltip, XAxis,
-    YAxis, Legend, LineChart as ReLineChart, Line, ErrorBar
+    CartesianGrid, Tooltip, XAxis,
+    YAxis, Legend, LineChart as ReLineChart, Line, ErrorBar, ResponsiveContainer
 } from 'recharts';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
-import {compareXValue, groupMeasurements, MeasurementGroup, formatXValue} from '../chart-utils';
+import { groupMeasurements, createLinePoints} from '../chart-utils';
 import {ColorPalette} from '../../color-palette';
 import {LineChartDataset} from './line-chart-dataset';
 import {Tick} from '../tick';
-import {Dictionary, chain, uniq, sort} from 'ramda';
 import {PointTooltip} from './point-tooltip';
 import {LinePoint} from './line-point';
 import {LineLegend} from './line-legend';
@@ -18,9 +17,13 @@ interface Props
 {
     views: LineChartDataset[];
     xAxis: string;
+    width?: number;
+    height: number;
+    responsive?: boolean;
     groupMode: GroupMode;
     connectPoints: boolean;
     showDeviation: boolean;
+    preview?: boolean;
     onMeasurementsSelected(measurements: Measurement[]): void;
 }
 
@@ -40,79 +43,61 @@ export class LineChart extends PureComponent<Props>
             return 'You have to use a group mode with multiple datasets';
         }
 
+        if (this.props.responsive)
+        {
+            return (
+                <ResponsiveContainer height={this.props.height}>
+                    {this.renderChart()}
+                </ResponsiveContainer>
+            );
+        }
+
+        return this.renderChart();
+    }
+    renderChart = (): JSX.Element =>
+    {
+        const preview = this.props.preview || false;
+
         const padding = 20;
         const datasets = this.props.views.map(v =>
             groupMeasurements(v.measurements, this.props.groupMode, this.props.xAxis, [v.yAxis])
         );
-        const points = this.createLinePoints(datasets);
+        const points = createLinePoints(datasets);
 
         return (
-            <>
-                <ResponsiveContainer width='98%' height={400}>
-                    <ReLineChart data={points}>
-                        <CartesianGrid stroke='#CCCCCC' />
-                        <XAxis
-                            dataKey='x'
-                            tick={props => <Tick {...props} />}
-                            padding={{left: padding, right: padding}} />
-                        <YAxis padding={{bottom: padding, top: padding}} />
-                        <Tooltip content={<PointTooltip xAxis={this.props.xAxis} />} />
-                        <Legend content={<LineLegend palette={DATASET_COLORS} />} />
-                        {datasets.map((scatter, index) =>
-                            <Line
-                                key={`line.${index}`}
-                                name={`Dataset ${this.props.views[index].name}`}
-                                isAnimationActive={false}
-                                dataKey={`data[${index}].value`}
-                                connectNulls={true}
-                                dot={!this.props.connectPoints}
-                                activeDot={{
-                                    onClick: (data: {payload: LinePoint}) => this.selectMeasurements(data, index)
-                                }}
-                                stroke={(this.props.connectPoints ? DATASET_COLORS.getColor(index) : '#00000000')}
-                                fill={DATASET_COLORS.getColor(index)}>
-                                {this.props.showDeviation &&
-                                    <ErrorBar
-                                        dataKey={`data[${index}].deviation`}
-                                        stroke={DATASET_COLORS.getColor(index)}
-                                        strokeWidth={2} />
-                                }
-                            </Line>
-                        )}
-                    </ReLineChart>
-                </ResponsiveContainer>
-            </>
+            <ReLineChart data={points} width={this.props.width} height={this.props.height}>
+                <CartesianGrid stroke='#CCCCCC' />
+                <XAxis
+                    dataKey='x'
+                    tickLine={!preview}
+                    tick={props => !this.props.preview && <Tick {...props} />}
+                    padding={{left: padding, right: padding}} />
+                <YAxis padding={{bottom: padding, top: padding}} />
+                {!preview && <Tooltip content={<PointTooltip xAxis={this.props.xAxis} />} />}
+                {!preview && <Legend content={<LineLegend palette={DATASET_COLORS} />} />}
+                {datasets.map((scatter, index) =>
+                    <Line
+                        key={`line.${index}`}
+                        name={`Dataset ${this.props.views[index].name}`}
+                        isAnimationActive={false}
+                        dataKey={`data[${index}].value`}
+                        connectNulls={true}
+                        dot={preview || !this.props.connectPoints}
+                        activeDot={{
+                            onClick: (data: {payload: LinePoint}) => !preview && this.selectMeasurements(data, index)
+                        }}
+                        stroke={(this.props.connectPoints ? DATASET_COLORS.getColor(index) : '#00000000')}
+                        fill={DATASET_COLORS.getColor(index)}>
+                        {(!preview && this.props.showDeviation) &&
+                        <ErrorBar
+                            dataKey={`data[${index}].deviation`}
+                            stroke={DATASET_COLORS.getColor(index)}
+                            strokeWidth={2} />
+                        }
+                    </Line>
+                )}
+            </ReLineChart>
         );
-    }
-
-    createLinePoints = (datasets: Dictionary<MeasurementGroup>[]): LinePoint[] =>
-    {
-        const keys = uniq(chain(d => Object.keys(d), datasets));
-        const values: LinePoint[] = keys.map(x => ({
-            x,
-            data: datasets.map(d => {
-                if (d.hasOwnProperty(x))
-                {
-                    const item = d[x].items[Object.keys(d[x].items)[0]];
-                    return {
-                        group: d[x],
-                        value: item.average,
-                        deviation: [item.deviation.low, item.deviation.high]
-                    };
-                }
-
-                return {
-                    group: null,
-                    value: null,
-                    deviation: null
-                };
-            })
-        }));
-
-        return sort((a, b) => compareXValue(a.x, b.x), values).map(val => ({
-            ...val,
-            x: formatXValue(val.x)
-        }));
     }
 
     selectMeasurements = (data: {payload: LinePoint}, index: number) =>

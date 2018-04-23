@@ -1,8 +1,9 @@
-import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement';
+import {Measurement, hashMeasurement} from '../../../lib/measurement/measurement';
 import {GroupMode} from '../../../lib/measurement/group-mode';
-import {groupBy, values, min, max, reduce, sum, zipObj, Dictionary, all, map, filter, sort} from 'ramda';
+import {groupBy, values, min, max, reduce, sum, zipObj, Dictionary, all, map, filter, sort, uniq, chain} from 'ramda';
 import {getValueWithPath} from '../../../util/object';
 import {isMoment, Moment} from 'moment';
+import {LinePoint} from './line-chart/line-point';
 
 export interface MeasurementGroup
 {
@@ -45,6 +46,50 @@ export function formatXValue(value: string): string
     }
 
     return value;
+}
+
+export function compareXValue(a: string, b: string): number
+{
+    if (isMoment(a) && isMoment(b))
+    {
+        return (a as {} as Moment).isBefore(b as {} as Moment) ? -1 : 1;
+    }
+    if (!isNaN(Number(a)) && !isNaN(Number(b)))
+    {
+        return Number(a) - Number(b);
+    }
+
+    return a.localeCompare(b);
+}
+
+export function createLinePoints(datasets: Dictionary<MeasurementGroup>[]): LinePoint[]
+{
+    const keys = uniq(chain(d => Object.keys(d), datasets));
+    const vals: LinePoint[] = keys.map(x => ({
+        x,
+        data: datasets.map(d => {
+            if (d.hasOwnProperty(x))
+            {
+                const item = d[x].items[Object.keys(d[x].items)[0]];
+                return {
+                    group: d[x],
+                    value: item.average,
+                    deviation: [item.deviation.low, item.deviation.high]
+                };
+            }
+
+            return {
+                group: null,
+                value: null,
+                deviation: null
+            };
+        })
+    }));
+
+    return sort((a, b) => compareXValue(a.x, b.x), vals).map(val => ({
+        ...val,
+        x: formatXValue(val.x)
+    }));
 }
 
 function createGroup(batch: Measurement[], axisX: string, axisY: string[]): MeasurementGroup
@@ -111,18 +156,4 @@ function transformDateAxis(group: MeasurementGroup): MeasurementGroup
     }
 
     return group;
-}
-
-export function compareXValue(a: string, b: string): number
-{
-    if (isMoment(a) && isMoment(b))
-    {
-        return (a as {} as Moment).isBefore(b as {} as Moment) ? -1 : 1;
-    }
-    if (!isNaN(Number(a)) && !isNaN(Number(b)))
-    {
-        return Number(a) - Number(b);
-    }
-
-    return a.localeCompare(b);
 }
