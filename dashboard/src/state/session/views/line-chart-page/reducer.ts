@@ -28,7 +28,7 @@ let reducer = reducerWithInitialState<LineChartPageState>({ ...initialState })
 .case(setLineChartXAxisAction, (state, xAxis) => ({ ...state, xAxis }))
 .case(deleteLineChartDatasetAction, (state, dataset) => ({
     ...state,
-    datasets: state.datasets.filter(d => d !== dataset)
+    datasets: state.datasets.filter(d => d.id !== dataset.id)
 }));
 
 reducer = compose(
@@ -36,7 +36,7 @@ reducer = compose(
         state => state.measurementsRequest,
         (state, action) => ({
             ...state,
-            datasets: update(state.datasets.findIndex(d => d === action.payload.params.dataset),
+            datasets: update(state.datasets.findIndex(d => d.id === action.payload.params.dataset.id),
                 action.payload.result, state.datasets)
         })
     ),

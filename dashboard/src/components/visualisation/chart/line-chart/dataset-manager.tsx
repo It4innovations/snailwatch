@@ -48,10 +48,10 @@ export class DatasetManager extends PureComponent<Props>
             </div>
         );
     }
-    renderDataset = (dataset: NamedLineChartDataset, index: number): JSX.Element =>
+    renderDataset = (dataset: NamedLineChartDataset): JSX.Element =>
     {
         return (
-            <Box key={`${dataset.name}.${index}`} title={this.renderHeader(dataset)}>
+            <Box key={dataset.id} title={this.renderHeader(dataset)}>
                 <div>Y axis</div>
                 <MeasurementKeys keys={this.props.measurementKeys}
                                  value={dataset.yAxis}

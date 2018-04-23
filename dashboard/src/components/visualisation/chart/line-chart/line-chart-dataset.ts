@@ -4,6 +4,7 @@ import {formatKey} from '../../../../util/measurement';
 
 export interface LineChartDataset
 {
+    id: string;
     selectionId: string;
     yAxis: string;
     measurements: Measurement[];

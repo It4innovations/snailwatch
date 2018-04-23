@@ -8,24 +8,26 @@ import {Observable} from 'rxjs/Observable';
 import {getSelectionById, getSelections} from '../../selection/reducer';
 import {AppState} from '../../../app/reducers';
 import {Selection} from '../../../../lib/measurement/selection/selection';
+import {getNextId} from '../../../../util/database';
 
 function getSelection(state: AppState, selectionId: string): Selection | null
 {
     return selectionId === '' ? null : getSelectionById(getSelections(state), selectionId);
 }
 
-const loadInitialMeasurements = createRequestEpic(addLineChartDatasetAction, (action, state, deps) => {
+const addDataset = createRequestEpic(addLineChartDatasetAction, (action, state, deps) => {
     const {user, project, rangeFilter} = action.payload;
     return deps.client.loadMeasurements(user, project, null, rangeFilter)
         .map(measurements => ({
             measurements,
+            id: getNextId(state.session.views.lineChartPage.datasets),
             name: '',
             selectionId: '',
             yAxis: ''
         }));
 });
 
-const loadMeasurementAfterUpdate = createRequestEpic(updateLineChartDatasetAction, (action, state, deps) => {
+const updateDataset = createRequestEpic(updateLineChartDatasetAction, (action, state, deps) => {
     const {user, project, selectionId, rangeFilter, dataset, yAxis} = action.payload;
     if (dataset.selectionId !== selectionId)
     {
@@ -59,7 +61,7 @@ const reloadDatasets = createRequestEpic(reloadDatasetsAction, (action, state, d
 });
 
 export const lineChartEpics = combineEpics(
-    loadInitialMeasurements,
-    loadMeasurementAfterUpdate,
+    addDataset,
+    updateDataset,
     reloadDatasets
 );

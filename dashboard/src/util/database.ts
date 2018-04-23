@@ -1,4 +1,4 @@
-import {Dictionary, zipObj, uniq, dissoc} from 'ramda';
+import {Dictionary, zipObj, uniq, dissoc, reduce, max} from 'ramda';
 
 export interface Database<T>
 {
@@ -39,4 +39,9 @@ export function deleteFromDatabase<T>(database: Database<T>, id: string): Databa
 export function getDatabaseItems<T>(database: Database<T>): T[]
 {
     return database.keys.map(key => database.items[key]);
+}
+
+export function getNextId<T>(objects: T[], accessor: (t: T) => number = t => Number(t['id'])): string
+{
+    return (reduce(max, 0, objects.map(accessor)) as number + 1).toString();
 }
