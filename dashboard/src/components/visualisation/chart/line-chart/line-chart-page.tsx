@@ -16,7 +16,7 @@ import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../measurement-list';
 import {getSelections} from '../../../../state/session/selection/reducer';
 import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/session/selection/actions';
-import {LineChartDataset} from './line-chart-dataset';
+import {LineChartDataset, nameDataset} from './line-chart-dataset';
 import {
     AddDatasetParams,
     addLineChartDatasetAction,
@@ -128,6 +128,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
     }
     renderGraph = (): JSX.Element =>
     {
+        const datasets = this.props.datasets.map(d => nameDataset(d, this.props.selections));
         return (
             <>
                 <h4>Line chart</h4>
@@ -139,7 +140,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     connectPoints={this.state.settings.connectPoints}
                     showDeviation={this.state.settings.showDeviation}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
-                    views={this.props.datasets} />
+                    datasets={datasets} />
                 <MeasurementsWrapper>
                     <h4>Selected measurements</h4>
                     <MeasurementList measurements={this.state.selectedMeasurements} />

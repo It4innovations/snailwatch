@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {LineChartDataset} from './line-chart-dataset';
+import {LineChartDataset, nameDataset, NamedLineChartDataset} from './line-chart-dataset';
 import Button from 'reactstrap/lib/Button';
 import {Selection} from '../../../../lib/measurement/selection/selection';
 import {MeasurementKeys} from '../../../global/measurement-keys';
@@ -35,10 +35,11 @@ export class DatasetManager extends PureComponent<Props>
 {
     render()
     {
+        const namedDatasets = this.props.datasets.map(d => nameDataset(d, this.props.selections));
         return (
             <div>
-                {this.props.datasets.map(this.renderDataset)}
-                {this.props.datasets.length < this.props.maxDatasetCount &&
+                {namedDatasets.map(this.renderDataset)}
+                {namedDatasets.length < this.props.maxDatasetCount &&
                     <AddButton
                         size='sm'
                         color='success'
@@ -47,7 +48,7 @@ export class DatasetManager extends PureComponent<Props>
             </div>
         );
     }
-    renderDataset = (dataset: LineChartDataset, index: number): JSX.Element =>
+    renderDataset = (dataset: NamedLineChartDataset, index: number): JSX.Element =>
     {
         return (
             <Box key={`${dataset.name}.${index}`} title={this.renderHeader(dataset)}>
@@ -65,11 +66,11 @@ export class DatasetManager extends PureComponent<Props>
             </Box>
         );
     }
-    renderHeader = (dataset: LineChartDataset): JSX.Element =>
+    renderHeader = (dataset: NamedLineChartDataset): JSX.Element =>
     {
         return (
             <Header>
-                <div>Dataset {dataset.name}</div>
+                <div>{dataset.name}</div>
                 <MdDelete size={20} onClick={() => this.props.deleteDataset(dataset)} />
             </Header>
         );

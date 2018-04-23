@@ -7,7 +7,7 @@ import {Measurement} from '../../../../lib/measurement/measurement';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import { groupMeasurements, createLinePoints} from '../chart-utils';
 import {ColorPalette} from '../../color-palette';
-import {LineChartDataset} from './line-chart-dataset';
+import {NamedLineChartDataset} from './line-chart-dataset';
 import {Tick} from '../tick';
 import {PointTooltip} from './point-tooltip';
 import {LinePoint} from './line-point';
@@ -15,7 +15,7 @@ import {LineLegend} from './line-legend';
 
 interface Props
 {
-    views: LineChartDataset[];
+    datasets: NamedLineChartDataset[];
     xAxis: string;
     width?: number;
     height: number;
@@ -38,7 +38,7 @@ export class LineChart extends PureComponent<Props>
 {
     render()
     {
-        if (this.props.views.length > 1 && this.props.groupMode === GroupMode.None)
+        if (this.props.datasets.length > 1 && this.props.groupMode === GroupMode.None)
         {
             return 'You have to use a group mode with multiple datasets';
         }
@@ -59,7 +59,7 @@ export class LineChart extends PureComponent<Props>
         const preview = this.props.preview || false;
 
         const padding = 20;
-        const datasets = this.props.views.map(v =>
+        const datasets = this.props.datasets.map(v =>
             groupMeasurements(v.measurements, this.props.groupMode, this.props.xAxis, [v.yAxis])
         );
         const points = createLinePoints(datasets);
@@ -78,7 +78,7 @@ export class LineChart extends PureComponent<Props>
                 {datasets.map((scatter, index) =>
                     <Line
                         key={`line.${index}`}
-                        name={`Dataset ${this.props.views[index].name}`}
+                        name={this.props.datasets[index].name}
                         isAnimationActive={false}
                         dataKey={`data[${index}].value`}
                         connectNulls={true}
