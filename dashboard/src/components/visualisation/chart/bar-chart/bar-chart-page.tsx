@@ -114,7 +114,6 @@ class BarChartPageComponent extends PureComponent<Props, State>
                 </Box>
                 <Box title='Projections'>
                     <DataSelector
-                        measurements={this.props.measurements}
                         measurementKeys={this.props.project.measurementKeys}
                         selection={this.props.selection}
                         xAxis={this.props.xAxis}
@@ -131,7 +130,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
     {
         return (
             <div>
-                <h4>Bar chart</h4>
+                <h4>Stacked bar chart</h4>
                 <BarChart measurements={this.props.measurements}
                           xAxis={this.props.xAxis}
                           yAxes={this.props.yAxes}

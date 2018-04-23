@@ -22,9 +22,10 @@ interface Props
     responsive?: boolean;
     groupMode: GroupMode;
     connectPoints: boolean;
+    showPoints: boolean;
     showDeviation: boolean;
     preview?: boolean;
-    onMeasurementsSelected(measurements: Measurement[]): void;
+    onMeasurementsSelected?(measurements: Measurement[]): void;
 }
 
 const DATASET_COLORS = new ColorPalette([
@@ -58,11 +59,12 @@ export class LineChart extends PureComponent<Props>
     {
         const preview = this.props.preview || false;
 
-        const padding = 20;
+        const padding = preview ? 0 : 20;
         const datasets = this.props.datasets.map(v =>
             groupMeasurements(v.measurements, this.props.groupMode, this.props.xAxis, [v.yAxis])
         );
         const points = createLinePoints(datasets);
+        const dotActive = this.selectMeasurements && !preview;
 
         return (
             <ReLineChart data={points} width={this.props.width} height={this.props.height}>
@@ -82,9 +84,9 @@ export class LineChart extends PureComponent<Props>
                         isAnimationActive={false}
                         dataKey={`data[${index}].value`}
                         connectNulls={true}
-                        dot={preview || !this.props.connectPoints}
-                        activeDot={{
-                            onClick: (data: {payload: LinePoint}) => !preview && this.selectMeasurements(data, index)
+                        dot={this.props.showPoints}
+                        activeDot={dotActive && {
+                            onClick: (data: {payload: LinePoint}) => this.selectMeasurements(data, index)
                         }}
                         stroke={(this.props.connectPoints ? DATASET_COLORS.getColor(index) : '#00000000')}
                         fill={DATASET_COLORS.getColor(index)}>

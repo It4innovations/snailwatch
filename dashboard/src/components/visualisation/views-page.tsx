@@ -14,6 +14,8 @@ import FaLineChart from 'react-icons/lib/fa/line-chart';
 import {RangeFilter} from '../../lib/measurement/selection/range-filter';
 import {getRangeFilter} from '../../state/session/views/reducers';
 import {changeRangeFilterAction} from '../../state/session/views/actions';
+import FaTh from 'react-icons/lib/fa/th';
+import {GridChartPage} from './chart/grid-page/grid-chart-page';
 
 interface StateProps
 {
@@ -36,6 +38,11 @@ class ViewsPageComponent extends PureComponent<Props>
             <Tabs>
                 <TabList>
                     <Tab>
+                        <div title='Chart overview'>
+                            <FaTh size={26} />
+                        </div>
+                    </Tab>
+                    <Tab>
                         <div title='Line chart'>
                             <FaLineChart size={26} />
                         </div>
@@ -46,6 +53,10 @@ class ViewsPageComponent extends PureComponent<Props>
                         </div>
                     </Tab>
                 </TabList>
+                <TabPanel>
+                    <GridChartPage rangeFilter={this.props.rangeFilter}
+                                   onChangeRangeFilter={this.props.changeRangeFilter} />
+                </TabPanel>
                 <TabPanel>
                     <LineChartPage rangeFilter={this.props.rangeFilter}
                                    onChangeRangeFilter={this.props.changeRangeFilter} />
