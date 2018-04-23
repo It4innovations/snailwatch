@@ -29,6 +29,7 @@ const operators: Operator[] = [
 
 const Row = styled.div`
   display: flex;
+  min-width: 300px;
 `;
 const DeleteIcon = styled(MdDelete)`
   padding-top: 3px;
@@ -38,6 +39,9 @@ const Operator = styled(Input)`
 `;
 const Filter = styled.span`
   font-size: 14px;
+`;
+const IconWrapper = styled.div`
+  width: 40px;
 `;
 
 export class FilterComponent extends PureComponent<Props>
@@ -73,7 +77,9 @@ export class FilterComponent extends PureComponent<Props>
                     onChange={val => this.change('value', val)}
                     calculateSuggestions={this.calculateValueSuggestions} />
                 {this.props.editable &&
-                    <DeleteIcon size={26} onClick={this.remove} />
+                    <IconWrapper title='Delete filter'>
+                        <DeleteIcon size={26} onClick={this.remove} />
+                    </IconWrapper>
                 }
             </Row>
         );

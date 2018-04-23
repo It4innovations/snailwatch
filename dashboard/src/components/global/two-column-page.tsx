@@ -15,7 +15,6 @@ const Row = styled.div`
   width: 100%;
 `;
 const MenuColumn = styled.div`
-  min-width: 240px;
   margin-right: 10px;
   padding: 0 10px 0 0;
   border-right: 1px solid black;

@@ -113,6 +113,12 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
                         rangeFilter={this.props.rangeFilter}
                         onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
+                <Box title='Selections'>
+                    <SelectionContainer
+                        measurements={measurements}
+                        selectedSelection={this.state.selection}
+                        selectSelection={this.changeSelection} />
+                </Box>
                 <Box title='Axes'>
                     <DataSelector
                         measurementKeys={this.props.project.measurementKeys}
@@ -120,12 +126,6 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
                         yAxis={this.props.yAxis}
                         onChangeXAxis={this.props.changeXAxis}
                         onChangeYAxis={this.props.changeYAxis} />
-                </Box>
-                <Box title='Selections'>
-                    <SelectionContainer
-                        measurements={measurements}
-                        selectedSelection={this.state.selection}
-                        selectSelection={this.changeSelection} />
                 </Box>
             </>
         );
