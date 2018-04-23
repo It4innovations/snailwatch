@@ -1,5 +1,7 @@
 FROM node:carbon-slim as build
 
+ENV PUBLIC_URL=.
+
 WORKDIR /dashboard
 COPY package.json package-lock.json ./
 RUN npm install
