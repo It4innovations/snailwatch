@@ -16,6 +16,7 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import os
 
 # -- Project information -----------------------------------------------------
 
@@ -45,11 +46,16 @@ extensions = [
     'sphinxcontrib.redoc'
 ]
 
+url = 'https://snailwatch.it4i.cz{}/api/schema'
+version = ''
+if os.environ.get('READTHEDOCS_VERSION', '') == 'dev':
+    version = '/dev'
+
 redoc = [
     {
         'name': 'Snailwatch API',
         'page': 'api',
-        'spec': 'https://snailwatch.it4i.cz/api/schema',
+        'spec': url.format(version),
         'opts': {
             'suppress-warnings': True
         }
