@@ -15,7 +15,7 @@ def setup_routes(app):
     @app.route('/schema', methods=['GET'])
     def schema():
         response = requests.get("https://app.swaggerhub.com/apiproxy/schema"
-                                "/file/IT4I/Snailwatch/0.0.2/swagger.json")
+                                "/file/IT4I/Snailwatch/0.1/swagger.json")
         headers = {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json',
