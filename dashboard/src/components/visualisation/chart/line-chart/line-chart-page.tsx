@@ -72,6 +72,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
         groupMode: GroupMode.AxisX,
         selectedMeasurements: [],
         settings: {
+            showPoints: false,
             connectPoints: true,
             showDeviation: false
         }
@@ -138,7 +139,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     responsive={true}
                     groupMode={this.state.groupMode}
                     connectPoints={this.state.settings.connectPoints}
-                    showPoints={true}
+                    showPoints={this.state.settings.showPoints}
                     showDeviation={this.state.settings.showDeviation}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     datasets={datasets} />

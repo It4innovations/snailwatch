@@ -23,7 +23,13 @@ export class LineChartSettingsComponent extends PureComponent<Props>
         return (
             <div>
                 <Row>
-                    <Label>Connect points: </Label>
+                    <Label>Show points: </Label>
+                    <input type='checkbox'
+                           checked={this.props.settings.showPoints}
+                           onChange={this.changeShowPoints} />
+                </Row>
+                <Row>
+                    <Label>Show lines: </Label>
                     <input type='checkbox'
                            checked={this.props.settings.connectPoints}
                            onChange={this.changeConnectPoints} />
@@ -38,6 +44,13 @@ export class LineChartSettingsComponent extends PureComponent<Props>
         );
     }
 
+    changeShowPoints = (e: React.SyntheticEvent<HTMLInputElement>) =>
+    {
+        this.props.onChangeSettings({
+            ...this.props.settings,
+            showPoints: e.currentTarget.checked
+        });
+    }
     changeConnectPoints = (e: React.SyntheticEvent<HTMLInputElement>) =>
     {
         this.props.onChangeSettings({
