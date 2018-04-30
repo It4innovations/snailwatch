@@ -87,6 +87,14 @@ class LineChartPageComponent extends PureComponent<Props, State>
         this.reloadDatasets(this.props.rangeFilter);
     }
 
+    componentDidUpdate(oldProps: Props)
+    {
+        if (this.props.selections !== oldProps.selections)
+        {
+            this.reloadDatasets(this.props.rangeFilter);
+        }
+    }
+
     render()
     {
         return (
