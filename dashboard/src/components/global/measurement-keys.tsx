@@ -57,7 +57,7 @@ export class MeasurementKeys extends PureComponent<Props>
 
         return ['Metadata', 'Environment', 'Result'].map(heading => ({
             title: heading,
-            keys: groups[heading].map(value => ({
+            keys: (groups[heading] || []).map(value => ({
                 value,
                 label: formatKey(value)
             }))
