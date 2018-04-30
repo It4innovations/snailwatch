@@ -57,6 +57,7 @@ interface State
 
 const Grid = styled.div`
   display: flex;
+  flex-wrap: wrap;
 `;
 const Dataset = styled.div`
   display: flex;
