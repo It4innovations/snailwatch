@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react';
 import {Measurement} from '../../../../lib/measurement/measurement';
-import {Bar, BarChart as ReBarChart, CartesianGrid, Label,
+import {
+    Bar, BarChart as ReBarChart, CartesianGrid, Label,
     Legend, ResponsiveContainer, Tooltip, XAxis, YAxis
 } from 'recharts';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
@@ -8,6 +9,7 @@ import {groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-uti
 import {ColorPalette} from '../../color-palette';
 import {formatKey} from '../../../../util/measurement';
 import {Tick} from '../tick';
+import {BarTooltip} from './bar-tooltip';
 
 interface Props
 {
@@ -51,7 +53,7 @@ export class BarChart extends PureComponent<Props>
                         <Label value={this.props.xAxis} position='bottom' />
                     </XAxis>
                     <YAxis />
-                    <Tooltip />
+                    <Tooltip content={<BarTooltip xAxis={this.props.xAxis} />} />
                     <Legend align='right' />
                     {filledYAxes.map((axis, index) =>
                         <Bar key={`${axis}.${index}`}
