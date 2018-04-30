@@ -17,6 +17,7 @@ import {changeRangeFilterAction} from '../../state/session/views/actions';
 import FaTh from 'react-icons/lib/fa/th';
 import {GridChartPage} from './chart/grid-page/grid-chart-page';
 import {SelectDatasetParams, selectLineChartDatasetAction} from '../../state/session/views/line-chart-page/actions';
+import {loadProject, LoadProjectParams} from '../../state/session/project/actions';
 
 interface StateProps
 {
@@ -28,6 +29,7 @@ interface DispatchProps
 {
     changeRangeFilter(rangeFilter: RangeFilter): void;
     selectDataset(params: SelectDatasetParams): void;
+    loadProject(params: LoadProjectParams): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
@@ -39,6 +41,14 @@ const initialState = {
 class ViewsPageComponent extends PureComponent<Props, Readonly<typeof initialState>>
 {
     readonly state = { ...initialState };
+
+    componentDidMount()
+    {
+        this.props.loadProject({
+            user: this.props.user,
+            name: this.props.project.name
+        });
+    }
 
     render()
     {
@@ -100,5 +110,6 @@ export const ViewsPage = withRouter(connect<StateProps, DispatchProps>((state: A
     rangeFilter: getRangeFilter(state)
 }), {
     changeRangeFilter: changeRangeFilterAction,
-    selectDataset: selectLineChartDatasetAction
+    selectDataset: selectLineChartDatasetAction,
+    loadProject: loadProject.started
 })(ViewsPageComponent));

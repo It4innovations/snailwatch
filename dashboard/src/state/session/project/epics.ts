@@ -12,8 +12,6 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/if';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/empty';
-import {isEmpty} from 'ramda';
-import {getProjectByName, getProjects} from './reducer';
 import {getUser} from '../user/reducer';
 import {Action} from 'typescript-fsa';
 import {AppEpic} from '../../app/app-epic';
@@ -29,16 +27,8 @@ const loadProjectsEpic = (action$: ActionsObservable<ReduxAction>,
         .ofAction(loadProjects.started)
         .switchMap((action: Action<LoadProjectsParams>) =>
             {
-                const {user, force} = action.payload;
-                const storedProjects = getProjects(store.getState());
-                if (force || isEmpty(storedProjects))
-                {
-                    return mapRequestToActions(loadProjects, action, deps.client.loadProjects(user));
-                }
-                else return Observable.of(loadProjects.done({
-                    params: action.payload,
-                    result: storedProjects
-                }));
+                const {user} = action.payload;
+                return mapRequestToActions(loadProjects, action, deps.client.loadProjects(user));
             }
         );
 
@@ -50,15 +40,7 @@ const loadProjectEpic = (action$: ActionsObservable<ReduxAction>,
         .switchMap((action: Action<LoadProjectParams>) =>
             {
                 const {user, name} = action.payload;
-                let storedProject = getProjectByName(getProjects(store.getState()), name);
-                if (storedProject === null)
-                {
-                    return mapRequestToActions(loadProject, action, deps.client.loadProject(user, name));
-                }
-                else return Observable.of(loadProject.done({
-                    params: action.payload,
-                    result: storedProject
-                }));
+                return mapRequestToActions(loadProject, action, deps.client.loadProject(user, name));
             }
         );
 
