@@ -7,7 +7,7 @@ import {
     updateLineChartDatasetAction,
     addLineChartDatasetAction, reloadLineChartDatasetsAction, selectLineChartDatasetAction
 } from './actions';
-import {compose, update} from 'ramda';
+import {compose, indexBy, update} from 'ramda';
 import {clearSession} from '../../actions';
 
 export interface LineChartPageState
@@ -54,10 +54,17 @@ reducer = compose(
     ),
     (r: typeof reducer) => hookRequestActions(r, reloadLineChartDatasetsAction,
         state => state.measurementsRequest,
-        (state, action) => ({
-            ...state,
-            datasets: action.payload.result
-        })
+        (state, action) => {
+            const byId = indexBy(d => d.id, action.payload.result);
+
+            return {
+                ...state,
+                datasets: state.datasets.map(d => ({
+                    ...d,
+                    measurements: byId[d.id] ? byId[d.id].measurements : d.measurements
+                }))
+            };
+        }
     )
 )(reducer);
 
