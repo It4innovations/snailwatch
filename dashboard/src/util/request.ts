@@ -8,6 +8,7 @@ import {Action as ReduxAction, Store} from 'redux';
 import {ServiceContainer} from '../state/app/di';
 import '../util/redux-observable';
 import {any} from 'ramda';
+import {isObject} from 'util';
 
 export interface Request
 {
@@ -47,6 +48,14 @@ export function requestDone(): Request
         error: null,
         completed: true
     };
+}
+
+export function isRequest(request: {}): boolean
+{
+    return isObject(request) &&
+        request.hasOwnProperty('loading') &&
+        request.hasOwnProperty('error') &&
+        request.hasOwnProperty('completed');
 }
 
 export function combineRequests(...requests: Request[]): Request

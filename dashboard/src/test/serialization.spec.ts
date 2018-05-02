@@ -1,5 +1,5 @@
 import moment, {isMoment} from 'moment';
-import {deserializeDates, serializeDates} from '../util/date';
+import {deserializeDates, serializeDates} from '../util/serialization';
 
 describe('serializeDates', () =>
 {

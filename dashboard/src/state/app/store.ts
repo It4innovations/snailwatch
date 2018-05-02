@@ -12,7 +12,7 @@ import Raven from 'raven-js';
 import {RestClient} from '../../lib/api/rest-client';
 import {API_SERVER, URL_PREFIX} from '../../configuration';
 import storage from 'redux-persist/lib/storage';
-import {deserializeDates, serializeDates} from '../../util/date';
+import {serializeDates, deserializeDates, serializeRequests} from '../../util/serialization';
 
 function errorHandler(error: Error, getState: () => AppState, action: Action)
 {
@@ -41,6 +41,9 @@ const sessionPersist = {
     transforms: [createTransform(
         serializeDates,
         deserializeDates
+    ), createTransform(
+        serializeRequests,
+        null
     )]
 };
 
