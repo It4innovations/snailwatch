@@ -1,0 +1,3 @@
+
+class SnailwatchException(Exception):
+    pass

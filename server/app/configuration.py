@@ -18,7 +18,7 @@ def get_mongo_host():
 
 
 def get_mongo_port():
-    return get_option('MONGO_PORT', 27017)
+    return int(get_option('MONGO_PORT', 27017))
 
 
 def get_mongo_db():

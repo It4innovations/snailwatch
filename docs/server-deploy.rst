@@ -55,12 +55,11 @@ Example request for creating a user using curl:
     $ curl -H "Content-Type: application/json" -H "Authorization: <admin-token>" \
     <server>/users -d '{"username": "user", "password": "12345"}'
 
-You can also use the helper script ``server/scripts/createuser.py`` to create a
-user:
+You can also use the helper library to create a user:
 
 .. code-block:: bash
 
-    $ python scripts/createuser.py <server-address> <admin-token> <username> <password>
+    $ python -m python/swclient <server-address> <admin-token> create-user <username>
 
 Once you create user accounts for your users, they can then login using the
 :doc:`dashboard <dashboard>`.

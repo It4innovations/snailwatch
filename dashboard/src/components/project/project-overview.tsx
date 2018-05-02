@@ -145,30 +145,32 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
         return (
             <>
                     <div>
-                        We provide a simple Python script located at <code>server/scripts/collect.py</code> to
-                        simplify measurement results uploads.<br />
+                        We provide a simple Python library located at <code>python/sw-client</code> that can
+                        simplify measurement uploads and user creation.<br />
                         You can use the following snippet as an example how to use it.
                     </div>
                     <SyntaxHighlighter language='python' style={dracula}>
-{`from collect import create_context, send_measurement
+{`from swclient.session import Session
 
-ctx = create_context(
+session = Session(
     "${API_SERVER}", # server address
     "${this.getUploadToken()}" # upload token
 )
 
-send_measurement(ctx,
+session.upload_measurement(
     "MyAwesomeBenchmark",   # benchmark name
     {                       # environment of the measurement
         "commit": "abcdef",
         "branch": "master",
         "threads": "16"
-    }, {                    # measured results
+    },
+    {                    # measured results
         "executionTime": {
             "value": "13.37",
             "type": "time"
         }
-    })`}
+    }
+)`}
                     </SyntaxHighlighter>
             </>
         );

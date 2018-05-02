@@ -19,12 +19,21 @@ test:dashboard:
 
 test:server:
   image: python:3.5-slim
+  services:
+    - mongo
   stage: test
   before_script:
-    - cd server
-    - pip install flake8
+    - apt-get update && apt-get install -y --no-install-recommends git
+    - pip3 install flake8 pytest pymongo python/
+    - pip3 install -r server/requirements.txt
   script:
     - flake8 .
+    - MONGO=mongo python3 -m pytest --verbose tests
+  artifacts:
+    paths:
+      - tests/work/server.out
+    when: on_failure
+    expire_in: 1 week
 
 publish:dashboard:
   image: docker:latest

@@ -13,6 +13,5 @@ def start():
 
     with app.app_context():
         init_database(app)
-
     setup_routes(app)
     app.run(threaded=True, host='0.0.0.0', port=get_server_port())

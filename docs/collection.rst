@@ -45,8 +45,8 @@ You will get back a string containing the upload token.
 
 After you have an upload token, you can upload measurements for
 the given project. If you don't feel like creating HTTP requests manually,
-you can use the helper scripts that we prepared (they are located in the
-``server/scripts`` folder). For using the uploading API directly look
+you can use a helper library (located at ``python/swclient``).
+For using the uploading API directly look
 :api:`here <#tag/Measurement/paths/~1measurements/post>`.
 
 Example curl request to upload a measurement to a project:
