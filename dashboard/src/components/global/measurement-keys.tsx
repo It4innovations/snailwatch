@@ -52,10 +52,10 @@ export class MeasurementKeys extends PureComponent<Props>
         const groups = groupBy(key => {
             if (key.startsWith('environment.')) return 'Environment';
             if (key.startsWith('result.')) return 'Result';
-            return 'Metadata';
+            return 'General';
         }, filtered);
 
-        return ['Metadata', 'Environment', 'Result'].map(heading => ({
+        return ['General', 'Environment', 'Result'].map(heading => ({
             title: heading,
             keys: (groups[heading] || []).map(value => ({
                 value,
