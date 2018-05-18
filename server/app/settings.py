@@ -126,7 +126,7 @@ measurement_schema = {
                     'allowed': ['time', 'size', 'integer', 'string']
                 },
                 'value': {
-                    'type': 'string',
+                    'type': ['string', 'number'],
                     'required': True
                 }
             }

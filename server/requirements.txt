@@ -1,3 +1,3 @@
-git+https://github.com/pyeve/eve@1d4a308f0091387da1728bd9aaa8638a5be0838c
+git+https://github.com/pyeve/eve@4851beb0289ecb27159461b494ae115b2935d784
 flask-cors
 requests
