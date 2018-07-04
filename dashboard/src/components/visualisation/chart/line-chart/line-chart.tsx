@@ -67,7 +67,10 @@ export class LineChart extends PureComponent<Props>
         const dotActive = this.selectMeasurements && !preview;
 
         return (
-            <ReLineChart data={points} width={this.props.width} height={this.props.height}>
+            <ReLineChart data={points}
+                         width={this.props.width}
+                         height={this.props.height}
+                         margin={{left: 20}}>
                 <CartesianGrid stroke='#CCCCCC' />
                 <XAxis
                     dataKey='x'
