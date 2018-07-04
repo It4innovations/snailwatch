@@ -40,12 +40,11 @@ export class BarChart extends PureComponent<Props>
 
         const grouped = groupMeasurements(this.props.measurements, this.props.groupMode, this.props.xAxis, filledYAxes);
         const data = linearizeGroups(grouped);
-        console.log(grouped, data);
 
         const height = 400;
         return (
             <ResponsiveContainer width='98%' height={height}>
-                <ReBarChart data={data}>
+                <ReBarChart data={data} margin={{left: 20}}>
                     <CartesianGrid strokeDasharray='3 3' />
                     <XAxis
                         dataKey='x'
