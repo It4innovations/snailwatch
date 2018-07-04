@@ -34,8 +34,8 @@ const Dataset = styled.div`
     border-bottom: none;
   }
 `;
-const DatasetLabel = styled.div`
-  color: ${(props: {color: string}) => props.color}
+const DatasetLabel = styled.div<{color: string}>`
+  color: ${props => props.color}
 `;
 const DatasetInfo = styled.div`
   font-size: 0.75rem;

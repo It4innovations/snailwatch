@@ -1,6 +1,6 @@
 import {isArray, isObject, isString} from 'util';
 import {isMoment, Moment, default as moment} from 'moment';
-import {map} from 'ramda';
+import {Functor, map} from 'ramda';
 import {createRequest, isRequest} from './request';
 
 const SERIALIZATION_FORMAT = 'DD.MM.YYYYTHH:mm:ss';
@@ -16,7 +16,7 @@ function traverse(obj: {},
 
     if (isArray(obj) || isObject(obj))
     {
-        return map(o => traverse(o, predicate, transform), obj);
+        return map(o => traverse(o, predicate, transform), obj as Functor<{}>);
     }
 
     return obj;
