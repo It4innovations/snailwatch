@@ -17,7 +17,8 @@
     "noUnusedLocals": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "importHelpers": true
+    "importHelpers": true,
+    "resolveJsonModule": true
   },
   "exclude": [
     "node_modules",

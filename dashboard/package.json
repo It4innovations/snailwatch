@@ -64,7 +64,7 @@
     "tslint": "^5.7.0",
     "tslint-loader": "^3.5.3",
     "tslint-react": "^3.2.0",
-    "typescript": "^2.8.1",
+    "typescript": "^2.9.2",
     "typescript-fsa": "^2.5.0",
     "typescript-fsa-reducers": "^0.4.5",
     "url": "^0.11.0",
