@@ -1,4 +1,4 @@
-FROM node:carbon-slim as build
+FROM node:9-slim as build
 
 ENV PUBLIC_URL=.
 
@@ -8,7 +8,7 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM node:carbon-slim
+FROM node:9-slim
 
 WORKDIR /dashboard
 COPY --from=build /dashboard/build .
