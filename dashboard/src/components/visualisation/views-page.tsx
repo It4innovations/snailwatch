@@ -15,7 +15,7 @@ import {RangeFilter} from '../../lib/measurement/selection/range-filter';
 import {getRangeFilter} from '../../state/session/views/reducers';
 import {changeRangeFilterAction} from '../../state/session/views/actions';
 import FaTh from 'react-icons/lib/fa/th';
-import {GridChartPage} from './chart/grid-page/grid-chart-page';
+import {GridChartPage} from './chart/grid-chart/grid-chart-page';
 import {SelectDatasetParams, selectLineChartDatasetAction} from '../../state/session/views/line-chart-page/actions';
 import {loadProject, LoadProjectParams} from '../../state/session/project/actions';
 import {loadSelectionsAction, LoadSelectionsParams} from '../../state/session/selection/actions';

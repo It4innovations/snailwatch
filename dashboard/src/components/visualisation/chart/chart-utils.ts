@@ -22,13 +22,25 @@ export interface MeasurementGroup
     measurements: Measurement[];
 }
 
+export function getValidYAxes(measurements: Measurement[], axesY: string[]): string[]
+{
+    return axesY.filter(a => a.length > 0 && all(m => hasAxis(m, a), measurements));
+}
+export function getValidMeasurements(measurements: Measurement[], axisX: string, axesY: string[]): Measurement[]
+{
+    return measurements.filter(m => {
+        return hasAxis(m, axisX) && all(a => hasAxis(m, a), axesY);
+    });
+}
+
 export function groupMeasurements(measurements: Measurement[], groupMode: GroupMode,
                                   axisX: string,
-                                  axisY: string[]):
+                                  axesY: string[]):
     Dictionary<MeasurementGroup>
 {
+    measurements = getValidMeasurements(measurements, axisX, axesY);
     const batches = batchMeasurement(measurements, groupMode, axisX);
-    const groups: Dictionary<MeasurementGroup> = map(batch => createGroup(batch, axisX, axisY), batches);
+    const groups: Dictionary<MeasurementGroup> = map(batch => createGroup(batch, axisX, axesY), batches);
 
     return filter(isGroupValid, groups);
 }
@@ -92,6 +104,11 @@ export function createLinePoints(datasets: Dictionary<MeasurementGroup>[]): Line
     }));
 }
 
+function hasAxis(measurement: Measurement, axis: string)
+{
+    return getValueWithPath(measurement, axis) !== undefined;
+}
+
 function createGroup(batch: Measurement[], axisX: string, axisY: string[]): MeasurementGroup
 {
     const x = getXAxisValue(batch[0], axisX);
@@ -124,6 +141,9 @@ function isGroupValid(group: MeasurementGroup): boolean
     return group.x && all(item => !isNaN(item.average), values(group.items));
 }
 
+/**
+ * Groups measurements into disjoint sets according to the given group mode.
+ */
 function batchMeasurement(measurements: Measurement[], groupMode: GroupMode, axis: string = ''):
     Dictionary<Measurement[]>
 {

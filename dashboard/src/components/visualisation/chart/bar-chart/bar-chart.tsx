@@ -5,7 +5,7 @@ import {
     Legend, ResponsiveContainer, Tooltip, XAxis, YAxis
 } from 'recharts';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
-import {groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
+import {getValidYAxes, groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
 import {ColorPalette} from '../../color-palette';
 import {formatKey} from '../../../../util/measurement';
 import {Tick} from '../tick';
@@ -31,15 +31,16 @@ export class BarChart extends PureComponent<Props>
 {
     render()
     {
-        const filledYAxes = this.props.yAxes.filter(axis => axis.length > 0);
+        const filledYAxes = getValidYAxes(this.props.measurements, this.props.yAxes);
         if (this.props.measurements.length === 0 || !this.props.xAxis || filledYAxes.length === 0)
         {
-            return 'No data available';
+            return `No data available. Make sure that all selected data items contain the chosen X axis ` +
+                    `(${this.props.xAxis})' and all of the chosen Y axes (${this.props.yAxes.join(', ')})`;
         }
 
-        const data = linearizeGroups(
-            groupMeasurements(this.props.measurements, this.props.groupMode, this.props.xAxis, filledYAxes)
-        );
+        const grouped = groupMeasurements(this.props.measurements, this.props.groupMode, this.props.xAxis, filledYAxes);
+        const data = linearizeGroups(grouped);
+        console.log(grouped, data);
 
         const height = 400;
         return (
