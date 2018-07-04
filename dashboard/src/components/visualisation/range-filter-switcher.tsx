@@ -22,6 +22,8 @@ const DateLabel = styled(InputGroupText)`
   justify-content: center;
 `;
 
+const rangeSizes = [100, 250, 500, 1000];
+
 export class RangeFilterSwitcher extends PureComponent<Props>
 {
     render()
@@ -79,10 +81,7 @@ export class RangeFilterSwitcher extends PureComponent<Props>
                    bsSize='sm'
                    value={this.props.rangeFilter.entryCount}
                    onChange={this.changeRange}>
-                <option value={10}>10</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-                <option value={200}>200</option>
+                {rangeSizes.map(r => <option key={r} value={r}>{r}</option>)}
             </RangeInput>
         );
     }
