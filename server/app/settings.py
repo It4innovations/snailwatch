@@ -104,7 +104,7 @@ measurement_schema = {
         'type': 'dict',
         'keyschema': {
             'type': 'string',
-            'regex': '[a-zA-Z_/-]+'
+            'regex': '[a-zA-Z_/-][a-zA-Z0-9_/-]*'
         },
         'valueschema': {
             'type': 'string'
@@ -115,7 +115,7 @@ measurement_schema = {
         'required': True,
         'keyschema': {
             'type': 'string',
-            'regex': '[a-zA-Z_/-]+'
+            'regex': '[a-zA-Z_/-][a-zA-Z0-9_/-]*'
         },
         'valueschema': {
             'type': 'dict',
