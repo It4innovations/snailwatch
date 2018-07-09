@@ -7,6 +7,7 @@ import {Observable} from 'rxjs/Observable';
 import {Action as ReduxAction, Store} from 'redux';
 import {ServiceContainer} from '../state/app/di';
 import '../util/redux-observable';
+import 'rxjs/add/observable/from';
 import {any} from 'ramda';
 import {isObject} from 'util';
 import {UnauthorizedError} from '../lib/errors/unauthorized';
