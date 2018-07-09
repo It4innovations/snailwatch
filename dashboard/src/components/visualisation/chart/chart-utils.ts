@@ -22,10 +22,6 @@ export interface MeasurementGroup
     measurements: Measurement[];
 }
 
-export function getValidYAxes(measurements: Measurement[], axesY: string[]): string[]
-{
-    return axesY.filter(a => a.length > 0 && all(m => hasAxis(m, a), measurements));
-}
 export function getValidMeasurements(measurements: Measurement[], axisX: string, axesY: string[]): Measurement[]
 {
     return measurements.filter(m => {

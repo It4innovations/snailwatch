@@ -5,7 +5,7 @@ import {
     Legend, ResponsiveContainer, Tooltip, XAxis, YAxis
 } from 'recharts';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
-import {getValidYAxes, groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
+import {groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
 import {ColorPalette} from '../../color-palette';
 import {formatKey} from '../../../../util/measurement';
 import {Tick} from '../tick';
@@ -31,14 +31,13 @@ export class BarChart extends PureComponent<Props>
 {
     render()
     {
-        const filledYAxes = getValidYAxes(this.props.measurements, this.props.yAxes);
-        if (this.props.measurements.length === 0 || !this.props.xAxis || filledYAxes.length === 0)
+        const yAxes = this.props.yAxes;
+        if (this.props.measurements.length === 0 || !this.props.xAxis || yAxes.length === 0)
         {
-            return `No data available. Make sure that all selected data items contain the chosen X axis ` +
-                    `(${this.props.xAxis}) and all of the chosen Y axes (${this.props.yAxes.join(', ')})`;
+            return 'No data available.';
         }
 
-        const grouped = groupMeasurements(this.props.measurements, this.props.groupMode, this.props.xAxis, filledYAxes);
+        const grouped = groupMeasurements(this.props.measurements, this.props.groupMode, this.props.xAxis, yAxes);
         const data = linearizeGroups(grouped);
 
         const height = 400;
@@ -55,7 +54,7 @@ export class BarChart extends PureComponent<Props>
                     <YAxis />
                     <Tooltip content={<BarTooltip xAxis={this.props.xAxis} />} />
                     <Legend align='right' />
-                    {filledYAxes.map((axis, index) =>
+                    {yAxes.map((axis, index) =>
                         <Bar key={`${axis}.${index}`}
                              isAnimationActive={false}
                              dataKey={`items["${axis}"].average`}
