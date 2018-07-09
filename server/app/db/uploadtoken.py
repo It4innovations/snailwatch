@@ -1,4 +1,5 @@
 from bson import ObjectId
+from eve import ID_FIELD
 
 from .repository import Repository
 
@@ -13,8 +14,8 @@ class UploadTokenRepo(Repository):
 
     def create_token(self, project, user, token):
         self.table.insert_one({
-            'project': project['_id'],
-            'owner': ObjectId(user['_id']),
+            'project': project[ID_FIELD],
+            'owner': ObjectId(user[ID_FIELD]),
             'token': token
         })
 
@@ -41,7 +42,7 @@ class UploadTokenRepo(Repository):
 
     def update_token(self, upload_token, value):
         self.table.update({
-            '_id': upload_token['_id']
+            ID_FIELD: upload_token[ID_FIELD]
         }, {
             '$set': {
                 'token': value

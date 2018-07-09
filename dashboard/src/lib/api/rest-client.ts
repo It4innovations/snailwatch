@@ -9,7 +9,7 @@ import {Filter} from '../measurement/selection/filter';
 import {buildRequestFilter} from './filter';
 import {
     DAO, MeasurementDAO, ProjectDAO, SelectionDAO,
-    parseMeasurement, parseSelection, parseProject, serializeDate
+    parseMeasurement, parseSelection, parseProject, serializeDate, UserDAO
 } from './dao';
 import {Selection} from '../measurement/selection/selection';
 import {RangeFilter} from '../measurement/selection/range-filter';
@@ -31,9 +31,10 @@ export class RestClient implements SnailClient
         return this.call('/login', 'POST', {
             username,
             password
-        }).map((token: string) => ({
-            username,
-            token
+        }).map((user: UserDAO) => ({
+            id: user.id,
+            token: user.token,
+            username
         }));
     }
     changePassword(user: User, oldPassword: string, newPassword: string): Observable<boolean>
@@ -153,6 +154,12 @@ export class RestClient implements SnailClient
     deleteMeasurement(user: User, measurement: Measurement): Observable<boolean>
     {
         return this.call(`/measurements/${measurement.id}`, 'DELETE', {}, {
+            token: user.token
+        }).map(() => true);
+    }
+    deleteAllMeasurements(user: User): Observable<boolean>
+    {
+        return this.call(`/clear-measurements`, 'POST', {}, {
             token: user.token
         }).map(() => true);
     }

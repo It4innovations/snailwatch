@@ -4,9 +4,10 @@ import requests
 from eve import ID_FIELD
 from flask import request, abort, jsonify, Response
 
-from app.db.project import ProjectRepo
 from .auth import check_password, hash_password
 from .db.loginsession import LoginSessionRepo
+from .db.measurement import MeasurementRepo
+from .db.project import ProjectRepo
 from .db.uploadtoken import UploadTokenRepo
 from .db.user import UserRepo
 
@@ -40,7 +41,10 @@ def setup_routes(app):
 
             if check_password(user, password):
                 token = login_repo.create_session(user[ID_FIELD])['token']
-                return jsonify(token)
+                return jsonify({
+                    "id": str(user[ID_FIELD]),
+                    "token": token
+                })
             else:
                 abort(403)
         else:
@@ -122,5 +126,19 @@ def setup_routes(app):
                 abort(403)
 
             return jsonify(token["token"])
+        else:
+            abort(400)
+
+    @app.route('/clear-measurements', methods=['POST'])
+    def clear_measurements():
+        token = request.headers.get('Authorization', None)
+
+        if token:
+            user_repo = UserRepo(app)
+            user = user_repo.get_user_from_request(request)
+            measurement_repo = MeasurementRepo(app)
+            measurement_repo.clear_measurements_for_user(user)
+
+            return jsonify()
         else:
             abort(400)

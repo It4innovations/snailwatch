@@ -3,6 +3,8 @@ from app.configuration import get_mongo_db, get_mongo_host, get_mongo_port, \
     get_mongo_username, get_mongo_password, get_admin_token
 
 # database
+from eve import ID_FIELD
+
 MONGO_HOST = get_mongo_host()
 MONGO_PORT = get_mongo_port()
 
@@ -70,7 +72,7 @@ project_schema = {
             'type': 'objectid',
             'data_relation': {
                 'resource': 'users',
-                'field': '_id'
+                'field': ID_FIELD
             }
         }
     },
@@ -88,7 +90,7 @@ measurement_schema = {
         'required': False,
         'data_relation': {
             'resource': 'projects',
-            'field': '_id'
+            'field': ID_FIELD
         }
     },
     'benchmark': {
@@ -139,7 +141,7 @@ selection_schema = {
         'required': True,
         'data_relation': {
             'resource': 'projects',
-            'field': '_id'
+            'field': ID_FIELD
         }
     },
     'name': {

@@ -1,3 +1,5 @@
+from eve import ID_FIELD
+
 from .repository import Repository
 from .loginsession import LoginSessionRepo
 
@@ -14,12 +16,12 @@ class UserRepo(Repository):
 
     def find_user_by_id(self, id):
         return self.table.find_one({
-            '_id': self.normalize_id(id)
+            ID_FIELD: self.normalize_id(id)
         })
 
     def update_user_password(self, user, password):
         self.table.update({
-            '_id': user['_id']
+            ID_FIELD: user[ID_FIELD]
         }, {
             '$set': {
                 'password': password

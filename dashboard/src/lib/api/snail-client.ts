@@ -21,7 +21,7 @@ export interface SnailClient
                      selection: Selection,
                      range: RangeFilter): Observable<Measurement[]>;
     deleteMeasurement(user: User, measurement: Measurement): Observable<boolean>;
-
+    deleteAllMeasurements(user: User): Observable<boolean>;
 
     loadSelections(user: User, project: Project): Observable<Selection[]>;
     createSelection(user: User, project: Project, view: Selection): Observable<Selection>;

@@ -11,6 +11,7 @@ import {User} from '../../../lib/user/user';
 import {Request} from '../../../util/request';
 import {sort} from 'ramda';
 import {
+    deleteAllMeasurementsAction,
     deleteMeasurementAction,
     loadMeasurementsAction,
     setMeasurementsSelectionAction
@@ -51,6 +52,7 @@ interface DispatchProps
 {
     loadMeasurements(): void;
     deleteMeasurement(measurement: Measurement): void;
+    deleteAllMeasurements(): void;
     changeRangeFilter(rangeFilter: RangeFilter): void;
     changeSelection(selectionId: string): void;
 }
@@ -135,6 +137,9 @@ class MeasurementListComponent extends PureComponent<Props, State>
                         <Button>CSV</Button>
                     </Download>
                 </Box>
+                <Box title='Actions'>
+                    <Button onClick={this.deleteAllMeasurements}>Delete all data</Button>
+                </Box>
             </div>
         );
     }
@@ -208,6 +213,14 @@ class MeasurementListComponent extends PureComponent<Props, State>
     {
         this.props.deleteMeasurement(measurement);
     }
+    deleteAllMeasurements = () =>
+    {
+        const response = confirm('Do you really want to delete all measurements?');
+        if (response)
+        {
+            this.props.deleteAllMeasurements();
+        }
+    }
 }
 
 export const MeasurementList = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
@@ -221,6 +234,7 @@ export const MeasurementList = withRouter(connect<StateProps, DispatchProps>((st
 }), ({
     loadMeasurements: () => loadMeasurementsAction.started({}),
     deleteMeasurement: deleteMeasurementAction.started,
+    deleteAllMeasurements: () => deleteAllMeasurementsAction.started({}),
     changeRangeFilter: changeRangeFilterAction,
     changeSelection: setMeasurementsSelectionAction
 }))(MeasurementListComponent));

@@ -10,6 +10,12 @@ export interface DAO
     _created: string;
 }
 
+export interface UserDAO
+{
+    id: string;
+    token: string;
+}
+
 export interface ProjectDAO extends DAO
 {
     name: string;
