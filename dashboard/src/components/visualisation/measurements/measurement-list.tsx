@@ -138,7 +138,7 @@ class MeasurementListComponent extends PureComponent<Props, State>
                     </Download>
                 </Box>
                 <Box title='Actions'>
-                    <Button onClick={this.deleteAllMeasurements}>Delete all data</Button>
+                    <Button onClick={this.deleteAllMeasurements} color='danger'>Delete all data</Button>
                 </Box>
             </div>
         );
@@ -177,6 +177,10 @@ class MeasurementListComponent extends PureComponent<Props, State>
                 minRows={5}
                 filterable={false}
                 multiSort={false}
+                sorted={[{
+                    id: 'timestamp',
+                    desc: true
+                }]}
                 SubComponent={this.renderSubcomponent} />
         );
     }
