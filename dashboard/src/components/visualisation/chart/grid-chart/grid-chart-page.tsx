@@ -58,18 +58,22 @@ interface State
 const Grid = styled.div`
   display: flex;
   flex-wrap: wrap;
+  padding-top: 1px;
+  padding-left: 1px;
 `;
 const Dataset = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-right: 20px;
-  margin-left: 10px;
-  border: 1px solid #00000000;
-  
+  padding: 20px;
+  border: 1px solid #8c8c8c;
+  border-radius: 5px;
+  margin-top: -1px;
+  margin-left: -1px;
+
   &:hover {
-    border: 1px solid #000000;
-    border-radius: 5px;
+    border-color: transparent;
+    box-shadow: 0 0 15px -2px #8c8c8c;
   }
 `;
 const Label = styled.div`
@@ -152,7 +156,9 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
         }, this.props.selections);
 
         return (
-            <Dataset key={mapped.name} title={`Select ${mapped.name}`} onClick={() => this.selectDataset(dataset)}>
+            <Dataset key={mapped.name}
+                     title={`Select ${mapped.name}`}
+                     onClick={() => this.selectDataset(dataset)}>
                 <Label>{mapped.name}</Label>
                 <LineChart
                     datasets={[mapped]}
