@@ -92,7 +92,7 @@ class SnailWatchEnv(Env):
 
         if do_init:
             self.create_user("tester", "testpass")
-            self.user_token = self.login("tester", "testpass")
+            self.user_token = self.login("tester", "testpass")["token"]
             self.project_id = self.create_project("project1")["_id"]
             self.upload_token = self.get_upload_token(self.project_id)
 
