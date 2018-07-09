@@ -35,7 +35,7 @@ export class BarChart extends PureComponent<Props>
         if (this.props.measurements.length === 0 || !this.props.xAxis || filledYAxes.length === 0)
         {
             return `No data available. Make sure that all selected data items contain the chosen X axis ` +
-                    `(${this.props.xAxis})' and all of the chosen Y axes (${this.props.yAxes.join(', ')})`;
+                    `(${this.props.xAxis}) and all of the chosen Y axes (${this.props.yAxes.join(', ')})`;
         }
 
         const grouped = groupMeasurements(this.props.measurements, this.props.groupMode, this.props.xAxis, filledYAxes);

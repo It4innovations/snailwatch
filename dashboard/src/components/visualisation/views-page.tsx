@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router';
+import {Route, RouteComponentProps, withRouter} from 'react-router';
 import {AppState} from '../../state/app/reducers';
 import {Project} from '../../lib/project/project';
 import {User} from '../../lib/user/user';
@@ -19,6 +19,8 @@ import {GridChartPage} from './chart/grid-chart/grid-chart-page';
 import {SelectDatasetParams, selectLineChartDatasetAction} from '../../state/session/views/line-chart-page/actions';
 import {loadProject, LoadProjectParams} from '../../state/session/project/actions';
 import {loadSelectionsAction, LoadSelectionsParams} from '../../state/session/selection/actions';
+import {push} from 'react-router-redux';
+import {invertObj} from 'ramda';
 
 interface StateProps
 {
@@ -32,18 +34,19 @@ interface DispatchProps
     selectDataset(params: SelectDatasetParams): void;
     loadProject(params: LoadProjectParams): void;
     loadSelections(params: LoadSelectionsParams): void;
+    navigate(path: string): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
-const initialState = {
-    selectedTab: 0
+const chartToTab = {
+    '': 0,
+    'line': 1,
+    'bar': 2
 };
 
-class ViewsPageComponent extends PureComponent<Props, Readonly<typeof initialState>>
+class ViewsPageComponent extends PureComponent<Props>
 {
-    readonly state = { ...initialState };
-
     componentDidMount()
     {
         this.props.loadProject({
@@ -58,8 +61,22 @@ class ViewsPageComponent extends PureComponent<Props, Readonly<typeof initialSta
 
     render()
     {
+        const match = this.props.match;
+
         return (
-            <Tabs selectedIndex={this.state.selectedTab}
+            <Route path={match.url + '/:chart?'}
+                   exact={true}
+                   render={(props: RouteComponentProps<{chart: string}>) =>
+                       this.renderBody(props.match.params.chart)} />
+        );
+    }
+
+    renderBody = (chart: string): JSX.Element =>
+    {
+        const index = chartToTab[chart] || 0;
+
+        return (
+            <Tabs selectedIndex={index}
                   onSelect={this.changeTab}>
                 <TabList>
                     <Tab>
@@ -97,7 +114,12 @@ class ViewsPageComponent extends PureComponent<Props, Readonly<typeof initialSta
 
     changeTab = (selectedTab: number) =>
     {
-        this.setState(() => ({ selectedTab }));
+        let path = invertObj(chartToTab)[selectedTab];
+        if (path !== '')
+        {
+            path = `/${path}`;
+        }
+        this.props.navigate(`${this.props.match.url}${path}`);
     }
     selectDataset = (params: SelectDatasetParams) =>
     {
@@ -118,5 +140,6 @@ export const ViewsPage = withRouter(connect<StateProps, DispatchProps>((state: A
     changeRangeFilter: changeRangeFilterAction,
     selectDataset: selectLineChartDatasetAction,
     loadProject: loadProject.started,
-    loadSelections: loadSelectionsAction.started
+    loadSelections: loadSelectionsAction.started,
+    navigate: (path: string) => push(path)
 })(ViewsPageComponent));
