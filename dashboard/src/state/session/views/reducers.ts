@@ -25,9 +25,9 @@ export interface ViewsState
 
 const initialState: GlobalState = {
     rangeFilter: {
-        from: moment().subtract(1, 'w'),
+        from: moment().subtract(1, 'm'),
         to: moment(),
-        entryCount: 50,
+        entryCount: 1000,
         useDateFilter: false
     }
 };
