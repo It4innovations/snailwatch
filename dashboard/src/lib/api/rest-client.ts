@@ -1,7 +1,7 @@
 import {SnailClient} from './snail-client';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import {User} from '../user/user';
 import {Project} from '../project/project';
 import {Measurement} from '../measurement/measurement';
@@ -13,6 +13,7 @@ import {
 } from './dao';
 import {Selection} from '../measurement/selection/selection';
 import {RangeFilter} from '../measurement/selection/range-filter';
+import {UnauthorizedError} from '../errors/unauthorized';
 
 interface ArrayResponse<T>
 {
@@ -249,8 +250,16 @@ export class RestClient implements SnailClient
 
         return Observable
             .fromPromise(axios(request)
-            .then(result => {
-                return result.data;
-            }));
+                .then(result => {
+                    return result.data;
+                })
+                .catch((err: AxiosError) => {
+                    if (err.response.status === 401)
+                    {
+                        throw new UnauthorizedError();
+                    }
+                    throw err;
+                })
+            );
     }
 }

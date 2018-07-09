@@ -9,6 +9,8 @@ import {ServiceContainer} from '../state/app/di';
 import '../util/redux-observable';
 import {any} from 'ramda';
 import {isObject} from 'util';
+import {UnauthorizedError} from '../lib/errors/unauthorized';
+import {clearSession} from '../state/session/actions';
 
 export interface Request
 {
@@ -128,12 +130,20 @@ export function mapRequestToActions<P, S, E>(creator: AsyncActionCreators<P, S, 
                 params: action.payload,
                 result
             })
-        ).catch(error =>
-            Observable.of(creator.failed({
-                params: action.payload,
-                error
-            }))
-        );
+        ).catch(error => {
+            const failed = creator.failed({
+                    params: action.payload,
+                    error
+            });
+            const observables = [failed];
+
+            if (error instanceof UnauthorizedError)
+            {
+                observables.push(clearSession());
+            }
+
+            return Observable.from(observables);
+        });
 }
 
 export function createRequestEpic<P, S, E>(creator: AsyncActionCreators<P, S, E>,
