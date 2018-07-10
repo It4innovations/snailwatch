@@ -3,8 +3,14 @@ import {Store, Action as ReduxAction} from 'redux';
 import {ServiceContainer} from '../../app/di';
 import {AppState} from '../../app/reducers';
 import {
-    createProject, CreateProjectParams, LoadProjectsParams, loadProjects, loadProject,
-    LoadProjectParams, selectProject, loadUploadToken, regenerateUploadToken
+    createProject,
+    CreateProjectParams,
+    loadProjects,
+    loadProject,
+    selectProject,
+    loadUploadToken,
+    regenerateUploadToken,
+    deselectProject
 } from './actions';
 import {Observable} from 'rxjs/Observable';
 import '../../../util/redux-observable';
@@ -20,29 +26,13 @@ import {loadSelectionsAction} from '../selection/actions';
 import {push} from 'react-router-redux';
 import {Navigation} from '../../nav/routes';
 
-const loadProjectsEpic = (action$: ActionsObservable<ReduxAction>,
-                          store: Store<AppState>,
-                          deps: ServiceContainer) =>
-    action$
-        .ofAction(loadProjects.started)
-        .switchMap((action: Action<LoadProjectsParams>) =>
-            {
-                const {user} = action.payload;
-                return mapRequestToActions(loadProjects, action, deps.client.loadProjects(user));
-            }
-        );
+const loadProjectsEpic = createRequestEpic(loadProjects, (action, state, deps) =>
+    deps.client.loadProjects(action.payload.user)
+);
 
-const loadProjectEpic = (action$: ActionsObservable<ReduxAction>,
-                         store: Store<AppState>,
-                         deps: ServiceContainer) =>
-    action$
-        .ofAction(loadProject.started)
-        .switchMap((action: Action<LoadProjectParams>) =>
-            {
-                const {user, name} = action.payload;
-                return mapRequestToActions(loadProject, action, deps.client.loadProject(user, name));
-            }
-        );
+const loadProjectEpic = createRequestEpic(loadProject, (action, state, deps) =>
+    deps.client.loadProject(action.payload.user, action.payload.name)
+);
 
 const createProjectEpic = (action$: ActionsObservable<ReduxAction>,
                            store: Store<AppState>,
@@ -99,11 +89,17 @@ const regenerateUploadTokenEpic = createRequestEpic(regenerateUploadToken, (acti
     deps.client.regenerateUploadToken(action.payload.user, action.payload.project)
 );
 
+const goToProjectSelectionAfterUnselecting = (action$: ActionsObservable<ReduxAction>) =>
+    action$
+    .ofAction(deselectProject)
+    .switchMap(() => Observable.of(push(Navigation.Projects)));
+
 export const projectEpics = combineEpics(
     loadProjectsEpic,
     loadProjectEpic,
     createProjectEpic,
     loadProjectAfterSelectEpic,
     loadUploadTokenEpic,
-    regenerateUploadTokenEpic
+    regenerateUploadTokenEpic,
+    goToProjectSelectionAfterUnselecting
 );
