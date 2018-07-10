@@ -65,11 +65,10 @@ const Dataset = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-right: 4px;
   padding: 20px;
   border: 1px solid #8c8c8c;
   border-radius: 5px;
-  margin-top: -1px;
-  margin-left: -1px;
 
   &:hover {
     border-color: transparent;

@@ -22,6 +22,8 @@ import {loadSelectionsAction, LoadSelectionsParams} from '../../state/session/se
 import {push} from 'react-router-redux';
 import {invertObj} from 'ramda';
 
+import style from './views-page.scss';
+
 interface StateProps
 {
     user: User;
@@ -78,7 +80,7 @@ class ViewsPageComponent extends PureComponent<Props>
         return (
             <Tabs selectedIndex={index}
                   onSelect={this.changeTab}>
-                <TabList>
+                <TabList className={style.tabList}>
                     <Tab>
                         <div title='Chart overview'>
                             <FaTh size={26} />

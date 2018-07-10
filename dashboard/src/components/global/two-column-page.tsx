@@ -12,12 +12,18 @@ interface Props
 
 const Row = styled.div`
   display: flex;
+  align-items: flex-start;
   width: 100%;
 `;
 const MenuColumn = styled.div`
+  width: 400px;
+  margin-top: 1px;
   margin-right: 10px;
-  padding: 0 10px 0 0;
-  border-right: 1px solid black;
+  padding: 10px;
+  background: #EAEAEA;
+  border: 1px solid black;
+  border-radius: 0 5px 5px 0;
+  border-left: 0;
 `;
 const ContentColumn = styled.div`
   flex-grow: 1;
