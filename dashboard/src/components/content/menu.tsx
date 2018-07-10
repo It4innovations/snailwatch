@@ -40,6 +40,9 @@ const MenuLink = styled.div`
   }
   color: #007BFF;
 `;
+const MenuItem = styled(NavItem)<{active: boolean}>`
+  font-weight: ${(props) => props.active ? 'bold' : 'normal'};
+`;
 
 class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
 {
@@ -126,10 +129,11 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
 
     link(name: string, path: string): JSX.Element
     {
+        const active = this.props.location.pathname.startsWith(path);
         return (
-            <NavItem key={name}>
+            <MenuItem key={name} active={active}>
                 <Link to={path} className='nav-link'>{name}</Link>
-            </NavItem>
+            </MenuItem>
         );
     }
 }
