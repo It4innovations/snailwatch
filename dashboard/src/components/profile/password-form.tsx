@@ -1,7 +1,8 @@
 import React, {PureComponent} from 'react';
-import {Button, Input, InputGroup, InputGroupAddon, Alert} from 'reactstrap';
+import {Button, Input, InputGroup, InputGroupAddon} from 'reactstrap';
 import {Request} from '../../util/request';
 import {toast, ToastContainer} from 'react-toastify';
+import {ErrorBox} from '../global/error-box';
 
 interface Props
 {
@@ -90,7 +91,7 @@ export class PasswordForm extends PureComponent<Props, State>
                            value={this.state.form.newRepeated}
                            onChange={e => this.changePasswordValue('newRepeated', e.currentTarget.value)} />
                 </InputGroup>
-                {this.getActiveError() && <Alert color='danger'>{this.getActiveError()}</Alert>}
+                <ErrorBox error={this.getActiveError()} />
                 {this.props.changePasswordRequest.loading && <div>Loading...</div>}
                 <Button onClick={this.tryChangePassword}>Change password</Button>
             </>

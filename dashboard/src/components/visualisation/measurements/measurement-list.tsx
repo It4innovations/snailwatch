@@ -34,6 +34,7 @@ import {SelectionSelectEditor} from '../selection-container/selection-select-edi
 import {Selection} from '../../../lib/measurement/selection/selection';
 import {getSelections} from '../../../state/session/selection/reducer';
 import {getMeasurementsPageSelection} from '../../../state/session/views/measurements-page/reducer';
+import {ErrorBox} from '../../global/error-box';
 
 registerLanguage('json', json);
 
@@ -109,7 +110,7 @@ class MeasurementListComponent extends PureComponent<Props, State>
                     menu={this.renderMenu}
                     content={
                         <div>
-                            {request.error && <div>{request.error}</div>}
+                            <ErrorBox error={request.error} />
                             {this.renderMeasurements()}
                         </div>
                     } />

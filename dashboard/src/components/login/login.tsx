@@ -5,6 +5,7 @@ import {loginUser} from '../../state/session/user/actions';
 import {AppState} from '../../state/app/reducers';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {Request} from '../../util/request';
+import {ErrorBox} from '../global/error-box';
 
 interface StateProps
 {
@@ -22,7 +23,7 @@ class LoginComponent extends PureComponent<StateProps & DispatchProps & RouteCom
         return (
             <div>
                 {this.props.loginRequest.loading && <div>Loading...</div>}
-                {this.props.loginRequest.error && <div>{this.props.loginRequest.error.toString()}</div>}
+                <ErrorBox error={this.props.loginRequest.error} />
                 <LoginForm handleSubmit={this.tryLogin} />
             </div>
         );

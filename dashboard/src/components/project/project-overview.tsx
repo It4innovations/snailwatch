@@ -19,6 +19,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import {toast, ToastContainer} from 'react-toastify';
 import MdContentCopy from 'react-icons/lib/md/content-copy';
 import CardHeader from 'reactstrap/lib/CardHeader';
+import {ErrorBox} from '../global/error-box';
 
 registerLanguage('python', python);
 
@@ -57,7 +58,7 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
     {
         if (this.props.loadProjectRequest.error)
         {
-            return <div>{this.props.loadProjectRequest.error}</div>;
+            return <ErrorBox error={this.props.loadProjectRequest.error} />;
         }
         if (this.props.loadProjectRequest.loading)
         {

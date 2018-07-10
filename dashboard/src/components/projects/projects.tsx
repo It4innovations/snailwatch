@@ -15,6 +15,7 @@ import {Request} from '../../util/request';
 import ListGroup from 'reactstrap/lib/ListGroup';
 import ListGroupItem from 'reactstrap/lib/ListGroupItem';
 import styled from 'styled-components';
+import {ErrorBox} from '../global/error-box';
 
 interface State
 {
@@ -75,9 +76,9 @@ class ProjectsComponent extends PureComponent<Props, State>
         return (
             <div>
                 <h2>Projects</h2>
-                {this.props.loadProjectsRequest.error && <div>{this.props.loadProjectsRequest.error.toString()}</div>}
+                <ErrorBox error={this.props.loadProjectsRequest.error} />
                 {this.props.loadProjectsRequest.loading && <div>Loading...</div>}
-                {this.props.createProjectRequest.error && <div>{this.props.createProjectRequest.error.toString()}</div>}
+                <ErrorBox error={this.props.createProjectRequest.error} />
                 {this.props.createProjectRequest.loading && <div>Creating project...</div>}
                 <ListGroup>
                     {projects.map(project =>

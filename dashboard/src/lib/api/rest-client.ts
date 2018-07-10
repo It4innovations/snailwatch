@@ -13,7 +13,8 @@ import {
 } from './dao';
 import {Selection} from '../measurement/selection/selection';
 import {RangeFilter} from '../measurement/selection/range-filter';
-import {UnauthorizedError} from '../errors/unauthorized';
+import {NetworkError} from '../errors/network';
+import {ApiError} from '../errors/api';
 
 interface ArrayResponse<T>
 {
@@ -250,16 +251,16 @@ export class RestClient implements SnailClient
 
         return Observable
             .fromPromise(axios(request)
-                .then(result => {
-                    return result.data;
-                })
-                .catch((err: AxiosError) => {
-                    if (err.response.status === 401)
-                    {
-                        throw new UnauthorizedError();
-                    }
-                    throw err;
-                })
+                .then(result => result.data)
+                .catch(this.handleError)
             );
+    }
+
+    private handleError(error: AxiosError)
+    {
+        console.error(error);
+        if (error.response === undefined) throw new NetworkError();
+
+        throw new ApiError(error.response.status, error.message);
     }
 }

@@ -9,6 +9,7 @@ import {Request} from '../../../util/request';
 import {sort, equals} from 'ramda';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {isBlank} from '../../../util/string';
+import {ErrorBox} from '../../global/error-box';
 
 interface Props
 {
@@ -93,8 +94,8 @@ export class SelectionManager extends PureComponent<Props, State>
                     onStartEdit={this.startEdit}
                     onCancelEdit={this.stopEdit} />
                 {this.props.selectionRequest.loading && <div>Loading...</div>}
-                {this.props.selectionRequest.error && <div>{this.props.selectionRequest.error}</div>}
-                {this.state.selectionError && <div>{this.state.selectionError}</div>}
+                <ErrorBox error={this.props.selectionRequest.error} />
+                <ErrorBox error={this.state.selectionError} />
             </>
         );
     }

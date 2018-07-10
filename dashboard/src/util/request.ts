@@ -10,8 +10,8 @@ import '../util/redux-observable';
 import 'rxjs/add/observable/from';
 import {any} from 'ramda';
 import {isObject} from 'util';
-import {UnauthorizedError} from '../lib/errors/unauthorized';
 import {clearSession} from '../state/session/actions';
+import {ApiError} from '../lib/errors/api';
 
 export interface Request
 {
@@ -84,7 +84,7 @@ function replaceKey<T, Value>(obj: T, valueSelector: (obj: T) => Value, value: V
 }
 export function hookRequestActions<T extends {}, P, S, E>(reducer: ReducerBuilder<T, T>,
                                                           action: AsyncActionCreators<P, S, E> |
-                                                              AsyncActionCreators<P, S, E>[],
+                                                                  AsyncActionCreators<P, S, E>[],
                                                           requestSelector: (state: T) => Request,
                                                           mapData: (state: T, result: Action<Success<P, S>>)
                                                               => Partial<T> = null)
@@ -133,12 +133,12 @@ export function mapRequestToActions<P, S, E>(creator: AsyncActionCreators<P, S, 
             })
         ).catch(error => {
             const failed = creator.failed({
-                    params: action.payload,
-                    error
+                params: action.payload,
+                error
             });
             const observables = [failed];
 
-            if (error instanceof UnauthorizedError)
+            if (error instanceof ApiError && error.status === 401)
             {
                 observables.push(clearSession());
             }

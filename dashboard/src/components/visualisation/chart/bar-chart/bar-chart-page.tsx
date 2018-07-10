@@ -24,7 +24,7 @@ import {getSelections} from '../../../../state/session/selection/reducer';
 import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/session/selection/actions';
 import {getBarChartPageSelection} from '../../../../state/session/views/bar-chart-page/reducer';
 import {Request} from '../../../../util/request';
-import {RequestComponent} from '../../../global/request-component';
+import {RequestView} from '../../../global/request-view';
 import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {SelectionSelectEditor} from '../../selection-container/selection-select-editor';
@@ -122,7 +122,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
                         onChangeYAxes={this.changeYAxes}
                         onChangeSelection={this.changeSelection} />
                 </Box>
-                <RequestComponent request={this.props.measurementRequest} />
+                <RequestView request={this.props.measurementRequest} />
             </>
         );
     }

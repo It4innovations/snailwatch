@@ -1,12 +1,13 @@
 import React, {PureComponent} from 'react';
 import {Request} from '../../util/request';
+import {ErrorBox} from './error-box';
 
 interface Props
 {
     request: Request;
 }
 
-export class RequestComponent extends PureComponent<Props>
+export class RequestView extends PureComponent<Props>
 {
     render()
     {
@@ -16,7 +17,7 @@ export class RequestComponent extends PureComponent<Props>
         }
         if (this.props.request.error)
         {
-            return <div>{this.props.request.error}</div>;
+            return <ErrorBox error={this.props.request.error} />;
         }
 
         return null;
