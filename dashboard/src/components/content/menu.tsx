@@ -8,7 +8,7 @@ import {
 import {Project} from '../../lib/project/project';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import MdSettings from 'react-icons/lib/md/settings';
+import MdMenu from 'react-icons/lib/md/menu';
 
 interface Props
 {
@@ -106,11 +106,9 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
         return (
             <UncontrolledDropdown>
                 <DropdownToggle>
-                    <MdSettings />
+                    <MdMenu />
                 </DropdownToggle>
-                <DropdownMenu>
-                    {items}
-                </DropdownMenu>
+                <DropdownMenu right>{items}</DropdownMenu>
             </UncontrolledDropdown>
         );
     }
