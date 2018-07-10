@@ -1,10 +1,18 @@
 import React, {FormEvent, PureComponent} from 'react';
-import {Button} from 'reactstrap';
+import {Button, Input} from 'reactstrap';
+import styled from 'styled-components';
 
 interface Props
 {
     onCreateRequest(name: string): void;
 }
+
+const Wrapper = styled.div`
+  width: 400px;
+`;
+const Name = styled(Input)`
+  margin-bottom: 10px;
+`;
 
 export class CreateProject extends PureComponent<Props>
 {
@@ -13,13 +21,12 @@ export class CreateProject extends PureComponent<Props>
     render()
     {
         return (
-            <div>
+            <Wrapper>
                 <form onSubmit={this.handleSubmit}>
-                    <label>Name</label>
-                    <input type='text' name='name' required ref={name => this.name = name} />
+                    <Name type='text' name='name' placeholder='Name' required innerRef={name => this.name = name} />
                     <Button type='submit' color='success'>Create project</Button>
                 </form>
-            </div>
+            </Wrapper>
         );
     }
 

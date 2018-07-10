@@ -22,9 +22,9 @@ class LoginComponent extends PureComponent<StateProps & DispatchProps & RouteCom
     {
         return (
             <div>
-                {this.props.loginRequest.loading && <div>Loading...</div>}
                 <ErrorBox error={this.props.loginRequest.error} />
-                <LoginForm handleSubmit={this.tryLogin} />
+                <LoginForm handleSubmit={this.tryLogin}
+                           loading={this.props.loginRequest.loading} />
             </div>
         );
     }

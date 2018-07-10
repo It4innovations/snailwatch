@@ -16,6 +16,7 @@ import ListGroup from 'reactstrap/lib/ListGroup';
 import ListGroupItem from 'reactstrap/lib/ListGroupItem';
 import styled from 'styled-components';
 import {ErrorBox} from '../global/error-box';
+import {Loading} from '../global/loading';
 
 interface State
 {
@@ -38,6 +39,17 @@ interface DispatchProps
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const Title = styled.h2`
+  margin-right: 10px;
+`;
+const ProjectList = styled(ListGroup)`
+  width: 400px;
+  margin-bottom: 10px !important;
+`;
 const ProjectLink = styled.span`
   cursor: pointer;
   :hover {
@@ -75,12 +87,13 @@ class ProjectsComponent extends PureComponent<Props, State>
         const projects = this.props.projects;
         return (
             <div>
-                <h2>Projects</h2>
+                <Header>
+                    <Title>Projects</Title>
+                    <Loading show={this.props.loadProjectsRequest.loading || this.props.createProjectRequest.loading} />
+                </Header>
                 <ErrorBox error={this.props.loadProjectsRequest.error} />
-                {this.props.loadProjectsRequest.loading && <div>Loading...</div>}
                 <ErrorBox error={this.props.createProjectRequest.error} />
-                {this.props.createProjectRequest.loading && <div>Creating project...</div>}
-                <ListGroup>
+                <ProjectList>
                     {projects.map(project =>
                         <ListGroupItem key={project.id}>
                             <ProjectLink onClick={() => this.selectProject(project)}>
@@ -88,7 +101,7 @@ class ProjectsComponent extends PureComponent<Props, State>
                             </ProjectLink>
                         </ListGroupItem>
                     )}
-                </ListGroup>
+                </ProjectList>
                 {this.state.creatingProject ? this.renderProjectCreation() :
                     <Button
                         onClick={this.startProjectCreate}
