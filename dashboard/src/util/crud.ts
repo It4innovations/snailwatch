@@ -1,4 +1,7 @@
 import actionCreatorFactory, {AsyncActionCreators, Action, AnyAction, Failure, Meta, Success} from 'typescript-fsa';
+import {compose} from 'ramda';
+import {ReducerBuilder} from 'typescript-fsa-reducers';
+import {hookRequestActions, Request} from './request';
 
 interface OptionalCreator<P> {
     type: string;
@@ -31,4 +34,42 @@ export function createCrudActions<T>(name: string): CrudActionWrapper<T>
         update: creator.async<T, boolean>('update'),
         delete: creator.async<T, boolean>('delete')
     };
+}
+
+export function createCrudReducer<State, Item extends {id: string}>(
+    reducer: ReducerBuilder<State, State>,
+    crudActions: CrudActionWrapper<Item>,
+    itemKey: keyof State,
+    requestSelector: (state: State) => Request): typeof reducer
+{
+    return compose(
+        (r: typeof reducer) => hookRequestActions(r,
+            crudActions.load,
+            requestSelector,
+            (state, action) => ({
+                [itemKey]: [...action.payload.result]
+            } as {} as State)
+        ),
+        (r: typeof reducer) => hookRequestActions(r,
+            crudActions.create,
+            requestSelector,
+            (state, action) => ({
+                [itemKey]: [...(state[itemKey] as {} as Item[]), action.payload.result]
+            } as {} as State)
+        ),
+        (r: typeof reducer) => hookRequestActions(reducer,
+            crudActions.update,
+            requestSelector,
+            (state, action) => ({
+                [itemKey]: [...(state[itemKey] as {} as Item[]).filter(v => v.id !== action.payload.params.id),
+                    action.payload.params]
+            } as {} as State)
+        ),
+        (r: typeof reducer) => hookRequestActions(r,
+            crudActions.delete,
+            requestSelector,
+            (state, action) => ({
+                [itemKey]: (state[itemKey] as {} as Item[]).filter(v => v.id !== action.payload.params.id)
+            } as {} as State)
+        ))(reducer);
 }

@@ -1,10 +1,10 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {AnalysisActions} from './actions';
-import {createRequest, hookRequestActions, Request} from '../../../util/request';
+import {createRequest, Request} from '../../../util/request';
 import {AppState} from '../../app/reducers';
-import {compose} from 'ramda';
 import {clearSession} from '../actions';
 import {Analysis} from '../../../lib/analysis/analysis';
+import {createCrudReducer} from '../../../util/crud';
 
 export interface AnalysisState
 {
@@ -20,36 +20,12 @@ const initialState: AnalysisState = {
 let reducer = reducerWithInitialState<AnalysisState>({ ...initialState })
 .case(clearSession, () => ({ ...initialState }));
 
-reducer = compose(
-    (r: typeof reducer) => hookRequestActions(r,
-        AnalysisActions.load,
-        state => state.analysisRequest,
-        (state, action) => ({
-            analyses: [...action.payload.result]
-        })
-    ),
-    (r: typeof reducer) => hookRequestActions(r,
-        AnalysisActions.create,
-        state => state.analysisRequest,
-        (state, action) => ({
-            analyses: [...state.analyses, action.payload.result]
-        })
-    ),
-    (r: typeof reducer) => hookRequestActions(reducer,
-        AnalysisActions.update,
-        state => state.analysisRequest,
-        (state, action) => ({
-            analyses: [...state.analyses.filter(v => v.id !== action.payload.params.id),
-                action.payload.params]
-        })
-    ),
-    (r: typeof reducer) => hookRequestActions(r,
-        AnalysisActions.delete,
-        state => state.analysisRequest,
-        (state, action) => ({
-            analyses: state.analyses.filter(v => v.id !== action.payload.params.id)
-        })
-))(reducer);
+reducer = createCrudReducer<AnalysisState, Analysis>(
+    reducer,
+    AnalysisActions,
+    'analyses',
+    state => state.analysisRequest,
+);
 
 export const getAnalyses = (state: AppState) => state.session.analysis.analyses;
 export const getAnalysisById = (analyses: Analysis[], id: string) =>
