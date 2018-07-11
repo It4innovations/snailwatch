@@ -7,8 +7,7 @@ import {getSelectedProject} from '../../../state/session/project/reducer';
 import {AppState} from '../../../state/app/reducers';
 import {getSelections} from '../../../state/session/selection/reducer';
 import {SelectionManager} from './selection-manager';
-import {createSelectionAction, deleteSelectionAction,
-    updateSelectionAction} from '../../../state/session/selection/actions';
+import {SelectionActions} from '../../../state/session/selection/actions';
 import {Request} from '../../../util/request';
 import {Measurement} from '../../../lib/measurement/measurement';
 
@@ -70,7 +69,7 @@ export const SelectionContainer = withRouter(connect<StateProps, DispatchProps, 
     selections: getSelections(state),
     selectionRequest: state.session.selection.selectionRequest
 }), {
-    createSelection: createSelectionAction.started,
-    updateSelection: updateSelectionAction.started,
-    deleteSelection: deleteSelectionAction.started
+    createSelection: SelectionActions.create.started,
+    updateSelection: SelectionActions.update.started,
+    deleteSelection: SelectionActions.delete.started
 })(SelectionContainerComponent));

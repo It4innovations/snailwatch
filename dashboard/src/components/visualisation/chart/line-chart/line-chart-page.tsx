@@ -11,7 +11,6 @@ import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../measurement-list';
 import {getSelections} from '../../../../state/session/selection/reducer';
-import {loadSelectionsAction} from '../../../../state/session/selection/actions';
 import {LineChartDataset, nameDataset} from './line-chart-dataset';
 import {
     AddDatasetParams,
@@ -28,6 +27,7 @@ import {LineChartSettings} from './line-chart-settings';
 import {LineChartSettingsComponent} from './line-chart-settings-component';
 import {Project} from '../../../../lib/project/project';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
+import {SelectionActions} from '../../../../state/session/selection/actions';
 
 interface OwnProps
 {
@@ -194,7 +194,7 @@ export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnPr
     xAxis: state.session.views.lineChartPage.xAxis,
     datasets: state.session.views.lineChartPage.datasets
 }), {
-    loadSelections: () => loadSelectionsAction.started({}),
+    loadSelections: SelectionActions.load.started,
     setXAxis: setLineChartXAxisAction,
     addDataset: addLineChartDatasetAction.started,
     deleteDataset: deleteLineChartDatasetAction,

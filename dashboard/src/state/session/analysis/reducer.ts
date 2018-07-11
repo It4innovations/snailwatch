@@ -1,5 +1,5 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {createAnalysisAction, deleteAnalysisAction, loadAnalysesAction, updateAnalysisAction} from './actions';
+import {AnalysisActions} from './actions';
 import {createRequest, hookRequestActions, Request} from '../../../util/request';
 import {AppState} from '../../app/reducers';
 import {compose} from 'ramda';
@@ -22,21 +22,21 @@ let reducer = reducerWithInitialState<AnalysisState>({ ...initialState })
 
 reducer = compose(
     (r: typeof reducer) => hookRequestActions(r,
-        loadAnalysesAction,
+        AnalysisActions.load,
         state => state.analysisRequest,
         (state, action) => ({
             analyses: [...action.payload.result]
         })
     ),
     (r: typeof reducer) => hookRequestActions(r,
-        createAnalysisAction,
+        AnalysisActions.create,
         state => state.analysisRequest,
         (state, action) => ({
             analyses: [...state.analyses, action.payload.result]
         })
     ),
     (r: typeof reducer) => hookRequestActions(reducer,
-        updateAnalysisAction,
+        AnalysisActions.update,
         state => state.analysisRequest,
         (state, action) => ({
             analyses: [...state.analyses.filter(v => v.id !== action.payload.params.id),
@@ -44,7 +44,7 @@ reducer = compose(
         })
     ),
     (r: typeof reducer) => hookRequestActions(r,
-        deleteAnalysisAction,
+        AnalysisActions.delete,
         state => state.analysisRequest,
         (state, action) => ({
             analyses: state.analyses.filter(v => v.id !== action.payload.params.id)

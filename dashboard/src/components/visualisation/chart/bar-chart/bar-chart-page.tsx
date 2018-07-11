@@ -18,7 +18,7 @@ import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../measurement-list';
 import {getSelections} from '../../../../state/session/selection/reducer';
-import {loadSelectionsAction} from '../../../../state/session/selection/actions';
+import {SelectionActions} from '../../../../state/session/selection/actions';
 import {getBarChartPageSelection} from '../../../../state/session/views/bar-chart-page/reducer';
 import {Request} from '../../../../util/request';
 import {RequestView} from '../../../global/request-view';
@@ -174,7 +174,7 @@ export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnPro
     selection: getBarChartPageSelection(state)
 }), {
     loadMeasurements: loadBarChartMeasurementsAction.started,
-    loadSelections: () => loadSelectionsAction.started({}),
+    loadSelections: SelectionActions.load.started,
     setXAxis: setBarChartXAxisAction,
     setYAxes: setBarChartYAxesAction,
     setSelection: setBarChartSelection

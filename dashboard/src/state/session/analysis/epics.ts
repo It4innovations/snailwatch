@@ -2,20 +2,20 @@ import {combineEpics} from 'redux-observable';
 import '../../../util/redux-observable';
 import 'rxjs/add/observable/of';
 import {createRequestEpic} from '../../../util/request';
-import {createAnalysisAction, deleteAnalysisAction, loadAnalysesAction, updateAnalysisAction} from './actions';
+import {AnalysisActions} from './actions';
 import {getUser} from '../user/reducer';
 import {getSelectedProject} from '../project/reducer';
 
-const loadAnalyses = createRequestEpic(loadAnalysesAction, (action, state, deps) =>
+const loadAnalyses = createRequestEpic(AnalysisActions.load, (action, state, deps) =>
     deps.client.loadAnalyses(getUser(state), getSelectedProject(state))
 );
-const createAnalysis = createRequestEpic(createAnalysisAction, (action, state, deps) =>
+const createAnalysis = createRequestEpic(AnalysisActions.create, (action, state, deps) =>
     deps.client.createAnalysis(getUser(state), getSelectedProject(state), action.payload)
 );
-const updateAnalysis = createRequestEpic(updateAnalysisAction, (action, state, deps) =>
+const updateAnalysis = createRequestEpic(AnalysisActions.update, (action, state, deps) =>
     deps.client.updateAnalysis(getUser(state), action.payload)
 );
-const deleteAnalysis = createRequestEpic(deleteAnalysisAction, (action, state, deps) =>
+const deleteAnalysis = createRequestEpic(AnalysisActions.delete, (action, state, deps) =>
     deps.client.deleteAnalysis(getUser(state), action.payload)
 );
 

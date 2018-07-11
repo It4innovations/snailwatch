@@ -1,6 +1,5 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {createSelectionAction, deleteSelectionAction, loadSelectionsAction,
-    updateSelectionAction} from './actions';
+import {SelectionActions} from './actions';
 import {createRequest, hookRequestActions, Request} from '../../../util/request';
 import {Selection} from '../../../lib/measurement/selection/selection';
 import {AppState} from '../../app/reducers';
@@ -23,21 +22,21 @@ let reducer = reducerWithInitialState<SelectionState>({ ...initialState })
 
 reducer = compose(
     (r: typeof reducer) => hookRequestActions(r,
-        loadSelectionsAction,
+        SelectionActions.load,
         state => state.selectionRequest,
         (state, action) => ({
             selections: [...action.payload.result]
         })
     ),
     (r: typeof reducer) => hookRequestActions(r,
-        createSelectionAction,
+        SelectionActions.create,
         state => state.selectionRequest,
         (state, action) => ({
             selections: [...state.selections, action.payload.result]
         })
     ),
     (r: typeof reducer) => hookRequestActions(reducer,
-        updateSelectionAction,
+        SelectionActions.update,
         state => state.selectionRequest,
         (state, action) => ({
             selections: [...state.selections.filter(v => v.id !== action.payload.params.id),
@@ -45,7 +44,7 @@ reducer = compose(
         })
     ),
     (r: typeof reducer) => hookRequestActions(r,
-        deleteSelectionAction,
+        SelectionActions.delete,
         state => state.selectionRequest,
         (state, action) => ({
             selections: state.selections.filter(v => v.id !== action.payload.params.id)

@@ -21,7 +21,7 @@ import {getUser} from '../user/reducer';
 import {Action} from 'typescript-fsa';
 import {AppEpic} from '../../app/app-epic';
 import {createRequestEpic, mapRequestToActions} from '../../../util/request';
-import {loadSelectionsAction} from '../selection/actions';
+import {SelectionActions} from '../selection/actions';
 import {push} from 'react-router-redux';
 import {Navigation} from '../../nav/routes';
 import {getSelectedProject} from './reducer';
@@ -63,7 +63,7 @@ const loadProjectAfterSelectEpic: AppEpic = (action$: ActionsObservable<ReduxAct
                 const selections = await deps.client.loadSelections(user, project).toPromise();
 
                 return [
-                    loadSelectionsAction.done({
+                    SelectionActions.load.done({
                         params: {
                             user,
                             project

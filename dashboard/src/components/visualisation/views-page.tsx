@@ -16,7 +16,7 @@ import FaTh from 'react-icons/lib/fa/th';
 import {GridChartPage} from './chart/grid-chart/grid-chart-page';
 import {SelectDatasetParams, selectLineChartDatasetAction} from '../../state/session/views/line-chart-page/actions';
 import {loadProject} from '../../state/session/project/actions';
-import {loadSelectionsAction} from '../../state/session/selection/actions';
+import {SelectionActions} from '../../state/session/selection/actions';
 import {push} from 'react-router-redux';
 import {invertObj} from 'ramda';
 
@@ -132,6 +132,6 @@ export const ViewsPage = withRouter(connect<StateProps, DispatchProps>((state: A
     changeRangeFilter: changeRangeFilterAction,
     selectDataset: selectLineChartDatasetAction,
     loadProject: loadProject.started,
-    loadSelections: () => loadSelectionsAction.started({}),
+    loadSelections: SelectionActions.load.started,
     navigate: (path: string) => push(path)
 })(ViewsPageComponent));
