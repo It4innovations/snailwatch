@@ -78,7 +78,7 @@ const DeleteIcon = styled(MdDelete)`
 
 class MeasurementListComponent extends PureComponent<Props, State>
 {
-    readonly state = {
+    readonly state: State = {
         csvExport: exportCSV([])
     };
 

@@ -4,7 +4,6 @@ import {ServiceContainer} from '../../app/di';
 import {AppState} from '../../app/reducers';
 import {
     createProject,
-    CreateProjectParams,
     loadProjects,
     loadProject,
     selectProject,
@@ -25,13 +24,14 @@ import {createRequestEpic, mapRequestToActions} from '../../../util/request';
 import {loadSelectionsAction} from '../selection/actions';
 import {push} from 'react-router-redux';
 import {Navigation} from '../../nav/routes';
+import {getSelectedProject} from './reducer';
 
 const loadProjectsEpic = createRequestEpic(loadProjects, (action, state, deps) =>
-    deps.client.loadProjects(action.payload.user)
+    deps.client.loadProjects(getUser(state))
 );
 
 const loadProjectEpic = createRequestEpic(loadProject, (action, state, deps) =>
-    deps.client.loadProject(action.payload.user, action.payload.name)
+    deps.client.loadProject(getUser(state), action.payload)
 );
 
 const createProjectEpic = (action$: ActionsObservable<ReduxAction>,
@@ -39,13 +39,12 @@ const createProjectEpic = (action$: ActionsObservable<ReduxAction>,
                            deps: ServiceContainer) =>
     action$
         .ofAction(createProject.started)
-        .switchMap((action: Action<CreateProjectParams>) =>
+        .switchMap((action: Action<string>) =>
             mapRequestToActions(createProject, action,
-                deps.client.createProject(action.payload.user, action.payload.name))
+                deps.client.createProject(getUser(store.getState()), action.payload))
                 .flatMap(result => Observable.from([
                     result,
                     loadProjects.started({
-                        user: action.payload.user,
                         force: true
                     })
                 ]))
@@ -83,10 +82,10 @@ const loadProjectAfterSelectEpic: AppEpic = (action$: ActionsObservable<ReduxAct
         });
 
 const loadUploadTokenEpic = createRequestEpic(loadUploadToken, (action, state, deps) =>
-    deps.client.loadUploadToken(action.payload.user, action.payload.project)
+    deps.client.loadUploadToken(getUser(state), getSelectedProject(state))
 );
 const regenerateUploadTokenEpic = createRequestEpic(regenerateUploadToken, (action, state, deps) =>
-    deps.client.regenerateUploadToken(action.payload.user, action.payload.project)
+    deps.client.regenerateUploadToken(getUser(state), getSelectedProject(state))
 );
 
 const goToProjectSelectionAfterUnselecting = (action$: ActionsObservable<ReduxAction>) =>

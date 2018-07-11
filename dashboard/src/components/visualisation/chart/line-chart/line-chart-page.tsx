@@ -3,11 +3,7 @@ import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
 import {LineChart} from './line-chart';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
-import {User} from '../../../../lib/user/user';
-import {Project} from '../../../../lib/project/project';
 import {connect} from 'react-redux';
-import {getUser} from '../../../../state/session/user/reducer';
-import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {AppState} from '../../../../state/app/reducers';
 import {Selection} from '../../../../lib/measurement/selection/selection';
 import styled from 'styled-components';
@@ -15,7 +11,7 @@ import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../measurement-list';
 import {getSelections} from '../../../../state/session/selection/reducer';
-import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/session/selection/actions';
+import {loadSelectionsAction} from '../../../../state/session/selection/actions';
 import {LineChartDataset, nameDataset} from './line-chart-dataset';
 import {
     AddDatasetParams,
@@ -30,6 +26,8 @@ import {MeasurementKeys} from '../../../global/measurement-keys';
 import {sort} from 'ramda';
 import {LineChartSettings} from './line-chart-settings';
 import {LineChartSettingsComponent} from './line-chart-settings-component';
+import {Project} from '../../../../lib/project/project';
+import {getSelectedProject} from '../../../../state/session/project/reducer';
 
 interface OwnProps
 {
@@ -38,7 +36,6 @@ interface OwnProps
 }
 interface StateProps
 {
-    user: User;
     project: Project;
     selections: Selection[];
     xAxis: string;
@@ -46,7 +43,7 @@ interface StateProps
 }
 interface DispatchProps
 {
-    loadSelections(params: LoadSelectionsParams): void;
+    loadSelections(): void;
     setXAxis(axis: string): void;
     addDataset(params: AddDatasetParams): void;
     deleteDataset(dataset: LineChartDataset): void;
@@ -80,10 +77,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
 
     componentDidMount()
     {
-        this.props.loadSelections({
-            user: this.props.user,
-            project: this.props.project
-        });
+        this.props.loadSelections();
         this.reloadDatasets(this.props.rangeFilter);
     }
 
@@ -162,16 +156,12 @@ class LineChartPageComponent extends PureComponent<Props, State>
     addDataset = () =>
     {
         this.props.addDataset({
-            user: this.props.user,
-            project: this.props.project,
             rangeFilter: this.props.rangeFilter
         });
     }
     updateDataset = (dataset: LineChartDataset, newDataset: LineChartDataset) =>
     {
         this.props.updateDataset({
-            user: this.props.user,
-            project: this.props.project,
             rangeFilter: this.props.rangeFilter,
             dataset,
             selectionId: newDataset.selectionId,
@@ -194,22 +184,17 @@ class LineChartPageComponent extends PureComponent<Props, State>
     }
     reloadDatasets = (rangeFilter: RangeFilter) =>
     {
-        this.props.reloadDatasets({
-            user: this.props.user,
-            project: this.props.project,
-            rangeFilter
-        });
+        this.props.reloadDatasets({ rangeFilter });
     }
 }
 
 export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
-    user: getUser(state),
     project: getSelectedProject(state),
     selections: getSelections(state),
     xAxis: state.session.views.lineChartPage.xAxis,
     datasets: state.session.views.lineChartPage.datasets
 }), {
-    loadSelections: loadSelectionsAction.started,
+    loadSelections: () => loadSelectionsAction.started({}),
     setXAxis: setLineChartXAxisAction,
     addDataset: addLineChartDatasetAction.started,
     deleteDataset: deleteLineChartDatasetAction,

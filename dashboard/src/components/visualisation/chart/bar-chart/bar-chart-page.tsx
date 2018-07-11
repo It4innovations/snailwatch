@@ -3,7 +3,6 @@ import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
 import {BarChart} from './bar-chart';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
-import {User} from '../../../../lib/user/user';
 import {Project} from '../../../../lib/project/project';
 import {
     loadBarChartMeasurementsAction,
@@ -11,8 +10,6 @@ import {
     setBarChartXAxisAction, setBarChartYAxesAction
 } from '../../../../state/session/views/bar-chart-page/actions';
 import {connect} from 'react-redux';
-import {getUser} from '../../../../state/session/user/reducer';
-import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {AppState} from '../../../../state/app/reducers';
 import {DataSelector} from './data-selector';
 import {Selection} from '../../../../lib/measurement/selection/selection';
@@ -21,13 +18,14 @@ import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../measurement-list';
 import {getSelections} from '../../../../state/session/selection/reducer';
-import {loadSelectionsAction, LoadSelectionsParams} from '../../../../state/session/selection/actions';
+import {loadSelectionsAction} from '../../../../state/session/selection/actions';
 import {getBarChartPageSelection} from '../../../../state/session/views/bar-chart-page/reducer';
 import {Request} from '../../../../util/request';
 import {RequestView} from '../../../global/request-view';
 import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {SelectionSelectEditor} from '../../selection-container/selection-select-editor';
+import {getSelectedProject} from '../../../../state/session/project/reducer';
 
 interface OwnProps
 {
@@ -36,7 +34,6 @@ interface OwnProps
 }
 interface StateProps
 {
-    user: User;
     project: Project;
     selections: Selection[];
     measurements: Measurement[];
@@ -48,7 +45,7 @@ interface StateProps
 interface DispatchProps
 {
     loadMeasurements(params: LoadMeasurementParams): void;
-    loadSelections(params: LoadSelectionsParams): void;
+    loadSelections(): void;
     setXAxis(axis: string): void;
     setYAxes(axes: string[]): void;
     setSelection(selectionId: string): void;
@@ -75,10 +72,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
     componentDidMount()
     {
         this.loadMeasurements();
-        this.props.loadSelections({
-            user: this.props.user,
-            project: this.props.project
-        });
+        this.props.loadSelections();
     }
     componentDidUpdate(props: Props, state: State)
     {
@@ -147,8 +141,6 @@ class BarChartPageComponent extends PureComponent<Props, State>
     loadMeasurements = () =>
     {
         this.props.loadMeasurements({
-            user: this.props.user,
-            project: this.props.project,
             rangeFilter: this.props.rangeFilter,
             selection: this.props.selection
         });
@@ -173,7 +165,6 @@ class BarChartPageComponent extends PureComponent<Props, State>
 }
 
 export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
-    user: getUser(state),
     project: getSelectedProject(state),
     selections: getSelections(state),
     measurements: state.session.views.barChartPage.measurements,
@@ -183,7 +174,7 @@ export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnPro
     selection: getBarChartPageSelection(state)
 }), {
     loadMeasurements: loadBarChartMeasurementsAction.started,
-    loadSelections: loadSelectionsAction.started,
+    loadSelections: () => loadSelectionsAction.started({}),
     setXAxis: setBarChartXAxisAction,
     setYAxes: setBarChartYAxesAction,
     setSelection: setBarChartSelection

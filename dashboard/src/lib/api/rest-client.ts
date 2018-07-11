@@ -9,12 +9,13 @@ import {Filter} from '../measurement/selection/filter';
 import {buildRequestFilter} from './filter';
 import {
     DAO, MeasurementDAO, ProjectDAO, SelectionDAO,
-    parseMeasurement, parseSelection, parseProject, serializeDate, UserDAO
+    parseMeasurement, parseSelection, parseProject, serializeDate, UserDAO, parseAnalysis, AnalysisDAO
 } from './dao';
 import {Selection} from '../measurement/selection/selection';
 import {RangeFilter} from '../measurement/selection/range-filter';
 import {NetworkError} from '../errors/network';
 import {ApiError} from '../errors/api';
+import {Analysis} from '../analysis/analysis';
 
 interface ArrayResponse<T>
 {
@@ -215,8 +216,67 @@ export class RestClient implements SnailClient
             }))
         }, {
             token: user.token
+        }).map(() => true);
+    }
+
+    loadAnalyses(user: User, project: Project): Observable<Analysis[]>
+    {
+        return this.call('/analyses', 'GET', {
+            where: JSON.stringify({
+                project: project.id
+            })
+        }, {
+            token: user.token
         })
-        .map(() => true);
+            .map((data: ArrayResponse<AnalysisDAO>) =>
+                data._items
+                    .map(v => parseAnalysis(v))
+            );
+    }
+    createAnalysis(user: User, project: Project, analysis: Analysis): Observable<Analysis>
+    {
+        return this.call('/analyses', 'POST', {
+            name: analysis.name,
+            project: analysis.id,
+            filters: analysis.filters.map(f => ({
+                path: f.path,
+                operator: f.operator,
+                value: f.value
+            })),
+            trigger: analysis.trigger,
+            observedvalue: analysis.observedValue,
+            ratio: analysis.ratio
+        }, {
+            token: user.token
+        })
+            .map((data: DAO) => ({
+                ...analysis,
+                id: data._id
+            }));
+    }
+
+    deleteAnalysis(user: User, analysis: Analysis): Observable<boolean>
+    {
+        return this.call(`/analyses/${analysis.id}`, 'DELETE', {}, {
+            token: user.token
+        }).map(() => true);
+    }
+
+    updateAnalysis(user: User, analysis: Analysis): Observable<boolean>
+    {
+        return this.call(`/analyses/${analysis.id}`, 'PATCH', {
+            name: analysis.name,
+            filters: analysis.filters.map(f => ({
+                path: f.path,
+                operator: f.operator,
+                value: f.value
+            })),
+            trigger: analysis.trigger,
+            observedvalue: analysis.observedValue,
+            ratio: analysis.ratio
+        }, {
+            token: user.token
+        }).map(() => true);
     }
 
     private call<T>(path: string, method: 'GET' | 'POST' | 'DELETE' | 'PATCH',

@@ -4,6 +4,7 @@ import {User} from '../user/user';
 import {Measurement} from '../measurement/measurement';
 import {Selection} from '../measurement/selection/selection';
 import {RangeFilter} from '../measurement/selection/range-filter';
+import {Analysis} from '../analysis/analysis';
 
 export interface SnailClient
 {
@@ -24,7 +25,12 @@ export interface SnailClient
     deleteAllMeasurements(user: User): Observable<boolean>;
 
     loadSelections(user: User, project: Project): Observable<Selection[]>;
-    createSelection(user: User, project: Project, view: Selection): Observable<Selection>;
+    createSelection(user: User, project: Project, selection: Selection): Observable<Selection>;
     deleteSelection(user: User, view: Selection): Observable<boolean>;
     updateSelection(user: User, view: Selection): Observable<boolean>;
+
+    loadAnalyses(user: User, project: Project): Observable<Analysis[]>;
+    createAnalysis(user: User, project: Project, analysis: Analysis): Observable<Analysis>;
+    deleteAnalysis(user: User, analysis: Analysis): Observable<boolean>;
+    updateAnalysis(user: User, analysis: Analysis): Observable<boolean>;
 }

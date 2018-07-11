@@ -40,15 +40,15 @@ reducer = compose(
         updateSelectionAction,
         state => state.selectionRequest,
         (state, action) => ({
-            selections: [...state.selections.filter(v => v.id !== action.payload.params.selection.id),
-                action.payload.params.selection]
+            selections: [...state.selections.filter(v => v.id !== action.payload.params.id),
+                action.payload.params]
         })
     ),
     (r: typeof reducer) => hookRequestActions(r,
         deleteSelectionAction,
         state => state.selectionRequest,
         (state, action) => ({
-            selections: state.selections.filter(v => v.id !== action.payload.params.selection.id)
+            selections: state.selections.filter(v => v.id !== action.payload.params.id)
         })
 ))(reducer);
 

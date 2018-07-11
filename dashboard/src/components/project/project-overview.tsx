@@ -13,7 +13,7 @@ import python from 'react-syntax-highlighter/languages/hljs/python';
 import {dracula} from 'react-syntax-highlighter/styles/hljs';
 import {API_SERVER} from '../../configuration';
 import Badge from 'reactstrap/lib/Badge';
-import {loadUploadToken, regenerateUploadToken, UploadTokenParams} from '../../state/session/project/actions';
+import {loadUploadToken, regenerateUploadToken} from '../../state/session/project/actions';
 import styled from 'styled-components';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import {toast, ToastContainer} from 'react-toastify';
@@ -33,8 +33,8 @@ interface StateProps
 }
 interface DispatchProps
 {
-    loadUploadToken(params: UploadTokenParams): void;
-    regenerateUploadToken(params: UploadTokenParams): void;
+    loadUploadToken(): void;
+    regenerateUploadToken(): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
@@ -48,10 +48,7 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
 {
     componentDidMount()
     {
-        this.props.loadUploadToken({
-            user: this.props.user,
-            project: this.props.project
-        });
+        this.props.loadUploadToken();
     }
 
     render()
@@ -188,10 +185,7 @@ session.upload_measurement(
 
     regenerateUploadToken = () =>
     {
-        this.props.regenerateUploadToken({
-            user: this.props.user,
-            project: this.props.project
-        });
+        this.props.regenerateUploadToken();
     }
 }
 
@@ -202,6 +196,6 @@ export const ProjectOverview = withRouter(connect<StateProps, DispatchProps>((st
     uploadToken: getUploadToken(state),
     uploadTokenRequest: state.session.project.uploadTokenRequest
 }), {
-    loadUploadToken: loadUploadToken.started,
-    regenerateUploadToken: regenerateUploadToken.started
+    loadUploadToken: () => loadUploadToken.started({}),
+    regenerateUploadToken: () => regenerateUploadToken.started({})
 })(ProjectOverviewComponent));

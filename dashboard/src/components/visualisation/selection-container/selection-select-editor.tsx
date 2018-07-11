@@ -21,7 +21,7 @@ type State = Readonly<typeof initialState>;
 
 export class SelectionSelectEditor extends PureComponent<Props, State>
 {
-    readonly state = initialState;
+    readonly state: State = initialState;
 
     render()
     {

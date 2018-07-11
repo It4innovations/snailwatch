@@ -14,7 +14,7 @@ type State = Readonly<typeof initialState>;
 
 export class ErrorBox extends PureComponent<Props, State>
 {
-    readonly state = initialState;
+    readonly state: State = initialState;
 
     componentDidUpdate(prev: Props)
     {

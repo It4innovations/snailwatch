@@ -2,10 +2,7 @@ import React, {PureComponent} from 'react';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {Project} from '../../lib/project/project';
-import {User} from '../../lib/user/user';
-import {
-    createProject, CreateProjectParams, loadProjects, selectProject
-} from '../../state/session/project/actions';
+import {createProject, loadProjects, selectProject} from '../../state/session/project/actions';
 import {getUser} from '../../state/session/user/reducer';
 import {AppState} from '../../state/app/reducers';
 import {getProjects} from '../../state/session/project/reducer';
@@ -24,7 +21,6 @@ interface State
 }
 interface StateProps
 {
-    user: User;
     projects: Project[];
     loadProjectsRequest: Request;
     createProjectRequest: Request;
@@ -32,9 +28,9 @@ interface StateProps
 }
 interface DispatchProps
 {
-    loadProjects(user: User): void;
+    loadProjects(): void;
     selectProject(name: string): void;
-    createProject(params: CreateProjectParams): void;
+    createProject(name: string): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
@@ -79,7 +75,7 @@ class ProjectsComponent extends PureComponent<Props, State>
 
     componentDidMount()
     {
-        this.props.loadProjects(this.props.user);
+        this.props.loadProjects();
     }
 
     render()
@@ -123,10 +119,7 @@ class ProjectsComponent extends PureComponent<Props, State>
     }
     createProject = (name: string) =>
     {
-        this.props.createProject({
-            user: this.props.user,
-            name
-        });
+        this.props.createProject(name);
     }
 
     selectProject = (project: Project) =>
@@ -142,7 +135,7 @@ export const Projects = withRouter(connect<StateProps, DispatchProps>((state: Ap
     user: getUser(state),
     projects: getProjects(state)
 }), {
-    loadProjects: (user: User) => loadProjects.started({ user, force: true }),
+    loadProjects: () => loadProjects.started({ force: true }),
     selectProject: selectProject.started,
     createProject: createProject.started
 })(ProjectsComponent));

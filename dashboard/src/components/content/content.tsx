@@ -19,6 +19,7 @@ import {clearSession} from '../../state/session/actions';
 import {deselectProject} from '../../state/session/project/actions';
 
 import './global.scss';
+import {AnalysisPage} from '../analysis/analysis-page';
 
 interface StateProps
 {
@@ -51,12 +52,15 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
                       deselectProject={this.props.deselectProject} />
                 <Body>
                     <Switch>
-                        <SwitchRoute path={Routes.Login} component={Login}
-                                     usePrimaryRoute={!this.props.authenticated} redirect={Navigation.Projects} />
+                        <SwitchRoute path={Routes.Login}
+                                     component={Login}
+                                     usePrimaryRoute={!this.props.authenticated}
+                                     redirect={Navigation.Projects} />
                         {this.authRoute(Routes.Profile, Profile)}
-                        {this.isProjectSelected() && this.authRoute(Routes.Overview, ProjectOverview)}
-                        {this.isProjectSelected() && this.authRoute(Routes.MeasurementList, MeasurementList)}
-                        {this.isProjectSelected() && this.authRoute(Routes.Views, ViewsPage)}
+                        {this.authRoute(Routes.Overview, ProjectOverview, true)}
+                        {this.authRoute(Routes.MeasurementList, MeasurementList, true)}
+                        {this.authRoute(Routes.Views, ViewsPage, true)}
+                        {this.authRoute(Routes.Analysis, AnalysisPage, true)}
                         {this.authRoute(Routes.Projects, Projects)}
                         {this.authRoute(Routes.Logout, this.logoutUser)}
                         {this.getAuthenticatedFallback()}
@@ -73,7 +77,7 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
         {
             if (this.isProjectSelected())
             {
-                return <Redirect to={Navigation.Overview} />;
+                return <Redirect to={Navigation.Views} />;
             }
             else return <Redirect to={Navigation.Projects} />;
         }
@@ -81,10 +85,15 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
         return null;
     }
 
-    authRoute = <T extends {}>(path: string, component: React.ComponentType<T>): JSX.Element =>
+    authRoute = <T extends {}>(path: string, component: React.ComponentType<T>, requiresProject: boolean = false)
+        : JSX.Element =>
     {
-        return <SwitchRoute path={path} component={component}
-                     usePrimaryRoute={this.props.authenticated} redirect={Navigation.Login} />;
+        if (requiresProject && !this.isProjectSelected()) return null;
+
+        return <SwitchRoute path={path}
+                            component={component}
+                            usePrimaryRoute={this.props.authenticated}
+                            redirect={Navigation.Login} />;
     }
 
     logoutUser = (): JSX.Element =>

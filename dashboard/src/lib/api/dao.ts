@@ -3,6 +3,7 @@ import {Measurement} from '../measurement/measurement';
 import moment, {Moment} from 'moment';
 import {Project} from '../project/project';
 import {Selection} from '../measurement/selection/selection';
+import {Analysis} from '../analysis/analysis';
 
 export interface DAO
 {
@@ -31,11 +32,23 @@ export interface MeasurementDAO extends DAO
 export interface SelectionDAO extends DAO
 {
     name: string;
-    filters: Array<{
+    filters: {
         path: string;
         operator: Operator,
         value: string;
-    }>;
+    }[];
+}
+export interface AnalysisDAO extends DAO
+{
+    name: string;
+    filters: {
+        path: string;
+        operator: Operator,
+        value: string;
+    }[];
+    trigger: string;
+    observedvalue: string;
+    ratio: number;
 }
 
 export function parseProject(project: ProjectDAO): Project
@@ -67,6 +80,21 @@ export function parseSelection(selection: SelectionDAO): Selection
             operator: f.operator,
             value: f.value
         }))
+    };
+}
+export function parseAnalysis(analysis: AnalysisDAO): Analysis
+{
+    return {
+        id: analysis._id,
+        name: analysis.name,
+        filters: analysis.filters.map(f => ({
+            path: f.path,
+            operator: f.operator,
+            value: f.value
+        })),
+        trigger: analysis.trigger,
+        observedValue: analysis.observedvalue,
+        ratio: analysis.ratio
     };
 }
 

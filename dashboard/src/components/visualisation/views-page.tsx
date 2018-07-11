@@ -3,8 +3,6 @@ import {connect} from 'react-redux';
 import {Route, RouteComponentProps, withRouter} from 'react-router';
 import {AppState} from '../../state/app/reducers';
 import {Project} from '../../lib/project/project';
-import {User} from '../../lib/user/user';
-import {getUser} from '../../state/session/user/reducer';
 import {getSelectedProject} from '../../state/session/project/reducer';
 import {BarChartPage} from './chart/bar-chart/bar-chart-page';
 import {LineChartPage} from './chart/line-chart/line-chart-page';
@@ -17,8 +15,8 @@ import {changeRangeFilterAction} from '../../state/session/views/actions';
 import FaTh from 'react-icons/lib/fa/th';
 import {GridChartPage} from './chart/grid-chart/grid-chart-page';
 import {SelectDatasetParams, selectLineChartDatasetAction} from '../../state/session/views/line-chart-page/actions';
-import {loadProject, LoadProjectParams} from '../../state/session/project/actions';
-import {loadSelectionsAction, LoadSelectionsParams} from '../../state/session/selection/actions';
+import {loadProject} from '../../state/session/project/actions';
+import {loadSelectionsAction} from '../../state/session/selection/actions';
 import {push} from 'react-router-redux';
 import {invertObj} from 'ramda';
 
@@ -26,7 +24,6 @@ import style from './views-page.scss';
 
 interface StateProps
 {
-    user: User;
     project: Project;
     rangeFilter: RangeFilter;
 }
@@ -34,8 +31,8 @@ interface DispatchProps
 {
     changeRangeFilter(rangeFilter: RangeFilter): void;
     selectDataset(params: SelectDatasetParams): void;
-    loadProject(params: LoadProjectParams): void;
-    loadSelections(params: LoadSelectionsParams): void;
+    loadProject(name: string): void;
+    loadSelections(): void;
     navigate(path: string): void;
 }
 
@@ -51,14 +48,8 @@ class ViewsPageComponent extends PureComponent<Props>
 {
     componentDidMount()
     {
-        this.props.loadProject({
-            user: this.props.user,
-            name: this.props.project.name
-        });
-        this.props.loadSelections({
-            user: this.props.user,
-            project: this.props.project
-        });
+        this.props.loadProject(this.props.project.name);
+        this.props.loadSelections();
     }
 
     render()
@@ -135,13 +126,12 @@ class ViewsPageComponent extends PureComponent<Props>
 }
 
 export const ViewsPage = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
-    user: getUser(state),
     project: getSelectedProject(state),
     rangeFilter: getRangeFilter(state)
 }), {
     changeRangeFilter: changeRangeFilterAction,
     selectDataset: selectLineChartDatasetAction,
     loadProject: loadProject.started,
-    loadSelections: loadSelectionsAction.started,
+    loadSelections: () => loadSelectionsAction.started({}),
     navigate: (path: string) => push(path)
 })(ViewsPageComponent));

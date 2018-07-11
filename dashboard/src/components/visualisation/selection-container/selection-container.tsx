@@ -1,18 +1,14 @@
 import React, {PureComponent} from 'react';
 import {Project} from '../../../lib/project/project';
-import {User} from '../../../lib/user/user';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {Selection} from '../../../lib/measurement/selection/selection';
-import {getUser} from '../../../state/session/user/reducer';
 import {getSelectedProject} from '../../../state/session/project/reducer';
 import {AppState} from '../../../state/app/reducers';
 import {getSelections} from '../../../state/session/selection/reducer';
 import {SelectionManager} from './selection-manager';
-import {
-    createSelectionAction, CreateSelectionParams, deleteSelectionAction, DeleteSelectionParams,
-    updateSelectionAction, UpdateSelectionParams
-} from '../../../state/session/selection/actions';
+import {createSelectionAction, deleteSelectionAction,
+    updateSelectionAction} from '../../../state/session/selection/actions';
 import {Request} from '../../../util/request';
 import {Measurement} from '../../../lib/measurement/measurement';
 
@@ -24,16 +20,15 @@ interface OwnProps
 }
 interface StateProps
 {
-    user: User;
     project: Project;
     selections: Selection[];
     selectionRequest: Request;
 }
 interface DispatchProps
 {
-    createSelection(params: CreateSelectionParams): void;
-    deleteSelection(params: DeleteSelectionParams): void;
-    updateSelection(params: UpdateSelectionParams): void;
+    createSelection(selection: Selection): void;
+    deleteSelection(selection: Selection): void;
+    updateSelection(selection: Selection): void;
 }
 
 type Props = StateProps & DispatchProps & OwnProps & RouteComponentProps<void>;
@@ -58,30 +53,19 @@ class SelectionContainerComponent extends PureComponent<Props>
 
     createSelection = (selection: Selection) =>
     {
-        this.props.createSelection({
-            user: this.props.user,
-            project: this.props.project,
-            selection
-        });
+        this.props.createSelection(selection);
     }
     updateSelection = (selection: Selection) =>
     {
-        this.props.updateSelection({
-            user: this.props.user,
-            selection
-        });
+        this.props.updateSelection(selection);
     }
     deleteSelection = (selection: Selection) =>
     {
-        this.props.deleteSelection({
-            user: this.props.user,
-            selection
-        });
+        this.props.deleteSelection(selection);
     }
 }
 
 export const SelectionContainer = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
-    user: getUser(state),
     project: getSelectedProject(state),
     selections: getSelections(state),
     selectionRequest: state.session.selection.selectionRequest
