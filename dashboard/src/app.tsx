@@ -5,6 +5,7 @@ import {ConnectedRouter} from 'react-router-redux';
 import {Content} from './components/content/content';
 import {PersistGate} from 'redux-persist/integration/react';
 import {hot} from 'react-hot-loader';
+import {Loading} from './components/global/loading';
 
 class AppComponent extends PureComponent
 {
@@ -12,7 +13,7 @@ class AppComponent extends PureComponent
     {
         return (
             <Provider store={store}>
-                <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
+                <PersistGate loading={<Loading />} persistor={persistor}>
                     <ConnectedRouter history={history}>
                         <Content />
                     </ConnectedRouter>

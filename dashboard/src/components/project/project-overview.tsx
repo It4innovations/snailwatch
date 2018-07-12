@@ -20,6 +20,7 @@ import {toast, ToastContainer} from 'react-toastify';
 import MdContentCopy from 'react-icons/lib/md/content-copy';
 import CardHeader from 'reactstrap/lib/CardHeader';
 import {ErrorBox} from '../global/error-box';
+import {Loading} from '../global/loading';
 
 registerLanguage('python', python);
 
@@ -59,7 +60,7 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
         }
         if (this.props.loadProjectRequest.loading)
         {
-            return <div>Loading...</div>;
+            return <Loading />;
         }
 
         return (

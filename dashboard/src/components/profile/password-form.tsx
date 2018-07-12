@@ -3,6 +3,7 @@ import {Button, Input, InputGroup, InputGroupAddon} from 'reactstrap';
 import {Request} from '../../util/request';
 import {toast, ToastContainer} from 'react-toastify';
 import {ErrorBox} from '../global/error-box';
+import {Loading} from '../global/loading';
 
 interface Props
 {
@@ -92,7 +93,7 @@ export class PasswordForm extends PureComponent<Props, State>
                            onChange={e => this.changePasswordValue('newRepeated', e.currentTarget.value)} />
                 </InputGroup>
                 <ErrorBox error={this.getActiveError()} />
-                {this.props.changePasswordRequest.loading && <div>Loading...</div>}
+                <Loading show={this.props.changePasswordRequest.loading} />
                 <Button onClick={this.tryChangePassword}>Change password</Button>
             </>
         );

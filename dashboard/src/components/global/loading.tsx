@@ -1,17 +1,26 @@
 import React, {PureComponent} from 'react';
 import ReactLoading from 'react-loading';
+import styled from 'styled-components';
 
 interface Props
 {
-    show: boolean;
+    show?: boolean;
 }
+
+const Loader = styled(ReactLoading)`
+  margin: 5px;
+`;
 
 export class Loading extends PureComponent<Props>
 {
     render()
     {
-        if (!this.props.show) return null;
+        const show = this.props.show === undefined ? true : this.props.show;
+        if (!show) return null;
 
-        return <ReactLoading type='spin' color='black' width={24} height={24} />;
+        return <Loader type='spin'
+                             color='black'
+                             width={24}
+                             height={24} />;
     }
 }

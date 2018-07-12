@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react';
 import {Request} from '../../util/request';
 import {ErrorBox} from './error-box';
+import {Loading} from './loading';
 
 interface Props
 {
@@ -13,7 +14,7 @@ export class RequestView extends PureComponent<Props>
     {
         if (this.props.request.loading)
         {
-            return 'Loading...';
+            return <Loading />;
         }
         if (this.props.request.error)
         {
