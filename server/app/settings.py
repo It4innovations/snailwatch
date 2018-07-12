@@ -54,10 +54,10 @@ def list_of(schema, required=True):
     }
 
 
-def ref(collection):
+def ref(collection, required=True):
     return {
         'type': 'objectid',
-        'required': True,
+        'required': required,
         'data_relation': {
             'resource': collection,
             'field': ID_FIELD
@@ -99,7 +99,6 @@ filter_type = {
         }
     }
 }
-project_ref = ref('projects')
 user_ref = ref('users')
 identifier_regex = '[a-zA-Z_/-][a-zA-Z0-9_/-]*'
 
@@ -122,7 +121,7 @@ project_schema = {
     }, required=False)
 }
 measurement_schema = {
-    'project': project_ref,
+    'project': ref('projects', False),
     'benchmark': string(),
     'timestamp': {
         'type': 'datetime',
@@ -162,12 +161,12 @@ measurement_schema = {
     }
 }
 selection_schema = {
-    'project': project_ref,
+    'project': ref('projects'),
     'name': string(),
     'filters': list_of(filter_type)
 }
 analysis_schema = {
-    'project': project_ref,
+    'project': ref('projects'),
     'name': string(),
     'filters': list_of(filter_type),
     'trigger': string(empty=True),
