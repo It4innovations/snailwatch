@@ -16,6 +16,7 @@ import {RangeFilter} from '../measurement/selection/range-filter';
 import {NetworkError} from '../errors/network';
 import {ApiError} from '../errors/api';
 import {Analysis} from '../analysis/analysis';
+import moment from 'moment';
 
 interface ArrayResponse<T>
 {
@@ -237,7 +238,7 @@ export class RestClient implements SnailClient
     {
         return this.call('/analyses', 'POST', {
             name: analysis.name,
-            project: analysis.id,
+            project: project.id,
             filters: analysis.filters.map(f => ({
                 path: f.path,
                 operator: f.operator,
@@ -251,7 +252,8 @@ export class RestClient implements SnailClient
         })
             .map((data: DAO) => ({
                 ...analysis,
-                id: data._id
+                id: data._id,
+                created: moment(data._created)
             }));
     }
 

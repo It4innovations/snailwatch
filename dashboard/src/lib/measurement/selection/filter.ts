@@ -30,6 +30,11 @@ export function createFilter(path: string = '', operator: Operator = '==', value
     };
 }
 
+export function stringifyFilter(filter: Filter): string
+{
+    return `${filter.path} ${filter.operator} ${filter.value}`;
+}
+
 export function testFilter<T>(data: T, filter: Filter): boolean
 {
     if (filter.path === '') return true;

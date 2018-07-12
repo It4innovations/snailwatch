@@ -94,7 +94,8 @@ export function parseAnalysis(analysis: AnalysisDAO): Analysis
         })),
         trigger: analysis.trigger,
         observedValue: analysis.observedvalue,
-        ratio: analysis.ratio
+        ratio: analysis.ratio,
+        created: moment(analysis._created)
     };
 }
 

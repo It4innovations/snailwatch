@@ -65,10 +65,10 @@ def ref(collection):
     }
 
 
-def string(unique=False):
+def string(unique=False, empty=False):
     return {
         'type': 'string',
-        'empty': False,
+        'empty': empty,
         'required': True,
         'unique': unique
     }
@@ -170,8 +170,8 @@ analysis_schema = {
     'project': project_ref,
     'name': string(),
     'filters': list_of(filter_type),
-    'trigger': string(),
-    'observedvalue': string(),
+    'trigger': string(empty=True),
+    'observedvalue': string(empty=True),
     'ratio': number()
 }
 
