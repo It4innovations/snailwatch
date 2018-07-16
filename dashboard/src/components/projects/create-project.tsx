@@ -10,7 +10,7 @@ interface Props
 const Wrapper = styled.div`
   width: 400px;
 `;
-const Name = styled(Input)`
+const Name = styled.div`
   margin-bottom: 10px;
 `;
 
@@ -23,7 +23,10 @@ export class CreateProject extends PureComponent<Props>
         return (
             <Wrapper>
                 <form onSubmit={this.handleSubmit}>
-                    <Name type='text' name='name' placeholder='Name' required innerRef={name => this.name = name} />
+                    <Name>
+                        <Input type='text' name='name' placeholder='Name' required
+                               innerRef={name => this.name = name} />
+                    </Name>
                     <Button type='submit' color='success'>Create project</Button>
                 </form>
             </Wrapper>
