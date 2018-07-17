@@ -1,12 +1,13 @@
 import React, {PureComponent} from 'react';
 import {Input} from 'reactstrap';
-import {groupBy} from 'ramda';
+import {find, groupBy} from 'ramda';
 import {formatKey} from '../../util/measurement';
 
 interface Props
 {
     keys: string[];
     value: string;
+    defaults?: string[];
     onChange(key: string): void;
 }
 
@@ -19,17 +20,35 @@ interface Group
     }[];
 }
 
+const DEFAULTS = [
+    'environment.commit',
+    'timestamp'
+];
+
 export class MeasurementKeys extends PureComponent<Props>
 {
+    componentDidMount()
+    {
+        const defaults = this.props.defaults === undefined ? [...DEFAULTS] : this.props.defaults;
+        if (this.props.value === '')
+        {
+            const def = this.findDefault(defaults, this.props.keys);
+            if (def !== null && def !== '')
+            {
+                this.props.onChange(def);
+            }
+        }
+    }
+
     render()
     {
         const groups = this.createGroups(this.props.keys);
+
         return (
             <Input type='select'
                    bsSize='sm'
                    value={this.props.value}
                    onChange={this.handleChange}>
-                <option key='' value='' />
                 {groups.map(group =>
                     <optgroup key={group.title} label={group.title}>
                         {group.keys.map(key =>
@@ -62,5 +81,10 @@ export class MeasurementKeys extends PureComponent<Props>
                 label: formatKey(value)
             }))
         }));
+    }
+
+    findDefault = (defaults: string[], keys: string[]): string | null =>
+    {
+        return find(d => keys.indexOf(d) !== -1, defaults) || null;
     }
 }
