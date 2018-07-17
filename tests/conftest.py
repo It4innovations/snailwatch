@@ -16,10 +16,12 @@ ROOT = os.path.dirname(TEST_DIR)
 WORK_DIR = os.path.join(TEST_DIR, "work")
 SNAILWATCH_SERVER = os.path.join(ROOT, "server", "start.py")
 PYTHON_DIR = os.path.join(ROOT, "python")
+SERVER_DIR = os.path.join(ROOT, "server")
 
 MONGO_ADDRESS = os.environ.get('MONGO', 'localhost')
 
-sys.path.insert(0, os.path.join(ROOT, "python"))
+sys.path.insert(0, PYTHON_DIR)
+sys.path.insert(0, SERVER_DIR)
 
 
 class Env:

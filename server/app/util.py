@@ -11,3 +11,10 @@ def get_dict_keys(item):
     keys = []
     get_keys(item, '', keys)
     return keys
+
+
+def group_by(iterable, key):
+    group = {}
+    for i in iterable:
+        group.setdefault(key(i), []).append(i)
+    return group

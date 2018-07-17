@@ -320,7 +320,7 @@ export class RestClient implements SnailClient
 
     private handleError(error: AxiosError)
     {
-        console.error(error);
+        console.error(error, error.response.statusText, error.response.data);
         if (error.response === undefined) throw new NetworkError();
 
         throw new ApiError(error.response.status, error.message);

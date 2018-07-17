@@ -136,6 +136,9 @@ def setup_routes(app):
         if token:
             user_repo = UserRepo(app)
             user = user_repo.get_user_from_request(request)
+            if not user:
+                abort(403)
+
             measurement_repo = MeasurementRepo(app)
             measurement_repo.clear_measurements_for_user(user)
 
