@@ -21,7 +21,7 @@ import {
 import {DatasetManager} from './dataset-manager';
 import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
-import {MeasurementKeys} from '../../../global/measurement-keys';
+import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {sort} from 'ramda';
 import {LineChartSettings} from './line-chart-settings';
 import {LineChartSettingsComponent} from './line-chart-settings-component';

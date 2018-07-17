@@ -1,8 +1,8 @@
 import React, {PureComponent} from 'react';
 import {sort} from 'ramda';
 import styled from 'styled-components';
-import {MeasurementKeys} from '../../../global/measurement-keys';
-import {ResultKeys} from '../../../global/result-keys';
+import {MeasurementKeys} from '../../../global/keys/measurement-keys';
+import {ResultKeys} from '../../../global/keys/result-keys';
 
 interface Props
 {

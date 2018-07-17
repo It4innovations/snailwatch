@@ -20,3 +20,8 @@ export function formatKey(key: string): string
 {
     return removePrefix(removeValue(key));
 }
+
+export function getResultKeys(keys: string[]): string[]
+{
+    return keys.filter(key => key.match(/^result\..*(?<!type)$/));
+}

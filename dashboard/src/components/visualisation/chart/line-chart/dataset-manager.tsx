@@ -7,7 +7,7 @@ import {Box} from '../../../global/box';
 import MdDelete from 'react-icons/lib/md/delete';
 import styled from 'styled-components';
 import {getSelectionById} from '../../../../state/session/selection/reducer';
-import {ResultKeys} from '../../../global/result-keys';
+import {ResultKeys} from '../../../global/keys/result-keys';
 
 interface Props
 {

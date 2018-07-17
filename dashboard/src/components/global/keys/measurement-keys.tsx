@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {Input} from 'reactstrap';
 import {find, groupBy} from 'ramda';
-import {formatKey} from '../../util/measurement';
+import {formatKey} from '../../../util/measurement';
 
 interface Props
 {
@@ -67,14 +67,13 @@ export class MeasurementKeys extends PureComponent<Props>
 
     createGroups = (keys: string[]): Group[] =>
     {
-        const filtered = keys.filter(key => !key.match(/^result\..*type$/));
+        const filtered = keys.filter(key => !key.startsWith('result.'));
         const groups = groupBy(key => {
             if (key.startsWith('environment.')) return 'Environment';
-            if (key.startsWith('result.')) return 'Result';
             return 'General';
         }, filtered);
 
-        return ['General', 'Environment', 'Result'].map(heading => ({
+        return ['General', 'Environment'].map(heading => ({
             title: heading,
             keys: (groups[heading] || []).map(value => ({
                 value,

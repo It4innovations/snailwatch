@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {formatKey} from '../../util/measurement';
+import {getResultKeys, formatKey} from '../../../util/measurement';
 import {Input} from 'reactstrap';
 
 interface Props
@@ -25,7 +25,6 @@ export class ResultKeys extends PureComponent<Props>
     render()
     {
         const keys = this.filterKeys(this.props.keys);
-        const key = formatKey(this.props.value);
         if (keys.length === 0) return <div>No result keys available, upload some measurements</div>;
 
         return (
@@ -47,7 +46,7 @@ export class ResultKeys extends PureComponent<Props>
 
     filterKeys = (keys: string[]): string[] =>
     {
-        return keys.filter(key => key.match(/^result\..*(?<!type)$/));
+        return getResultKeys(keys);
     }
 
     isSelectionValid = (value: string, keys: string[]): boolean =>
