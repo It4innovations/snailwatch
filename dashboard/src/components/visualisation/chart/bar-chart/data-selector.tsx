@@ -6,6 +6,7 @@ import MdDelete from 'react-icons/lib/md/delete';
 import styled from 'styled-components';
 import MdAddCircleOutline from 'react-icons/lib/md/add-circle-outline';
 import {MeasurementKeys} from '../../../global/measurement-keys';
+import {ResultKeys} from '../../../global/result-keys';
 
 interface Props
 {
@@ -41,9 +42,9 @@ export class DataSelector extends PureComponent<Props>
                 <div>Y axes</div>
                 {this.props.yAxes.map((axis, index) =>
                     <Row key={index}>
-                        <MeasurementKeys keys={keys}
-                                         value={axis}
-                                         onChange={(val) => this.changeYAxis(index, val)} />
+                        <ResultKeys keys={keys}
+                                    value={axis}
+                                    onChange={(val) => this.changeYAxis(index, val)} />
                         <MdDelete size={26} onClick={() => this.removeYAxis(index)} />
                     </Row>
                 )}

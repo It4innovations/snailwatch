@@ -2,12 +2,12 @@ import React, {PureComponent} from 'react';
 import {LineChartDataset, nameDataset, NamedLineChartDataset} from './line-chart-dataset';
 import Button from 'reactstrap/lib/Button';
 import {Selection} from '../../../../lib/measurement/selection/selection';
-import {MeasurementKeys} from '../../../global/measurement-keys';
 import {SelectionSelectEditor} from '../../selection-container/selection-select-editor';
 import {Box} from '../../../global/box';
 import MdDelete from 'react-icons/lib/md/delete';
 import styled from 'styled-components';
 import {getSelectionById} from '../../../../state/session/selection/reducer';
+import {ResultKeys} from '../../../global/result-keys';
 
 interface Props
 {
@@ -53,9 +53,9 @@ export class DatasetManager extends PureComponent<Props>
         return (
             <Box key={dataset.id} title={this.renderHeader(dataset)}>
                 <div>Y axis</div>
-                <MeasurementKeys keys={this.props.measurementKeys}
-                                 value={dataset.yAxis}
-                                 onChange={(value) => this.changeYAxis(dataset, value)} />
+                <ResultKeys keys={this.props.measurementKeys}
+                            value={dataset.yAxis}
+                            onChange={(value) => this.changeYAxis(dataset, value)} />
                 <SelectWrapper>
                     <SelectionSelectEditor
                         selections={this.props.selections}

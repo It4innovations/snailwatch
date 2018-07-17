@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react';
 import {sort} from 'ramda';
 import styled from 'styled-components';
 import {MeasurementKeys} from '../../../global/measurement-keys';
+import {ResultKeys} from '../../../global/result-keys';
 
 interface Props
 {
@@ -31,9 +32,9 @@ export class DataSelector extends PureComponent<Props>
                                  onChange={this.props.onChangeXAxis} />
                 <div>Y axis</div>
                 <Row>
-                    <MeasurementKeys keys={keys}
-                                     value={this.props.yAxis}
-                                     onChange={this.props.onChangeYAxis} />
+                    <ResultKeys keys={keys}
+                                value={this.props.yAxis}
+                                onChange={this.props.onChangeYAxis} />
                 </Row>
             </div>
         );
