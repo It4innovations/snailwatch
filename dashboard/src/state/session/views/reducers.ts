@@ -23,9 +23,9 @@ export interface ViewsState
     global: GlobalState;
 }
 
-const initialState: GlobalState = {
+export const initialState: GlobalState = {
     rangeFilter: {
-        from: moment().subtract(1, 'm'),
+        from: moment().subtract(1, 'M'),
         to: moment(),
         entryCount: 1000,
         useDateFilter: false

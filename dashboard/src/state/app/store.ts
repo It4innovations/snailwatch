@@ -1,18 +1,16 @@
 import createHistory from 'history/createBrowserHistory';
-import {routerMiddleware, routerReducer} from 'react-router-redux';
-import {Action, applyMiddleware, combineReducers, compose, createStore, Reducer} from 'redux';
+import {routerMiddleware} from 'react-router-redux';
+import {Action, applyMiddleware, combineReducers, compose, createStore} from 'redux';
 import {createLogger} from 'redux-logger';
 import {createEpicMiddleware} from 'redux-observable';
 import thunk from 'redux-thunk';
 import {rootEpic} from './epics';
-import {AppState, reducers} from './reducers';
-import {persistReducer, persistStore, createTransform} from 'redux-persist';
+import {AppState, rootReducer} from './reducers';
+import {persistStore} from 'redux-persist';
 import reduxCatch from 'redux-catch';
 import Raven from 'raven-js';
 import {RestClient} from '../../lib/api/rest-client';
 import {API_SERVER, URL_PREFIX} from '../../configuration';
-import storage from 'redux-persist/lib/storage';
-import {serializeDates, deserializeDates, serializeRequests} from '../../util/serialization';
 
 function errorHandler(error: Error, getState: () => AppState, action: Action)
 {
@@ -35,23 +33,6 @@ const epic = createEpicMiddleware(rootEpic, {
     }
 });
 
-const sessionPersist = {
-    key: 'session',
-    storage,
-    transforms: [createTransform(
-        serializeDates,
-        deserializeDates
-    ), createTransform(
-        serializeRequests,
-        null
-    )]
-};
-
-const rootReducer: {[K in keyof AppState]: Reducer<{}>} = {
-    ...reducers,
-    session: persistReducer(sessionPersist, reducers.session),
-    router: routerReducer
-};
 const middleware = [
     router,
     epic,

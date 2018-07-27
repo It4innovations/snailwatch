@@ -43,6 +43,7 @@ export class RangeFilterSwitcher extends PureComponent<Props>
     renderDate = (): JSX.Element =>
     {
         const dateFormat = 'YYYY-MM-DD';
+
         const from = this.props.rangeFilter.from.format(dateFormat);
         const to = this.props.rangeFilter.to.format(dateFormat);
 

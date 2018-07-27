@@ -1,7 +1,8 @@
 import {isArray, isObject, isString} from 'util';
 import {isMoment, Moment, default as moment} from 'moment';
-import {Functor, map} from 'ramda';
+import {Functor, lensPath, map, set} from 'ramda';
 import {createRequest, isRequest} from './request';
+import {initialState, ViewsState} from '../state/session/views/reducers';
 
 const SERIALIZATION_FORMAT = 'DD.MM.YYYYTHH:mm:ss';
 
@@ -43,4 +44,14 @@ export function serializeRequests(obj: {}): {}
         o => isRequest(o),
         o => createRequest()
     );
+}
+
+export function deserializeRangeFilter(obj: ViewsState, key: string): {}
+{
+    if (key === 'views')
+    {
+        const path = lensPath(['global', 'rangeFilter']);
+        return set(path, {...initialState.rangeFilter}, obj);
+    }
+    return obj;
 }
