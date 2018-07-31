@@ -19,7 +19,6 @@ import {clearSession} from '../../state/session/actions';
 import {deselectProject} from '../../state/session/project/actions';
 
 import './global.scss';
-import {AnalysisPage} from '../analysis/analysis-page';
 
 interface StateProps
 {
@@ -60,7 +59,6 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
                         {this.authRoute(Routes.Overview, ProjectOverview, true)}
                         {this.authRoute(Routes.MeasurementList, MeasurementList, true)}
                         {this.authRoute(Routes.Views, ViewsPage, true)}
-                        {this.authRoute(Routes.Analysis, AnalysisPage, true)}
                         {this.authRoute(Routes.Projects, Projects)}
                         {this.authRoute(Routes.Logout, this.logoutUser)}
                         {this.getAuthenticatedFallback()}

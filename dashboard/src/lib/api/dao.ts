@@ -3,7 +3,7 @@ import {Measurement} from '../measurement/measurement';
 import moment, {Moment} from 'moment';
 import {Project} from '../project/project';
 import {Selection} from '../measurement/selection/selection';
-import {Analysis} from '../analysis/analysis';
+import {View} from '../view/view';
 
 export interface DAO
 {
@@ -38,17 +38,17 @@ export interface SelectionDAO extends DAO
         value: string;
     }[];
 }
-export interface AnalysisDAO extends DAO
+export interface ViewDAO extends DAO
 {
     name: string;
-    filters: {
-        path: string;
-        operator: Operator,
-        value: string;
-    }[];
-    trigger: string;
-    observedvalue: string;
-    ratio: number;
+    selection: string;
+    xAxis: string;
+    yAxes: string[];
+}
+
+export interface ArrayResponse<T>
+{
+    _items: T[];
 }
 
 export function parseProject(project: ProjectDAO): Project
@@ -82,24 +82,53 @@ export function parseSelection(selection: SelectionDAO): Selection
         }))
     };
 }
-export function parseAnalysis(analysis: AnalysisDAO): Analysis
+export function serializeSelection(selection: Selection): {}
 {
     return {
-        id: analysis._id,
-        name: analysis.name,
-        filters: analysis.filters.map(f => ({
+        name: selection.name,
+        filters: selection.filters.map(f => ({
             path: f.path,
             operator: f.operator,
             value: f.value
-        })),
-        trigger: analysis.trigger,
-        observedValue: analysis.observedvalue,
-        ratio: analysis.ratio,
-        created: moment(analysis._created)
+        }))
+    };
+}
+export function parseView(view: ViewDAO): View
+{
+    return {
+        id: view._id,
+        name: view.name,
+        selection: view.selection,
+        xAxis: view.xAxis,
+        yAxes: view.yAxes,
+        created: moment(view._created)
+    };
+}
+export function serializeView(view: View): {}
+{
+    return {
+        name: view.name,
+        selection: view.selection,
+        xAxis: view.xAxis,
+        yAxes: view.yAxes
     };
 }
 
 export function serializeDate(date: Moment): string
 {
     return date.format('YYYY-MM-DDTHH:mm:ss');
+}
+
+export function where(args: {}): { where: string; }
+{
+    return {
+        where: JSON.stringify(args)
+    };
+}
+export function withProject<T extends {}>(project: Project, args: T = ({} as T)): T & { project: string; }
+{
+    return {
+        ...(args as {}),
+        project: project.id
+    } as T & { project: string; };
 }

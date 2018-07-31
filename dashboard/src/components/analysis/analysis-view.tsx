@@ -1,5 +1,6 @@
+/*
 import React, {PureComponent, Fragment} from 'react';
-import {Analysis, createAnalysis} from '../../lib/analysis/analysis';
+import {View, createView} from '../../lib/view/view';
 import {FilterList} from '../visualisation/selection-container/filter/filter-list';
 import styled from 'styled-components';
 import {Button} from 'reactstrap';
@@ -8,14 +9,14 @@ import {stringifyFilter} from '../../lib/measurement/selection/filter';
 
 interface Props
 {
-    analysis: Analysis;
-    onChange(analysis: Analysis): void;
-    onDelete(analysis: Analysis): void;
+    analysis: View;
+    onChange(analysis: View): void;
+    onDelete(analysis: View): void;
 }
 
 const initialState = {
     editing: false,
-    analysis: createAnalysis()
+    analysis: createView()
 };
 
 type State = Readonly<typeof initialState>;
@@ -96,7 +97,7 @@ export class AnalysisView extends PureComponent<Props, State>
             </ActionButton>
         );
     }
-    renderFilters = (analysis: Analysis): JSX.Element =>
+    renderFilters = (analysis: View): JSX.Element =>
     {
         return (
             <div>
@@ -109,7 +110,7 @@ export class AnalysisView extends PureComponent<Props, State>
             </div>
         );
     }
-    renderTrigger = (analysis: Analysis): JSX.Element =>
+    renderTrigger = (analysis: View): JSX.Element =>
     {
         return (
             <Row>
@@ -120,7 +121,7 @@ export class AnalysisView extends PureComponent<Props, State>
             </Row>
         );
     }
-    renderObservedValue = (analysis: Analysis): JSX.Element =>
+    renderObservedValue = (analysis: View): JSX.Element =>
     {
         return (
             <Row>
@@ -131,7 +132,7 @@ export class AnalysisView extends PureComponent<Props, State>
             </Row>
         );
     }
-    renderRatio = (analysis: Analysis): JSX.Element =>
+    renderRatio = (analysis: View): JSX.Element =>
     {
         return (
             <Row>
@@ -143,7 +144,7 @@ export class AnalysisView extends PureComponent<Props, State>
             </Row>
         );
     }
-    createDescription = (analysis: Analysis): JSX.Element =>
+    createDescription = (analysis: View): JSX.Element =>
     {
         const filters = analysis.filters.map(f => ({
             path: f.path === '' ? '?' : f.path,
@@ -175,7 +176,7 @@ export class AnalysisView extends PureComponent<Props, State>
         this.changeEdit(false);
         this.props.onChange({...this.state.analysis});
     }
-    changeAnalysis = (key: keyof Analysis, value: {}) =>
+    changeAnalysis = (key: keyof View, value: {}) =>
     {
         this.setState(state => ({
             analysis: {...state.analysis, [key]: value}
@@ -187,3 +188,4 @@ export class AnalysisView extends PureComponent<Props, State>
         this.setState(() => ({ editing }));
     }
 }
+*/

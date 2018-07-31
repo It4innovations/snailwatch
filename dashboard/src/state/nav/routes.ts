@@ -7,7 +7,7 @@ export class Routes
     static Overview = '/project';
     static MeasurementList = '/measurements';
     static Views = '/views';
-    static Analysis = '/analysis';
+    static Analysis = '/view';
 }
 
 export class Navigation

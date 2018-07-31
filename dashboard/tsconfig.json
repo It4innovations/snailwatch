@@ -18,7 +18,6 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "importHelpers": true,
-    "resolveJsonModule": true,
     "keyofStringsOnly": true
   },
   "exclude": [

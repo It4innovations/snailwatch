@@ -6,7 +6,7 @@ import {barChartEpics} from './pages/bar-chart-page/epics';
 import {lineChartEpics} from './pages/line-chart-page/epics';
 import {measurementsEpics} from './pages/measurements-page/epics';
 import {gridChartEpics} from './pages/grid-chart-page/epics';
-import {analysisEpics} from './analysis/epics';
+import {analysisEpics} from './view/epics';
 
 export const sessionEpics = combineEpics(
     userEpics,
