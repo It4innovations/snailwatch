@@ -44,7 +44,7 @@ const chartToTab = {
     'bar': 2
 };
 
-class ViewsPageComponent extends PureComponent<Props>
+class ChartsPageComponent extends PureComponent<Props>
 {
     componentDidMount()
     {
@@ -125,7 +125,7 @@ class ViewsPageComponent extends PureComponent<Props>
     }
 }
 
-export const ViewsPage = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
+export const ChartsPage = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     project: getSelectedProject(state),
     rangeFilter: getRangeFilter(state)
 }), {
@@ -134,4 +134,4 @@ export const ViewsPage = withRouter(connect<StateProps, DispatchProps>((state: A
     loadProject: loadProject.started,
     loadSelections: SelectionActions.load.started,
     navigate: (path: string) => push(path)
-})(ViewsPageComponent));
+})(ChartsPageComponent));

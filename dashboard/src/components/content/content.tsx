@@ -12,8 +12,8 @@ import styled from 'styled-components';
 import {Profile} from '../profile/profile';
 import {Project} from '../../lib/project/project';
 import {getSelectedProject} from '../../state/session/project/reducer';
-import {MeasurementList} from '../visualisation/measurements/measurement-list';
-import {ViewsPage} from '../visualisation/views-page';
+import {MeasurementList} from '../measurement-list/measurement-list';
+import {ChartsPage} from '../charts/charts-page';
 import {ProjectOverview} from '../project/project-overview';
 import {clearSession} from '../../state/session/actions';
 import {deselectProject} from '../../state/session/project/actions';
@@ -58,7 +58,7 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
                         {this.authRoute(Routes.Profile, Profile)}
                         {this.authRoute(Routes.Overview, ProjectOverview, true)}
                         {this.authRoute(Routes.MeasurementList, MeasurementList, true)}
-                        {this.authRoute(Routes.Views, ViewsPage, true)}
+                        {this.authRoute(Routes.Views, ChartsPage, true)}
                         {this.authRoute(Routes.Projects, Projects)}
                         {this.authRoute(Routes.Logout, this.logoutUser)}
                         {this.getAuthenticatedFallback()}

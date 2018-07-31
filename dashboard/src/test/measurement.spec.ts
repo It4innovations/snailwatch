@@ -1,4 +1,4 @@
-import {groupMeasurements} from '../components/visualisation/chart/chart-utils';
+import {groupMeasurements} from '../components/charts/chart/chart-utils';
 import {GroupMode} from '../lib/measurement/group-mode';
 import {Measurement} from '../lib/measurement/measurement';
 

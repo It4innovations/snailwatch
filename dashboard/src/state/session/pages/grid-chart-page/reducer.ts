@@ -1,6 +1,6 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {createRequest, hookRequestActions, Request} from '../../../../util/request';
-import {LineChartDataset} from '../../../../components/visualisation/chart/line-chart/line-chart-dataset';
+import {LineChartDataset} from '../../../../components/charts/chart/line-chart/line-chart-dataset';
 import {setGridChartXAxisAction, loadGridChartDatasetsAction, setGridChartYAxisAction} from './actions';
 import {compose} from 'ramda';
 import {clearSession} from '../../actions';

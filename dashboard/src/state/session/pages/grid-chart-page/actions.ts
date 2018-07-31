@@ -1,5 +1,5 @@
 import actionCreatorFactory from 'typescript-fsa';
-import {LineChartDataset} from '../../../../components/visualisation/chart/line-chart/line-chart-dataset';
+import {LineChartDataset} from '../../../../components/charts/chart/line-chart/line-chart-dataset';
 
 const actionCreator = actionCreatorFactory('grid-chart-page');
 
