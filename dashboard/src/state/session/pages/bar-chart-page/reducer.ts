@@ -45,6 +45,6 @@ reducer = compose(
 )(reducer);
 
 export const getBarChartPageSelection = (state: AppState) => getSelectionById(getSelections(state),
-    state.session.views.barChartPage.selectionId);
+    state.session.pages.barChartPage.selectionId);
 
 export const barChartReducer = reducer;

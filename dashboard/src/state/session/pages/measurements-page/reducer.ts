@@ -43,6 +43,6 @@ reducer = compose(
 )(reducer);
 
 export const getMeasurementsPageSelection = (state: AppState) => getSelectionById(getSelections(state),
-    state.session.views.measurementsPage.selectionId);
+    state.session.pages.measurementsPage.selectionId);
 
 export const measurementsReducer = reducer;

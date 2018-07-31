@@ -14,7 +14,7 @@ interface GlobalState
     rangeFilter: RangeFilter;
 }
 
-export interface ViewsState
+export interface PagesState
 {
     barChartPage: BarChartPageState;
     lineChartPage: LineChartPageState;
@@ -37,9 +37,9 @@ const reducer = reducerWithInitialState({ ...initialState })
     rangeFilter
 }));
 
-export const getRangeFilter = (state: AppState) => state.session.views.global.rangeFilter;
+export const getRangeFilter = (state: AppState) => state.session.pages.global.rangeFilter;
 
-export const viewsReducer = combineReducers({
+export const pagesReducer = combineReducers({
     barChartPage: barChartReducer,
     lineChartPage: lineChartReducer,
     gridChartPage: gridChartReducer,

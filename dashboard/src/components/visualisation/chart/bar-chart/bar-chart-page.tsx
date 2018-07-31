@@ -8,7 +8,7 @@ import {
     loadBarChartMeasurementsAction,
     LoadMeasurementParams, setBarChartSelection,
     setBarChartXAxisAction, setBarChartYAxesAction
-} from '../../../../state/session/views/bar-chart-page/actions';
+} from '../../../../state/session/pages/bar-chart-page/actions';
 import {connect} from 'react-redux';
 import {AppState} from '../../../../state/app/reducers';
 import {DataSelector} from './data-selector';
@@ -19,7 +19,7 @@ import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../measurement-list';
 import {getSelections} from '../../../../state/session/selection/reducer';
 import {SelectionActions} from '../../../../state/session/selection/actions';
-import {getBarChartPageSelection} from '../../../../state/session/views/bar-chart-page/reducer';
+import {getBarChartPageSelection} from '../../../../state/session/pages/bar-chart-page/reducer';
 import {Request} from '../../../../util/request';
 import {RequestView} from '../../../global/request-view';
 import {Box} from '../../../global/box';
@@ -167,10 +167,10 @@ class BarChartPageComponent extends PureComponent<Props, State>
 export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
     selections: getSelections(state),
-    measurements: state.session.views.barChartPage.measurements,
-    measurementRequest: state.session.views.barChartPage.measurementsRequest,
-    xAxis: state.session.views.barChartPage.xAxis,
-    yAxes: state.session.views.barChartPage.yAxes,
+    measurements: state.session.pages.barChartPage.measurements,
+    measurementRequest: state.session.pages.barChartPage.measurementsRequest,
+    xAxis: state.session.pages.barChartPage.xAxis,
+    yAxes: state.session.pages.barChartPage.yAxes,
     selection: getBarChartPageSelection(state)
 }), {
     loadMeasurements: loadBarChartMeasurementsAction.started,

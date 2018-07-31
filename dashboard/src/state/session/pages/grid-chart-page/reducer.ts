@@ -36,8 +36,9 @@ reducer = compose(
     )
 )(reducer);
 
-export const getGridChartXAxis = (state: AppState) => state.session.views.gridChartPage.xAxis;
-export const getGridChartYAxis = (state: AppState) => state.session.views.gridChartPage.yAxis;
-export const getGridChartDatasets = (state: AppState) => state.session.views.gridChartPage.datasets;
+const getGridChartPage = (state: AppState): GridChartPageState => state.session.pages.gridChartPage;
+export const getGridChartXAxis = (state: AppState) => getGridChartPage(state).xAxis;
+export const getGridChartYAxis = (state: AppState) => getGridChartPage(state).yAxis;
+export const getGridChartDatasets = (state: AppState) => getGridChartPage(state).datasets;
 
 export const gridChartReducer = reducer;

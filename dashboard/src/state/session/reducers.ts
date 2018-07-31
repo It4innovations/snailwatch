@@ -2,7 +2,7 @@ import {userReducer, UserState} from './user/reducer';
 import {combineReducers} from 'redux';
 import {projectReducer, ProjectState} from './project/reducer';
 import {selectionReducer, SelectionState} from './selection/reducer';
-import {viewsReducer, ViewsState} from './views/reducers';
+import {pagesReducer, PagesState} from './pages/reducers';
 import {analysisReducer, AnalysisState} from './analysis/reducer';
 
 export interface SessionState
@@ -11,7 +11,7 @@ export interface SessionState
     project: ProjectState;
     analysis: AnalysisState;
     selection: SelectionState;
-    views: ViewsState;
+    pages: PagesState;
 }
 
 export const sessionReducer = combineReducers({
@@ -19,5 +19,5 @@ export const sessionReducer = combineReducers({
     project: projectReducer,
     analysis: analysisReducer,
     selection: selectionReducer,
-    views: viewsReducer
+    pages: pagesReducer
 });

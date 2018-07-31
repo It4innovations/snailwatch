@@ -22,7 +22,7 @@ const addDataset = createRequestEpic(addLineChartDatasetAction, (action, state, 
     return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), null, rangeFilter)
         .map(measurements => ({
             measurements,
-            id: getNextId(state.session.views.lineChartPage.datasets),
+            id: getNextId(state.session.pages.lineChartPage.datasets),
             name: '',
             selectionId: '',
             yAxis: ''
@@ -50,7 +50,7 @@ const updateDataset = createRequestEpic(updateLineChartDatasetAction, (action, s
 
 const reloadDatasets = createRequestEpic(reloadLineChartDatasetsAction, (action, state, deps) => {
     const {rangeFilter} = action.payload;
-    const datasets = state.session.views.lineChartPage.datasets;
+    const datasets = state.session.pages.lineChartPage.datasets;
 
     return datasets.length === 0 ? Observable.of([]) : Observable.forkJoin(datasets.map(dataset => {
         const selection = getSelection(state, dataset.selectionId);

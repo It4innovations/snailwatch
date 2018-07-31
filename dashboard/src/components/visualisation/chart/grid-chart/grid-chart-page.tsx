@@ -14,18 +14,18 @@ import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {
     loadGridChartDatasetsAction,
     setGridChartXAxisAction, setGridChartYAxisAction
-} from '../../../../state/session/views/grid-chart-page/actions';
+} from '../../../../state/session/pages/grid-chart-page/actions';
 import {
     getGridChartDatasets,
     getGridChartXAxis,
     getGridChartYAxis
-} from '../../../../state/session/views/grid-chart-page/reducer';
+} from '../../../../state/session/pages/grid-chart-page/reducer';
 import {DataSelector} from './data-selector';
 import {Project} from '../../../../lib/project/project';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import styled from 'styled-components';
 import {SelectionContainer} from '../../selection-container/selection-container';
-import {SelectDatasetParams} from '../../../../state/session/views/line-chart-page/actions';
+import {SelectDatasetParams} from '../../../../state/session/pages/line-chart-page/actions';
 
 interface OwnProps
 {

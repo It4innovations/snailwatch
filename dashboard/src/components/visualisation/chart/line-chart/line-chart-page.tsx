@@ -17,7 +17,7 @@ import {
     addLineChartDatasetAction,
     deleteLineChartDatasetAction, setLineChartXAxisAction,
     UpdateDatasetParams, updateLineChartDatasetAction, ReloadDatasetsParams, reloadLineChartDatasetsAction
-} from '../../../../state/session/views/line-chart-page/actions';
+} from '../../../../state/session/pages/line-chart-page/actions';
 import {DatasetManager} from './dataset-manager';
 import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
@@ -191,8 +191,8 @@ class LineChartPageComponent extends PureComponent<Props, State>
 export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
     selections: getSelections(state),
-    xAxis: state.session.views.lineChartPage.xAxis,
-    datasets: state.session.views.lineChartPage.datasets
+    xAxis: state.session.pages.lineChartPage.xAxis,
+    datasets: state.session.pages.lineChartPage.datasets
 }), {
     loadSelections: SelectionActions.load.started,
     setXAxis: setLineChartXAxisAction,

@@ -14,7 +14,7 @@ export interface AppState
 const sessionPersist = {
     key: 'session',
     storage,
-    transforms: [, createTransform(
+    transforms: [createTransform(
         null,
         deserializeRangeFilter
     ), createTransform(

@@ -15,7 +15,7 @@ import {
     deleteMeasurementAction,
     loadMeasurementsAction,
     setMeasurementsSelectionAction
-} from '../../../state/session/views/measurements-page/actions';
+} from '../../../state/session/pages/measurements-page/actions';
 import MdDelete from 'react-icons/lib/md/delete';
 import styled from 'styled-components';
 import {TwoColumnPage} from '../../global/two-column-page';
@@ -25,15 +25,15 @@ import {Button} from 'reactstrap';
 import {Box} from '../../global/box';
 import {RangeFilterSwitcher} from '../range-filter-switcher';
 import {RangeFilter} from '../../../lib/measurement/selection/range-filter';
-import {getRangeFilter} from '../../../state/session/views/reducers';
-import {changeRangeFilterAction} from '../../../state/session/views/actions';
+import {getRangeFilter} from '../../../state/session/pages/reducers';
+import {changeRangeFilterAction} from '../../../state/session/pages/actions';
 import SyntaxHighlighter, { registerLanguage } from 'react-syntax-highlighter/light';
 import {dracula} from 'react-syntax-highlighter/styles/hljs';
 import json from 'react-syntax-highlighter/languages/hljs/json';
 import {SelectionSelectEditor} from '../selection-container/selection-select-editor';
 import {Selection} from '../../../lib/measurement/selection/selection';
 import {getSelections} from '../../../state/session/selection/reducer';
-import {getMeasurementsPageSelection} from '../../../state/session/views/measurements-page/reducer';
+import {getMeasurementsPageSelection} from '../../../state/session/pages/measurements-page/reducer';
 import {ErrorBox} from '../../global/error-box';
 
 registerLanguage('json', json);
@@ -231,8 +231,8 @@ class MeasurementListComponent extends PureComponent<Props, State>
 export const MeasurementList = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     user: getUser(state),
     project: getSelectedProject(state),
-    measurements: state.session.views.measurementsPage.measurements,
-    measurementRequest: state.session.views.measurementsPage.measurementsRequest,
+    measurements: state.session.pages.measurementsPage.measurements,
+    measurementRequest: state.session.pages.measurementsPage.measurementsRequest,
     rangeFilter: getRangeFilter(state),
     selections: getSelections(state),
     selection: getMeasurementsPageSelection(state)
