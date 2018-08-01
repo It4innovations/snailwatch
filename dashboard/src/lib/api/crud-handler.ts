@@ -31,10 +31,7 @@ export class CrudHandler<T extends Identifiable, D extends DAO>
         return this.requestManager.request(this.url, 'POST', item, {
             token: user.token
         })
-            .map((data: D) => ({
-                ...(item as {}),
-                id: data._id
-            } as T));
+            .map(this.parse);
     }
     delete(user: User, item: T): Observable<boolean>
     {

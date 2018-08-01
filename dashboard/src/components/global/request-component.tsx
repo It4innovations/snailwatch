@@ -1,5 +1,6 @@
 import React, {PureComponent} from 'react';
 import {Request} from '../../util/request';
+import {Loading} from './loading';
 
 interface Props
 {
@@ -12,7 +13,7 @@ export class RequestComponent extends PureComponent<Props>
     {
         if (this.props.request.loading)
         {
-            return 'Loading...';
+            return <Loading />;
         }
         if (this.props.request.error)
         {

@@ -27,7 +27,8 @@ reducer = createCrudReducer<ViewState, View>(
     state => state.viewRequest,
 );
 
-export const getViews = (state: AppState) => state.session.view.views;
+export const getViewsState = (state: AppState) => state.session.view;
+export const getViews = (state: AppState) => getViewsState(state).views;
 export const getViewById = (views: View[], id: string) =>
     views.find(view => view.id === id) || null;
 

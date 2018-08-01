@@ -7,7 +7,6 @@ export class Routes
     static Overview = '/project';
     static MeasurementList = '/measurements';
     static Views = '/views';
-    static Analysis = '/view';
 }
 
 export class Navigation
@@ -19,5 +18,4 @@ export class Navigation
     static Overview = Routes.Overview;
     static MeasurementList = Routes.MeasurementList;
     static Views = Routes.Views;
-    static Analysis = Routes.Analysis;
 }

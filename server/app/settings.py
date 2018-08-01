@@ -58,6 +58,7 @@ def ref(collection, required=True):
     return {
         'type': 'objectid',
         'required': required,
+        'nullable': not required,
         'data_relation': {
             'resource': collection,
             'field': ID_FIELD
@@ -165,13 +166,11 @@ selection_schema = {
     'name': string(),
     'filters': list_of(filter_type)
 }
-analysis_schema = {
+view_schema = {
     'project': ref('projects'),
     'name': string(),
-    'filters': list_of(filter_type),
-    'trigger': string(empty=True),
-    'observedvalue': string(empty=True),
-    'ratio': number()
+    'selection': ref('selections', required=False),
+    'yAxes': list_of(string())
 }
 
 
@@ -197,8 +196,8 @@ DOMAIN = {
         'resource_methods': ['GET', 'POST'],
         'item_methods': ['GET', 'PATCH', 'DELETE']
     },
-    'analyses': {
-        'schema': analysis_schema,
+    'views': {
+        'schema': view_schema,
         'resource_methods': ['GET', 'POST'],
         'item_methods': ['GET', 'PATCH', 'DELETE']
     }

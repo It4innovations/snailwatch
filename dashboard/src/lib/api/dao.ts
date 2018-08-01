@@ -98,20 +98,25 @@ export function parseView(view: ViewDAO): View
     return {
         id: view._id,
         name: view.name,
-        selection: view.selection,
-        xAxis: view.xAxis,
+        selection: view.selection || null,
         yAxes: view.yAxes,
         created: moment(view._created)
     };
 }
 export function serializeView(view: View): {}
 {
-    return {
+    const obj = {
         name: view.name,
-        selection: view.selection,
-        xAxis: view.xAxis,
         yAxes: view.yAxes
     };
+
+    // TODO: eve null ref bugfix https://github.com/pyeve/eve/issues/1159
+    if (view.selection !== null)
+    {
+        obj['selection'] = view.selection;
+    }
+
+    return obj;
 }
 
 export function serializeDate(date: Moment): string
@@ -119,11 +124,19 @@ export function serializeDate(date: Moment): string
     return date.format('YYYY-MM-DDTHH:mm:ss');
 }
 
-export function where(args: {}): { where: string; }
+export function where<T extends {}>(args: {}, obj: T = ({} as T)): T & { where: string; }
 {
     return {
+        ...(obj as {}),
         where: JSON.stringify(args)
-    };
+    } as T & { where: string; };
+}
+export function sort<T extends {}>(prop: string, obj: T = ({} as T)): T & { sort: string; }
+{
+    return {
+        ...(obj as {}),
+        sort: prop
+    } as T & { sort: string; };
 }
 export function withProject<T extends {}>(project: Project, args: T = ({} as T)): T & { project: string; }
 {

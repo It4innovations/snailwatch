@@ -29,14 +29,14 @@ export class ResultKeysMultiselect extends PureComponent<Props>
         return (
             <div>
                 {keys.map(key =>
-                    <FormGroup check>
-                    <Label check>
-                        <Input type='checkbox'
-                               bsSize='sm'
-                               value={key}
-                               onChange={this.handleChange} />
-                        {' '}{formatKey(key)}
-                    </Label>
+                    <FormGroup check key={key}>
+                        <Label check>
+                            <Input type='checkbox'
+                                   value={key}
+                                   checked={this.props.values.indexOf(key) !== -1}
+                                   onChange={this.handleChange} />
+                            {' '}{formatKey(key)}
+                        </Label>
                     </FormGroup>
                 )}
             </div>

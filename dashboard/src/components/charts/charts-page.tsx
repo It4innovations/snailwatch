@@ -20,7 +20,7 @@ import {SelectionActions} from '../../state/session/selection/actions';
 import {push} from 'react-router-redux';
 import {invertObj} from 'ramda';
 
-import style from './views-page.scss';
+import style from './charts-page.scss';
 
 interface StateProps
 {

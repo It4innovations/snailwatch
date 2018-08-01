@@ -30,7 +30,7 @@ export interface SnailClient
     updateSelection(user: User, view: Selection): Observable<boolean>;
 
     loadViews(user: User, project: Project): Observable<View[]>;
-    createViews(user: User, project: Project, view: View): Observable<View>;
-    deleteViews(user: User, view: View): Observable<boolean>;
-    updateViews(user: User, view: View): Observable<boolean>;
+    createView(user: User, project: Project, view: View): Observable<View>;
+    deleteView(user: User, view: View): Observable<boolean>;
+    updateView(user: User, view: View): Observable<boolean>;
 }

@@ -15,7 +15,7 @@ import {
     parseProject,
     serializeDate,
     UserDAO,
-    serializeSelection, ViewDAO, parseView, withProject, where, serializeView
+    serializeSelection, ViewDAO, parseView, withProject, where, serializeView, sort
 } from './dao';
 import {Selection} from '../measurement/selection/selection';
 import {RangeFilter} from '../measurement/selection/range-filter';
@@ -129,10 +129,7 @@ export class RestClient implements SnailClient
             }];
         }
 
-        let args: {} = {
-            ...where(buildRequestFilter(filters)),
-            sort: '-timestamp'
-        };
+        let args: {} = where(buildRequestFilter(filters), sort('-timestamp'));
 
         if (!range.useDateFilter)
         {
@@ -154,7 +151,7 @@ export class RestClient implements SnailClient
 
     loadSelections(user: User, project: Project): Observable<Selection[]>
     {
-       return this.selectionCrud.load(user, where(withProject(project)));
+       return this.selectionCrud.load(user, where(withProject(project), sort('_created')));
     }
     createSelection(user: User, project: Project, selection: Selection): Observable<Selection>
     {
@@ -172,17 +169,17 @@ export class RestClient implements SnailClient
 
     loadViews(user: User, project: Project): Observable<View[]>
     {
-        return this.viewCrud.load(user, where(withProject(project)));
+        return this.viewCrud.load(user, where(withProject(project), sort('_created')));
     }
-    createViews(user: User, project: Project, view: View): Observable<View>
+    createView(user: User, project: Project, view: View): Observable<View>
     {
         return this.viewCrud.create(user, withProject(project, serializeView(view)));
     }
-    deleteViews(user: User, view: View): Observable<boolean>
+    deleteView(user: User, view: View): Observable<boolean>
     {
         return this.viewCrud.delete(user, view);
     }
-    updateViews(user: User, view: View): Observable<boolean>
+    updateView(user: User, view: View): Observable<boolean>
     {
         return this.viewCrud.update(user, view, serializeView(view));
     }

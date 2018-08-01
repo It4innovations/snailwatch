@@ -22,6 +22,7 @@ interface Group
 
 const DEFAULTS = [
     'environment.commit',
+    'environment.sha',
     'timestamp'
 ];
 

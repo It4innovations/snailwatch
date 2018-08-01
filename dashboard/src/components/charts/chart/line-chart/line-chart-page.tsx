@@ -28,6 +28,7 @@ import {LineChartSettingsComponent} from './line-chart-settings-component';
 import {Project} from '../../../../lib/project/project';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {SelectionActions} from '../../../../state/session/selection/actions';
+import {ViewManager} from '../../view/view-manager';
 
 interface OwnProps
 {
@@ -134,6 +135,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
         const datasets = this.props.datasets.map(d => nameDataset(d, this.props.selections));
         return (
             <>
+                <ViewManager />
                 <h4>Line chart</h4>
                 <LineChart
                     xAxis={this.props.xAxis}
