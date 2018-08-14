@@ -15,7 +15,8 @@ interface OwnProps
 {
     measurements: Measurement[];
     selectedSelection: Selection | null;
-    selectSelection(selection: Selection): void;
+    onSelectionChange?(selection: Selection): void;
+    onSelect(selection: Selection): void;
 }
 interface StateProps
 {
@@ -43,7 +44,7 @@ class SelectionContainerComponent extends PureComponent<Props>
                 selections={this.props.selections}
                 selectionRequest={this.props.selectionRequest}
                 selectedSelection={this.props.selectedSelection}
-                selectSelection={this.props.selectSelection}
+                selectSelection={this.props.onSelect}
                 createSelection={this.createSelection}
                 updateSelection={this.updateSelection}
                 deleteSelection={this.deleteSelection} />
@@ -53,14 +54,26 @@ class SelectionContainerComponent extends PureComponent<Props>
     createSelection = (selection: Selection) =>
     {
         this.props.createSelection(selection);
+        this.notifyChange(selection);
     }
     updateSelection = (selection: Selection) =>
     {
         this.props.updateSelection(selection);
+        this.notifyChange(selection);
     }
+
     deleteSelection = (selection: Selection) =>
     {
         this.props.deleteSelection(selection);
+        this.notifyChange(selection);
+    }
+
+    private notifyChange(selection: Selection)
+    {
+        if (this.props.onSelectionChange)
+        {
+            this.props.onSelectionChange(selection);
+        }
     }
 }
 

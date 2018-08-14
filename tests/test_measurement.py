@@ -1,4 +1,4 @@
-from ..server.app.db.measurement import serialize_filters
+from app.db.measurement import serialize_filters
 
 
 def test_serialize_filters():

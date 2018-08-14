@@ -1,43 +1,48 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {createRequest, hookRequestActions, Request} from '../../../../util/request';
-import {LineChartDataset} from '../../../../components/charts/chart/line-chart/line-chart-dataset';
+import {ChartDataset} from '../../../../components/charts/chart/chart-dataset';
 import {
-    deleteLineChartDatasetAction,
-    setLineChartXAxisAction,
-    updateLineChartDatasetAction,
-    addLineChartDatasetAction, reloadLineChartDatasetsAction, selectLineChartDatasetAction
+    deleteChartDatasetAction,
+    setChartXAxisAction,
+    updateChartDatasetAction,
+    addChartDatasetAction, reloadChartDatasetsAction, selectChartViewAction
 } from './actions';
 import {compose, indexBy, update} from 'ramda';
 import {clearSession} from '../../actions';
 
-export interface LineChartPageState
+export interface ChartPageState
 {
     measurementsRequest: Request;
-    datasets: LineChartDataset[];
+    datasets: ChartDataset[];
     xAxis: string;
 }
 
-const initialState: LineChartPageState = {
+const initialState: ChartPageState = {
     measurementsRequest: createRequest(),
     datasets: [],
     xAxis: ''
 };
 
-let reducer = reducerWithInitialState<LineChartPageState>({ ...initialState })
+let reducer = reducerWithInitialState<ChartPageState>({ ...initialState })
 .case(clearSession, () => ({ ...initialState }))
-.case(setLineChartXAxisAction, (state, xAxis) => ({ ...state, xAxis }))
-.case(deleteLineChartDatasetAction, (state, dataset) => ({
+.case(setChartXAxisAction, (state, xAxis) => ({ ...state, xAxis }))
+.case(deleteChartDatasetAction, (state, dataset) => ({
     ...state,
     datasets: state.datasets.filter(d => d.id !== dataset.id)
 }))
-.case(selectLineChartDatasetAction, (state, action) => ({
+.case(selectChartViewAction, (state, action) => ({
     ...state,
-    datasets: [action.dataset],
+    datasets: [{
+        id: '1',
+        view: action.view.name,
+        xAxis: action.xAxis,
+        measurements: []
+    }],
     xAxis: action.xAxis
 }));
 
 reducer = compose(
-    (r: typeof reducer) => hookRequestActions(r, updateLineChartDatasetAction,
+    (r: typeof reducer) => hookRequestActions(r, updateChartDatasetAction,
         state => state.measurementsRequest,
         (state, action) => ({
             ...state,
@@ -45,14 +50,14 @@ reducer = compose(
                 action.payload.result, state.datasets)
         })
     ),
-    (r: typeof reducer) => hookRequestActions(r, addLineChartDatasetAction,
+    (r: typeof reducer) => hookRequestActions(r, addChartDatasetAction,
         state => state.measurementsRequest,
         (state, action) => ({
             ...state,
             datasets: [...state.datasets, action.payload.result]
         })
     ),
-    (r: typeof reducer) => hookRequestActions(r, reloadLineChartDatasetsAction,
+    (r: typeof reducer) => hookRequestActions(r, reloadChartDatasetsAction,
         state => state.measurementsRequest,
         (state, action) => {
             const byId = indexBy(d => d.id, action.payload.result);
@@ -68,4 +73,4 @@ reducer = compose(
     )
 )(reducer);
 
-export const lineChartReducer = reducer;
+export const chartReducer = reducer;

@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Route, RouteComponentProps, withRouter} from 'react-router';
 import {AppState} from '../../state/app/reducers';
 import {Project} from '../../lib/project/project';
+import {selectChartViewAction, SelectChartViewParams} from '../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../state/session/project/reducer';
 import {BarChartPage} from './chart/bar-chart/bar-chart-page';
 import {LineChartPage} from './chart/line-chart/line-chart-page';
@@ -14,7 +15,6 @@ import {getRangeFilter} from '../../state/session/pages/reducers';
 import {changeRangeFilterAction} from '../../state/session/pages/actions';
 import FaTh from 'react-icons/lib/fa/th';
 import {GridChartPage} from './chart/grid-chart/grid-chart-page';
-import {SelectDatasetParams, selectLineChartDatasetAction} from '../../state/session/pages/line-chart-page/actions';
 import {loadProject} from '../../state/session/project/actions';
 import {SelectionActions} from '../../state/session/selection/actions';
 import {push} from 'react-router-redux';
@@ -30,7 +30,7 @@ interface StateProps
 interface DispatchProps
 {
     changeRangeFilter(rangeFilter: RangeFilter): void;
-    selectDataset(params: SelectDatasetParams): void;
+    selectDataset(params: SelectChartViewParams): void;
     loadProject(name: string): void;
     loadSelections(): void;
     navigate(path: string): void;
@@ -91,7 +91,7 @@ class ChartsPageComponent extends PureComponent<Props>
                 <TabPanel>
                     <GridChartPage rangeFilter={this.props.rangeFilter}
                                    onChangeRangeFilter={this.props.changeRangeFilter}
-                                   selectDataset={this.selectDataset} />
+                                   selectView={this.selectDataset} />
                 </TabPanel>
                 <TabPanel>
                     <LineChartPage rangeFilter={this.props.rangeFilter}
@@ -114,7 +114,7 @@ class ChartsPageComponent extends PureComponent<Props>
         }
         this.props.navigate(`${this.props.match.url}${path}`);
     }
-    selectDataset = (params: SelectDatasetParams) =>
+    selectDataset = (params: SelectChartViewParams) =>
     {
         this.props.selectDataset(params);
         this.moveToLineChart();
@@ -130,7 +130,7 @@ export const ChartsPage = withRouter(connect<StateProps, DispatchProps>((state: 
     rangeFilter: getRangeFilter(state)
 }), {
     changeRangeFilter: changeRangeFilterAction,
-    selectDataset: selectLineChartDatasetAction,
+    selectDataset: selectChartViewAction,
     loadProject: loadProject.started,
     loadSelections: SelectionActions.load.started,
     navigate: (path: string) => push(path)

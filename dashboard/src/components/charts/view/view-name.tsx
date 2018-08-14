@@ -20,6 +20,7 @@ type State = Readonly<typeof initialState>;
 const Row = styled.div`
     display: flex;
     align-items: center;
+    width: 250px;
 `;
 
 export class ViewName extends PureComponent<Props, State>
@@ -42,9 +43,17 @@ export class ViewName extends PureComponent<Props, State>
     {
         if (this.state.editing)
         {
-            return <MdCheck onClick={this.commit} />;
+            return (
+                <div title='Confirm'>
+                    <MdCheck onClick={this.commit} size={26} />
+                </div>
+            );
         }
-        else return <MdEdit onClick={this.startEdit} />;
+        else return (
+            <div title='Edit'>
+                <MdEdit onClick={this.startEdit} />
+            </div>
+        );
     }
 
     onChange = (value: string) =>

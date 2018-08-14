@@ -1,17 +1,23 @@
-import React, {PureComponent} from 'react';
+import {sort} from 'ramda';
+import React, {PureComponent, Fragment} from 'react';
 import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
+import {View} from '../../../../lib/view/view';
+import {
+    addChartDatasetAction,
+    AddDatasetParams, deleteChartDatasetAction, reloadChartDatasetsAction,
+    ReloadDatasetsParams, setChartXAxisAction, updateChartDatasetAction,
+    UpdateDatasetParams
+} from '../../../../state/session/pages/chart-page/actions';
+import {getViews} from '../../../../state/session/view/reducer';
+import {ViewManager} from '../../view/view-manager';
+import {ChartDataset} from '../chart-dataset';
+import {DatasetManager} from '../dataset-manager';
 import {BarChart} from './bar-chart';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {Project} from '../../../../lib/project/project';
-import {
-    loadBarChartMeasurementsAction,
-    LoadMeasurementParams, setBarChartSelection,
-    setBarChartXAxisAction, setBarChartYAxesAction
-} from '../../../../state/session/pages/bar-chart-page/actions';
 import {connect} from 'react-redux';
 import {AppState} from '../../../../state/app/reducers';
-import {DataSelector} from './data-selector';
 import {Selection} from '../../../../lib/measurement/selection/selection';
 import styled from 'styled-components';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
@@ -19,12 +25,10 @@ import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../measurement-list';
 import {getSelections} from '../../../../state/session/selection/reducer';
 import {SelectionActions} from '../../../../state/session/selection/actions';
-import {getBarChartPageSelection} from '../../../../state/session/pages/bar-chart-page/reducer';
 import {Request} from '../../../../util/request';
 import {RequestView} from '../../../global/request-view';
 import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
-import {SelectionSelectEditor} from '../../selection-container/selection-select-editor';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 
 interface OwnProps
@@ -36,19 +40,19 @@ interface StateProps
 {
     project: Project;
     selections: Selection[];
-    measurements: Measurement[];
-    selection: Selection | null;
+    views: View[];
     xAxis: string;
-    yAxes: string[];
+    datasets: ChartDataset[];
     measurementRequest: Request;
 }
 interface DispatchProps
 {
-    loadMeasurements(params: LoadMeasurementParams): void;
     loadSelections(): void;
     setXAxis(axis: string): void;
-    setYAxes(axes: string[]): void;
-    setSelection(selectionId: string): void;
+    addDataset(params: AddDatasetParams): void;
+    deleteDataset(dataset: ChartDataset): void;
+    updateDataset(params: UpdateDatasetParams): void;
+    reloadDatasets(params: ReloadDatasetsParams): void;
 }
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 
@@ -71,14 +75,15 @@ class BarChartPageComponent extends PureComponent<Props, State>
 
     componentDidMount()
     {
-        this.loadMeasurements();
         this.props.loadSelections();
+        this.reloadDatasets(this.props.rangeFilter);
     }
-    componentDidUpdate(props: Props, state: State)
+
+    componentDidUpdate(oldProps: Props)
     {
-        if (props.rangeFilter !== this.props.rangeFilter || props.selection !== this.props.selection)
+        if (this.props.views !== oldProps.views)
         {
-            this.loadMeasurements();
+            this.reloadDatasets(this.props.rangeFilter);
         }
     }
 
@@ -92,44 +97,47 @@ class BarChartPageComponent extends PureComponent<Props, State>
     }
     renderOptions = (): JSX.Element =>
     {
+        const keys = sort((a, b) => a.localeCompare(b), this.props.project.measurementKeys);
         return (
             <>
                 <Box title='Range'>
                     <RangeFilterSwitcher
                         rangeFilter={this.props.rangeFilter}
-                        onFilterChange={this.props.onChangeRangeFilter} />
+                        onFilterChange={this.changeRangeFilter} />
                 </Box>
-                <Box title='Selection'>
-                    <SelectionSelectEditor
-                        selections={this.props.selections}
-                        selection={this.props.selection}
-                        measurements={this.props.measurements}
-                        onSelectSelection={this.changeSelection} />
-                </Box>
-                <Box title='Projections'>
-                    <DataSelector
-                        measurementKeys={this.props.project.measurementKeys}
-                        selection={this.props.selection}
-                        xAxis={this.props.xAxis}
-                        yAxes={this.props.yAxes}
-                        onChangeXAxis={this.changeXAxis}
-                        onChangeYAxes={this.changeYAxes}
-                        onChangeSelection={this.changeSelection} />
+                <Box title='Views'>
+                    {this.renderDatasetManager(keys)}
                 </Box>
                 <RequestView request={this.props.measurementRequest} />
             </>
+        );
+    }
+    renderDatasetManager = (keys: string[]): JSX.Element =>
+    {
+        if (this.props.views.length === 0)
+        {
+            return <span>You have no defined views</span>;
+        }
+
+        return (
+            <DatasetManager
+                views={this.props.views}
+                measurementKeys={keys}
+                datasets={this.props.datasets}
+                maxDatasetCount={4}
+                addDataset={this.addDataset}
+                canAdd={this.canAddDataset()}
+                deleteDataset={this.props.deleteDataset}
+                updateDataset={this.updateDataset} />
         );
     }
     renderGraph = (): JSX.Element =>
     {
         return (
             <div>
+                <ViewManager />
                 <h4>Stacked bar chart</h4>
-                <BarChart measurements={this.props.measurements}
-                          xAxis={this.props.xAxis}
-                          yAxes={this.props.yAxes}
-                          groupMode={this.state.groupMode}
-                          onMeasurementsSelected={this.changeSelectedMeasurements} />
+                {this.props.datasets.map(this.renderDataset)}
                 <MeasurementsWrapper>
                     <h4>Selected measurements</h4>
                     <MeasurementList measurements={this.state.selectedMeasurements} />
@@ -137,45 +145,72 @@ class BarChartPageComponent extends PureComponent<Props, State>
             </div>
         );
     }
-
-    loadMeasurements = () =>
+    renderDataset = (dataset: ChartDataset): JSX.Element =>
     {
-        this.props.loadMeasurements({
+        const view = this.props.views.find(v => v.id === dataset.view);
+        if (!view) return <Fragment key={dataset.id}>Select a view</Fragment>;
+
+        return (
+            <BarChart key={dataset.id}
+                      measurements={dataset.measurements}
+                      xAxis={this.props.xAxis}
+                      yAxes={view.yAxes}
+                      groupMode={this.state.groupMode}
+                      onMeasurementsSelected={this.changeSelectedMeasurements} />
+        );
+    }
+
+    canAddDataset = () =>
+    {
+        return this.props.views.length > 0;
+    }
+
+    addDataset = () =>
+    {
+        if (this.canAddDataset())
+        {
+            this.props.addDataset({
+                rangeFilter: this.props.rangeFilter,
+                view: this.props.views[0].id
+            });
+        }
+    }
+    updateDataset = (dataset: ChartDataset, newDataset: ChartDataset) =>
+    {
+        this.props.updateDataset({
             rangeFilter: this.props.rangeFilter,
-            selection: this.props.selection
+            dataset,
+            view: newDataset.view
         });
     }
+    changeRangeFilter = (rangeFilter: RangeFilter) =>
+    {
+        this.props.onChangeRangeFilter(rangeFilter);
+        this.reloadDatasets(rangeFilter);
+    }
 
-    changeXAxis = (xAxis: string) =>
-    {
-        this.props.setXAxis(xAxis);
-    }
-    changeYAxes = (yAxes: string[]) =>
-    {
-        this.props.setYAxes(yAxes);
-    }
-    changeSelection = (selection: Selection) =>
-    {
-        this.props.setSelection(selection === null ? null : selection.id);
-    }
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
     {
         this.setState(() => ({ selectedMeasurements  }));
+    }
+    reloadDatasets = (rangeFilter: RangeFilter) =>
+    {
+        this.props.reloadDatasets({ rangeFilter });
     }
 }
 
 export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
     selections: getSelections(state),
-    measurements: state.session.pages.barChartPage.measurements,
-    measurementRequest: state.session.pages.barChartPage.measurementsRequest,
-    xAxis: state.session.pages.barChartPage.xAxis,
-    yAxes: state.session.pages.barChartPage.yAxes,
-    selection: getBarChartPageSelection(state)
+    views: getViews(state),
+    datasets: state.session.pages.chartState.datasets,
+    xAxis: state.session.pages.chartState.xAxis,
+    measurementRequest: state.session.pages.chartState.measurementsRequest
 }), {
-    loadMeasurements: loadBarChartMeasurementsAction.started,
     loadSelections: SelectionActions.load.started,
-    setXAxis: setBarChartXAxisAction,
-    setYAxes: setBarChartYAxesAction,
-    setSelection: setBarChartSelection
+    setXAxis: setChartXAxisAction,
+    addDataset: addChartDatasetAction.started,
+    deleteDataset: deleteChartDatasetAction,
+    updateDataset: updateChartDatasetAction.started,
+    reloadDatasets: reloadChartDatasetsAction.started
 })(BarChartPageComponent));

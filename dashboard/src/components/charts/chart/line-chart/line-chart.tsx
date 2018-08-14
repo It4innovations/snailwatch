@@ -7,15 +7,22 @@ import {Measurement} from '../../../../lib/measurement/measurement';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import { groupMeasurements, createLinePoints} from '../chart-utils';
 import {ColorPalette} from '../../color-palette';
-import {NamedLineChartDataset} from './line-chart-dataset';
 import {Tick} from '../tick';
 import {PointTooltip} from './point-tooltip';
 import {LinePoint} from './line-point';
 import {LineLegend} from './line-legend';
+import {chain} from 'ramda';
+
+export interface LineChartDataset
+{
+    name: string;
+    yAxis: string;
+    measurements: Measurement[];
+}
 
 interface Props
 {
-    datasets: NamedLineChartDataset[];
+    datasets: LineChartDataset[];
     xAxis: string;
     width?: number;
     height: number;
@@ -42,6 +49,11 @@ export class LineChart extends PureComponent<Props>
         if (this.props.datasets.length > 1 && this.props.groupMode === GroupMode.None)
         {
             return 'You have to use a group mode with multiple datasets';
+        }
+
+        if (chain(d => d.measurements, this.props.datasets).length === 0)
+        {
+            return 'No data available';
         }
 
         if (this.props.responsive)

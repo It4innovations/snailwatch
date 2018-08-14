@@ -40,7 +40,7 @@ export class SelectionSelectEditor extends PureComponent<Props, State>
                     <SelectionContainer
                         measurements={this.props.measurements}
                         selectedSelection={this.props.selection}
-                        selectSelection={this.props.onSelectSelection} />
+                        onSelect={this.props.onSelectSelection} />
                 }
                 onChange={this.changeSelectionsEditing} />
         );

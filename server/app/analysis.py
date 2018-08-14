@@ -1,11 +1,7 @@
-from server.app.db.measurement import MeasurementRepo
 from server.app.util import group_by
 
 
 class Analyser(object):
-    """
-    :type measurement_repo MeasurementRepo
-    """
     def __init__(self, measurement_repo):
         self.measurement_repo = measurement_repo
 

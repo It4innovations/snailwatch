@@ -6,6 +6,7 @@ import {getViews, getViewsState} from '../../../state/session/view/reducer';
 import {Request} from '../../../util/request';
 import {ViewActions} from '../../../state/session/view/actions';
 import {Input} from 'reactstrap';
+import {Box} from '../../global/box';
 import {ViewComponent} from './view-component';
 import {getSelections} from '../../../state/session/selection/reducer';
 import {Selection} from '../../../lib/measurement/selection/selection';
@@ -41,6 +42,9 @@ interface State
 const Row = styled.div`
     display: flex;
 `;
+const ViewWrapper = styled.div`
+    margin-top: 10px;
+`;
 
 class ViewManagerComponent extends PureComponent<Props, State>
 {
@@ -74,7 +78,7 @@ class ViewManagerComponent extends PureComponent<Props, State>
         const selectedView = this.props.views.find(v => v.id === this.state.selectedView) || null;
 
         return (
-            <div>
+            <Box title={this.renderTitle()} hideable={true}>
                 <Row>
                     <Input type='select'
                            value={this.state.selectedView || ''}
@@ -86,15 +90,27 @@ class ViewManagerComponent extends PureComponent<Props, State>
                                   onClick={this.createView}>Create view</MdAddBox>
                     </div>
                 </Row>
-                {selectedView &&
-                    <ViewComponent view={selectedView}
-                                   selections={this.props.selections}
-                                   measurementKeys={this.props.project.measurementKeys}
-                                   onChange={this.props.updateView}
-                                   onDelete={this.props.deleteView} />
-                }
+                <ViewWrapper>
+                    {selectedView &&
+                    <ViewComponent
+                        measurements={[]}
+                        view={selectedView}
+                        selections={this.props.selections}
+                        measurementKeys={this.props.project.measurementKeys}
+                        onChange={this.props.updateView}
+                        onDelete={this.props.deleteView} />
+                    }
+                </ViewWrapper>
+            </Box>
+        );
+    }
+    renderTitle = (): JSX.Element =>
+    {
+        return (
+            <Row>
+                <div>View manager</div>
                 <RequestComponent request={this.props.viewRequest} />
-            </div>
+            </Row>
         );
     }
 

@@ -1,4 +1,4 @@
-import {Operator} from '../measurement/selection/filter';
+import {Filter, Operator} from '../measurement/selection/filter';
 import {Measurement} from '../measurement/measurement';
 import moment, {Moment} from 'moment';
 import {Project} from '../project/project';
@@ -51,6 +51,15 @@ export interface ArrayResponse<T>
     _items: T[];
 }
 
+export function parseFilter(filter: Filter): Filter
+{
+    return { ...filter };
+}
+export function serializeFilter(filter: Filter): {}
+{
+    return { ...filter };
+}
+
 export function parseProject(project: ProjectDAO): Project
 {
     return {
@@ -75,22 +84,14 @@ export function parseSelection(selection: SelectionDAO): Selection
     return {
         id: selection._id,
         name: selection.name,
-        filters: selection.filters.map(f => ({
-            path: f.path,
-            operator: f.operator,
-            value: f.value
-        }))
+        filters: selection.filters.map(parseFilter)
     };
 }
 export function serializeSelection(selection: Selection): {}
 {
     return {
         name: selection.name,
-        filters: selection.filters.map(f => ({
-            path: f.path,
-            operator: f.operator,
-            value: f.value
-        }))
+        filters: selection.filters.map(serializeFilter)
     };
 }
 export function parseView(view: ViewDAO): View
@@ -105,18 +106,8 @@ export function parseView(view: ViewDAO): View
 }
 export function serializeView(view: View): {}
 {
-    const obj = {
-        name: view.name,
-        yAxes: view.yAxes
-    };
-
-    // TODO: eve null ref bugfix https://github.com/pyeve/eve/issues/1159
-    if (view.selection !== null)
-    {
-        obj['selection'] = view.selection;
-    }
-
-    return obj;
+    const { name, selection, yAxes } = view;
+    return { name, selection, yAxes };
 }
 
 export function serializeDate(date: Moment): string

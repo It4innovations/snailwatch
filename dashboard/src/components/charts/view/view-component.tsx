@@ -1,6 +1,8 @@
 import React, {PureComponent} from 'react';
+import styled from 'styled-components';
+import {Measurement} from '../../../lib/measurement/measurement';
 import {View} from '../../../lib/view/view';
-import {SelectionSelect} from '../selection-container/selection-select';
+import {SelectionContainer} from '../selection-container/selection-container';
 import {Selection} from '../../../lib/measurement/selection/selection';
 import {getSelectionById} from '../../../state/session/selection/reducer';
 import {ResultKeysMultiselect} from '../../global/keys/result-keys-multiselect';
@@ -11,6 +13,7 @@ interface Props
 {
     view: View;
     selections: Selection[];
+    measurements: Measurement[];
     measurementKeys: string[];
     onChange(view: View): void;
     onDelete(view: View): void;
@@ -22,6 +25,10 @@ const initialState = {
 
 type State = Readonly<typeof initialState>;
 
+const KeysWrapper = styled.div`
+    margin: 10px;
+`;
+
 export class ViewComponent extends PureComponent<Props, State>
 {
     readonly state: State = initialState;
@@ -32,13 +39,17 @@ export class ViewComponent extends PureComponent<Props, State>
             <div>
                 <ViewName value={this.props.view.name}
                           onChange={this.changeName} />
-                <SelectionSelect selections={this.props.selections}
-                                 selection={getSelectionById(this.props.selections, this.props.view.selection)}
-                                 onSelect={this.changeSelection} />
-                <ResultKeysMultiselect keys={this.props.measurementKeys}
-                                       values={this.props.view.yAxes}
-                                       onChange={this.changeYAxes} />
-                <Button onClick={this.deleteView}>Delete</Button>
+                <SelectionContainer
+                    selectedSelection={getSelectionById(this.props.selections, this.props.view.selection)}
+                    onSelect={this.changeSelection}
+                    onSelectionChange={this.onSelectionChange}
+                    measurements={this.props.measurements} />
+                <KeysWrapper>
+                    <ResultKeysMultiselect keys={this.props.measurementKeys}
+                                           values={this.props.view.yAxes}
+                                           onChange={this.changeYAxes} />
+                </KeysWrapper>
+                <Button onClick={this.deleteView} color='danger'>Delete</Button>
             </div>
         );
     }
@@ -59,5 +70,14 @@ export class ViewComponent extends PureComponent<Props, State>
     deleteView = () =>
     {
         this.props.onDelete(this.props.view);
+    }
+
+    onSelectionChange = (selection: Selection) =>
+    {
+        const id = selection === null ? null : selection.id;
+        if (selection.id === id)
+        {
+            this.props.onChange({ ...this.props.view });
+        }
     }
 }

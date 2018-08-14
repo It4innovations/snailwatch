@@ -1,51 +1,41 @@
 import React, {PureComponent} from 'react';
+import {Measurement} from '../../../../lib/measurement/measurement';
 import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {connect} from 'react-redux';
+import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
+import {SelectChartViewParams} from '../../../../state/session/pages/chart-page/actions';
+import {loadGridChartMeasurements} from '../../../../state/session/pages/grid-chart-page/actions';
 import {getSelections} from '../../../../state/session/selection/reducer';
 import {Selection} from '../../../../lib/measurement/selection/selection';
+import {getViews} from '../../../../state/session/view/reducer';
+import {formatKey} from '../../../../util/measurement';
+import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {LineChart} from '../line-chart/line-chart';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
-import {LineChartDataset, nameDataset} from '../line-chart/line-chart-dataset';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {Box} from '../../../global/box';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
-import {
-    loadGridChartDatasetsAction,
-    setGridChartXAxisAction, setGridChartYAxisAction
-} from '../../../../state/session/pages/grid-chart-page/actions';
-import {
-    getGridChartDatasets,
-    getGridChartXAxis,
-    getGridChartYAxis
-} from '../../../../state/session/pages/grid-chart-page/reducer';
-import {DataSelector} from './data-selector';
 import {Project} from '../../../../lib/project/project';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import styled from 'styled-components';
-import {SelectionContainer} from '../../selection-container/selection-container';
-import {SelectDatasetParams} from '../../../../state/session/pages/line-chart-page/actions';
 
 interface OwnProps
 {
     rangeFilter: RangeFilter;
     onChangeRangeFilter(rangeFilter: RangeFilter): void;
-    selectDataset(dataset: SelectDatasetParams): void;
+    selectView(view: SelectChartViewParams): void;
 }
 interface StateProps
 {
     project: Project;
-    xAxis: string;
-    yAxis: string;
-    datasets: LineChartDataset[];
-    selections: Selection[];
+    views: View[];
+    measurements: Measurement[];
 }
 interface DispatchProps
 {
-    loadDatasets(): void;
-    changeXAxis(axis: string): void;
-    changeYAxis(axis: string): void;
+    loadMeasurements(): void;
 }
 
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
@@ -53,6 +43,7 @@ type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 interface State
 {
     selection: Selection;
+    xAxis: string;
 }
 
 const Grid = styled.div`
@@ -82,20 +73,13 @@ const Label = styled.div`
 class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
 {
     readonly state: State = {
-        selection: null
+        selection: null,
+        xAxis: ''
     };
 
     componentDidMount()
     {
-        this.props.loadDatasets();
-    }
-    componentDidUpdate(oldProps: Props)
-    {
-        if (this.props.selections !== oldProps.selections ||
-            this.props.rangeFilter !== oldProps.rangeFilter)
-        {
-            this.props.loadDatasets();
-        }
+        this.props.loadMeasurements();
     }
 
     render()
@@ -108,60 +92,45 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
     }
     renderMenu = (): JSX.Element =>
     {
-        const measurements = this.props.datasets.length === 0 ? [] : this.props.datasets[0].measurements;
-
         return (
             <>
                 <Box title='Range'>
                     <RangeFilterSwitcher
                         rangeFilter={this.props.rangeFilter}
-                        onFilterChange={this.props.onChangeRangeFilter} />
+                        onFilterChange={this.changeRangeFilter} />
                 </Box>
-                <Box title='Selections'>
-                    <SelectionContainer
-                        measurements={measurements}
-                        selectedSelection={this.state.selection}
-                        selectSelection={this.changeSelection} />
-                </Box>
-                <Box title='Axes'>
-                    <DataSelector
-                        measurementKeys={this.props.project.measurementKeys}
-                        xAxis={this.props.xAxis}
-                        yAxis={this.props.yAxis}
-                        onChangeXAxis={this.props.changeXAxis}
-                        onChangeYAxis={this.props.changeYAxis} />
+                <Box title='X axis'>
+                    <MeasurementKeys keys={this.props.project.measurementKeys}
+                                     value={this.state.xAxis}
+                                     onChange={this.changeXAxis} />
                 </Box>
             </>
         );
     }
     renderContent = (): JSX.Element =>
     {
-        if (this.props.datasets.length === 0)
-        {
-            return <div>You have no selections</div>;
-        }
-
+        const views = this.props.views.sort((a: View, b: View) => a.name.localeCompare(b.name));
         return (
             <Grid>
-                {this.props.datasets.map(this.renderDataset)}
+                {views.map(this.renderView)}
             </Grid>
         );
     }
-    renderDataset = (dataset: LineChartDataset): JSX.Element =>
+    renderView = (view: View): JSX.Element =>
     {
-        const mapped = nameDataset({
-            ...dataset,
-            yAxis: this.props.yAxis
-        }, this.props.selections);
-
+        const datasets = view.yAxes.map(yAxis => ({
+            name: `${view.name} (${formatKey(yAxis)})`,
+            yAxis,
+            measurements: this.props.measurements
+        }));
         return (
-            <Dataset key={mapped.name}
-                     title={`Select ${mapped.name}`}
-                     onClick={() => this.selectDataset(dataset)}>
-                <Label>{mapped.name}</Label>
+            <Dataset key={view.id}
+                     title={`Select ${view.name}`}
+                     onClick={() => this.selectView(view)}>
+                <Label>{view.name}</Label>
                 <LineChart
-                    datasets={[mapped]}
-                    xAxis={this.props.xAxis}
+                    datasets={datasets}
+                    xAxis={this.state.xAxis}
                     width={300}
                     height={150}
                     preview={true}
@@ -173,31 +142,30 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
         );
     }
 
-    selectDataset = (dataset: LineChartDataset) =>
+    selectView = (view: View) =>
     {
-        this.props.selectDataset({
-            dataset: {
-                ...dataset,
-                yAxis: this.props.yAxis
-            },
-            xAxis: this.props.xAxis
+        this.props.selectView({
+            view,
+            xAxis: this.state.xAxis
         });
     }
 
-    changeSelection = (selection: Selection) =>
+    changeXAxis = (xAxis: string) =>
     {
-        this.setState(() => ({ selection }));
+        this.setState(() => ({ xAxis }));
+    }
+    changeRangeFilter = (rangeFilter: RangeFilter) =>
+    {
+        this.props.onChangeRangeFilter(rangeFilter);
+        this.props.loadMeasurements();
     }
 }
 
 export const GridChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
     selections: getSelections(state),
-    datasets: getGridChartDatasets(state),
-    xAxis: getGridChartXAxis(state),
-    yAxis: getGridChartYAxis(state)
-}), {
-    loadDatasets: () => loadGridChartDatasetsAction.started({}),
-    changeXAxis: setGridChartXAxisAction,
-    changeYAxis: setGridChartYAxisAction
-})(GridChartPageComponent));
+    views: getViews(state),
+    measurements: state.session.pages.gridChartPage.measurements
+}), ({
+    loadMeasurements: () => loadGridChartMeasurements.started({})
+}))(GridChartPageComponent));
