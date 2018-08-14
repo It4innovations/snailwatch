@@ -20,9 +20,9 @@ const SlimCard = styled(Card)`
     padding: 10px !important;
     margin-bottom: 5px;
 `;
-const Title = styled.div`
+const Title = styled.div<{hideable: boolean}>`
     font-size: 1.25rem;
-    cursor: pointer;
+    ${(props) => props.hideable ? 'cursor: pointer' : ''};
 `;
 
 export class Box extends PureComponent<Props, State>
@@ -45,7 +45,7 @@ export class Box extends PureComponent<Props, State>
     {
         return (
             <SlimCard body outline color='secondary' className={this.props.className}>
-                <Title onClick={this.handleClick}>{this.props.title}</Title>
+                <Title onClick={this.handleClick} hideable={this.props.hideable}>{this.props.title}</Title>
                 {this.state.visible && <>{this.props.children}</>}
             </SlimCard>
         );
