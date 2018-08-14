@@ -47,7 +47,8 @@ export class ViewComponent extends PureComponent<Props, State>
                 <KeysWrapper>
                     <ResultKeysMultiselect keys={this.props.measurementKeys}
                                            values={this.props.view.yAxes}
-                                           onChange={this.changeYAxes} />
+                                           onChange={this.changeYAxes}
+                                           requireSelection={true} />
                 </KeysWrapper>
                 <Button onClick={this.deleteView} color='danger'>Delete</Button>
             </div>

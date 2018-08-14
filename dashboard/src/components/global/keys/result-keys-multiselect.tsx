@@ -7,6 +7,7 @@ interface Props
 {
     keys: string[];
     values: string[];
+    requireSelection?: boolean;
     onChange(keys: string[]): void;
 }
 
@@ -15,7 +16,7 @@ export class ResultKeysMultiselect extends PureComponent<Props>
     componentDidMount()
     {
         const keys = getResultKeys(this.props.keys);
-        if (this.props.values.length === 0 && keys.length > 0)
+        if (this.props.values.length === 0 && keys.length > 0 && this.props.requireSelection)
         {
             this.props.onChange([keys[0]]);
         }
@@ -26,19 +27,25 @@ export class ResultKeysMultiselect extends PureComponent<Props>
         const keys = getResultKeys(this.props.keys);
         if (keys.length === 0) return <div>No result keys available, upload some measurements</div>;
 
+        const disableChecked = this.props.values.length === 1;
+
         return (
             <div>
-                {keys.map(key =>
-                    <FormGroup check key={key}>
-                        <Label check>
-                            <Input type='checkbox'
-                                   value={key}
-                                   checked={this.props.values.indexOf(key) !== -1}
-                                   onChange={this.handleChange} />
-                            {' '}{formatKey(key)}
-                        </Label>
-                    </FormGroup>
-                )}
+                {keys.map(key => {
+                    const checked = this.props.values.indexOf(key) !== -1;
+                    return (
+                        <FormGroup check key={key}>
+                            <Label check>
+                                <Input type='checkbox'
+                                       value={key}
+                                       checked={checked}
+                                       disabled={checked && disableChecked}
+                                       onChange={this.handleChange} />
+                                {' '}{formatKey(key)}
+                            </Label>
+                        </FormGroup>
+                    );
+                })}
             </div>
         );
     }
