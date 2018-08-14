@@ -1,13 +1,20 @@
 import React, {PureComponent} from 'react';
-import {Measurement} from '../../../../lib/measurement/measurement';
 import {
-    Bar, BarChart as ReBarChart, CartesianGrid, Label,
-    Legend, ResponsiveContainer, Tooltip, XAxis, YAxis
+    Bar,
+    BarChart as ReBarChart,
+    CartesianGrid,
+    Label,
+    Legend,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis
 } from 'recharts';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
-import {groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
-import {ColorPalette} from '../../color-palette';
+import {Measurement} from '../../../../lib/measurement/measurement';
 import {formatKey} from '../../../../util/measurement';
+import {ColorPalette} from '../../color-palette';
+import {groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
 import {Tick} from '../tick';
 import {BarTooltip} from './bar-tooltip';
 

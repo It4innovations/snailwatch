@@ -1,4 +1,4 @@
-import {chain, lensPath, reduce, uniq, view, contains} from 'ramda';
+import {chain, contains, lensPath, reduce, uniq, view} from 'ramda';
 
 export function getAllKeys<T>(data: T, prefix: string = ''): string[]
 {

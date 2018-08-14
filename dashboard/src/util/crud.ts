@@ -1,5 +1,5 @@
-import actionCreatorFactory, {AsyncActionCreators, Action, AnyAction, Failure, Meta, Success} from 'typescript-fsa';
 import {compose} from 'ramda';
+import actionCreatorFactory, {Action, AnyAction, AsyncActionCreators, Failure, Meta, Success} from 'typescript-fsa';
 import {ReducerBuilder} from 'typescript-fsa-reducers';
 import {hookRequestActions, Request} from './request';
 

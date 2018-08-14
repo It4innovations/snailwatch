@@ -1,10 +1,10 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {ViewActions} from './actions';
+import {View} from '../../../lib/view/view';
+import {createCrudReducer} from '../../../util/crud';
 import {createRequest, Request} from '../../../util/request';
 import {AppState} from '../../app/reducers';
 import {clearSession} from '../actions';
-import {View} from '../../../lib/view/view';
-import {createCrudReducer} from '../../../util/crud';
+import {ViewActions} from './actions';
 
 export interface ViewState
 {

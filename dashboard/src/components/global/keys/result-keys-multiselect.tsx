@@ -1,7 +1,7 @@
-import React, {PureComponent} from 'react';
-import {getResultKeys, formatKey} from '../../../util/measurement';
-import {FormGroup, Input, Label} from 'reactstrap';
 import {without} from 'ramda';
+import React, {PureComponent} from 'react';
+import {FormGroup, Input, Label} from 'reactstrap';
+import {formatKey, getResultKeys} from '../../../util/measurement';
 
 interface Props
 {

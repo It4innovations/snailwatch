@@ -1,17 +1,16 @@
-import {ReducerBuilder} from 'typescript-fsa-reducers';
+import {Action as ReduxAction} from 'redux';
+import {ActionsObservable, StateObservable} from 'redux-observable';
+import {from as observableFrom, Observable} from 'rxjs';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {Action, AsyncActionCreators, Success} from 'typescript-fsa';
-import {AppEpic} from '../state/app/app-epic';
-import {AppState} from '../state/app/reducers';
-import {ActionsObservable} from 'redux-observable';
-import {Observable} from 'rxjs/Observable';
-import {Action as ReduxAction, Store} from 'redux';
-import {ServiceContainer} from '../state/app/di';
-import '../util/redux-observable';
-import 'rxjs/add/observable/from';
-import {any} from 'ramda';
+import {ReducerBuilder} from 'typescript-fsa-reducers';
 import {isObject} from 'util';
-import {clearSession} from '../state/session/actions';
 import {ApiError} from '../lib/errors/api';
+import {AppEpic} from '../state/app/app-epic';
+import {ServiceContainer} from '../state/app/di';
+import {AppState} from '../state/app/reducers';
+import {clearSession} from '../state/session/actions';
+import {ofAction} from './redux-observable';
 
 export interface Request
 {
@@ -59,15 +58,6 @@ export function isRequest(request: {}): boolean
         request.hasOwnProperty('loading') &&
         request.hasOwnProperty('error') &&
         request.hasOwnProperty('completed');
-}
-
-export function combineRequests(...requests: Request[]): Request
-{
-    return {
-        loading: any(r => r.loading, requests),
-        error: requests.map(r => r.error).find(r => r !== null) || null,
-        completed: any(r => r.completed, requests)
-    };
 }
 
 function replaceKey<T, Value>(obj: T, valueSelector: (obj: T) => Value, value: Value)
@@ -125,13 +115,13 @@ export function mapRequestToActions<P, S, E>(creator: AsyncActionCreators<P, S, 
                                              request: Observable<S>)
 : Observable<ReduxAction>
 {
-    return request
-        .map(result =>
+    return request.pipe(
+        map(result =>
             creator.done({
                 params: action.payload,
                 result
             })
-        ).catch(error => {
+        ), catchError(error => {
             const failed = creator.failed({
                 params: action.payload,
                 error
@@ -143,8 +133,8 @@ export function mapRequestToActions<P, S, E>(creator: AsyncActionCreators<P, S, 
                 observables.push(clearSession());
             }
 
-            return Observable.from(observables);
-        });
+            return observableFrom(observables);
+        }));
 }
 
 export function createRequestEpic<P, S, E>(creator: AsyncActionCreators<P, S, E>,
@@ -153,13 +143,12 @@ export function createRequestEpic<P, S, E>(creator: AsyncActionCreators<P, S, E>
                                                           deps: ServiceContainer) => Observable<S>): AppEpic
 {
     return (action$: ActionsObservable<ReduxAction>,
-            store: Store<AppState>,
+            store: StateObservable<AppState>,
             deps: ServiceContainer) =>
-        action$
-            .ofAction(creator.started)
-            .switchMap((action: Action<P>) =>
-                {
-                    return mapRequestToActions(creator, action, startRequest(action, store.getState(), deps));
-                }
-            );
+        action$.pipe(
+            ofAction(creator.started),
+            switchMap((action: Action<P>) =>
+                mapRequestToActions(creator, action, startRequest(action, store.value, deps))
+            )
+        );
 }

@@ -1,10 +1,10 @@
-import React, {PureComponent} from 'react';
-import {Measurement} from '../../../lib/measurement/measurement';
-import ReactTable, {RowInfo} from 'react-table';
 import {sort} from 'ramda';
-import SyntaxHighlighter, { registerLanguage } from 'react-syntax-highlighter/light';
-import {dracula} from 'react-syntax-highlighter/styles/hljs';
+import React, {PureComponent} from 'react';
 import json from 'react-syntax-highlighter/languages/hljs/json';
+import SyntaxHighlighter, {registerLanguage} from 'react-syntax-highlighter/light';
+import {dracula} from 'react-syntax-highlighter/styles/hljs';
+import ReactTable, {RowInfo} from 'react-table';
+import {Measurement} from '../../../lib/measurement/measurement';
 
 registerLanguage('json', json);
 

@@ -1,6 +1,6 @@
 import actionCreatorFactory from 'typescript-fsa';
-import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
 import {ChartDataset} from '../../../../components/charts/chart/chart-dataset';
+import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
 import {View} from '../../../../lib/view/view';
 
 const actionCreator = actionCreatorFactory('chart-state');

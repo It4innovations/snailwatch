@@ -1,5 +1,5 @@
-import {Filter} from '../measurement/selection/filter';
 import {groupBy, values, zipObj} from 'ramda';
+import {Filter} from '../measurement/selection/filter';
 
 const table = {
     '!=': '$ne',

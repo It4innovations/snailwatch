@@ -1,8 +1,8 @@
 import React, {PureComponent} from 'react';
 import MdCheck from 'react-icons/lib/md/check';
 import MdEdit from 'react-icons/lib/md/edit';
-import {EditableText} from '../../global/editable-text';
 import styled from 'styled-components';
+import {EditableText} from '../../global/editable-text';
 
 interface Props
 {

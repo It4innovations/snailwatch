@@ -1,10 +1,8 @@
 import {combineEpics} from 'redux-observable';
-import {SelectionActions} from './actions';
-import '../../../util/redux-observable';
-import 'rxjs/add/observable/of';
 import {createRequestEpic} from '../../../util/request';
-import {getUser} from '../user/reducer';
 import {getSelectedProject} from '../project/reducer';
+import {getUser} from '../user/reducer';
+import {SelectionActions} from './actions';
 
 const loadSelections = createRequestEpic(SelectionActions.load, (action, state, deps) =>
     deps.client.loadSelections(getUser(state), getSelectedProject(state))

@@ -1,11 +1,11 @@
-import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {changePassword, loginUser} from './actions';
-import {AppState} from '../../app/reducers';
-import {User} from '../../../lib/user/user';
-import {createSelector} from 'reselect';
-import {createRequest, hookRequestActions, Request} from '../../../util/request';
 import {compose} from 'ramda';
+import {createSelector} from 'reselect';
+import {reducerWithInitialState} from 'typescript-fsa-reducers';
+import {User} from '../../../lib/user/user';
+import {createRequest, hookRequestActions, Request} from '../../../util/request';
+import {AppState} from '../../app/reducers';
 import {clearSession} from '../actions';
+import {changePassword, loginUser} from './actions';
 
 export interface UserState
 {

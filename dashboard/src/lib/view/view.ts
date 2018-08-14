@@ -1,4 +1,4 @@
-import {Moment, default as moment} from 'moment';
+import {default as moment, Moment} from 'moment';
 
 export interface View
 {

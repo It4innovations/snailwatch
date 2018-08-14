@@ -1,11 +1,16 @@
-import {Action as ReduxAction, Store} from 'redux';
-import {ActionsObservable, combineEpics} from 'redux-observable';
-import '../../../../util/redux-observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/forkJoin';
+import {combineEpics} from 'redux-observable';
+import {forkJoin as observableForkJoin, of as observableOf} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {Selection} from '../../../../lib/measurement/selection/selection';
 import {View} from '../../../../lib/view/view';
 import {getNextId} from '../../../../util/database';
+import {ofAction} from '../../../../util/redux-observable';
 import {createRequestEpic} from '../../../../util/request';
+import {AppEpic} from '../../../app/app-epic';
+import {AppState} from '../../../app/reducers';
+import {getSelectedProject} from '../../project/reducer';
+import {getSelectionById, getSelections} from '../../selection/reducer';
+import {getUser} from '../../user/reducer';
 import {getViewById, getViews} from '../../view/reducer';
 import {getRangeFilter} from '../reducers';
 import {
@@ -14,12 +19,6 @@ import {
     selectChartViewAction,
     updateChartDatasetAction
 } from './actions';
-import {Observable} from 'rxjs/Observable';
-import {getSelectionById, getSelections} from '../../selection/reducer';
-import {AppState} from '../../../app/reducers';
-import {Selection} from '../../../../lib/measurement/selection/selection';
-import {getUser} from '../../user/reducer';
-import {getSelectedProject} from '../../project/reducer';
 
 function getSelection(state: AppState, selectionId: string): Selection | null
 {
@@ -35,12 +34,12 @@ const addDataset = createRequestEpic(addChartDatasetAction, (action, state, deps
     const view = getView(state, viewId);
     const selection = getSelection(state, view.selection);
 
-    return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), selection, rangeFilter)
-        .map(measurements => ({
+    return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), selection, rangeFilter).pipe(
+        map(measurements => ({
             id: getNextId(state.session.pages.chartState.datasets),
             view: viewId,
             measurements
-        }));
+        })));
 });
 
 const updateDataset = createRequestEpic(updateChartDatasetAction, (action, state, deps) => {
@@ -54,37 +53,37 @@ const updateDataset = createRequestEpic(updateChartDatasetAction, (action, state
     {
         const view = getView(state, viewId);
         const selection = getSelection(state, view === null ? null : view.selection);
-        return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), selection, rangeFilter)
-            .map(measurements => ({
+        return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), selection, rangeFilter).pipe(
+            map(measurements => ({
                     ...updated,
                     measurements
-            }));
+            })));
     }
-    else return Observable.of(updated);
+    else return observableOf(updated);
 });
 
 const reloadDatasets = createRequestEpic(reloadChartDatasetsAction, (action, state, deps) => {
     const {rangeFilter} = action.payload;
     const datasets = state.session.pages.chartState.datasets;
 
-    return datasets.length === 0 ? Observable.of([]) : Observable.forkJoin(datasets.map(dataset => {
+    return datasets.length === 0 ? observableOf([]) : observableForkJoin(datasets.map(dataset => {
         const view = getView(state, dataset.view);
         const selection = getSelection(state, view === null ? null : view.selection);
-        return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), selection, rangeFilter)
-            .map(measurements => ({
+        return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), selection, rangeFilter).pipe(
+            map(measurements => ({
                 ...dataset,
                 measurements
-            }));
+            })));
     }));
 });
 
-const reloadAfterSelect = (action$: ActionsObservable<ReduxAction>,
-                           state: Store<AppState>) =>
-    action$
-        .ofAction(selectChartViewAction)
-        .map(() => reloadChartDatasetsAction.started({
-            rangeFilter: getRangeFilter(state.getState())
-        }));
+const reloadAfterSelect: AppEpic = (action$, store) =>
+    action$.pipe(
+        ofAction(selectChartViewAction),
+        map(() => reloadChartDatasetsAction.started({
+            rangeFilter: getRangeFilter(store.value)
+        }))
+    );
 
 export const chartEpics = combineEpics(
     addDataset,

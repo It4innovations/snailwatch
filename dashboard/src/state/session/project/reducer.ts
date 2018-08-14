@@ -1,14 +1,19 @@
-import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {AppState} from '../../app/reducers';
-import {Project} from '../../../lib/project/project';
-import {
-    createProject, loadProject, loadProjects, selectProject,
-    loadUploadToken, regenerateUploadToken, deselectProject
-} from './actions';
-import {createRequest, hookRequestActions, Request} from '../../../util/request';
-import {createSelector} from 'reselect';
 import {compose} from 'ramda';
+import {createSelector} from 'reselect';
+import {reducerWithInitialState} from 'typescript-fsa-reducers';
+import {Project} from '../../../lib/project/project';
+import {createRequest, hookRequestActions, Request} from '../../../util/request';
+import {AppState} from '../../app/reducers';
 import {clearSession} from '../actions';
+import {
+    createProject,
+    deselectProject,
+    loadProject,
+    loadProjects,
+    loadUploadToken,
+    regenerateUploadToken,
+    selectProject
+} from './actions';
 
 export interface ProjectState
 {

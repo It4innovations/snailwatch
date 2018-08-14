@@ -1,14 +1,20 @@
 import React, {PureComponent} from 'react';
-import {Navigation} from '../../state/nav/routes';
-import {RouteComponentProps, withRouter} from 'react-router';
-import {
-    Navbar, NavbarBrand, NavItem, Nav,
-    UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem
-} from 'reactstrap';
-import {Project} from '../../lib/project/project';
-import {Link} from 'react-router-dom';
-import styled from 'styled-components';
 import MdMenu from 'react-icons/lib/md/menu';
+import {RouteComponentProps, withRouter} from 'react-router';
+import {Link} from 'react-router-dom';
+import {
+    DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
+    Nav,
+    Navbar,
+    NavbarBrand,
+    NavItem,
+    UncontrolledDropdown
+} from 'reactstrap';
+import styled from 'styled-components';
+import {Project} from '../../lib/project/project';
+import {Navigation} from '../../state/nav/routes';
 
 interface Props
 {

@@ -1,6 +1,6 @@
 import React, {PureComponent, ReactNode} from 'react';
-import styled from 'styled-components';
 import {Card} from 'reactstrap';
+import styled from 'styled-components';
 
 interface DefaultProps
 {

@@ -1,23 +1,21 @@
 import {combineEpics} from 'redux-observable';
-import {changePassword, loginUser} from './actions';
-import '../../../util/redux-observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/throw';
-import {getUser} from './reducer';
-import {createRequestEpic} from '../../../util/request';
+import {throwError as observableThrowError} from 'rxjs';
+import {catchError} from 'rxjs/operators';
 import {ApiError} from '../../../lib/errors/api';
-import {Observable} from 'rxjs/Observable';
+import {createRequestEpic} from '../../../util/request';
+import {changePassword, loginUser} from './actions';
+import {getUser} from './reducer';
 
 const loginUserEpic = createRequestEpic(loginUser, (action, state, deps) =>
-    deps.client.loginUser(action.payload.username, action.payload.password)
-        .catch(error => {
+    deps.client.loginUser(action.payload.username, action.payload.password).pipe(
+        catchError(error => {
             if (error instanceof ApiError && error.status === 403)
             {
-                return Observable.throw('You have entered invalid credentials');
+                return observableThrowError('You have entered invalid credentials');
             }
 
-            return Observable.throw(error);
-        })
+            return observableThrowError(error);
+        }))
 );
 const changePasswordEpic = createRequestEpic(changePassword, (action, state, deps) =>
     deps.client.changePassword(getUser(state), action.payload.oldPassword, action.payload.newPassword)

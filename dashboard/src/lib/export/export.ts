@@ -1,6 +1,6 @@
-import {Measurement} from '../measurement/measurement';
-import {uniq, chain, toUpper} from 'ramda';
+import {chain, toUpper, uniq} from 'ramda';
 import {getValueWithPath} from '../../util/object';
+import {Measurement} from '../measurement/measurement';
 
 function getKeys(measurements: Measurement[], dictKey: keyof Measurement): string[]
 {

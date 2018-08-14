@@ -1,10 +1,10 @@
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {SelectionActions} from './actions';
-import {createRequest, Request} from '../../../util/request';
 import {Selection} from '../../../lib/measurement/selection/selection';
+import {createCrudReducer} from '../../../util/crud';
+import {createRequest, Request} from '../../../util/request';
 import {AppState} from '../../app/reducers';
 import {clearSession} from '../actions';
-import {createCrudReducer} from '../../../util/crud';
+import {SelectionActions} from './actions';
 
 export interface SelectionState
 {

@@ -1,9 +1,9 @@
 import {routerReducer, RouterState} from 'react-router-redux';
-import {SessionState, sessionReducer} from '../session/reducers';
-import {createTransform, persistReducer} from 'redux-persist';
-import {deserializeDates, serializeDates, deserializeRangeFilter, serializeRequests} from '../../util/serialization';
-import storage from 'redux-persist/lib/storage';
 import {Reducer} from 'redux';
+import {createTransform, persistReducer} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import {deserializeDates, deserializeRangeFilter, serializeDates, serializeRequests} from '../../util/serialization';
+import {sessionReducer, SessionState} from '../session/reducers';
 
 export interface AppState
 {

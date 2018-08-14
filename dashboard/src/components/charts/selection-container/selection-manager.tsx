@@ -1,16 +1,16 @@
+import {equals, sort} from 'ramda';
 import React, {PureComponent} from 'react';
-import {FilterList} from './filter/filter-list';
-import {createSelection, Selection} from '../../../lib/measurement/selection/selection';
-import {SelectionSelect} from './selection-select';
-import {SelectionControls} from './selection-controls';
-import {SelectionName} from './selection-name';
-import {Filter} from '../../../lib/measurement/selection/filter';
-import {Request} from '../../../util/request';
-import {sort, equals} from 'ramda';
 import {Measurement} from '../../../lib/measurement/measurement';
+import {Filter} from '../../../lib/measurement/selection/filter';
+import {createSelection, Selection} from '../../../lib/measurement/selection/selection';
+import {Request} from '../../../util/request';
 import {isBlank} from '../../../util/string';
 import {ErrorBox} from '../../global/error-box';
 import {Loading} from '../../global/loading';
+import {FilterList} from './filter/filter-list';
+import {SelectionControls} from './selection-controls';
+import {SelectionName} from './selection-name';
+import {SelectionSelect} from './selection-select';
 
 interface Props
 {

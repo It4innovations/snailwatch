@@ -1,19 +1,19 @@
 import React, {PureComponent} from 'react';
-import {RouteComponentProps, withRouter} from 'react-router';
 import {connect} from 'react-redux';
-import {Project} from '../../lib/project/project';
-import {createProject, loadProjects, selectProject} from '../../state/session/project/actions';
-import {getUser} from '../../state/session/user/reducer';
-import {AppState} from '../../state/app/reducers';
-import {getProjects} from '../../state/session/project/reducer';
+import {RouteComponentProps, withRouter} from 'react-router';
 import {Button} from 'reactstrap';
-import {CreateProject} from './create-project';
-import {Request} from '../../util/request';
 import ListGroup from 'reactstrap/lib/ListGroup';
 import ListGroupItem from 'reactstrap/lib/ListGroupItem';
 import styled from 'styled-components';
+import {Project} from '../../lib/project/project';
+import {AppState} from '../../state/app/reducers';
+import {createProject, loadProjects, selectProject} from '../../state/session/project/actions';
+import {getProjects} from '../../state/session/project/reducer';
+import {getUser} from '../../state/session/user/reducer';
+import {Request} from '../../util/request';
 import {ErrorBox} from '../global/error-box';
 import {Loading} from '../global/loading';
+import {CreateProject} from './create-project';
 
 interface State
 {

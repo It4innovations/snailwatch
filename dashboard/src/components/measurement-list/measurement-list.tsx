@@ -1,40 +1,40 @@
-import React, {PureComponent} from 'react';
-import {Project} from '../../lib/project/project';
-import {Measurement} from '../../lib/measurement/measurement';
-import {connect} from 'react-redux';
-import {getUser} from '../../state/session/user/reducer';
-import {AppState} from '../../state/app/reducers';
-import {getSelectedProject} from '../../state/session/project/reducer';
-import {RouteComponentProps, withRouter} from 'react-router';
-import ReactTable, {RowInfo} from 'react-table';
-import {User} from '../../lib/user/user';
-import {Request} from '../../util/request';
+import Download from '@axetroy/react-download';
 import {sort} from 'ramda';
+import React, {PureComponent} from 'react';
+import MdDelete from 'react-icons/lib/md/delete';
+import {connect} from 'react-redux';
+import {RouteComponentProps, withRouter} from 'react-router';
+import json from 'react-syntax-highlighter/languages/hljs/json';
+import SyntaxHighlighter, {registerLanguage} from 'react-syntax-highlighter/light';
+import {dracula} from 'react-syntax-highlighter/styles/hljs';
+import ReactTable, {RowInfo} from 'react-table';
+import {Button} from 'reactstrap';
+import styled from 'styled-components';
+import {exportCSV} from '../../lib/export/export';
+import {Measurement} from '../../lib/measurement/measurement';
+import {RangeFilter} from '../../lib/measurement/selection/range-filter';
+import {Selection} from '../../lib/measurement/selection/selection';
+import {Project} from '../../lib/project/project';
+import {User} from '../../lib/user/user';
+import {AppState} from '../../state/app/reducers';
+import {changeRangeFilterAction} from '../../state/session/pages/actions';
 import {
     deleteAllMeasurementsAction,
     deleteMeasurementAction,
     loadMeasurementsAction,
     setMeasurementsSelectionAction
 } from '../../state/session/pages/measurements-page/actions';
-import MdDelete from 'react-icons/lib/md/delete';
-import styled from 'styled-components';
-import {TwoColumnPage} from '../global/two-column-page';
-import Download from '@axetroy/react-download';
-import {exportCSV} from '../../lib/export/export';
-import {Button} from 'reactstrap';
-import {Box} from '../global/box';
-import {RangeFilterSwitcher} from '../charts/range-filter-switcher';
-import {RangeFilter} from '../../lib/measurement/selection/range-filter';
-import {getRangeFilter} from '../../state/session/pages/reducers';
-import {changeRangeFilterAction} from '../../state/session/pages/actions';
-import SyntaxHighlighter, { registerLanguage } from 'react-syntax-highlighter/light';
-import {dracula} from 'react-syntax-highlighter/styles/hljs';
-import json from 'react-syntax-highlighter/languages/hljs/json';
-import {SelectionSelectEditor} from '../charts/selection-container/selection-select-editor';
-import {Selection} from '../../lib/measurement/selection/selection';
-import {getSelections} from '../../state/session/selection/reducer';
 import {getMeasurementsPageSelection} from '../../state/session/pages/measurements-page/reducer';
+import {getRangeFilter} from '../../state/session/pages/reducers';
+import {getSelectedProject} from '../../state/session/project/reducer';
+import {getSelections} from '../../state/session/selection/reducer';
+import {getUser} from '../../state/session/user/reducer';
+import {Request} from '../../util/request';
+import {RangeFilterSwitcher} from '../charts/range-filter-switcher';
+import {SelectionSelectEditor} from '../charts/selection-container/selection-select-editor';
+import {Box} from '../global/box';
 import {ErrorBox} from '../global/error-box';
+import {TwoColumnPage} from '../global/two-column-page';
 
 registerLanguage('json', json);
 

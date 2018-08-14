@@ -1,9 +1,9 @@
 import React, {PureComponent} from 'react';
-import {Selection} from '../../../lib/measurement/selection/selection';
 import Input from 'reactstrap/lib/Input';
 import InputGroup from 'reactstrap/lib/InputGroup';
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon';
 import styled from 'styled-components';
+import {Selection} from '../../../lib/measurement/selection/selection';
 
 interface Props
 {

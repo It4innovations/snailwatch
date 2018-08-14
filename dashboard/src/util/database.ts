@@ -1,4 +1,4 @@
-import {Dictionary, zipObj, uniq, dissoc, reduce, max} from 'ramda';
+import {Dictionary, dissoc, max, reduce, uniq, zipObj} from 'ramda';
 
 export interface Database<T>
 {

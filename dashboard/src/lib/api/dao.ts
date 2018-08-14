@@ -1,8 +1,8 @@
-import {Filter, Operator} from '../measurement/selection/filter';
-import {Measurement} from '../measurement/measurement';
 import moment, {Moment} from 'moment';
-import {Project} from '../project/project';
+import {Measurement} from '../measurement/measurement';
+import {Filter, Operator} from '../measurement/selection/filter';
 import {Selection} from '../measurement/selection/selection';
+import {Project} from '../project/project';
 import {View} from '../view/view';
 
 export interface DAO

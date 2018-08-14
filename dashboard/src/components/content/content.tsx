@@ -1,24 +1,23 @@
 import React, {PureComponent} from 'react';
-import {Projects} from '../projects/projects';
-import {Login} from '../login/login';
-import {Navigation, Routes} from '../../state/nav/routes';
-import {Redirect, RouteComponentProps, Switch, withRouter} from 'react-router';
 import {connect} from 'react-redux';
-import {AppState} from '../../state/app/reducers';
-import {isUserAuthenticated} from '../../state/session/user/reducer';
-import {Menu} from './menu';
-import {SwitchRoute} from '../../state/nav/switch-route';
+import {Redirect, RouteComponentProps, Switch, withRouter} from 'react-router';
 import styled from 'styled-components';
-import {Profile} from '../profile/profile';
 import {Project} from '../../lib/project/project';
-import {getSelectedProject} from '../../state/session/project/reducer';
-import {MeasurementList} from '../measurement-list/measurement-list';
-import {ChartsPage} from '../charts/charts-page';
-import {ProjectOverview} from '../project/project-overview';
+import {AppState} from '../../state/app/reducers';
+import {Navigation, Routes} from '../../state/nav/routes';
+import {SwitchRoute} from '../../state/nav/switch-route';
 import {clearSession} from '../../state/session/actions';
 import {deselectProject} from '../../state/session/project/actions';
-
+import {getSelectedProject} from '../../state/session/project/reducer';
+import {isUserAuthenticated} from '../../state/session/user/reducer';
+import {ChartsPage} from '../charts/charts-page';
+import {Login} from '../login/login';
+import {MeasurementList} from '../measurement-list/measurement-list';
+import {Profile} from '../profile/profile';
+import {ProjectOverview} from '../project/project-overview';
+import {Projects} from '../projects/projects';
 import './global.scss';
+import {Menu} from './menu';
 
 interface StateProps
 {

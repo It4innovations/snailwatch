@@ -1,9 +1,9 @@
 import React, {PureComponent} from 'react';
-import {Switch} from '../../global/switch';
-import {Selection} from '../../../lib/measurement/selection/selection';
-import {SelectionSelect} from './selection-select';
-import {SelectionContainer} from './selection-container';
 import {Measurement} from '../../../lib/measurement/measurement';
+import {Selection} from '../../../lib/measurement/selection/selection';
+import {Switch} from '../../global/switch';
+import {SelectionContainer} from './selection-container';
+import {SelectionSelect} from './selection-select';
 
 interface Props
 {

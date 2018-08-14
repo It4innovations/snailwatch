@@ -1,8 +1,8 @@
-import {isArray, isObject, isString} from 'util';
-import {isMoment, Moment, default as moment} from 'moment';
+import {default as moment, isMoment, Moment} from 'moment';
 import {Functor, lensPath, map, set} from 'ramda';
-import {createRequest, isRequest} from './request';
+import {isArray, isObject, isString} from 'util';
 import {initialState, PagesState} from '../state/session/pages/reducers';
+import {createRequest, isRequest} from './request';
 
 const SERIALIZATION_FORMAT = 'DD.MM.YYYYTHH:mm:ss';
 

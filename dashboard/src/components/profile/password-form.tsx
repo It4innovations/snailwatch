@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
+import {toast, ToastContainer} from 'react-toastify';
 import {Button, Input, InputGroup, InputGroupAddon} from 'reactstrap';
 import {Request} from '../../util/request';
-import {toast, ToastContainer} from 'react-toastify';
 import {ErrorBox} from '../global/error-box';
 import {Loading} from '../global/loading';
 

@@ -1,8 +1,8 @@
-import {Measurement, hashMeasurement} from '../../../lib/measurement/measurement';
-import {GroupMode} from '../../../lib/measurement/group-mode';
-import {groupBy, values, min, max, reduce, sum, zipObj, Dictionary, all, map, filter, sort, uniq, chain} from 'ramda';
-import {getValueWithPath} from '../../../util/object';
 import {isMoment, Moment} from 'moment';
+import {all, chain, Dictionary, filter, groupBy, map, max, min, reduce, sort, sum, uniq, values, zipObj} from 'ramda';
+import {GroupMode} from '../../../lib/measurement/group-mode';
+import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement';
+import {getValueWithPath} from '../../../util/object';
 import {LinePoint} from './line-chart/line-point';
 
 export interface MeasurementGroup

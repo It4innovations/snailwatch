@@ -1,35 +1,39 @@
 import {sort} from 'ramda';
-import React, {PureComponent, Fragment} from 'react';
+import React, {Fragment, PureComponent} from 'react';
+import {connect} from 'react-redux';
+import {RouteComponentProps, withRouter} from 'react-router';
+import styled from 'styled-components';
+import {GroupMode} from '../../../../lib/measurement/group-mode';
+import {Measurement} from '../../../../lib/measurement/measurement';
 import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
+import {Selection} from '../../../../lib/measurement/selection/selection';
+import {Project} from '../../../../lib/project/project';
 import {View} from '../../../../lib/view/view';
+import {AppState} from '../../../../state/app/reducers';
 import {
     addChartDatasetAction,
-    AddDatasetParams, deleteChartDatasetAction, reloadChartDatasetsAction,
-    ReloadDatasetsParams, setChartXAxisAction, updateChartDatasetAction,
+    AddDatasetParams,
+    deleteChartDatasetAction,
+    reloadChartDatasetsAction,
+    ReloadDatasetsParams,
+    setChartXAxisAction,
+    updateChartDatasetAction,
     UpdateDatasetParams
 } from '../../../../state/session/pages/chart-page/actions';
+import {getSelectedProject} from '../../../../state/session/project/reducer';
+import {SelectionActions} from '../../../../state/session/selection/actions';
+import {getSelections} from '../../../../state/session/selection/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
+import {Request} from '../../../../util/request';
+import {Box} from '../../../global/box';
+import {RequestView} from '../../../global/request-view';
+import {TwoColumnPage} from '../../../global/two-column-page';
+import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ChartDataset} from '../chart-dataset';
 import {DatasetManager} from '../dataset-manager';
-import {BarChart} from './bar-chart';
-import {GroupMode} from '../../../../lib/measurement/group-mode';
-import {Measurement} from '../../../../lib/measurement/measurement';
-import {Project} from '../../../../lib/project/project';
-import {connect} from 'react-redux';
-import {AppState} from '../../../../state/app/reducers';
-import {Selection} from '../../../../lib/measurement/selection/selection';
-import styled from 'styled-components';
-import {RangeFilterSwitcher} from '../../range-filter-switcher';
-import {RouteComponentProps, withRouter} from 'react-router';
 import {MeasurementList} from '../measurement-list';
-import {getSelections} from '../../../../state/session/selection/reducer';
-import {SelectionActions} from '../../../../state/session/selection/actions';
-import {Request} from '../../../../util/request';
-import {RequestView} from '../../../global/request-view';
-import {Box} from '../../../global/box';
-import {TwoColumnPage} from '../../../global/two-column-page';
-import {getSelectedProject} from '../../../../state/session/project/reducer';
+import {BarChart} from './bar-chart';
 
 interface OwnProps
 {

@@ -1,15 +1,15 @@
 import React, {PureComponent} from 'react';
-import {Project} from '../../../lib/project/project';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {Selection} from '../../../lib/measurement/selection/selection';
-import {getSelectedProject} from '../../../state/session/project/reducer';
-import {AppState} from '../../../state/app/reducers';
-import {getSelections} from '../../../state/session/selection/reducer';
-import {SelectionManager} from './selection-manager';
-import {SelectionActions} from '../../../state/session/selection/actions';
-import {Request} from '../../../util/request';
 import {Measurement} from '../../../lib/measurement/measurement';
+import {Selection} from '../../../lib/measurement/selection/selection';
+import {Project} from '../../../lib/project/project';
+import {AppState} from '../../../state/app/reducers';
+import {getSelectedProject} from '../../../state/session/project/reducer';
+import {SelectionActions} from '../../../state/session/selection/actions';
+import {getSelections} from '../../../state/session/selection/reducer';
+import {Request} from '../../../util/request';
+import {SelectionManager} from './selection-manager';
 
 interface OwnProps
 {

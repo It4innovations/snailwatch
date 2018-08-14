@@ -1,25 +1,25 @@
 import React, {PureComponent} from 'react';
+import {connect} from 'react-redux';
+import {RouteComponentProps, withRouter} from 'react-router';
+import styled from 'styled-components';
+import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
-import {RouteComponentProps, withRouter} from 'react-router';
-import {connect} from 'react-redux';
+import {Selection} from '../../../../lib/measurement/selection/selection';
+import {Project} from '../../../../lib/project/project';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
 import {SelectChartViewParams} from '../../../../state/session/pages/chart-page/actions';
 import {loadGridChartMeasurements} from '../../../../state/session/pages/grid-chart-page/actions';
+import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {getSelections} from '../../../../state/session/selection/reducer';
-import {Selection} from '../../../../lib/measurement/selection/selection';
 import {getViews} from '../../../../state/session/view/reducer';
 import {formatKey} from '../../../../util/measurement';
-import {MeasurementKeys} from '../../../global/keys/measurement-keys';
-import {LineChart} from '../line-chart/line-chart';
-import {GroupMode} from '../../../../lib/measurement/group-mode';
-import {TwoColumnPage} from '../../../global/two-column-page';
 import {Box} from '../../../global/box';
+import {MeasurementKeys} from '../../../global/keys/measurement-keys';
+import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
-import {Project} from '../../../../lib/project/project';
-import {getSelectedProject} from '../../../../state/session/project/reducer';
-import styled from 'styled-components';
+import {LineChart} from '../line-chart/line-chart';
 
 interface OwnProps
 {

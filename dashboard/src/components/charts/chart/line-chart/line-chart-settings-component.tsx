@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
-import {LineChartSettings} from './line-chart-settings';
 import styled from 'styled-components';
+import {LineChartSettings} from './line-chart-settings';
 
 interface Props
 {

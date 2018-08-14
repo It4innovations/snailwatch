@@ -1,7 +1,7 @@
-import React, {PureComponent} from 'react';
-import {Selection} from '../../../lib/measurement/selection/selection';
 import {find} from 'ramda';
+import React, {PureComponent} from 'react';
 import Input from 'reactstrap/lib/Input';
+import {Selection} from '../../../lib/measurement/selection/selection';
 
 interface Props
 {

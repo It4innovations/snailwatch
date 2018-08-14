@@ -1,11 +1,11 @@
 import React, {PureComponent} from 'react';
-import {LoginForm} from './login-form';
 import {connect} from 'react-redux';
-import {loginUser} from '../../state/session/user/actions';
-import {AppState} from '../../state/app/reducers';
 import {RouteComponentProps, withRouter} from 'react-router';
+import {AppState} from '../../state/app/reducers';
+import {loginUser} from '../../state/session/user/actions';
 import {Request} from '../../util/request';
 import {ErrorBox} from '../global/error-box';
+import {LoginForm} from './login-form';
 
 interface StateProps
 {

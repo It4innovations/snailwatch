@@ -1,6 +1,5 @@
 import axios, {AxiosError} from 'axios';
-import 'rxjs/add/observable/fromPromise';
-import {Observable} from 'rxjs/Observable';
+import {from as observableFrom, Observable} from 'rxjs';
 import {ApiError} from '../errors/api';
 import {NetworkError} from '../errors/network';
 
@@ -39,7 +38,7 @@ export class RequestManager
         };
 
         this.promise = this.promise.then(() => this.executeRequest(request));
-        return Observable.fromPromise(this.promise) as Observable<T>;
+        return observableFrom(this.promise) as Observable<T>;
     }
 
     private executeRequest<T>(request: Request): Promise<T>

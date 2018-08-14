@@ -1,27 +1,33 @@
-import {SnailClient} from './snail-client';
-import {Observable} from 'rxjs/Observable';
-
-import {User} from '../user/user';
-import {Project} from '../project/project';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {Measurement} from '../measurement/measurement';
 import {Filter} from '../measurement/selection/filter';
-import {buildRequestFilter} from './filter';
+import {RangeFilter} from '../measurement/selection/range-filter';
+import {Selection} from '../measurement/selection/selection';
+import {Project} from '../project/project';
+import {User} from '../user/user';
+import {View} from '../view/view';
+import {CrudHandler} from './crud-handler';
 import {
     MeasurementDAO,
+    parseMeasurement,
+    parseProject,
+    parseSelection,
+    parseView,
     ProjectDAO,
     SelectionDAO,
-    parseMeasurement,
-    parseSelection,
-    parseProject,
     serializeDate,
+    serializeSelection,
+    serializeView,
+    sort,
     UserDAO,
-    serializeSelection, ViewDAO, parseView, withProject, where, serializeView, sort
+    ViewDAO,
+    where,
+    withProject
 } from './dao';
-import {Selection} from '../measurement/selection/selection';
-import {RangeFilter} from '../measurement/selection/range-filter';
-import {View} from '../view/view';
+import {buildRequestFilter} from './filter';
 import {RequestManager} from './request-manager';
-import {CrudHandler} from './crud-handler';
+import {SnailClient} from './snail-client';
 
 export class RestClient implements SnailClient
 {
@@ -45,11 +51,11 @@ export class RestClient implements SnailClient
         return this.requestManager.request('/login', 'POST', {
             username,
             password
-        }).map((user: UserDAO) => ({
+        }).pipe(map((user: UserDAO) => ({
             id: user.id,
             token: user.token,
             username
-        }));
+        })));
     }
     changePassword(user: User, oldPassword: string, newPassword: string): Observable<boolean>
     {
@@ -58,14 +64,14 @@ export class RestClient implements SnailClient
             newPassword
         }, {
             token: user.token
-        }).map(() => true);
+        }).pipe(map(() => true));
     }
 
     createProject(user: User, name: string): Observable<boolean>
     {
         return this.projectCrud.create(user, {
             name
-        }).map(() => true);
+        }).pipe(map(() => true));
     }
     loadProjects(user: User): Observable<Project[]>
     {
@@ -73,20 +79,20 @@ export class RestClient implements SnailClient
     }
     loadProject(user: User, name: string): Observable<Project>
     {
-        return this.projectCrud.load(user, where({ name })).map(projects => {
+        return this.projectCrud.load(user, where({ name })).pipe(map(projects => {
             if (projects.length === 0)
             {
                 throw new Error(`Project ${name} not found`);
             }
             return projects[0];
-        });
+        }));
     }
 
     loadUploadToken(user: User, project: Project): Observable<string>
     {
         return this.requestManager.request(`/get-upload-token/${project.id}`, 'GET', {}, {
             token: user.token
-        }).map((token: string) => token);
+        }).pipe(map((token: string) => token));
     }
     regenerateUploadToken(user: User, project: Project): Observable<string>
     {
@@ -94,7 +100,7 @@ export class RestClient implements SnailClient
             project: project.id
         }, {
             token: user.token
-        }).map((token: string) => token);
+        }).pipe(map((token: string) => token));
     }
 
     loadMeasurements(user: User, project: Project,
@@ -146,7 +152,7 @@ export class RestClient implements SnailClient
     {
         return this.requestManager.request(`/clear-measurements`, 'POST', {}, {
             token: user.token
-        }).map(() => true);
+        }).pipe(map(() => true));
     }
 
     loadSelections(user: User, project: Project): Observable<Selection[]>

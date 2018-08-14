@@ -1,7 +1,4 @@
 import {combineEpics} from 'redux-observable';
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/observable/of';
-import '../../../../util/redux-observable';
 import {createRequestEpic} from '../../../../util/request';
 import {getSelectedProject} from '../../project/reducer';
 import {getUser} from '../../user/reducer';

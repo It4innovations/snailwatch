@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
-import ButtonGroup from 'reactstrap/lib/ButtonGroup';
 import Button from 'reactstrap/lib/Button';
+import ButtonGroup from 'reactstrap/lib/ButtonGroup';
 import styled from 'styled-components';
 
 interface Props

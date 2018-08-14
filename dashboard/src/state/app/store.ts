@@ -1,16 +1,16 @@
 import createHistory from 'history/createBrowserHistory';
+import Raven from 'raven-js';
 import {routerMiddleware} from 'react-router-redux';
 import {Action, applyMiddleware, combineReducers, compose, createStore} from 'redux';
+import reduxCatch from 'redux-catch';
 import {createLogger} from 'redux-logger';
 import {createEpicMiddleware} from 'redux-observable';
+import {persistStore} from 'redux-persist';
 import thunk from 'redux-thunk';
+import {API_SERVER, URL_PREFIX} from '../../configuration';
+import {RestClient} from '../../lib/api/rest-client';
 import {rootEpic} from './epics';
 import {AppState, rootReducer} from './reducers';
-import {persistStore} from 'redux-persist';
-import reduxCatch from 'redux-catch';
-import Raven from 'raven-js';
-import {RestClient} from '../../lib/api/rest-client';
-import {API_SERVER, URL_PREFIX} from '../../configuration';
 
 function errorHandler(error: Error, getState: () => AppState, action: Action)
 {
@@ -27,7 +27,7 @@ export const history = createHistory({
 
 const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;
 const router = routerMiddleware(history);
-const epic = createEpicMiddleware(rootEpic, {
+const epic = createEpicMiddleware<Action, Action, AppState>({
     dependencies: {
         client: new RestClient(API_SERVER)
     }
@@ -53,3 +53,5 @@ export const store = createStore(
     composeEnhancers(applyMiddleware(...middleware))
 );
 export const persistor = persistStore(store);
+
+epic.run(rootEpic);

@@ -1,12 +1,12 @@
+import {default as moment, Moment} from 'moment';
 import React, {PureComponent} from 'react';
-import {RangeFilter} from '../../lib/measurement/selection/range-filter';
-import {Moment, default as moment} from 'moment';
 import Input from 'reactstrap/lib/Input';
-import {Switch} from '../global/switch';
 import InputGroup from 'reactstrap/lib/InputGroup';
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon';
-import styled from 'styled-components';
 import InputGroupText from 'reactstrap/lib/InputGroupText';
+import styled from 'styled-components';
+import {RangeFilter} from '../../lib/measurement/selection/range-filter';
+import {Switch} from '../global/switch';
 
 interface Props
 {

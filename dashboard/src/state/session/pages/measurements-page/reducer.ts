@@ -1,10 +1,10 @@
-import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {createRequest, hookRequestActions, Request} from '../../../../util/request';
-import {loadMeasurementsAction, deleteMeasurementAction, setMeasurementsSelectionAction} from './actions';
 import {compose} from 'ramda';
+import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {Measurement} from '../../../../lib/measurement/measurement';
-import {getSelectionById, getSelections} from '../../selection/reducer';
+import {createRequest, hookRequestActions, Request} from '../../../../util/request';
 import {AppState} from '../../../app/reducers';
+import {getSelectionById, getSelections} from '../../selection/reducer';
+import {deleteMeasurementAction, loadMeasurementsAction, setMeasurementsSelectionAction} from './actions';
 
 export interface MeasurementsPageState
 {

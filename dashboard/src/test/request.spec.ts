@@ -1,12 +1,10 @@
+import {createStore} from 'redux';
+import {ActionsObservable, StateObservable} from 'redux-observable';
+import {of as observableOf, throwError as observableThrowError} from 'rxjs';
 import actionCreatorFactory, {Action, Failure, Success} from 'typescript-fsa';
-import {createRequest, createRequestEpic, hookRequestActions, mapRequestToActions} from '../util/request';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/throw';
-import {ActionsObservable} from 'redux-observable';
-import {createStore, Store} from 'redux';
-import {AppState} from '../state/app/reducers';
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
+import {AppState} from '../state/app/reducers';
+import {createRequest, createRequestEpic, hookRequestActions, mapRequestToActions} from '../util/request';
 
 const factory = actionCreatorFactory('request-test');
 const creator = factory.async<string, number>('action');
@@ -21,7 +19,7 @@ describe('mapRequestToActions', () =>
         };
         const response = 5;
 
-        mapRequestToActions(creator, action, Observable.of(response))
+        mapRequestToActions(creator, action, observableOf(response))
             .subscribe(result => {
                 const res = result as Action<Success<string, number>>;
 
@@ -41,7 +39,7 @@ describe('mapRequestToActions', () =>
         };
         const error = 'error';
 
-        mapRequestToActions(creator, action, Observable.throw(error))
+        mapRequestToActions(creator, action, observableThrowError(error))
             .subscribe(result => {
                 const res = result as Action<Failure<string, string>>;
 
@@ -64,11 +62,11 @@ describe('createRequestEpic', () => {
         const epic = createRequestEpic(creator, (action) => {
             expect(action.payload).toEqual('test');
 
-            return Observable.of(0);
+            return observableOf(0);
         });
         epic(action$, {
-            getState: () => {}
-        } as Store<AppState>, null).subscribe(() => {
+            value: {}
+        } as StateObservable<AppState>, null).subscribe(() => {
             done();
         });
     });

@@ -1,12 +1,14 @@
+import {chain, dissoc} from 'ramda';
 import React, {PureComponent} from 'react';
 import Autosuggest, {
-    InputProps, RenderSuggestionParams, SuggestionSelectedEventData, SuggestionsFetchRequestedParams
+    InputProps,
+    RenderSuggestionParams,
+    SuggestionSelectedEventData,
+    SuggestionsFetchRequestedParams
 } from 'react-autosuggest';
-import {chain, dissoc} from 'ramda';
 import {Input} from 'reactstrap';
-
-import theme from './suggest-input.scss';
 import styled from 'styled-components';
+import theme from './suggest-input.scss';
 
 interface Props
 {

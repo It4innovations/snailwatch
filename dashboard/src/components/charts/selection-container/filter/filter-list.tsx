@@ -1,11 +1,11 @@
+import {remove, update} from 'ramda';
 import React, {PureComponent} from 'react';
-import {createFilter, Filter} from '../../../../lib/measurement/selection/filter';
-import {FilterComponent} from './filter-component';
 import {Button} from 'reactstrap';
-import {update, remove} from 'ramda';
-import {Measurement} from '../../../../lib/measurement/measurement';
-import {getValuesWithPath} from '../../../../util/object';
 import styled from 'styled-components';
+import {Measurement} from '../../../../lib/measurement/measurement';
+import {createFilter, Filter} from '../../../../lib/measurement/selection/filter';
+import {getValuesWithPath} from '../../../../util/object';
+import {FilterComponent} from './filter-component';
 
 interface Props
 {

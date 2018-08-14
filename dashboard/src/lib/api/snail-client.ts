@@ -1,9 +1,9 @@
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
+import {Measurement} from '../measurement/measurement';
+import {RangeFilter} from '../measurement/selection/range-filter';
+import {Selection} from '../measurement/selection/selection';
 import {Project} from '../project/project';
 import {User} from '../user/user';
-import {Measurement} from '../measurement/measurement';
-import {Selection} from '../measurement/selection/selection';
-import {RangeFilter} from '../measurement/selection/range-filter';
 import {View} from '../view/view';
 
 export interface SnailClient

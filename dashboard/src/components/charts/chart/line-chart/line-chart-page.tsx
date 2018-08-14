@@ -10,9 +10,14 @@ import {Project} from '../../../../lib/project/project';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
 import {
-    addChartDatasetAction, AddDatasetParams,
-    deleteChartDatasetAction, reloadChartDatasetsAction, ReloadDatasetsParams,
-    setChartXAxisAction, updateChartDatasetAction, UpdateDatasetParams
+    addChartDatasetAction,
+    AddDatasetParams,
+    deleteChartDatasetAction,
+    reloadChartDatasetsAction,
+    ReloadDatasetsParams,
+    setChartXAxisAction,
+    updateChartDatasetAction,
+    UpdateDatasetParams
 } from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {SelectionActions} from '../../../../state/session/selection/actions';
@@ -23,10 +28,10 @@ import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
-import {MeasurementList} from '../measurement-list';
-import {DatasetManager} from '../dataset-manager';
-import {LineChartDataset, LineChart} from './line-chart';
 import {ChartDataset} from '../chart-dataset';
+import {DatasetManager} from '../dataset-manager';
+import {MeasurementList} from '../measurement-list';
+import {LineChart, LineChartDataset} from './line-chart';
 import {LineChartSettings} from './line-chart-settings';
 import {LineChartSettingsComponent} from './line-chart-settings-component';
 

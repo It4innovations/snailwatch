@@ -1,14 +1,16 @@
-import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {createRequest, hookRequestActions, Request} from '../../../../util/request';
-import {ChartDataset} from '../../../../components/charts/chart/chart-dataset';
-import {
-    deleteChartDatasetAction,
-    setChartXAxisAction,
-    updateChartDatasetAction,
-    addChartDatasetAction, reloadChartDatasetsAction, selectChartViewAction
-} from './actions';
 import {compose, indexBy, update} from 'ramda';
+import {reducerWithInitialState} from 'typescript-fsa-reducers';
+import {ChartDataset} from '../../../../components/charts/chart/chart-dataset';
+import {createRequest, hookRequestActions, Request} from '../../../../util/request';
 import {clearSession} from '../../actions';
+import {
+    addChartDatasetAction,
+    deleteChartDatasetAction,
+    reloadChartDatasetsAction,
+    selectChartViewAction,
+    setChartXAxisAction,
+    updateChartDatasetAction
+} from './actions';
 
 export interface ChartPageState
 {

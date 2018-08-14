@@ -1,17 +1,24 @@
+import {chain} from 'ramda';
 import React, {PureComponent} from 'react';
 import {
-    CartesianGrid, Tooltip, XAxis,
-    YAxis, Legend, LineChart as ReLineChart, Line, ErrorBar, ResponsiveContainer
+    CartesianGrid,
+    ErrorBar,
+    Legend,
+    Line,
+    LineChart as ReLineChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis
 } from 'recharts';
-import {Measurement} from '../../../../lib/measurement/measurement';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
-import { groupMeasurements, createLinePoints} from '../chart-utils';
+import {Measurement} from '../../../../lib/measurement/measurement';
 import {ColorPalette} from '../../color-palette';
+import {createLinePoints, groupMeasurements} from '../chart-utils';
 import {Tick} from '../tick';
-import {PointTooltip} from './point-tooltip';
-import {LinePoint} from './line-point';
 import {LineLegend} from './line-legend';
-import {chain} from 'ramda';
+import {LinePoint} from './line-point';
+import {PointTooltip} from './point-tooltip';
 
 export interface LineChartDataset
 {

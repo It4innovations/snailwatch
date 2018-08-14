@@ -1,13 +1,13 @@
 import React, {PureComponent} from 'react';
+import {Button} from 'reactstrap';
 import styled from 'styled-components';
 import {Measurement} from '../../../lib/measurement/measurement';
-import {View} from '../../../lib/view/view';
-import {SelectionContainer} from '../selection-container/selection-container';
 import {Selection} from '../../../lib/measurement/selection/selection';
+import {View} from '../../../lib/view/view';
 import {getSelectionById} from '../../../state/session/selection/reducer';
 import {ResultKeysMultiselect} from '../../global/keys/result-keys-multiselect';
+import {SelectionContainer} from '../selection-container/selection-container';
 import {ViewName} from './view-name';
-import {Button} from 'reactstrap';
 
 interface Props
 {

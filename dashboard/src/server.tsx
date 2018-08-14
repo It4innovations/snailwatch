@@ -1,7 +1,7 @@
 import express from 'express';
 import expressStaticGzip from 'express-static-gzip';
-import path from 'path';
 import {readFile} from 'fs';
+import path from 'path';
 import {promisify} from 'util';
 
 const app = express();

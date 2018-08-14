@@ -1,9 +1,9 @@
 import React, {PureComponent} from 'react';
 import MdDelete from 'react-icons/lib/md/delete';
 import {Button, Input} from 'reactstrap';
+import styled from 'styled-components';
 import {View} from '../../../lib/view/view';
 import {ChartDataset} from './chart-dataset';
-import styled from 'styled-components';
 
 interface Props
 {

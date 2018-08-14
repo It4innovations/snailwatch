@@ -1,7 +1,7 @@
+import {sort} from 'ramda';
 import React, {PureComponent} from 'react';
 import {TooltipProps} from 'recharts';
 import styled from 'styled-components';
-import {sort} from 'ramda';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {compareDate} from '../../../util/date';
 

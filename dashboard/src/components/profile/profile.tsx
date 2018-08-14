@@ -1,17 +1,17 @@
 import React, {PureComponent} from 'react';
-import {Project} from '../../lib/project/project';
-import {Input, InputGroup} from 'reactstrap';
-import {User} from '../../lib/user/user';
-import {RouteComponentProps, withRouter} from 'react-router';
-import {getUser} from '../../state/session/user/reducer';
-import { getSelectedProject} from '../../state/session/project/reducer';
-import {AppState} from '../../state/app/reducers';
 import {connect} from 'react-redux';
+import {RouteComponentProps, withRouter} from 'react-router';
+import {Input, InputGroup} from 'reactstrap';
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon';
 import styled from 'styled-components';
-import {PasswordForm} from './password-form';
+import {Project} from '../../lib/project/project';
+import {User} from '../../lib/user/user';
+import {AppState} from '../../state/app/reducers';
+import {getSelectedProject} from '../../state/session/project/reducer';
 import {changePassword, ChangePasswordParams} from '../../state/session/user/actions';
+import {getUser} from '../../state/session/user/reducer';
 import {Request} from '../../util/request';
+import {PasswordForm} from './password-form';
 
 interface StateProps
 {

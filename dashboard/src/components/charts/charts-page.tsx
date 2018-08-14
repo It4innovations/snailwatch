@@ -1,25 +1,24 @@
+import {invertObj} from 'ramda';
 import React, {PureComponent} from 'react';
-import {connect} from 'react-redux';
-import {Route, RouteComponentProps, withRouter} from 'react-router';
-import {AppState} from '../../state/app/reducers';
-import {Project} from '../../lib/project/project';
-import {selectChartViewAction, SelectChartViewParams} from '../../state/session/pages/chart-page/actions';
-import {getSelectedProject} from '../../state/session/project/reducer';
-import {BarChartPage} from './chart/bar-chart/bar-chart-page';
-import {LineChartPage} from './chart/line-chart/line-chart-page';
-import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 import FaBarChart from 'react-icons/lib/fa/bar-chart';
 import FaLineChart from 'react-icons/lib/fa/line-chart';
-import {RangeFilter} from '../../lib/measurement/selection/range-filter';
-import {getRangeFilter} from '../../state/session/pages/reducers';
-import {changeRangeFilterAction} from '../../state/session/pages/actions';
 import FaTh from 'react-icons/lib/fa/th';
-import {GridChartPage} from './chart/grid-chart/grid-chart-page';
-import {loadProject} from '../../state/session/project/actions';
-import {SelectionActions} from '../../state/session/selection/actions';
+import {connect} from 'react-redux';
+import {Route, RouteComponentProps, withRouter} from 'react-router';
 import {push} from 'react-router-redux';
-import {invertObj} from 'ramda';
-
+import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
+import {RangeFilter} from '../../lib/measurement/selection/range-filter';
+import {Project} from '../../lib/project/project';
+import {AppState} from '../../state/app/reducers';
+import {changeRangeFilterAction} from '../../state/session/pages/actions';
+import {selectChartViewAction, SelectChartViewParams} from '../../state/session/pages/chart-page/actions';
+import {getRangeFilter} from '../../state/session/pages/reducers';
+import {loadProject} from '../../state/session/project/actions';
+import {getSelectedProject} from '../../state/session/project/reducer';
+import {SelectionActions} from '../../state/session/selection/actions';
+import {BarChartPage} from './chart/bar-chart/bar-chart-page';
+import {GridChartPage} from './chart/grid-chart/grid-chart-page';
+import {LineChartPage} from './chart/line-chart/line-chart-page';
 import style from './charts-page.scss';
 
 interface StateProps

@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {TooltipProps} from 'recharts';
-import {LinePoint} from './line-point';
 import {Tooltip, TooltipDataset} from '../tooltip';
+import {LinePoint} from './line-point';
 
 interface Props
 {

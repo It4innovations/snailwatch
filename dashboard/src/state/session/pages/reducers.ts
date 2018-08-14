@@ -1,10 +1,10 @@
-import {RangeFilter} from '../../../lib/measurement/selection/range-filter';
-import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import moment from 'moment';
+import {combineReducers} from 'redux';
+import {reducerWithInitialState} from 'typescript-fsa-reducers';
+import {RangeFilter} from '../../../lib/measurement/selection/range-filter';
+import {AppState} from '../../app/reducers';
 import {changeRangeFilterAction} from './actions';
 import {ChartPageState, chartReducer} from './chart-page/reducer';
-import {combineReducers} from 'redux';
-import {AppState} from '../../app/reducers';
 import {gridChartPageReducer, GridChartPageState} from './grid-chart-page/reducer';
 import {MeasurementsPageState, measurementsReducer} from './measurements-page/reducer';
 

@@ -1,18 +1,15 @@
-import {ActionsObservable, combineEpics} from 'redux-observable';
-import '../../../../util/redux-observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/forkJoin';
-import {createRequestEpic, mapRequestToActions} from '../../../../util/request';
-import {deleteAllMeasurementsAction, deleteMeasurementAction, loadMeasurementsAction} from './actions';
-import {getUser} from '../../user/reducer';
-import {getSelectedProject} from '../../project/reducer';
-import {getRangeFilter} from '../reducers';
-import {getMeasurementsPageSelection} from './reducer';
-import {AppState} from '../../../app/reducers';
-import {ServiceContainer} from '../../../app/di';
+import {combineEpics} from 'redux-observable';
+import {from as observableFrom} from 'rxjs';
+import {mergeMap, switchMap} from 'rxjs/operators';
 import {Action} from 'typescript-fsa';
-import {Action as ReduxAction, Store} from 'redux';
-import {Observable} from 'rxjs/Observable';
+import {ofAction} from '../../../../util/redux-observable';
+import {createRequestEpic, mapRequestToActions} from '../../../../util/request';
+import {AppEpic} from '../../../app/app-epic';
+import {getSelectedProject} from '../../project/reducer';
+import {getUser} from '../../user/reducer';
+import {getRangeFilter} from '../reducers';
+import {deleteAllMeasurementsAction, deleteMeasurementAction, loadMeasurementsAction} from './actions';
+import {getMeasurementsPageSelection} from './reducer';
 
 const loadMeasurements = createRequestEpic(loadMeasurementsAction, (action, state, deps) => {
     const user = getUser(state);
@@ -27,19 +24,17 @@ const deleteMeasurement = createRequestEpic(deleteMeasurementAction, (action, st
     return deps.client.deleteMeasurement(user, action.payload);
 });
 
-const deleteAllMeasurements = (action$: ActionsObservable<ReduxAction>,
-                               store: Store<AppState>,
-                               deps: ServiceContainer) =>
-    action$
-        .ofAction(deleteAllMeasurementsAction.started)
-        .switchMap((action: Action<{}>) =>
+const deleteAllMeasurements: AppEpic = (action$, store, deps) =>
+    action$.pipe(
+        ofAction(deleteAllMeasurementsAction.started),
+        switchMap((action: Action<{}>) =>
             mapRequestToActions(deleteAllMeasurementsAction, action,
-                deps.client.deleteAllMeasurements(getUser(store.getState())))
-                .flatMap(result => Observable.from([
+                deps.client.deleteAllMeasurements(getUser(store.value))).pipe(
+                mergeMap(result => observableFrom([
                     result,
                     loadMeasurementsAction.started({})
-                ]))
-        );
+                ])))
+        ));
 
 export const measurementsEpics = combineEpics(
     loadMeasurements,

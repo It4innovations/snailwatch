@@ -1,6 +1,6 @@
+import {find, groupBy} from 'ramda';
 import React, {PureComponent} from 'react';
 import {Input} from 'reactstrap';
-import {find, groupBy} from 'ramda';
 import {formatKey} from '../../../util/measurement';
 
 interface Props

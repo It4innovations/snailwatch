@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
-import {getResultKeys, formatKey} from '../../../util/measurement';
 import {Input} from 'reactstrap';
+import {formatKey, getResultKeys} from '../../../util/measurement';
 
 interface Props
 {
