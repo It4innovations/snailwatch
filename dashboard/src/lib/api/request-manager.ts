@@ -1,51 +1,75 @@
-import {Observable} from 'rxjs/Observable';
 import axios, {AxiosError} from 'axios';
-import {NetworkError} from '../errors/network';
-import {ApiError} from '../errors/api';
 import 'rxjs/add/observable/fromPromise';
+import {Observable} from 'rxjs/Observable';
+import {ApiError} from '../errors/api';
+import {NetworkError} from '../errors/network';
+
+type HttpMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH';
+
+interface Request
+{
+    path: string;
+    method: HttpMethod;
+    params: {[key: string]: {}};
+    options: {
+        token?: string;
+    };
+}
 
 export class RequestManager
 {
+    private promise: Promise<{}> = Promise.resolve({});
+
     constructor(private url: string)
     {
 
     }
 
-    request<T>(path: string, method: 'GET' | 'POST' | 'DELETE' | 'PATCH',
-               params: {[key: string]: {}}, options: {
+    request<T>(path: string, method: HttpMethod, params: {[key: string]: {}}, options: {
             token?: string;
         } = {
             token: null
         }): Observable<T>
     {
+        let request = {
+            path,
+            method,
+            params,
+            options
+        };
+
+        this.promise = this.promise.then(() => this.executeRequest(request));
+        return Observable.fromPromise(this.promise) as Observable<T>;
+    }
+
+    private executeRequest<T>(request: Request): Promise<T>
+    {
         let headers = {};
-        if (options.token !== null)
+        if (request.options.token !== null)
         {
-            headers['Authorization'] = options.token;
+            headers['Authorization'] = request.options.token;
         }
 
-        let request = {
+        let data = {
             baseURL: this.url,
-            url: path,
-            method,
+            url: request.path,
+            method: request.method,
             headers,
             responseType: 'json'
         };
 
-        if (method === 'GET')
+        if (request.method === 'GET')
         {
-            request['params'] = params;
+            data['params'] = request.params;
         }
         else
         {
-            request['data'] = params;
+            data['data'] = request.params;
         }
 
-        return Observable
-            .fromPromise(axios(request)
-                .then(result => result.data)
-                .catch(this.handleError)
-            );
+        return axios(data)
+            .then(result => result.data)
+            .catch(this.handleError);
     }
 
     private handleError(error: AxiosError)
