@@ -1,21 +1,21 @@
 import React, {PureComponent} from 'react';
+import MdAddBox from 'react-icons/lib/md/add-box';
 import {connect} from 'react-redux';
-import {AppState} from '../../../state/app/reducers';
-import {createView, View} from '../../../lib/view/view';
-import {getViews, getViewsState} from '../../../state/session/view/reducer';
-import {Request} from '../../../util/request';
-import {ViewActions} from '../../../state/session/view/actions';
 import {Input} from 'reactstrap';
-import {Box} from '../../global/box';
-import {ViewComponent} from './view-component';
-import {getSelections} from '../../../state/session/selection/reducer';
+import styled from 'styled-components';
 import {Selection} from '../../../lib/measurement/selection/selection';
 import {Project} from '../../../lib/project/project';
+import {createView, View} from '../../../lib/view/view';
+import {AppState} from '../../../state/app/reducers';
 import {getSelectedProject} from '../../../state/session/project/reducer';
-import styled from 'styled-components';
-import MdAddBox from 'react-icons/lib/md/add-box';
-import {RequestComponent} from '../../global/request-component';
+import {getSelections} from '../../../state/session/selection/reducer';
+import {ViewActions} from '../../../state/session/view/actions';
+import {getViews, getViewsState} from '../../../state/session/view/reducer';
 import {getResultKeys} from '../../../util/measurement';
+import {Request} from '../../../util/request';
+import {Box} from '../../global/box';
+import {Loading} from '../../global/loading';
+import {ViewComponent} from './view-component';
 
 interface StateProps
 {
@@ -109,7 +109,7 @@ class ViewManagerComponent extends PureComponent<Props, State>
         return (
             <Row>
                 <div>View manager</div>
-                <RequestComponent request={this.props.viewRequest} />
+                <Loading show={this.props.viewRequest.loading} />
             </Row>
         );
     }
