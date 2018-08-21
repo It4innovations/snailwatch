@@ -7,11 +7,12 @@ export interface Selection
     filters: Filter[];
 }
 
-export function createSelection(id: string = '', name: string = '', filters: Filter[] = [])
+export function createSelection(selection: Partial<Selection> = {}): Selection
 {
     return {
-        id,
-        name,
-        filters
+        id: null,
+        name: '',
+        filters: [],
+        ...selection
     };
 }

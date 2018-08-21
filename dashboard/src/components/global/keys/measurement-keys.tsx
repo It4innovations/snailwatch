@@ -8,6 +8,7 @@ interface Props
     keys: string[];
     value: string;
     defaults?: string[];
+    className?: string;
     onChange(key: string): void;
 }
 
@@ -46,18 +47,20 @@ export class MeasurementKeys extends PureComponent<Props>
         const groups = this.createGroups(this.props.keys);
 
         return (
-            <Input type='select'
-                   bsSize='sm'
-                   value={this.props.value}
-                   onChange={this.handleChange}>
-                {groups.map(group =>
-                    <optgroup key={group.title} label={group.title}>
-                        {group.keys.map(key =>
-                            <option key={key.value} value={key.value}>{key.label}</option>
-                        )}
-                    </optgroup>
-                )}
-            </Input>
+            <div className={this.props.className}>
+                <Input type='select'
+                       bsSize='sm'
+                       value={this.props.value}
+                       onChange={this.handleChange}>
+                    {groups.map(group =>
+                        <optgroup key={group.title} label={group.title}>
+                            {group.keys.map(key =>
+                                <option key={key.value} value={key.value}>{key.label}</option>
+                            )}
+                        </optgroup>
+                    )}
+                </Input>
+            </div>
         );
     }
 

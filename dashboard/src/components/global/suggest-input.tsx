@@ -10,25 +10,27 @@ import {Input} from 'reactstrap';
 import styled from 'styled-components';
 import theme from './suggest-input.scss';
 
-interface Props
+interface Props<T>
 {
     value: string;
-    onChange(value: string): void;
-    calculateSuggestions(input: string): string[];
+    onChange?(value: string): void;
+    onSuggestionSelected?(value: T): void;
+    getSuggestionValue?(value: T): string;
+    calculateSuggestions(input: string): T[];
 }
 
-interface State
+interface State<T>
 {
-    suggestions: string[];
+    suggestions: T[];
 }
 
 const Suggestion = styled.div`
   font-size: 12px;
 `;
 
-export class SuggestInput extends PureComponent<Props, State>
+export class SuggestInput<T = string> extends PureComponent<Props<T>, State<T>>
 {
-    state: State = {
+    state: State<T> = {
         suggestions: []
     };
 
@@ -42,15 +44,16 @@ export class SuggestInput extends PureComponent<Props, State>
                 }}
                 renderInputComponent={this.renderInput}
                 suggestions={this.state.suggestions}
-                getSuggestionValue={s => s}
+                getSuggestionValue={this.getSuggestionValue}
                 renderSuggestion={this.renderSuggestion}
                 onSuggestionsFetchRequested={this.calculateSuggestions}
                 onSuggestionsClearRequested={this.clearSuggestions}
                 onSuggestionSelected={this.onSuggestionSelected} />;
     }
-    renderSuggestion = (suggestion: string, params: RenderSuggestionParams): JSX.Element =>
+    renderSuggestion = (suggestion: T, params: RenderSuggestionParams): JSX.Element =>
     {
-        const parts = suggestion.split(new RegExp(params.query, 'i'));
+        const suggestionValue = this.getSuggestionValue(suggestion);
+        const parts = suggestionValue.split(new RegExp(params.query, 'i'));
         const length = params.query.length;
 
         let queryIndex = 0;
@@ -59,7 +62,7 @@ export class SuggestInput extends PureComponent<Props, State>
             queryIndex += p.length;
             const text = [
                     <span key={i++}>{p}</span>,
-                    <b key={i++}>{suggestion.substr(queryIndex, length)}</b>
+                    <b key={i++}>{suggestionValue.substr(queryIndex, length)}</b>
             ];
             queryIndex += length;
             return text;
@@ -69,7 +72,7 @@ export class SuggestInput extends PureComponent<Props, State>
 
         return <Suggestion>{html}</Suggestion>;
     }
-    renderInput = (props: InputProps<string>): JSX.Element =>
+    renderInput = (props: InputProps<T>): JSX.Element =>
     {
         // https://github.com/moroshko/react-autosuggest/issues/318
         const ref = props.ref;
@@ -78,14 +81,33 @@ export class SuggestInput extends PureComponent<Props, State>
         return <Input {...properties} type='text' bsSize='sm' innerRef={ref} />;
     }
 
+    getSuggestionValue = (s: T): string =>
+    {
+        if (this.props.getSuggestionValue)
+        {
+            return this.props.getSuggestionValue(s);
+        }
+        else return s.toString();
+    }
     handleChange = (e: React.FormEvent<HTMLInputElement>) =>
     {
-        this.props.onChange(e.currentTarget.value);
+        this.onChange(e.currentTarget.value);
     }
     onSuggestionSelected = (event: React.FormEvent<HTMLInputElement>,
-                            data: SuggestionSelectedEventData<string>) =>
+                            data: SuggestionSelectedEventData<T>) =>
     {
-        this.props.onChange(data.suggestionValue);
+        this.onChange(data.suggestionValue);
+        if (this.props.onSuggestionSelected)
+        {
+            this.props.onSuggestionSelected(data.suggestion);
+        }
+    }
+    onChange = (value: string) =>
+    {
+        if (this.props.onChange)
+        {
+            this.props.onChange(value);
+        }
     }
 
     calculateSuggestions = (params: SuggestionsFetchRequestedParams) =>

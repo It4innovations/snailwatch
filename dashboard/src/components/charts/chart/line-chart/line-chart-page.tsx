@@ -1,4 +1,4 @@
-import {chain, sort} from 'ramda';
+import {chain} from 'ramda';
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
@@ -10,26 +10,19 @@ import {Project} from '../../../../lib/project/project';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
 import {
-    addChartDatasetAction,
-    AddDatasetParams,
-    deleteChartDatasetAction,
     reloadChartDatasetsAction,
     ReloadDatasetsParams,
-    setChartXAxisAction,
-    updateChartDatasetAction,
-    UpdateDatasetParams
+    setChartXAxisAction
 } from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {SelectionActions} from '../../../../state/session/selection/actions';
 import {getViews} from '../../../../state/session/view/reducer';
 import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
-import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ChartDataset} from '../chart-dataset';
-import {DatasetManager} from '../dataset-manager';
 import {MeasurementList} from '../measurement-list';
 import {LineChart, LineChartDataset} from './line-chart';
 import {LineChartSettings} from './line-chart-settings';
@@ -51,9 +44,6 @@ interface DispatchProps
 {
     loadSelections(): void;
     setXAxis(axis: string): void;
-    addDataset(params: AddDatasetParams): void;
-    deleteDataset(dataset: ChartDataset): void;
-    updateDataset(params: UpdateDatasetParams): void;
     reloadDatasets(params: ReloadDatasetsParams): void;
 }
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
@@ -100,12 +90,12 @@ class LineChartPageComponent extends PureComponent<Props, State>
         return (
             <TwoColumnPage
                 menu={this.renderOptions}
+                menuWidth='auto'
                 content={this.renderGraph} />
         );
     }
     renderOptions = (): JSX.Element =>
     {
-        const keys = sort((a, b) => a.localeCompare(b), this.props.project.measurementKeys);
         return (
             <>
                 <Box title='Range'>
@@ -113,38 +103,13 @@ class LineChartPageComponent extends PureComponent<Props, State>
                         rangeFilter={this.props.rangeFilter}
                         onFilterChange={this.changeRangeFilter} />
                 </Box>
-                <Box title='Views'>
-                    <div>X axis</div>
-                    <MeasurementKeys keys={keys}
-                                     value={this.props.xAxis}
-                                     onChange={this.props.setXAxis} />
-                    {this.renderDatasetManager(keys)}
-                </Box>
+
                 <Box title='Settings'>
                     <LineChartSettingsComponent
                         settings={this.state.settings}
                         onChangeSettings={this.changeSettings} />
                 </Box>
             </>
-        );
-    }
-    renderDatasetManager = (keys: string[]): JSX.Element =>
-    {
-        if (this.props.views.length === 0)
-        {
-            return <span>You have no defined views</span>;
-        }
-
-        return (
-            <DatasetManager
-                views={this.props.views}
-                measurementKeys={keys}
-                datasets={this.props.datasets}
-                maxDatasetCount={4}
-                addDataset={this.addDataset}
-                canAdd={this.canAddDataset()}
-                deleteDataset={this.props.deleteDataset}
-                updateDataset={this.updateDataset} />
         );
     }
     renderGraph = (): JSX.Element =>
@@ -189,30 +154,6 @@ class LineChartPageComponent extends PureComponent<Props, State>
         }, datasets);
     }
 
-    canAddDataset = () =>
-    {
-        return this.props.views.length > 0;
-    }
-
-    addDataset = () =>
-    {
-        if (this.canAddDataset())
-        {
-            this.props.addDataset({
-                rangeFilter: this.props.rangeFilter,
-                view: this.props.views[0].id
-            });
-        }
-    }
-    updateDataset = (dataset: ChartDataset, newDataset: ChartDataset) =>
-    {
-        this.props.updateDataset({
-            rangeFilter: this.props.rangeFilter,
-            dataset,
-            view: newDataset.view
-        });
-    }
-
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
     {
         this.setState(() => ({ selectedMeasurements  }));
@@ -240,8 +181,5 @@ export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnPr
 }), {
     loadSelections: SelectionActions.load.started,
     setXAxis: setChartXAxisAction,
-    addDataset: addChartDatasetAction.started,
-    deleteDataset: deleteChartDatasetAction,
-    updateDataset: updateChartDatasetAction.started,
     reloadDatasets: reloadChartDatasetsAction.started
 })(LineChartPageComponent));

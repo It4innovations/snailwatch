@@ -3,6 +3,7 @@ import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {ChartDataset} from '../../../../components/charts/chart/chart-dataset';
 import {createRequest, hookRequestActions, Request} from '../../../../util/request';
 import {clearSession} from '../../actions';
+import {ViewActions} from '../../view/actions';
 import {
     addChartDatasetAction,
     deleteChartDatasetAction,
@@ -41,6 +42,10 @@ let reducer = reducerWithInitialState<ChartPageState>({ ...initialState })
         measurements: []
     }],
     xAxis: action.xAxis
+}))
+.case(ViewActions.delete.done, (state, view) => ({
+    ...state,
+    datasets: state.datasets.filter(d => d.view !== view.params.id)
 }));
 
 reducer = compose(

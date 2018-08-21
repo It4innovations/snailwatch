@@ -110,6 +110,25 @@ export function hookRequestActions<T extends {}, P, S, E>(reducer: ReducerBuilde
         });
 }
 
+export function handleActionError<P, S, E>(creator: AsyncActionCreators<P, S, E>,
+                                           action: Action<P>,
+                                           error: {} | Error)
+    : Observable<ReduxAction>
+{
+    const failed = creator.failed({
+        params: action.payload,
+        error: error as E
+    });
+    const observables = [failed];
+
+    if (error instanceof ApiError && error.status === 401)
+    {
+        observables.push(clearSession());
+    }
+
+    return observableFrom(observables);
+}
+
 export function mapRequestToActions<P, S, E>(creator: AsyncActionCreators<P, S, E>,
                                              action: Action<P>,
                                              request: Observable<S>)
@@ -121,20 +140,7 @@ export function mapRequestToActions<P, S, E>(creator: AsyncActionCreators<P, S, 
                 params: action.payload,
                 result
             })
-        ), catchError(error => {
-            const failed = creator.failed({
-                params: action.payload,
-                error
-            });
-            const observables = [failed];
-
-            if (error instanceof ApiError && error.status === 401)
-            {
-                observables.push(clearSession());
-            }
-
-            return observableFrom(observables);
-        }));
+        ), catchError(error => handleActionError(creator, action, error)));
 }
 
 export function createRequestEpic<P, S, E>(creator: AsyncActionCreators<P, S, E>,

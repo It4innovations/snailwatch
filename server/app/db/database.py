@@ -1,7 +1,7 @@
 import datetime
 import uuid
-import pymongo
-from flask import request, current_app as app
+
+from flask import current_app as app, request
 
 from app.db.loginsession import LoginSessionRepo
 from app.db.project import ProjectRepo
@@ -14,11 +14,6 @@ from ..auth import hash_password
 def init_database(app):
     LoginSessionRepo(app).create_indices()
     UploadTokenRepo(app).create_indices()
-
-    app.data.driver.db['selections'].create_index([
-        ('project', pymongo.ASCENDING),
-        ('name', pymongo.ASCENDING)
-    ], unique=True)
 
     set_db_callbacks(app)
 

@@ -7,6 +7,7 @@ type Element = JSX.Element | (() => JSX.Element);
 interface Props
 {
     menu: Element;
+    menuWidth?: string;
     content: Element;
 }
 
@@ -15,8 +16,8 @@ const Row = styled.div`
   align-items: flex-start;
   width: 100%;
 `;
-const MenuColumn = styled.div`
-  width: 400px;
+const MenuColumn = styled.div<{width?: string}>`
+  width: ${props => props.width ? props.width : '400px'};
   margin-top: 1px;
   margin-right: 10px;
   padding: 10px;
@@ -44,7 +45,7 @@ export class TwoColumnPage extends Component<Props>
 
         return (
             <Row>
-                <MenuColumn>{render(this.props.menu)}</MenuColumn>
+                <MenuColumn width={this.props.menuWidth}>{render(this.props.menu)}</MenuColumn>
                 <ContentColumn>{render(this.props.content)}</ContentColumn>
             </Row>
         );

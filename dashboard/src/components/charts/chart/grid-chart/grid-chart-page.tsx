@@ -87,6 +87,7 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
         return (
             <TwoColumnPage
                 menu={this.renderMenu}
+                menuWidth='auto'
                 content={this.renderContent} />
         );
     }

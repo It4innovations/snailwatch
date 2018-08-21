@@ -1,4 +1,3 @@
-import {sort} from 'ramda';
 import React, {Fragment, PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
@@ -11,14 +10,9 @@ import {Project} from '../../../../lib/project/project';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
 import {
-    addChartDatasetAction,
-    AddDatasetParams,
-    deleteChartDatasetAction,
     reloadChartDatasetsAction,
     ReloadDatasetsParams,
-    setChartXAxisAction,
-    updateChartDatasetAction,
-    UpdateDatasetParams
+    setChartXAxisAction
 } from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {SelectionActions} from '../../../../state/session/selection/actions';
@@ -31,7 +25,6 @@ import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ChartDataset} from '../chart-dataset';
-import {DatasetManager} from '../dataset-manager';
 import {MeasurementList} from '../measurement-list';
 import {BarChart} from './bar-chart';
 
@@ -53,9 +46,6 @@ interface DispatchProps
 {
     loadSelections(): void;
     setXAxis(axis: string): void;
-    addDataset(params: AddDatasetParams): void;
-    deleteDataset(dataset: ChartDataset): void;
-    updateDataset(params: UpdateDatasetParams): void;
     reloadDatasets(params: ReloadDatasetsParams): void;
 }
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
@@ -96,12 +86,12 @@ class BarChartPageComponent extends PureComponent<Props, State>
         return (
             <TwoColumnPage
                 menu={this.renderOptions}
+                menuWidth='auto'
                 content={this.renderGraph} />
         );
     }
     renderOptions = (): JSX.Element =>
     {
-        const keys = sort((a, b) => a.localeCompare(b), this.props.project.measurementKeys);
         return (
             <>
                 <Box title='Range'>
@@ -109,30 +99,8 @@ class BarChartPageComponent extends PureComponent<Props, State>
                         rangeFilter={this.props.rangeFilter}
                         onFilterChange={this.changeRangeFilter} />
                 </Box>
-                <Box title='Views'>
-                    {this.renderDatasetManager(keys)}
-                </Box>
                 <RequestView request={this.props.measurementRequest} />
             </>
-        );
-    }
-    renderDatasetManager = (keys: string[]): JSX.Element =>
-    {
-        if (this.props.views.length === 0)
-        {
-            return <span>You have no defined views</span>;
-        }
-
-        return (
-            <DatasetManager
-                views={this.props.views}
-                measurementKeys={keys}
-                datasets={this.props.datasets}
-                maxDatasetCount={4}
-                addDataset={this.addDataset}
-                canAdd={this.canAddDataset()}
-                deleteDataset={this.props.deleteDataset}
-                updateDataset={this.updateDataset} />
         );
     }
     renderGraph = (): JSX.Element =>
@@ -164,29 +132,6 @@ class BarChartPageComponent extends PureComponent<Props, State>
         );
     }
 
-    canAddDataset = () =>
-    {
-        return this.props.views.length > 0;
-    }
-
-    addDataset = () =>
-    {
-        if (this.canAddDataset())
-        {
-            this.props.addDataset({
-                rangeFilter: this.props.rangeFilter,
-                view: this.props.views[0].id
-            });
-        }
-    }
-    updateDataset = (dataset: ChartDataset, newDataset: ChartDataset) =>
-    {
-        this.props.updateDataset({
-            rangeFilter: this.props.rangeFilter,
-            dataset,
-            view: newDataset.view
-        });
-    }
     changeRangeFilter = (rangeFilter: RangeFilter) =>
     {
         this.props.onChangeRangeFilter(rangeFilter);
@@ -213,8 +158,5 @@ export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnPro
 }), {
     loadSelections: SelectionActions.load.started,
     setXAxis: setChartXAxisAction,
-    addDataset: addChartDatasetAction.started,
-    deleteDataset: deleteChartDatasetAction,
-    updateDataset: updateChartDatasetAction.started,
     reloadDatasets: reloadChartDatasetsAction.started
 })(BarChartPageComponent));

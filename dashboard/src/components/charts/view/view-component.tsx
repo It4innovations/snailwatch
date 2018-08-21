@@ -6,7 +6,7 @@ import {Selection} from '../../../lib/measurement/selection/selection';
 import {View} from '../../../lib/view/view';
 import {getSelectionById} from '../../../state/session/selection/reducer';
 import {ResultKeysMultiselect} from '../../global/keys/result-keys-multiselect';
-import {SelectionContainer} from '../selection-container/selection-container';
+import {SelectionView} from '../selection-container/selection-view';
 import {ViewName} from './view-name';
 
 interface Props
@@ -15,7 +15,8 @@ interface Props
     selections: Selection[];
     measurements: Measurement[];
     measurementKeys: string[];
-    onChange(view: View): void;
+    onChangeView(view: View): void;
+    onChangeSelection(selection: Selection): void;
     onDelete(view: View): void;
 }
 
@@ -39,11 +40,11 @@ export class ViewComponent extends PureComponent<Props, State>
             <div>
                 <ViewName value={this.props.view.name}
                           onChange={this.changeName} />
-                <SelectionContainer
-                    selectedSelection={getSelectionById(this.props.selections, this.props.view.selection)}
-                    onSelect={this.changeSelection}
-                    onSelectionChange={this.onSelectionChange}
-                    measurements={this.props.measurements} />
+                <SelectionView
+                    selection={getSelectionById(this.props.selections, this.props.view.selection)}
+                    onChange={this.props.onChangeSelection}
+                    measurements={this.props.measurements}
+                    measurementKeys={this.props.measurementKeys} />
                 <KeysWrapper>
                     <ResultKeysMultiselect keys={this.props.measurementKeys}
                                            values={this.props.view.yAxes}
@@ -57,28 +58,17 @@ export class ViewComponent extends PureComponent<Props, State>
 
     changeName = (name: string) =>
     {
-        this.props.onChange({ ...this.props.view, name });
-    }
-    changeSelection = (selection: Selection | null) =>
-    {
-        const id = selection === null ? null : selection.id;
-        this.props.onChange({ ...this.props.view, selection: id });
+        if (name !== this.props.view.name)
+        {
+            this.props.onChangeView({ ...this.props.view, name });
+        }
     }
     changeYAxes = (yAxes: string[]) =>
     {
-        this.props.onChange({ ...this.props.view, yAxes });
+        this.props.onChangeView({ ...this.props.view, yAxes });
     }
     deleteView = () =>
     {
         this.props.onDelete(this.props.view);
-    }
-
-    onSelectionChange = (selection: Selection) =>
-    {
-        const id = selection === null ? null : selection.id;
-        if (selection.id === id)
-        {
-            this.props.onChange({ ...this.props.view });
-        }
     }
 }

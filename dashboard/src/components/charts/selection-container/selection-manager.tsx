@@ -157,7 +157,7 @@ export class SelectionManager extends PureComponent<Props, State>
         this.setState(() => ({
             createdNamePending: name
         }));
-        this.props.createSelection(createSelection(null, name));
+        this.props.createSelection(createSelection({ name }));
     }
     copySelection = () =>
     {

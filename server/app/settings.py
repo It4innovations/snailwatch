@@ -169,7 +169,7 @@ selection_schema = {
 view_schema = {
     'project': ref('projects'),
     'name': string(),
-    'selection': ref('selections', required=False),
+    'selection': ref('selections'),
     'yAxes': list_of(string())
 }
 
