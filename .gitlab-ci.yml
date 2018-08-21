@@ -46,7 +46,7 @@ publish:dashboard:
   before_script:
     - cd dashboard
   script:
-    - docker build -t snailwatch-dashboard-${CI_COMMIT_REF_SLUG} .
+    - docker build -t snailwatch-dashboard-${CI_COMMIT_REF_SLUG} --build-arg PUBLIC_URL=`[ ${CI_COMMIT_REF_SLUG} == 'dev' ] && echo "/dev" || echo "/"` .
 
 publish:server:
   image: docker:latest

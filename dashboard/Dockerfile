@@ -1,6 +1,7 @@
 FROM node:9-slim as build
 
-ENV PUBLIC_URL=.
+ARG PUBLIC_URL=.
+ENV PUBLIC_URL=$PUBLIC_URL
 
 WORKDIR /dashboard
 COPY package.json package-lock.json ./
