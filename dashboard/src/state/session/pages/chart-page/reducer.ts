@@ -37,7 +37,7 @@ let reducer = reducerWithInitialState<ChartPageState>({ ...initialState })
     ...state,
     datasets: [{
         id: '1',
-        view: action.view.name,
+        view: action.view.id,
         xAxis: action.xAxis,
         measurements: []
     }],

@@ -9,6 +9,7 @@ import {createRequestEpic} from '../../../../util/request';
 import {AppEpic} from '../../../app/app-epic';
 import {AppState} from '../../../app/reducers';
 import {getSelectedProject} from '../../project/reducer';
+import {SelectionActions} from '../../selection/actions';
 import {getSelectionById, getSelections} from '../../selection/reducer';
 import {getUser} from '../../user/reducer';
 import {getViewById, getViews} from '../../view/reducer';
@@ -85,9 +86,18 @@ const reloadAfterSelect: AppEpic = (action$, store) =>
         }))
     );
 
+const reloadDatasetsAfterSelectionChange: AppEpic = (action$, store) =>
+    action$.pipe(
+        ofAction(SelectionActions.update.done),
+        map(() => reloadChartDatasetsAction.started({
+            rangeFilter: getRangeFilter(store.value)
+        }))
+    );
+
 export const chartEpics = combineEpics(
     addDataset,
     updateDataset,
     reloadDatasets,
-    reloadAfterSelect
+    reloadAfterSelect,
+    reloadDatasetsAfterSelectionChange
 );

@@ -21,6 +21,7 @@ const Row = styled.div`
     display: flex;
     align-items: center;
     width: 250px;
+    font-size: 20px;
 `;
 
 export class ViewName extends PureComponent<Props, State>

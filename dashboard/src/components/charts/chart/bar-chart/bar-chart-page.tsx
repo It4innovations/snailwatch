@@ -24,8 +24,10 @@ import {RequestView} from '../../../global/request-view';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
+import {ViewSelection} from '../../view/view-selection';
 import {ChartDataset} from '../chart-dataset';
 import {MeasurementList} from '../measurement-list';
+import {XAxisSelector} from '../x-axis-selector';
 import {BarChart} from './bar-chart';
 
 interface OwnProps
@@ -54,6 +56,7 @@ interface State
 {
     groupMode: GroupMode;
     selectedMeasurements: Measurement[];
+    selectedView: string | null;
 }
 
 const MeasurementsWrapper = styled.div`
@@ -64,7 +67,8 @@ class BarChartPageComponent extends PureComponent<Props, State>
 {
     state: State = {
         groupMode: GroupMode.AxisX,
-        selectedMeasurements: []
+        selectedMeasurements: [],
+        selectedView: null
     };
 
     componentDidMount()
@@ -99,15 +103,25 @@ class BarChartPageComponent extends PureComponent<Props, State>
                         rangeFilter={this.props.rangeFilter}
                         onFilterChange={this.changeRangeFilter} />
                 </Box>
+                <Box title='X axis'>
+                    <XAxisSelector measurementKeys={this.props.project.measurementKeys}
+                                   xAxis={this.props.xAxis}
+                                   onChange={this.props.setXAxis} />
+                </Box>
+                <Box title='View list'>
+                    <ViewSelection onEditView={this.setSelectedView} />
+                </Box>
                 <RequestView request={this.props.measurementRequest} />
             </>
         );
     }
     renderGraph = (): JSX.Element =>
     {
+        const view = this.props.views.find(v => v.id === this.state.selectedView);
+
         return (
             <div>
-                <ViewManager />
+                {view && <ViewManager view={view} onClose={this.deselectView} />}
                 <h4>Stacked bar chart</h4>
                 {this.props.datasets.map(this.renderDataset)}
                 <MeasurementsWrapper>
@@ -145,6 +159,15 @@ class BarChartPageComponent extends PureComponent<Props, State>
     reloadDatasets = (rangeFilter: RangeFilter) =>
     {
         this.props.reloadDatasets({ rangeFilter });
+    }
+
+    setSelectedView = (selectedView: View) =>
+    {
+        this.setState(() => ({ selectedView: selectedView.id }));
+    }
+    deselectView = () =>
+    {
+        this.setState(() => ({ selectedView: null }));
     }
 }
 

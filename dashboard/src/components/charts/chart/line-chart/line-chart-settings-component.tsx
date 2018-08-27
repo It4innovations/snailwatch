@@ -11,9 +11,7 @@ interface Props
 const Row = styled.div`
   display: flex;
   align-items: center;
-`;
-const Label = styled.div`
-  width: 150px;
+  justify-content: space-between;
 `;
 
 export class LineChartSettingsComponent extends PureComponent<Props>
@@ -23,19 +21,19 @@ export class LineChartSettingsComponent extends PureComponent<Props>
         return (
             <div>
                 <Row>
-                    <Label>Show points: </Label>
+                    <div>Show points: </div>
                     <input type='checkbox'
                            checked={this.props.settings.showPoints}
                            onChange={this.changeShowPoints} />
                 </Row>
                 <Row>
-                    <Label>Show lines: </Label>
+                    <div>Show lines: </div>
                     <input type='checkbox'
                            checked={this.props.settings.connectPoints}
                            onChange={this.changeConnectPoints} />
                 </Row>
                 <Row>
-                    <Label>Show deviation: </Label>
+                    <div>Show deviation: </div>
                     <input type='checkbox'
                            checked={this.props.settings.showDeviation}
                            onChange={this.changeShowDeviation} />

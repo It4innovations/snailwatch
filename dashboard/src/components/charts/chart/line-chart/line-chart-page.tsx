@@ -22,8 +22,10 @@ import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
+import {ViewSelection} from '../../view/view-selection';
 import {ChartDataset} from '../chart-dataset';
 import {MeasurementList} from '../measurement-list';
+import {XAxisSelector} from '../x-axis-selector';
 import {LineChart, LineChartDataset} from './line-chart';
 import {LineChartSettings} from './line-chart-settings';
 import {LineChartSettingsComponent} from './line-chart-settings-component';
@@ -53,10 +55,21 @@ interface State
     groupMode: GroupMode;
     selectedMeasurements: Measurement[];
     settings: LineChartSettings;
+    selectedView: string | null;
 }
 
+const Row = styled.div`
+  display: flex;
+  align-items: stretch;
+`;
 const MeasurementsWrapper = styled.div`
   width: 900px;
+`;
+const ViewManagerWrapper = styled.div`
+  flex-grow: 1;
+  margin-left: 15px;
+  padding-left: 15px;
+  border-left: 1px solid #000000;
 `;
 
 class LineChartPageComponent extends PureComponent<Props, State>
@@ -68,7 +81,8 @@ class LineChartPageComponent extends PureComponent<Props, State>
             showPoints: false,
             connectPoints: true,
             showDeviation: false
-        }
+        },
+        selectedView: null
     };
 
     componentDidMount()
@@ -103,7 +117,14 @@ class LineChartPageComponent extends PureComponent<Props, State>
                         rangeFilter={this.props.rangeFilter}
                         onFilterChange={this.changeRangeFilter} />
                 </Box>
-
+                <Box title='X axis'>
+                    <XAxisSelector measurementKeys={this.props.project.measurementKeys}
+                                   xAxis={this.props.xAxis}
+                                   onChange={this.props.setXAxis} />
+                </Box>
+                <Box title='View list'>
+                    <ViewSelection onEditView={this.setSelectedView} />
+                </Box>
                 <Box title='Settings'>
                     <LineChartSettingsComponent
                         settings={this.state.settings}
@@ -115,9 +136,9 @@ class LineChartPageComponent extends PureComponent<Props, State>
     renderGraph = (): JSX.Element =>
     {
         const datasets = this.expandDatasets(this.props.datasets);
+        const view = this.props.views.find(v => v.id === this.state.selectedView);
         return (
             <>
-                <ViewManager />
                 <h4>Line chart</h4>
                 <LineChart
                     xAxis={this.props.xAxis}
@@ -129,10 +150,15 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     showDeviation={this.state.settings.showDeviation}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     datasets={datasets} />
-                <MeasurementsWrapper>
-                    <h4>Selected measurements</h4>
-                    <MeasurementList measurements={this.state.selectedMeasurements} />
-                </MeasurementsWrapper>
+                <Row>
+                    <MeasurementsWrapper>
+                        <h4>Selected measurements</h4>
+                        <MeasurementList measurements={this.state.selectedMeasurements} />
+                    </MeasurementsWrapper>
+                    <ViewManagerWrapper>
+                        {view && <ViewManager view={view} onClose={this.deselectView} />}
+                    </ViewManagerWrapper>
+                </Row>
             </>
         );
     }
@@ -170,6 +196,15 @@ class LineChartPageComponent extends PureComponent<Props, State>
     reloadDatasets = (rangeFilter: RangeFilter) =>
     {
         this.props.reloadDatasets({ rangeFilter });
+    }
+
+    setSelectedView = (selectedView: View) =>
+    {
+        this.setState(() => ({ selectedView: selectedView.id }));
+    }
+    deselectView = () =>
+    {
+        this.setState(() => ({ selectedView: null }));
     }
 }
 
