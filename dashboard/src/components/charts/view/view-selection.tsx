@@ -1,4 +1,5 @@
 import React, {ChangeEvent, PureComponent} from 'react';
+import MdEdit from 'react-icons/lib/md/edit';
 import {connect} from 'react-redux';
 import {Button, Input} from 'reactstrap';
 import styled from 'styled-components';
@@ -23,7 +24,6 @@ import {getViews, getViewsState} from '../../../state/session/view/reducer';
 import {getResultKeys} from '../../../util/measurement';
 import {Request} from '../../../util/request';
 import {ChartDataset} from '../chart/chart-dataset';
-import MdEdit from 'react-icons/lib/md/edit';
 
 interface OwnProps
 {
@@ -41,7 +41,6 @@ interface StateProps
 }
 interface DispatchProps
 {
-    loadViews(): void;
     changeXAxis(xAxis: string): void;
     createView(view: View): void;
     updateView(view: View): void;
@@ -88,11 +87,6 @@ const CreateButton = styled(Button)`
 class ViewSelectionComponent extends PureComponent<Props, State>
 {
     readonly state: State = initialState;
-
-    componentDidMount()
-    {
-        this.props.loadViews();
-    }
 
     render()
     {
@@ -191,7 +185,6 @@ export const ViewSelection = connect<StateProps, DispatchProps, OwnProps>((state
     datasets: state.session.pages.chartState.datasets,
     rangeFilter: state.session.pages.global.rangeFilter
 }), {
-    loadViews: ViewActions.load.started,
     createView: ViewActions.create.started,
     updateView: ViewActions.update.started,
     deleteView: ViewActions.delete.started,

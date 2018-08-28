@@ -13,9 +13,7 @@ import {AppState} from '../../state/app/reducers';
 import {changeRangeFilterAction} from '../../state/session/pages/actions';
 import {selectChartViewAction, SelectChartViewParams} from '../../state/session/pages/chart-page/actions';
 import {getRangeFilter} from '../../state/session/pages/reducers';
-import {loadProject} from '../../state/session/project/actions';
 import {getSelectedProject} from '../../state/session/project/reducer';
-import {SelectionActions} from '../../state/session/selection/actions';
 import {BarChartPage} from './chart/bar-chart/bar-chart-page';
 import {GridChartPage} from './chart/grid-chart/grid-chart-page';
 import {LineChartPage} from './chart/line-chart/line-chart-page';
@@ -30,8 +28,6 @@ interface DispatchProps
 {
     changeRangeFilter(rangeFilter: RangeFilter): void;
     selectDataset(params: SelectChartViewParams): void;
-    loadProject(name: string): void;
-    loadSelections(): void;
     navigate(path: string): void;
 }
 
@@ -45,12 +41,6 @@ const chartToTab = {
 
 class ChartsPageComponent extends PureComponent<Props>
 {
-    componentDidMount()
-    {
-        this.props.loadProject(this.props.project.name);
-        this.props.loadSelections();
-    }
-
     render()
     {
         const match = this.props.match;
@@ -130,7 +120,5 @@ export const ChartsPage = withRouter(connect<StateProps, DispatchProps>((state: 
 }), {
     changeRangeFilter: changeRangeFilterAction,
     selectDataset: selectChartViewAction,
-    loadProject: loadProject.started,
-    loadSelections: SelectionActions.load.started,
     navigate: (path: string) => push(path)
 })(ChartsPageComponent));

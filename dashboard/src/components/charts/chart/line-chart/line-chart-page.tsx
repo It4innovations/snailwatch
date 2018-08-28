@@ -9,13 +9,8 @@ import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
 import {Project} from '../../../../lib/project/project';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
-import {
-    reloadChartDatasetsAction,
-    ReloadDatasetsParams,
-    setChartXAxisAction
-} from '../../../../state/session/pages/chart-page/actions';
+import {setChartXAxisAction} from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
-import {SelectionActions} from '../../../../state/session/selection/actions';
 import {getViews} from '../../../../state/session/view/reducer';
 import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
@@ -44,9 +39,7 @@ interface StateProps
 }
 interface DispatchProps
 {
-    loadSelections(): void;
     setXAxis(axis: string): void;
-    reloadDatasets(params: ReloadDatasetsParams): void;
 }
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 
@@ -85,20 +78,6 @@ class LineChartPageComponent extends PureComponent<Props, State>
         selectedView: null
     };
 
-    componentDidMount()
-    {
-        this.props.loadSelections();
-        this.reloadDatasets(this.props.rangeFilter);
-    }
-
-    componentDidUpdate(oldProps: Props)
-    {
-        if (this.props.views !== oldProps.views)
-        {
-            this.reloadDatasets(this.props.rangeFilter);
-        }
-    }
-
     render()
     {
         return (
@@ -115,7 +94,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                 <Box title='Range'>
                     <RangeFilterSwitcher
                         rangeFilter={this.props.rangeFilter}
-                        onFilterChange={this.changeRangeFilter} />
+                        onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
                 <Box title='X axis'>
                     <XAxisSelector measurementKeys={this.props.project.measurementKeys}
@@ -185,18 +164,9 @@ class LineChartPageComponent extends PureComponent<Props, State>
     {
         this.setState(() => ({ selectedMeasurements  }));
     }
-    changeRangeFilter = (rangeFilter: RangeFilter) =>
-    {
-        this.props.onChangeRangeFilter(rangeFilter);
-        this.reloadDatasets(rangeFilter);
-    }
     changeSettings = (settings: LineChartSettings) =>
     {
         this.setState(() => ({ settings }));
-    }
-    reloadDatasets = (rangeFilter: RangeFilter) =>
-    {
-        this.props.reloadDatasets({ rangeFilter });
     }
 
     setSelectedView = (selectedView: View) =>
@@ -215,7 +185,5 @@ export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnPr
     xAxis: state.session.pages.chartState.xAxis,
     datasets: state.session.pages.chartState.datasets
 }), {
-    loadSelections: SelectionActions.load.started,
-    setXAxis: setChartXAxisAction,
-    reloadDatasets: reloadChartDatasetsAction.started
+    setXAxis: setChartXAxisAction
 })(LineChartPageComponent));

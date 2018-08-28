@@ -12,7 +12,7 @@ export const ProjectActions = createCrudActions<Project, LoadProjectsParams>('pr
 
 export const loadProject = actionCreator.async<string, Project>('load-project');
 
-export const selectProject = actionCreator.async<string, Project>('select');
+export const selectProject = actionCreator.async<string, string>('select');
 export const deselectProject = actionCreator('deselect');
 
 export const loadUploadToken = actionCreator.async<{}, string>('load-upload-token');

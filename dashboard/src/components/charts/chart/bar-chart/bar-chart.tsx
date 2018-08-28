@@ -39,11 +39,6 @@ export class BarChart extends PureComponent<Props>
     render()
     {
         const yAxes = this.props.yAxes;
-        if (this.props.measurements.length === 0 || !this.props.xAxis || yAxes.length === 0)
-        {
-            return 'No data available.';
-        }
-
         const grouped = groupMeasurements(this.props.measurements, this.props.groupMode, this.props.xAxis, yAxes);
         const data = linearizeGroups(grouped);
 
@@ -74,10 +69,6 @@ export class BarChart extends PureComponent<Props>
                 </ReBarChart>
             </ResponsiveContainer>
         );
-    }
-    renderLabel = (data: MeasurementGroup[], props: {}, axis: string): string =>
-    {
-        return data[props['index']].items[axis].average.toFixed(2).toString();
     }
 
     handleBarClick = (data: {payload: MeasurementGroup}) =>

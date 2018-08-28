@@ -1,4 +1,5 @@
 import {combineEpics} from 'redux-observable';
+import {from} from 'rxjs';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {catchError, flatMap, switchMap} from 'rxjs/operators';
 import {Action} from 'typescript-fsa';
@@ -32,9 +33,34 @@ async function createViewWithSelection(user: User, project: Project,
     }));
 }
 
-const loadViews = createRequestEpic(ViewActions.load, (action, state, deps) =>
-    deps.client.loadViews(getUser(state), getSelectedProject(state))
-);
+const loadViews: AppEpic = (action$, store, deps) =>
+    action$.pipe(
+        ofAction(ViewActions.load.started),
+        switchMap(action => {
+            const state = store.value;
+            const user = getUser(state);
+            const project = getSelectedProject(state);
+
+            return deps.client.loadSelections(user, project).pipe(
+                flatMap(selections =>
+                    deps.client.loadViews(getUser(state), getSelectedProject(state)).pipe(
+                        flatMap(views => from([
+                            SelectionActions.load.done({
+                                params: {},
+                                result: selections
+                            }),
+                            ViewActions.load.done({
+                                params: {},
+                                result: views
+                            })
+                        ]))
+                    )
+                ),
+                catchError(error => handleActionError(ViewActions.load, action, error))
+            );
+        })
+    );
+
 const createView: AppEpic = (action$, store, deps) =>
     action$.pipe(
         ofAction(ViewActions.create.started),

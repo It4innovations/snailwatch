@@ -16,6 +16,7 @@ import {SelectionActions} from '../../selection/actions';
 import {getSelectionById, getSelections} from '../../selection/reducer';
 import {getUser} from '../../user/reducer';
 import {getViewById, getViews} from '../../view/reducer';
+import {changeRangeFilterAction} from '../actions';
 import {getRangeFilter} from '../reducers';
 import {
     addChartDatasetAction,
@@ -115,10 +116,19 @@ const reloadDatasetsAfterSelectionChange: AppEpic = (action$, store) =>
         }))
     );
 
+const reloadDatasetsAfterRangeFilterChange: AppEpic = action$ =>
+    action$.pipe(
+        ofAction(changeRangeFilterAction),
+        map(action => reloadChartDatasetsAction.started({
+            rangeFilter: action.payload
+        }))
+    );
+
 export const chartEpics = combineEpics(
     addDataset,
     updateDataset,
     reloadDatasets,
     reloadAfterSelect,
-    reloadDatasetsAfterSelectionChange
+    reloadDatasetsAfterSelectionChange,
+    reloadDatasetsAfterRangeFilterChange
 );

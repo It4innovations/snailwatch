@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Redirect, RouteComponentProps, Switch, withRouter} from 'react-router';
 import styled from 'styled-components';
 import {Project} from '../../lib/project/project';
+import {initAppAction} from '../../state/app/actions';
 import {AppState} from '../../state/app/reducers';
 import {Navigation, Routes} from '../../state/nav/routes';
 import {SwitchRoute} from '../../state/nav/switch-route';
@@ -26,6 +27,7 @@ interface StateProps
 }
 interface DispatchProps
 {
+    initApp(): void;
     clearSession(): void;
     deselectProject(): void;
 }
@@ -41,6 +43,11 @@ const Body = styled.div`
 
 class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteComponentProps<void>>
 {
+    componentDidMount()
+    {
+        this.props.initApp();
+    }
+
     render()
     {
         return (
@@ -109,6 +116,7 @@ export const Content = withRouter(connect<StateProps, DispatchProps>((state: App
     authenticated: isUserAuthenticated(state),
     selectedProject: getSelectedProject(state)
 }), {
+    initApp: initAppAction,
     clearSession,
     deselectProject
 })(ContentComponent));

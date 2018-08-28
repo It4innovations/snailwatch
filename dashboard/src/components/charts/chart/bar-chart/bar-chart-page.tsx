@@ -9,13 +9,8 @@ import {Selection} from '../../../../lib/measurement/selection/selection';
 import {Project} from '../../../../lib/project/project';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
-import {
-    reloadChartDatasetsAction,
-    ReloadDatasetsParams,
-    setChartXAxisAction
-} from '../../../../state/session/pages/chart-page/actions';
+import {setChartXAxisAction} from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
-import {SelectionActions} from '../../../../state/session/selection/actions';
 import {getSelections} from '../../../../state/session/selection/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
 import {Request} from '../../../../util/request';
@@ -46,9 +41,7 @@ interface StateProps
 }
 interface DispatchProps
 {
-    loadSelections(): void;
     setXAxis(axis: string): void;
-    reloadDatasets(params: ReloadDatasetsParams): void;
 }
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 
@@ -71,20 +64,6 @@ class BarChartPageComponent extends PureComponent<Props, State>
         selectedView: null
     };
 
-    componentDidMount()
-    {
-        this.props.loadSelections();
-        this.reloadDatasets(this.props.rangeFilter);
-    }
-
-    componentDidUpdate(oldProps: Props)
-    {
-        if (this.props.views !== oldProps.views)
-        {
-            this.reloadDatasets(this.props.rangeFilter);
-        }
-    }
-
     render()
     {
         return (
@@ -101,7 +80,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
                 <Box title='Range'>
                     <RangeFilterSwitcher
                         rangeFilter={this.props.rangeFilter}
-                        onFilterChange={this.changeRangeFilter} />
+                        onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
                 <Box title='X axis'>
                     <XAxisSelector measurementKeys={this.props.project.measurementKeys}
@@ -147,19 +126,9 @@ class BarChartPageComponent extends PureComponent<Props, State>
         );
     }
 
-    changeRangeFilter = (rangeFilter: RangeFilter) =>
-    {
-        this.props.onChangeRangeFilter(rangeFilter);
-        this.reloadDatasets(rangeFilter);
-    }
-
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
     {
         this.setState(() => ({ selectedMeasurements  }));
-    }
-    reloadDatasets = (rangeFilter: RangeFilter) =>
-    {
-        this.props.reloadDatasets({ rangeFilter });
     }
 
     setSelectedView = (selectedView: View) =>
@@ -180,7 +149,5 @@ export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnPro
     xAxis: state.session.pages.chartState.xAxis,
     measurementRequest: state.session.pages.chartState.measurementsRequest
 }), {
-    loadSelections: SelectionActions.load.started,
     setXAxis: setChartXAxisAction,
-    reloadDatasets: reloadChartDatasetsAction.started
 })(BarChartPageComponent));

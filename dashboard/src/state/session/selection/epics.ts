@@ -4,9 +4,10 @@ import {getSelectedProject} from '../project/reducer';
 import {getUser} from '../user/reducer';
 import {SelectionActions} from './actions';
 
-const loadSelections = createRequestEpic(SelectionActions.load, (action, state, deps) =>
-    deps.client.loadSelections(getUser(state), getSelectedProject(state))
-);
+const loadSelections = createRequestEpic(SelectionActions.load, (action, state, deps) => {
+    throw new Error('Invalid direct selection load, use ViewActions.load');
+    return deps.client.loadSelections(getUser(state), getSelectedProject(state));
+});
 const createSelection = createRequestEpic(SelectionActions.create, (action, state, deps) =>
     deps.client.createSelection(getUser(state), getSelectedProject(state), action.payload)
 );

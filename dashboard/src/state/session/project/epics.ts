@@ -1,14 +1,12 @@
 import {push} from 'react-router-redux';
-import {Action as ReduxAction} from 'redux';
 import {combineEpics} from 'redux-observable';
-import {from as observableFrom, of as observableOf} from 'rxjs';
+import {from, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
-import {Action} from 'typescript-fsa';
 import {ofAction} from '../../../util/redux-observable';
 import {createRequestEpic} from '../../../util/request';
 import {AppEpic} from '../../app/app-epic';
 import {Navigation} from '../../nav/routes';
-import {SelectionActions} from '../selection/actions';
+import {initSession} from '../actions';
 import {getUser} from '../user/reducer';
 import {
     deselectProject,
@@ -36,34 +34,20 @@ const updateProjectEpic = createRequestEpic(ProjectActions.update, (action, stat
     deps.client.updateProject(getUser(state), action.payload)
 );
 
-const loadProjectAfterSelectEpic: AppEpic = (action$, store, deps) =>
+const loadProjectAfterSelectEpic: AppEpic = action$ =>
     action$.pipe(
         ofAction(selectProject.started),
-        switchMap((action: Action<string>) => {
-            async function load(): Promise<ReduxAction[]>
-            {
-                const user = getUser(store.value);
-                const project = await deps.client.loadProject(user, action.payload).toPromise();
-                const selections = await deps.client.loadSelections(user, project).toPromise();
-
-                return [
-                    SelectionActions.load.done({
-                        params: {
-                            user,
-                            project
-                        },
-                        result: selections
-                    }),
-                    selectProject.done({
-                        params: action.payload,
-                        result: project
-                    }),
-                    push(Navigation.Overview)
-                ];
-            }
-
-            return observableFrom(load()).pipe(switchMap(actions => observableFrom(actions)));
-        }));
+        switchMap(action =>
+            from([
+                selectProject.done({
+                    params: action.payload,
+                    result: action.payload
+                }),
+                initSession,
+                push(Navigation.Overview)
+            ])
+        )
+    );
 
 const loadUploadTokenEpic = createRequestEpic(loadUploadToken, (action, state, deps) =>
     deps.client.loadUploadToken(getUser(state), getSelectedProject(state))

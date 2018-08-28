@@ -58,11 +58,6 @@ export class LineChart extends PureComponent<Props>
             return 'You have to use a group mode with multiple datasets';
         }
 
-        if (chain(d => d.measurements, this.props.datasets).length === 0)
-        {
-            return 'No data available';
-        }
-
         if (this.props.responsive)
         {
             return (
