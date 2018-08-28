@@ -1,6 +1,7 @@
 import {default as moment, isMoment, Moment} from 'moment';
 import {Functor, lensPath, map, set} from 'ramda';
 import {isArray, isObject, isString} from 'util';
+import {Measurement} from '../lib/measurement/measurement';
 import {initialState, PagesState} from '../state/session/pages/reducers';
 import {createRequest, isRequest} from './request';
 
@@ -21,6 +22,22 @@ function traverse(obj: {},
     }
 
     return obj;
+}
+
+function isMeasurement(obj: {}): boolean
+{
+    return  isObject(obj) &&
+            obj.hasOwnProperty('id') &&
+            obj.hasOwnProperty('timestamp') &&
+            obj.hasOwnProperty('benchmark') &&
+            obj.hasOwnProperty('environment') &&
+            obj.hasOwnProperty('result');
+}
+function isMeasurementArray(obj: Measurement[]): boolean
+{
+    return  isArray(obj) &&
+            obj.length > 0 &&
+            isMeasurement(obj[0]);
 }
 
 export function serializeDates(obj: {}): {}
@@ -54,4 +71,12 @@ export function deserializeRangeFilter(obj: PagesState, key: string): {}
         return set(path, {...initialState.rangeFilter}, obj);
     }
     return obj;
+}
+
+export function serializeMeasurements(obj: {}): {}
+{
+    return traverse(obj,
+        o => isMeasurementArray(o as Measurement[]),
+        () => []
+    );
 }
