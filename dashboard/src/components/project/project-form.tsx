@@ -60,12 +60,13 @@ export class ProjectForm extends PureComponent<Props, Readonly<State>>
                     <Input value={project.id} disabled />
                 </InputGroup>
                 <InputGroup>
-                    <Label addonType='prepend'>Repository</Label>
+                    <Label addonType='prepend' title='URL of your repository'>Repository</Label>
                     <Input value={project.repository}
                            onChange={this.changeProjectAttribute('repository')} />
                 </InputGroup>
                 <InputGroup>
-                    <Label addonType='prepend'>Commit key</Label>
+                    <Label addonType='prepend' title='Key in uploaded measurements that contains the commit ID'>
+                        Commit key</Label>
                     <Input value={project.commitKey}
                            onChange={this.changeProjectAttribute('commitKey')} />
                 </InputGroup>
