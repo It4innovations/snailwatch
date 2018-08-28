@@ -24,15 +24,18 @@ export class MeasurementRecord extends PureComponent<Props>
         if (project.repository !== '' && project.commitKey !== '')
         {
             const path = lensPath(project.commitKey.split('.'));
-            const commit = view(path, measurement).toString();
-            const url = `${this.addSlash(project.repository.trim())}commit/${commit}`;
-            const lines = this.wrapper.current.querySelectorAll('span');
-            for (let i = 0; i < lines.length; i++)
+            const commit = view(path, measurement);
+            if (commit !== undefined)
             {
-                const line = lines[i];
-                if (line.textContent === `"${commit}"`)
+                const url = `${this.addSlash(project.repository.trim())}commit/${commit}`;
+                const lines = this.wrapper.current.querySelectorAll('span');
+                for (let i = 0; i < lines.length; i++)
                 {
-                    line.innerHTML = `<a href='${url}' target='_blank'>${commit}</a>`;
+                    const line = lines[i];
+                    if (line.textContent === `"${commit}"`)
+                    {
+                        line.innerHTML = `<a href='${url}' target='_blank'>${commit}</a>`;
+                    }
                 }
             }
         }
