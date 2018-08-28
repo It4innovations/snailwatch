@@ -1,12 +1,15 @@
 import {combineEpics} from 'redux-observable';
-import {forkJoin as observableForkJoin, of as observableOf} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {forkJoin as observableForkJoin, Observable, of, of as observableOf} from 'rxjs';
+import {map, tap} from 'rxjs/operators';
+import {Measurement} from '../../../../lib/measurement/measurement';
+import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
 import {Selection} from '../../../../lib/measurement/selection/selection';
 import {View} from '../../../../lib/view/view';
 import {getNextId} from '../../../../util/database';
 import {ofAction} from '../../../../util/redux-observable';
 import {createRequestEpic} from '../../../../util/request';
 import {AppEpic} from '../../../app/app-epic';
+import {ServiceContainer} from '../../../app/di';
 import {AppState} from '../../../app/reducers';
 import {getSelectedProject} from '../../project/reducer';
 import {SelectionActions} from '../../selection/actions';
@@ -20,6 +23,7 @@ import {
     selectChartViewAction,
     updateChartDatasetAction
 } from './actions';
+import {getMeasurementsRecord, insertMeasurementsRecord} from './dataset-cache';
 
 function getSelection(state: AppState, selectionId: string): Selection | null
 {
@@ -30,17 +34,34 @@ function getView(state: AppState, viewId: string): View | null
     return !viewId ? null : getViewById(getViews(state), viewId);
 }
 
+function loadMeasurements(state: AppState, deps: ServiceContainer,
+                          selection: Selection, rangeFilter: RangeFilter): Observable<Measurement[]>
+{
+    const cache = getMeasurementsRecord(selection, rangeFilter);
+    if (cache !== null)
+    {
+        return of(cache);
+    }
+
+    return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), selection, rangeFilter).pipe(
+        tap(measurements => {
+            insertMeasurementsRecord(selection, rangeFilter, measurements);
+        })
+    );
+}
+
 const addDataset = createRequestEpic(addChartDatasetAction, (action, state, deps) => {
     const {rangeFilter, view: viewId} = action.payload;
     const view = getView(state, viewId);
     const selection = getSelection(state, view.selection);
 
-    return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), selection, rangeFilter).pipe(
+    return loadMeasurements(state, deps, selection, rangeFilter).pipe(
         map(measurements => ({
             id: getNextId(state.session.pages.chartState.datasets),
             view: viewId,
             measurements
-        })));
+        }))
+    );
 });
 
 const updateDataset = createRequestEpic(updateChartDatasetAction, (action, state, deps) => {
@@ -50,17 +71,15 @@ const updateDataset = createRequestEpic(updateChartDatasetAction, (action, state
         view: viewId
     };
 
-    if (dataset.view !== viewId && viewId)
-    {
-        const view = getView(state, viewId);
-        const selection = getSelection(state, view === null ? null : view.selection);
-        return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), selection, rangeFilter).pipe(
-            map(measurements => ({
-                    ...updated,
-                    measurements
-            })));
-    }
-    else return observableOf(updated);
+    const view = getView(state, viewId);
+    const selection = getSelection(state, view === null ? null : view.selection);
+
+    return loadMeasurements(state, deps, selection, rangeFilter).pipe(
+        map(measurements => ({
+            ...updated,
+            measurements
+        }))
+    );
 });
 
 const reloadDatasets = createRequestEpic(reloadChartDatasetsAction, (action, state, deps) => {
@@ -70,11 +89,13 @@ const reloadDatasets = createRequestEpic(reloadChartDatasetsAction, (action, sta
     return datasets.length === 0 ? observableOf([]) : observableForkJoin(datasets.map(dataset => {
         const view = getView(state, dataset.view);
         const selection = getSelection(state, view === null ? null : view.selection);
-        return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), selection, rangeFilter).pipe(
+
+        return loadMeasurements(state, deps, selection, rangeFilter).pipe(
             map(measurements => ({
                 ...dataset,
                 measurements
-            })));
+            }))
+        );
     }));
 });
 
