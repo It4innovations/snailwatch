@@ -1,4 +1,3 @@
-import {chain} from 'ramda';
 import React, {PureComponent} from 'react';
 import {
     CartesianGrid,

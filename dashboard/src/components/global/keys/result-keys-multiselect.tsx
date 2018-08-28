@@ -1,6 +1,6 @@
 import {without} from 'ramda';
 import React, {PureComponent} from 'react';
-import {FormGroup, Input, Label} from 'reactstrap';
+import styled from 'styled-components';
 import {formatKey, getResultKeys} from '../../../util/measurement';
 
 interface Props
@@ -10,6 +10,16 @@ interface Props
     requireSelection?: boolean;
     onChange(keys: string[]): void;
 }
+
+const RowLabel = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 0;
+  
+  input {
+    margin-right: 5px;
+  }
+`;
 
 export class ResultKeysMultiselect extends PureComponent<Props>
 {
@@ -34,23 +44,29 @@ export class ResultKeysMultiselect extends PureComponent<Props>
                 {keys.map(key => {
                     const checked = this.props.values.indexOf(key) !== -1;
                     return (
-                        <FormGroup check key={key}>
-                            <Label check>
-                                <Input type='checkbox'
-                                       value={key}
-                                       checked={checked}
-                                       disabled={checked && disableChecked}
-                                       onChange={this.handleChange} />
-                                {' '}{formatKey(key)}
-                            </Label>
-                        </FormGroup>
+                        <RowLabel key={key}>
+                            <input type='radio'
+                                   value={key}
+                                   checked={false}
+                                   onChange={this.selectSingle} />
+                            <input type='checkbox'
+                                   value={key}
+                                   checked={checked}
+                                   disabled={checked && disableChecked}
+                                   onChange={this.handleChange} />
+                            {' '}{formatKey(key)}
+                        </RowLabel>
                     );
                 })}
             </div>
         );
     }
 
-    handleChange = (e: React.SyntheticEvent<HTMLInputElement>) =>
+    selectSingle = (e: React.ChangeEvent<HTMLInputElement>) =>
+    {
+        this.props.onChange([e.currentTarget.value]);
+    }
+    handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     {
         const value = e.currentTarget.value;
         let values = [...this.props.values];
