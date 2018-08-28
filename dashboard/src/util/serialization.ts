@@ -42,13 +42,13 @@ export function serializeRequests(obj: {}): {}
 {
     return traverse(obj,
         o => isRequest(o),
-        o => createRequest()
+        () => createRequest()
     );
 }
 
 export function deserializeRangeFilter(obj: PagesState, key: string): {}
 {
-    if (key === 'views')
+    if (key === 'pages')
     {
         const path = lensPath(['global', 'rangeFilter']);
         return set(path, {...initialState.rangeFilter}, obj);
