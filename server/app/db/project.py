@@ -19,7 +19,7 @@ class ProjectRepo(Repository):
             ID_FIELD: pid
         }, {
             '$addToSet': {
-                'measurementkeys': {
+                'measurementKeys': {
                     '$each': keys
                 }
             }
