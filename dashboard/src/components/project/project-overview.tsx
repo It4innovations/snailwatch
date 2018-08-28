@@ -7,7 +7,7 @@ import python from 'react-syntax-highlighter/languages/hljs/python';
 import SyntaxHighlighter, {registerLanguage} from 'react-syntax-highlighter/light';
 import {dracula} from 'react-syntax-highlighter/styles/hljs';
 import {toast, ToastContainer} from 'react-toastify';
-import {Button, Card, CardBody, Input, InputGroup, InputGroupAddon} from 'reactstrap';
+import {Button, Card, CardBody} from 'reactstrap';
 import Badge from 'reactstrap/lib/Badge';
 import CardHeader from 'reactstrap/lib/CardHeader';
 import styled from 'styled-components';
@@ -15,12 +15,12 @@ import {API_SERVER} from '../../configuration';
 import {Project} from '../../lib/project/project';
 import {User} from '../../lib/user/user';
 import {AppState} from '../../state/app/reducers';
-import {loadUploadToken, regenerateUploadToken} from '../../state/session/project/actions';
+import {loadUploadToken, ProjectActions, regenerateUploadToken} from '../../state/session/project/actions';
 import {getSelectedProject, getUploadToken} from '../../state/session/project/reducer';
 import {getUser} from '../../state/session/user/reducer';
 import {Request} from '../../util/request';
-import {ErrorBox} from '../global/error-box';
-import {Loading} from '../global/loading';
+import {RequestComponent} from '../global/request-component';
+import {ProjectForm} from './project-form';
 
 registerLanguage('python', python);
 
@@ -28,7 +28,7 @@ interface StateProps
 {
     user: User;
     project: Project;
-    loadProjectRequest: Request;
+    projectRequest: Request;
     uploadToken: string | null;
     uploadTokenRequest: Request;
 }
@@ -36,6 +36,7 @@ interface DispatchProps
 {
     loadUploadToken(): void;
     regenerateUploadToken(): void;
+    changeProject(project: Project): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
@@ -54,29 +55,15 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
 
     render()
     {
-        if (this.props.loadProjectRequest.error)
-        {
-            return <ErrorBox error={this.props.loadProjectRequest.error} />;
-        }
-        if (this.props.loadProjectRequest.loading)
-        {
-            return <Loading />;
-        }
-
         return (
             <div>
                 <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={false} />
+                <RequestComponent request={this.props.projectRequest} />
                 <Card>
                     <CardHeader>Project overview</CardHeader>
                     <CardBody>
-                        <InputGroup>
-                            <InputGroupAddon addonType='prepend'>Name</InputGroupAddon>
-                            <Input value={this.props.project.name} disabled />
-                        </InputGroup>
-                        <InputGroup>
-                            <InputGroupAddon addonType='prepend'>Id</InputGroupAddon>
-                            <Input value={this.props.project.id} disabled />
-                        </InputGroup>
+                        <ProjectForm project={this.props.project}
+                                     onChange={this.props.changeProject} />
                     </CardBody>
                 </Card>
                 <Card>
@@ -193,10 +180,11 @@ session.upload_measurement(
 export const ProjectOverview = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     user: getUser(state),
     project: getSelectedProject(state),
-    loadProjectRequest: state.session.project.loadProjectRequest,
+    projectRequest: state.session.project.projectRequest,
     uploadToken: getUploadToken(state),
     uploadTokenRequest: state.session.project.uploadTokenRequest
 }), {
     loadUploadToken: () => loadUploadToken.started({}),
-    regenerateUploadToken: () => regenerateUploadToken.started({})
+    regenerateUploadToken: () => regenerateUploadToken.started({}),
+    changeProject: ProjectActions.update.started
 })(ProjectOverviewComponent));

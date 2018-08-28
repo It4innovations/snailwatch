@@ -2,18 +2,11 @@ import {compose} from 'ramda';
 import {createSelector} from 'reselect';
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {Project} from '../../../lib/project/project';
+import {createCrudReducer} from '../../../util/crud';
 import {createRequest, hookRequestActions, Request} from '../../../util/request';
 import {AppState} from '../../app/reducers';
 import {clearSession} from '../actions';
-import {
-    createProject,
-    deselectProject,
-    loadProject,
-    loadProjects,
-    loadUploadToken,
-    regenerateUploadToken,
-    selectProject
-} from './actions';
+import {deselectProject, loadUploadToken, ProjectActions, regenerateUploadToken, selectProject} from './actions';
 
 export interface ProjectState
 {
@@ -21,9 +14,7 @@ export interface ProjectState
     selectedProject: string | null;
     uploadToken: string | null;
 
-    loadProjectsRequest: Request;
-    loadProjectRequest: Request;
-    createProjectRequest: Request;
+    projectRequest: Request;
     uploadTokenRequest: Request;
 }
 
@@ -31,9 +22,7 @@ const initialState: ProjectState = {
     projects: [],
     selectedProject: null,
     uploadToken: null,
-    loadProjectsRequest: createRequest(),
-    loadProjectRequest: createRequest(),
-    createProjectRequest: createRequest(),
+    projectRequest: createRequest(),
     uploadTokenRequest: createRequest()
 };
 
@@ -47,26 +36,8 @@ let reducer = reducerWithInitialState<ProjectState>({ ...initialState })
 
 reducer = compose(
     (r: typeof reducer) => hookRequestActions(r,
-        loadProject,
-        state => state.loadProjectRequest,
-        (state, action) => ({
-            projects: [...state.projects.filter(p => p.id !== action.payload.result.id), action.payload.result]
-        })
-    ),
-    (r: typeof reducer) => hookRequestActions(r,
-        loadProjects,
-        state => state.loadProjectsRequest,
-        (state, action) => ({
-            projects: action.payload.result
-        })
-    ),
-    (r: typeof reducer) => hookRequestActions(r,
-        createProject,
-        state => state.createProjectRequest
-    ),
-    (r: typeof reducer) => hookRequestActions(r,
         selectProject,
-        state => state.loadProjectRequest,
+        state => state.projectRequest,
         (state, action) => ({
             ...state,
             selectedProject: action.payload.params
@@ -80,6 +51,13 @@ reducer = compose(
         })
     )
 )(reducer);
+
+reducer = createCrudReducer<ProjectState, Project>(
+    reducer,
+    ProjectActions,
+    'projects',
+    state => state.projectRequest,
+);
 
 export const getProjects = (state: AppState) => state.session.project.projects;
 export const getSelectedProjectName = (state: AppState) => state.session.project.selectedProject;

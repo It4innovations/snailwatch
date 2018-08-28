@@ -5,9 +5,9 @@ import {Button} from 'reactstrap';
 import ListGroup from 'reactstrap/lib/ListGroup';
 import ListGroupItem from 'reactstrap/lib/ListGroupItem';
 import styled from 'styled-components';
-import {Project} from '../../lib/project/project';
+import {createProject, Project} from '../../lib/project/project';
 import {AppState} from '../../state/app/reducers';
-import {createProject, loadProjects, selectProject} from '../../state/session/project/actions';
+import {ProjectActions, selectProject} from '../../state/session/project/actions';
 import {getProjects} from '../../state/session/project/reducer';
 import {getUser} from '../../state/session/user/reducer';
 import {Request} from '../../util/request';
@@ -22,15 +22,13 @@ interface State
 interface StateProps
 {
     projects: Project[];
-    loadProjectsRequest: Request;
-    createProjectRequest: Request;
-    loadProjectRequest: Request;
+    projectRequest: Request;
 }
 interface DispatchProps
 {
     loadProjects(): void;
     selectProject(name: string): void;
-    createProject(name: string): void;
+    createProject(project: Project): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
@@ -62,8 +60,8 @@ class ProjectsComponent extends PureComponent<Props, State>
     static getDerivedStateFromProps(nextProps: Props, prevState: State): Partial<State>
     {
         if (prevState.creatingProject &&
-            !nextProps.createProjectRequest.loading &&
-            !nextProps.createProjectRequest.error)
+            !nextProps.projectRequest.loading &&
+            !nextProps.projectRequest.error)
         {
             return {
                 creatingProject: false
@@ -85,10 +83,9 @@ class ProjectsComponent extends PureComponent<Props, State>
             <div>
                 <Header>
                     <Title>Projects</Title>
-                    <Loading show={this.props.loadProjectsRequest.loading || this.props.createProjectRequest.loading} />
+                    <Loading show={this.props.projectRequest.loading} />
                 </Header>
-                <ErrorBox error={this.props.loadProjectsRequest.error} />
-                <ErrorBox error={this.props.createProjectRequest.error} />
+                <ErrorBox error={this.props.projectRequest.error} />
                 <ProjectList>
                     {projects.map(project =>
                         <ListGroupItem key={project.id}>
@@ -119,7 +116,7 @@ class ProjectsComponent extends PureComponent<Props, State>
     }
     createProject = (name: string) =>
     {
-        this.props.createProject(name);
+        this.props.createProject(createProject({ name }));
     }
 
     selectProject = (project: Project) =>
@@ -129,13 +126,11 @@ class ProjectsComponent extends PureComponent<Props, State>
 }
 
 export const Projects = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
-    loadProjectsRequest: state.session.project.loadProjectsRequest,
-    loadProjectRequest: state.session.project.loadProjectRequest,
-    createProjectRequest: state.session.project.createProjectRequest,
+    projectRequest: state.session.project.projectRequest,
     user: getUser(state),
     projects: getProjects(state)
 }), {
-    loadProjects: () => loadProjects.started({ force: true }),
+    loadProjects: () => ProjectActions.load.started({ force: true }),
     selectProject: selectProject.started,
-    createProject: createProject.started
+    createProject: ProjectActions.create.started
 })(ProjectsComponent));

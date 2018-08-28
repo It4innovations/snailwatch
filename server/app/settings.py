@@ -66,11 +66,11 @@ def ref(collection, required=True):
     }
 
 
-def string(unique=False, empty=False):
+def string(unique=False, empty=False, required=True):
     return {
         'type': 'string',
         'empty': empty,
-        'required': True,
+        'required': required,
         'unique': unique
     }
 
@@ -117,9 +117,11 @@ project_schema = {
         'unique_to_user': True
     },
     'writers': list_of(user_ref, required=False),
-    'measurementkeys': list_of({
+    'measurementKeys': list_of({
         'type': 'string'
-    }, required=False)
+    }, required=False),
+    'repository': string(empty=True, required=False),
+    'commitKey': string(empty=True, required=False)
 }
 measurement_schema = {
     'project': ref('projects', False),
@@ -183,7 +185,8 @@ DOMAIN = {
     },
     'projects': {
         'schema': project_schema,
-        'resource_methods': ['GET', 'POST']
+        'resource_methods': ['GET', 'POST'],
+        'item_methods': ['GET', 'PATCH']
     },
     'measurements': {
         'schema': measurement_schema,

@@ -5,8 +5,7 @@ import MdDelete from 'react-icons/lib/md/delete';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
 import json from 'react-syntax-highlighter/languages/hljs/json';
-import SyntaxHighlighter, {registerLanguage} from 'react-syntax-highlighter/light';
-import {dracula} from 'react-syntax-highlighter/styles/hljs';
+import {registerLanguage} from 'react-syntax-highlighter/light';
 import ReactTable, {RowInfo} from 'react-table';
 import {Button} from 'reactstrap';
 import styled from 'styled-components';
@@ -34,6 +33,7 @@ import {RangeFilterSwitcher} from '../charts/range-filter-switcher';
 import {SelectionSelectEditor} from '../charts/selection-container/selection-select-editor';
 import {Box} from '../global/box';
 import {ErrorBox} from '../global/error-box';
+import {MeasurementRecord} from '../global/measurement-record';
 import {TwoColumnPage} from '../global/two-column-page';
 
 registerLanguage('json', json);
@@ -198,16 +198,7 @@ class MeasurementListComponent extends PureComponent<Props, State>
     renderSubcomponent = (rowInfo: RowInfo): JSX.Element =>
     {
         const measurement: Measurement = rowInfo['original'];
-        return (
-            <SyntaxHighlighter language='json' style={dracula}>
-                {JSON.stringify({
-                    benchmark: measurement.benchmark,
-                    timestamp: measurement.timestamp.format(DATETIME_FORMAT),
-                    environment: measurement.environment,
-                    result: measurement.result
-                }, null, 2)}
-            </SyntaxHighlighter>
-        );
+        return <MeasurementRecord measurement={measurement} project={this.props.project} />;
     }
 
     changeSelection = (selection: Selection) =>

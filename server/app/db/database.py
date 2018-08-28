@@ -30,7 +30,9 @@ def before_insert_project(projects):
 
     for project in projects:
         project['writers'] = [user['_id']]
-        project['measurementkeys'] = []
+        project['measurementKeys'] = []
+        project['repository'] = ''
+        project['commitKey'] = 'environment.commit'
 
 
 def after_insert_project(projects):

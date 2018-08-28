@@ -11,9 +11,10 @@ export interface SnailClient
     loginUser(username: string, password: string): Observable<User>;
     changePassword(user: User, oldPassword: string, newPassword: string): Observable<boolean>;
 
-    createProject(user: User, name: string): Observable<boolean>;
+    createProject(user: User, project: Project): Observable<Project>;
     loadProjects(user: User): Observable<Project[]>;
     loadProject(user: User, name: string): Observable<Project>;
+    updateProject(user: User, project: Project): Observable<boolean>;
 
     loadUploadToken(user: User, project: Project): Observable<string>;
     regenerateUploadToken(user: User, project: Project): Observable<string>;

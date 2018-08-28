@@ -24,12 +24,12 @@ export interface CrudActionWrapper<T>
     delete: AsyncActionCreators<T, boolean, {}>;
 }
 
-export function createCrudActions<T>(name: string): CrudActionWrapper<T>
+export function createCrudActions<T, LoadParams = {}>(name: string): CrudActionWrapper<T>
 {
     const creator = actionCreatorFactory(name);
 
     return {
-        load: creator.async<{}, T[]>('load') as OptionalActionsCreator<{}, T[], {}>,
+        load: creator.async<LoadParams, T[]>('load') as OptionalActionsCreator<{}, T[], {}>,
         create: creator.async<T, T>('create'),
         update: creator.async<T, boolean>('update'),
         delete: creator.async<T, boolean>('delete')

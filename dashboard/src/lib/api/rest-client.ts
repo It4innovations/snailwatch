@@ -17,6 +17,7 @@ import {
     ProjectDAO,
     SelectionDAO,
     serializeDate,
+    serializeProject,
     serializeSelection,
     serializeView,
     sort,
@@ -67,11 +68,9 @@ export class RestClient implements SnailClient
         }).pipe(map(() => true));
     }
 
-    createProject(user: User, name: string): Observable<boolean>
+    createProject(user: User, project: Project): Observable<Project>
     {
-        return this.projectCrud.create(user, {
-            name
-        }).pipe(map(() => true));
+        return this.projectCrud.create(user, serializeProject(project));
     }
     loadProjects(user: User): Observable<Project[]>
     {
@@ -86,6 +85,10 @@ export class RestClient implements SnailClient
             }
             return projects[0];
         }));
+    }
+    updateProject(user: User, project: Project): Observable<boolean>
+    {
+        return this.projectCrud.update(user, project, serializeProject(project));
     }
 
     loadUploadToken(user: User, project: Project): Observable<string>

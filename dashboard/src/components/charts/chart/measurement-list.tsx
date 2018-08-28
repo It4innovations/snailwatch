@@ -1,16 +1,14 @@
 import {sort} from 'ramda';
 import React, {PureComponent} from 'react';
-import json from 'react-syntax-highlighter/languages/hljs/json';
-import SyntaxHighlighter, {registerLanguage} from 'react-syntax-highlighter/light';
-import {dracula} from 'react-syntax-highlighter/styles/hljs';
 import ReactTable, {RowInfo} from 'react-table';
 import {Measurement} from '../../../lib/measurement/measurement';
-
-registerLanguage('json', json);
+import {Project} from '../../../lib/project/project';
+import {MeasurementRecord} from '../../global/measurement-record';
 
 interface Props
 {
     measurements: Measurement[];
+    project: Project;
 }
 
 const DATETIME_FORMAT = 'DD. MM. YYYY HH:mm:ss';
@@ -49,16 +47,6 @@ export class MeasurementList extends PureComponent<Props>
     renderSubcomponent = (rowInfo: RowInfo): JSX.Element =>
     {
         const measurement: Measurement = rowInfo['original'];
-        return (
-            <SyntaxHighlighter language='json' style={dracula}>
-                {JSON.stringify({
-                    id: measurement.id,
-                    benchmark: measurement.benchmark,
-                    timestamp: measurement.timestamp.format(DATETIME_FORMAT),
-                    environment: measurement.environment,
-                    result: measurement.result
-                }, null, 2)}
-            </SyntaxHighlighter>
-        );
+        return <MeasurementRecord measurement={measurement} project={this.props.project} />;
     }
 }

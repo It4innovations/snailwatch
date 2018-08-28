@@ -153,7 +153,8 @@ class LineChartPageComponent extends PureComponent<Props, State>
                 <Row>
                     <MeasurementsWrapper>
                         <h4>Selected measurements</h4>
-                        <MeasurementList measurements={this.state.selectedMeasurements} />
+                        <MeasurementList measurements={this.state.selectedMeasurements}
+                                         project={this.props.project} />
                     </MeasurementsWrapper>
                     <ViewManagerWrapper>
                         {view && <ViewManager view={view} onClose={this.deselectView} />}

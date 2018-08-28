@@ -20,7 +20,9 @@ export interface UserDAO
 export interface ProjectDAO extends DAO
 {
     name: string;
-    measurementkeys: string[];
+    measurementKeys: string[];
+    repository: string;
+    commitKey: string;
 }
 export interface MeasurementDAO extends DAO
 {
@@ -55,7 +57,7 @@ export function parseFilter(filter: Filter): Filter
 {
     return { ...filter };
 }
-export function serializeFilter(filter: Filter): {}
+export function serializeFilter(filter: Filter): Filter
 {
     return { ...filter };
 }
@@ -65,10 +67,21 @@ export function parseProject(project: ProjectDAO): Project
     return {
         id: project._id,
         name: project.name,
-        measurementKeys: project.measurementkeys,
+        measurementKeys: project.measurementKeys,
+        repository: project.repository || '',
+        commitKey: project.commitKey || '',
         createdAt: moment(project._created)
     };
 }
+export function serializeProject(project: Project): Partial<ProjectDAO>
+{
+    return {
+        name: project.name,
+        repository: project.repository,
+        commitKey: project.commitKey
+    };
+}
+
 export function parseMeasurement(measurement: MeasurementDAO): Measurement
 {
     return {
@@ -79,6 +92,7 @@ export function parseMeasurement(measurement: MeasurementDAO): Measurement
         result: {...measurement.result}
     };
 }
+
 export function parseSelection(selection: SelectionDAO): Selection
 {
     return {
@@ -87,13 +101,14 @@ export function parseSelection(selection: SelectionDAO): Selection
         filters: selection.filters.map(parseFilter)
     };
 }
-export function serializeSelection(selection: Selection): {}
+export function serializeSelection(selection: Selection): Partial<SelectionDAO>
 {
     return {
         name: selection.name,
         filters: selection.filters.map(serializeFilter)
     };
 }
+
 export function parseView(view: ViewDAO): View
 {
     return {
@@ -104,7 +119,7 @@ export function parseView(view: ViewDAO): View
         created: moment(view._created)
     };
 }
-export function serializeView(view: View): {}
+export function serializeView(view: View): Partial<ViewDAO>
 {
     const { name, selection, yAxes } = view;
     return { name, selection, yAxes };
