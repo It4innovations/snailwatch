@@ -6,24 +6,13 @@ import {ofAction} from '../../../util/redux-observable';
 import {createRequestEpic} from '../../../util/request';
 import {AppEpic} from '../../app/app-epic';
 import {Navigation} from '../../nav/routes';
-import {initSession} from '../actions';
+import {initProjectSession} from '../actions';
 import {getUser} from '../user/reducer';
-import {
-    deselectProject,
-    loadProject,
-    loadUploadToken,
-    ProjectActions,
-    regenerateUploadToken,
-    selectProject
-} from './actions';
+import {deselectProject, loadUploadToken, ProjectActions, regenerateUploadToken, selectProject} from './actions';
 import {getSelectedProject} from './reducer';
 
 const loadProjectsEpic = createRequestEpic(ProjectActions.load, (action, state, deps) =>
     deps.client.loadProjects(getUser(state))
-);
-
-const loadProjectEpic = createRequestEpic(loadProject, (action, state, deps) =>
-    deps.client.loadProject(getUser(state), action.payload)
 );
 
 const createProjectEpic = createRequestEpic(ProjectActions.create, (action, state, deps) =>
@@ -34,7 +23,7 @@ const updateProjectEpic = createRequestEpic(ProjectActions.update, (action, stat
     deps.client.updateProject(getUser(state), action.payload)
 );
 
-const loadProjectAfterSelectEpic: AppEpic = action$ =>
+const initSessionAfterProjectSelect: AppEpic = action$ =>
     action$.pipe(
         ofAction(selectProject.started),
         switchMap(action =>
@@ -43,7 +32,7 @@ const loadProjectAfterSelectEpic: AppEpic = action$ =>
                     params: action.payload,
                     result: action.payload
                 }),
-                initSession,
+                initProjectSession(),
                 push(Navigation.Overview)
             ])
         )
@@ -64,10 +53,9 @@ const goToProjectSelectionAfterUnselecting: AppEpic = (action$) =>
 
 export const projectEpics = combineEpics(
     loadProjectsEpic,
-    loadProjectEpic,
     createProjectEpic,
     updateProjectEpic,
-    loadProjectAfterSelectEpic,
+    initSessionAfterProjectSelect,
     loadUploadTokenEpic,
     regenerateUploadTokenEpic,
     goToProjectSelectionAfterUnselecting

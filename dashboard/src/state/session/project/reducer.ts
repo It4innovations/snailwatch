@@ -13,7 +13,6 @@ export interface ProjectState
     projects: Project[];
     selectedProject: string | null;
     uploadToken: string | null;
-
     projectRequest: Request;
     uploadTokenRequest: Request;
 }

@@ -10,8 +10,6 @@ export interface LoadProjectsParams
 }
 export const ProjectActions = createCrudActions<Project, LoadProjectsParams>('project');
 
-export const loadProject = actionCreator.async<string, Project>('load-project');
-
 export const selectProject = actionCreator.async<string, string>('select');
 export const deselectProject = actionCreator('deselect');
 

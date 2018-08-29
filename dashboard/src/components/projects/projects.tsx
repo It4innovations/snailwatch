@@ -26,7 +26,6 @@ interface StateProps
 }
 interface DispatchProps
 {
-    loadProjects(): void;
     selectProject(name: string): void;
     createProject(project: Project): void;
 }
@@ -69,11 +68,6 @@ class ProjectsComponent extends PureComponent<Props, State>
         }
 
         return null;
-    }
-
-    componentDidMount()
-    {
-        this.props.loadProjects();
     }
 
     render()
@@ -130,7 +124,6 @@ export const Projects = withRouter(connect<StateProps, DispatchProps>((state: Ap
     user: getUser(state),
     projects: getProjects(state)
 }), {
-    loadProjects: () => ProjectActions.load.started({ force: true }),
     selectProject: selectProject.started,
     createProject: ProjectActions.create.started
 })(ProjectsComponent));
