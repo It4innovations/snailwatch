@@ -37,7 +37,9 @@ export class RequestManager
             options
         };
 
-        this.promise = this.promise.then(() => this.executeRequest(request));
+        this.promise = this.promise
+            .then(() => this.executeRequest(request))
+            .catch(() => this.executeRequest(request));
         return observableFrom(this.promise) as Observable<T>;
     }
 
