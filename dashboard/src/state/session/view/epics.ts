@@ -1,12 +1,6 @@
 import {combineEpics} from 'redux-observable';
-import {from} from 'rxjs';
-import {fromPromise} from 'rxjs/internal-compatibility';
 import {catchError, flatMap, switchMap} from 'rxjs/operators';
 import {Action} from 'typescript-fsa';
-import {SnailClient} from '../../../lib/api/snail-client';
-import {createSelection, Selection} from '../../../lib/measurement/selection/selection';
-import {Project} from '../../../lib/project/project';
-import {User} from '../../../lib/user/user';
 import {View} from '../../../lib/view/view';
 import {ofAction} from '../../../util/redux-observable';
 import {createRequestEpic, handleActionError} from '../../../util/request';
@@ -14,52 +8,12 @@ import {AppEpic} from '../../app/app-epic';
 import {addChartDatasetAction} from '../pages/chart-page/actions';
 import {getRangeFilter} from '../pages/reducers';
 import {getSelectedProject} from '../project/reducer';
-import {SelectionActions} from '../selection/actions';
 import {getUser} from '../user/reducer';
 import {ViewActions} from './actions';
 
-async function createViewWithSelection(user: User, project: Project,
-                                       selection: Selection,
-                                       view: View, client: SnailClient): Promise<{view: View, selection: Selection}>
-{
-    const newSelection = await client.createSelection(user, project, selection).toPromise();
-    view = {
-        ...view,
-        selection: newSelection.id
-    };
-    return client.createView(user, project, view).toPromise().then(v => ({
-        view: v,
-        selection: newSelection
-    }));
-}
-
-const loadViews: AppEpic = (action$, store, deps) =>
-    action$.pipe(
-        ofAction(ViewActions.load.started),
-        switchMap(action => {
-            const state = store.value;
-            const user = getUser(state);
-            const project = getSelectedProject(state);
-
-            return deps.client.loadSelections(user, project).pipe(
-                flatMap(selections =>
-                    deps.client.loadViews(getUser(state), getSelectedProject(state)).pipe(
-                        flatMap(views => from([
-                            SelectionActions.load.done({
-                                params: {},
-                                result: selections
-                            }),
-                            ViewActions.load.done({
-                                params: {},
-                                result: views
-                            })
-                        ]))
-                    )
-                ),
-                catchError(error => handleActionError(ViewActions.load, action, error))
-            );
-        })
-    );
+const loadViews = createRequestEpic(ViewActions.load, (action, state, deps) =>
+    deps.client.loadViews(getUser(state), getSelectedProject(state))
+);
 
 const createView: AppEpic = (action$, store, deps) =>
     action$.pipe(
@@ -69,20 +23,11 @@ const createView: AppEpic = (action$, store, deps) =>
             const user = getUser(state);
             const project = getSelectedProject(state);
 
-            const newSelection = createSelection({
-                name: action.payload.name
-            });
-            const request = fromPromise(createViewWithSelection(user, project,
-                newSelection, action.payload, deps.client));
-            return request.pipe(
-                flatMap(({ view, selection }) => [
+            return deps.client.createView(user, project, action.payload).pipe(
+                flatMap(view => [
                     ViewActions.create.done({
                         params: action.payload,
                         result: view
-                    }),
-                    SelectionActions.create.done({
-                        params: { ...newSelection },
-                        result: selection
                     }),
                     addChartDatasetAction.started({
                         rangeFilter: getRangeFilter(state),

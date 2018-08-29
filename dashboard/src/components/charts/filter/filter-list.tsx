@@ -2,9 +2,9 @@ import {remove, update} from 'ramda';
 import React, {PureComponent} from 'react';
 import {Button} from 'reactstrap';
 import styled from 'styled-components';
-import {Measurement} from '../../../../lib/measurement/measurement';
-import {createFilter, Filter} from '../../../../lib/measurement/selection/filter';
-import {getValuesWithPath} from '../../../../util/object';
+import {Measurement} from '../../../lib/measurement/measurement';
+import {createFilter, Filter} from '../../../lib/view/filter';
+import {getValuesWithPath} from '../../../util/object';
 import {FilterComponent} from './filter-component';
 
 interface Props

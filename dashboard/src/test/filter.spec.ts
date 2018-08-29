@@ -1,5 +1,5 @@
 import {buildRequestFilter} from '../lib/api/filter';
-import {BadValueFilteredError, createFilter, Filter, Operator, testFilter} from '../lib/measurement/selection/filter';
+import {BadValueFilteredError, createFilter, Filter, Operator, testFilter} from '../lib/view/filter';
 
 describe('Filter', () =>
 {

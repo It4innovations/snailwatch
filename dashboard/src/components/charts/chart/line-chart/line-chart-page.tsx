@@ -5,7 +5,7 @@ import {RouteComponentProps, withRouter} from 'react-router';
 import styled from 'styled-components';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
-import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
+import {RangeFilter} from '../../../../lib/view/range-filter';
 import {Project} from '../../../../lib/project/project';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';

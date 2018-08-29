@@ -163,15 +163,10 @@ measurement_schema = {
         }
     }
 }
-selection_schema = {
-    'project': ref('projects'),
-    'name': string(),
-    'filters': list_of(filter_type)
-}
 view_schema = {
     'project': ref('projects'),
     'name': string(),
-    'selection': ref('selections'),
+    'filters': list_of(filter_type),
     'yAxes': list_of(string())
 }
 
@@ -193,11 +188,6 @@ DOMAIN = {
         'resource_methods': ['GET', 'POST'],
         'item_methods': ['GET', 'DELETE'],
         'authentication': MeasurementAuthenticator
-    },
-    'selections': {
-        'schema': selection_schema,
-        'resource_methods': ['GET', 'POST'],
-        'item_methods': ['GET', 'PATCH', 'DELETE']
     },
     'views': {
         'schema': view_schema,

@@ -3,8 +3,8 @@ import React, {PureComponent} from 'react';
 import MdDelete from 'react-icons/lib/md/delete';
 import Input from 'reactstrap/lib/Input';
 import styled from 'styled-components';
-import {Filter, Operator} from '../../../../lib/measurement/selection/filter';
-import {SuggestInput} from '../../../global/suggest-input';
+import {Filter, Operator} from '../../../lib/view/filter';
+import {SuggestInput} from '../../global/suggest-input';
 
 interface Props
 {

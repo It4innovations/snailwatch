@@ -1,10 +1,11 @@
 import {default as moment, Moment} from 'moment';
+import {Filter} from './filter';
 
 export interface View
 {
     id: string;
     name: string;
-    selection: string | null;
+    filters: Filter[];
     yAxes: string[];
     created: Moment;
 }
@@ -14,7 +15,7 @@ export function createView(view: Partial<View> = {}): View
     return {
         id: '',
         name: '',
-        selection: null,
+        filters: [],
         yAxes: [],
         created: moment(),
         ...view

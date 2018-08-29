@@ -4,22 +4,22 @@ import MdCheck from 'react-icons/lib/md/check';
 import MdEdit from 'react-icons/lib/md/edit';
 import styled from 'styled-components';
 import {Measurement} from '../../../lib/measurement/measurement';
-import {Filter} from '../../../lib/measurement/selection/filter';
-import {createSelection, Selection} from '../../../lib/measurement/selection/selection';
-import {FilterList} from './filter/filter-list';
+import {Filter} from '../../../lib/view/filter';
+import {createView, View} from '../../../lib/view/view';
+import {FilterList} from '../filter/filter-list';
 
 interface Props
 {
-    selection: Selection;
+    view: View;
     measurements: Measurement[];
     measurementKeys: string[];
-    onChange(selection: Selection): void;
+    onChange(view: View): void;
 }
 
 const initialState = {
     editing: false,
-    selection: createSelection(),
-    selectionError: ''
+    view: createView(),
+    viewError: ''
 };
 
 type State = Readonly<typeof initialState>;
@@ -29,28 +29,28 @@ const Row = styled.div`
     align-items: center;
 `;
 
-export class SelectionView extends PureComponent<Props, State>
+export class ViewFilterManager extends PureComponent<Props, State>
 {
     readonly state: State = initialState;
 
     componentDidUpdate(prevProps: Props)
     {
-        if (prevProps.selection !== this.props.selection && this.state.editing)
+        if (prevProps.view !== this.props.view && this.state.editing)
         {
             this.setState(() => ({
-                selection: this.props.selection
+                view: this.props.view
             }));
         }
     }
 
     render()
     {
-        const selection = this.getSelectedSelection();
+        const view = this.getSelectedView();
         return (
             <div>
                 <Row>Filters {this.renderEditButton()}</Row>
                 <FilterList
-                    filters={selection.filters}
+                    filters={view.filters}
                     measurementKeys={this.props.measurementKeys}
                     measurements={this.props.measurements}
                     editable={this.state.editing}
@@ -75,53 +75,53 @@ export class SelectionView extends PureComponent<Props, State>
         );
     }
 
-    getSelectedSelection = (): Selection =>
+    getSelectedView = (): View =>
     {
-        return this.state.editing ? this.state.selection : this.props.selection;
+        return this.state.editing ? this.state.view : this.props.view;
     }
 
     startEdit = () =>
     {
         this.setState(() => ({
             editing: true,
-            selection: {...this.props.selection}
+            view: {...this.props.view}
         }));
     }
     stopEdit = () =>
     {
         this.setState(() => ({
             editing: false,
-            selectionError: ''
+            viewError: ''
         }));
     }
 
     commitSelection = () =>
     {
-        const selection = this.cleanSelection(this.state.selection);
-        if (!equals(selection, this.props.selection))
+        const view = this.cleanView(this.state.view);
+        if (!equals(view, this.props.view))
         {
-            this.props.onChange(selection);
+            this.props.onChange(view);
         }
 
         this.stopEdit();
     }
 
-    cleanSelection = (selection: Selection): Selection =>
+    cleanView = (view: View): View =>
     {
         return {
-            ...selection,
-            filters: selection.filters.filter(f => f.path.trim() !== '')
+            ...view,
+            filters: view.filters.filter(f => f.path.trim() !== '')
         };
     }
 
     handleFilterChange = (filters: Filter[]) =>
     {
-        this.changeSelection({ filters });
+        this.changeView({ filters });
     }
-    changeSelection = (change: Partial<Selection>) =>
+    changeView = (change: Partial<View>) =>
     {
         this.setState(state => ({
-            selection: {...state.selection, ...change}
+            view: {...state.view, ...change}
         }));
     }
 }

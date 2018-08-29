@@ -5,7 +5,7 @@ import InputGroup from 'reactstrap/lib/InputGroup';
 import InputGroupAddon from 'reactstrap/lib/InputGroupAddon';
 import InputGroupText from 'reactstrap/lib/InputGroupText';
 import styled from 'styled-components';
-import {RangeFilter} from '../../lib/measurement/selection/range-filter';
+import {RangeFilter} from '../../lib/view/range-filter';
 import {Switch} from '../global/switch';
 
 interface Props

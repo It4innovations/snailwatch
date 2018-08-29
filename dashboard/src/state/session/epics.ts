@@ -12,7 +12,6 @@ import {getRangeFilter} from './pages/reducers';
 import {loadProject} from './project/actions';
 import {projectEpics} from './project/epics';
 import {getSelectedProject} from './project/reducer';
-import {selectionEpics} from './selection/epics';
 import {userEpics} from './user/epics';
 import {isUserAuthenticated} from './user/reducer';
 import {ViewActions} from './view/actions';
@@ -41,7 +40,6 @@ export const sessionEpics = combineEpics(
     initSessionEpic,
     userEpics,
     analysisEpics,
-    selectionEpics,
     projectEpics,
     chartEpics,
     gridChartPageEpics,

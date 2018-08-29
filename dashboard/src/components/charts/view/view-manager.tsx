@@ -3,19 +3,16 @@ import MdClose from 'react-icons/lib/md/close';
 import {connect} from 'react-redux';
 import {Button} from 'reactstrap';
 import styled from 'styled-components';
-import {Selection} from '../../../lib/measurement/selection/selection';
 import {Project} from '../../../lib/project/project';
 import {View} from '../../../lib/view/view';
 import {AppState} from '../../../state/app/reducers';
 import {getSelectedProject} from '../../../state/session/project/reducer';
-import {SelectionActions} from '../../../state/session/selection/actions';
-import {getSelectionById, getSelections} from '../../../state/session/selection/reducer';
 import {ViewActions} from '../../../state/session/view/actions';
 import {getViews, getViewsState} from '../../../state/session/view/reducer';
 import {Request} from '../../../util/request';
 import {ResultKeysMultiselect} from '../../global/keys/result-keys-multiselect';
 import {RequestComponent} from '../../global/request-component';
-import {SelectionView} from '../selection-container/selection-view';
+import {ViewFilterManager} from './view-filter-manager';
 import {ViewName} from './view-name';
 
 interface OwnProps
@@ -26,15 +23,13 @@ interface OwnProps
 interface StateProps
 {
     views: View[];
-    selections: Selection[];
     project: Project;
     viewRequest: Request;
 }
 interface DispatchProps
 {
-    updateView(view: View): void;
+    changeView(view: View): void;
     deleteView(view: View): void;
-    changeSelection(selection: Selection): void;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -62,9 +57,9 @@ class ViewManagerComponent extends PureComponent<Props>
                               onChange={this.changeName} />
                     <Button title='Close view detail' onClick={this.props.onClose}><MdClose /></Button>
                 </Row>
-                <SelectionView
-                    selection={getSelectionById(this.props.selections, this.props.view.selection)}
-                    onChange={this.props.changeSelection}
+                <ViewFilterManager
+                    view={this.props.view}
+                    onChange={this.props.changeView}
                     measurements={[]}
                     measurementKeys={this.props.project.measurementKeys} />
                 <KeysWrapper>
@@ -84,12 +79,12 @@ class ViewManagerComponent extends PureComponent<Props>
     {
         if (name !== this.props.view.name)
         {
-            this.props.updateView({ ...this.props.view, name });
+            this.props.changeView({ ...this.props.view, name });
         }
     }
     changeYAxes = (yAxes: string[]) =>
     {
-        this.props.updateView({ ...this.props.view, yAxes });
+        this.props.changeView({ ...this.props.view, yAxes });
     }
     deleteView = () =>
     {
@@ -100,13 +95,11 @@ class ViewManagerComponent extends PureComponent<Props>
 export const ViewManager = connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     views: getViews(state),
     project: getSelectedProject(state),
-    selections: getSelections(state),
     xAxis: state.session.pages.chartState.xAxis,
     datasets: state.session.pages.chartState.datasets,
     rangeFilter: state.session.pages.global.rangeFilter,
     viewRequest: getViewsState(state).viewRequest
 }), {
-    updateView: ViewActions.update.started,
+    changeView: ViewActions.update.started,
     deleteView: ViewActions.delete.started,
-    changeSelection: SelectionActions.update.started
 })(ViewManagerComponent);

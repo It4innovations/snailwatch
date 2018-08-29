@@ -1,24 +1,20 @@
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Measurement} from '../measurement/measurement';
-import {Filter} from '../measurement/selection/filter';
-import {RangeFilter} from '../measurement/selection/range-filter';
-import {Selection} from '../measurement/selection/selection';
 import {Project} from '../project/project';
 import {User} from '../user/user';
+import {Filter} from '../view/filter';
+import {RangeFilter} from '../view/range-filter';
 import {View} from '../view/view';
 import {CrudHandler} from './crud-handler';
 import {
     MeasurementDAO,
     parseMeasurement,
     parseProject,
-    parseSelection,
     parseView,
     ProjectDAO,
-    SelectionDAO,
     serializeDate,
     serializeProject,
-    serializeSelection,
     serializeView,
     sort,
     UserDAO,
@@ -34,14 +30,12 @@ export class RestClient implements SnailClient
 {
     private readonly requestManager: RequestManager;
     private readonly projectCrud: CrudHandler<Project, ProjectDAO>;
-    private readonly selectionCrud: CrudHandler<Selection, SelectionDAO>;
     private readonly measurementCrud: CrudHandler<Measurement, MeasurementDAO>;
     private readonly viewCrud: CrudHandler<View, ViewDAO>;
 
     constructor(url: string)
     {
         this.requestManager = new RequestManager(url);
-        this.selectionCrud = new CrudHandler(this.requestManager, '/selections', parseSelection);
         this.projectCrud = new CrudHandler(this.requestManager, '/projects', parseProject);
         this.measurementCrud = new CrudHandler(this.requestManager, '/measurements', parseMeasurement);
         this.viewCrud = new CrudHandler(this.requestManager, '/views', parseView);
@@ -107,13 +101,13 @@ export class RestClient implements SnailClient
     }
 
     loadMeasurements(user: User, project: Project,
-                     selection: Selection,
+                     view: View,
                      range: RangeFilter): Observable<Measurement[]>
     {
         let filters: Filter[] = [];
-        if (selection !== null)
+        if (view !== null)
         {
-            filters = [...filters, ...selection.filters];
+            filters = [...filters, ...view.filters];
         }
 
         filters = [...filters, {
@@ -156,24 +150,6 @@ export class RestClient implements SnailClient
         return this.requestManager.request(`/clear-measurements`, 'POST', {}, {
             token: user.token
         }).pipe(map(() => true));
-    }
-
-    loadSelections(user: User, project: Project): Observable<Selection[]>
-    {
-       return this.selectionCrud.load(user, where(withProject(project), sort('_created')));
-    }
-    createSelection(user: User, project: Project, selection: Selection): Observable<Selection>
-    {
-        const args = withProject(project, serializeSelection(selection));
-        return this.selectionCrud.create(user, args);
-    }
-    deleteSelection(user: User, selection: Selection): Observable<boolean>
-    {
-        return this.selectionCrud.delete(user, selection);
-    }
-    updateSelection(user: User, selection: Selection): Observable<boolean>
-    {
-        return this.selectionCrud.update(user, selection, serializeSelection(selection));
     }
 
     loadViews(user: User, project: Project): Observable<View[]>

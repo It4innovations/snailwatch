@@ -4,14 +4,12 @@ import {RouteComponentProps, withRouter} from 'react-router';
 import styled from 'styled-components';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
-import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
-import {Selection} from '../../../../lib/measurement/selection/selection';
+import {RangeFilter} from '../../../../lib/view/range-filter';
 import {Project} from '../../../../lib/project/project';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
 import {setChartXAxisAction} from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
-import {getSelections} from '../../../../state/session/selection/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
 import {Request} from '../../../../util/request';
 import {Box} from '../../../global/box';
@@ -33,7 +31,6 @@ interface OwnProps
 interface StateProps
 {
     project: Project;
-    selections: Selection[];
     views: View[];
     xAxis: string;
     datasets: ChartDataset[];
@@ -143,7 +140,6 @@ class BarChartPageComponent extends PureComponent<Props, State>
 
 export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
-    selections: getSelections(state),
     views: getViews(state),
     datasets: state.session.pages.chartState.datasets,
     xAxis: state.session.pages.chartState.xAxis,

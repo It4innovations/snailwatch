@@ -3,26 +3,26 @@ import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {createRequest, hookRequestActions, Request} from '../../../../util/request';
 import {AppState} from '../../../app/reducers';
-import {getSelectionById, getSelections} from '../../selection/reducer';
-import {deleteMeasurementAction, loadMeasurementsAction, setMeasurementsSelectionAction} from './actions';
+import {getViewById, getViews} from '../../view/reducer';
+import {deleteMeasurementAction, loadMeasurementsAction, setMeasurementsViewAction} from './actions';
 
 export interface MeasurementsPageState
 {
     measurementsRequest: Request;
     measurements: Measurement[];
-    selectionId: string | null;
+    viewId: string | null;
 }
 
 const initialState: MeasurementsPageState = {
     measurementsRequest: createRequest(),
     measurements: [],
-    selectionId: null
+    viewId: null
 };
 
 let reducer = reducerWithInitialState<MeasurementsPageState>({ ...initialState })
-.case(setMeasurementsSelectionAction, (state, selectionId) => ({
+.case(setMeasurementsViewAction, (state, viewId) => ({
     ...state,
-    selectionId
+    viewId
 }));
 
 reducer = compose(
@@ -42,7 +42,7 @@ reducer = compose(
     )
 )(reducer);
 
-export const getMeasurementsPageSelection = (state: AppState) => getSelectionById(getSelections(state),
-    state.session.pages.measurementsPage.selectionId);
+export const getMeasurementsPageView = (state: AppState) => getViewById(getViews(state),
+    state.session.pages.measurementsPage.viewId);
 
 export const measurementsReducer = reducer;

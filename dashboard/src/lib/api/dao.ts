@@ -1,8 +1,7 @@
 import moment, {Moment} from 'moment';
 import {Measurement} from '../measurement/measurement';
-import {Filter, Operator} from '../measurement/selection/filter';
-import {Selection} from '../measurement/selection/selection';
 import {Project} from '../project/project';
+import {Filter, Operator} from '../view/filter';
 import {View} from '../view/view';
 
 export interface DAO
@@ -31,7 +30,7 @@ export interface MeasurementDAO extends DAO
     environment: {};
     result: {};
 }
-export interface SelectionDAO extends DAO
+export interface ViewDAO extends DAO
 {
     name: string;
     filters: {
@@ -39,12 +38,6 @@ export interface SelectionDAO extends DAO
         operator: Operator,
         value: string;
     }[];
-}
-export interface ViewDAO extends DAO
-{
-    name: string;
-    selection: string;
-    xAxis: string;
     yAxes: string[];
 }
 
@@ -93,36 +86,20 @@ export function parseMeasurement(measurement: MeasurementDAO): Measurement
     };
 }
 
-export function parseSelection(selection: SelectionDAO): Selection
-{
-    return {
-        id: selection._id,
-        name: selection.name,
-        filters: selection.filters.map(parseFilter)
-    };
-}
-export function serializeSelection(selection: Selection): Partial<SelectionDAO>
-{
-    return {
-        name: selection.name,
-        filters: selection.filters.map(serializeFilter)
-    };
-}
-
 export function parseView(view: ViewDAO): View
 {
     return {
         id: view._id,
         name: view.name,
-        selection: view.selection || null,
+        filters: view.filters.map(parseFilter),
         yAxes: view.yAxes,
         created: moment(view._created)
     };
 }
 export function serializeView(view: View): Partial<ViewDAO>
 {
-    const { name, selection, yAxes } = view;
-    return { name, selection, yAxes };
+    const { name, filters, yAxes } = view;
+    return { name, filters: filters.map(serializeFilter), yAxes };
 }
 
 export function serializeDate(date: Moment): string

@@ -11,26 +11,23 @@ import {Button} from 'reactstrap';
 import styled from 'styled-components';
 import {exportCSV} from '../../lib/export/export';
 import {Measurement} from '../../lib/measurement/measurement';
-import {RangeFilter} from '../../lib/measurement/selection/range-filter';
-import {Selection} from '../../lib/measurement/selection/selection';
 import {Project} from '../../lib/project/project';
 import {User} from '../../lib/user/user';
+import {RangeFilter} from '../../lib/view/range-filter';
+import {View} from '../../lib/view/view';
 import {AppState} from '../../state/app/reducers';
 import {changeRangeFilterAction} from '../../state/session/pages/actions';
 import {
     deleteAllMeasurementsAction,
     deleteMeasurementAction,
-    loadMeasurementsAction,
-    setMeasurementsSelectionAction
+    loadMeasurementsAction
 } from '../../state/session/pages/measurements-page/actions';
-import {getMeasurementsPageSelection} from '../../state/session/pages/measurements-page/reducer';
+import {getMeasurementsPageView} from '../../state/session/pages/measurements-page/reducer';
 import {getRangeFilter} from '../../state/session/pages/reducers';
 import {getSelectedProject} from '../../state/session/project/reducer';
-import {getSelections} from '../../state/session/selection/reducer';
 import {getUser} from '../../state/session/user/reducer';
 import {Request} from '../../util/request';
 import {RangeFilterSwitcher} from '../charts/range-filter-switcher';
-import {SelectionSelectEditor} from '../charts/selection-container/selection-select-editor';
 import {Box} from '../global/box';
 import {ErrorBox} from '../global/error-box';
 import {MeasurementRecord} from '../global/measurement-record';
@@ -45,8 +42,7 @@ interface StateProps
     measurements: Measurement[];
     measurementRequest: Request;
     rangeFilter: RangeFilter;
-    selections: Selection[];
-    selection: Selection | null;
+    view: View | null;
 }
 
 interface DispatchProps
@@ -55,7 +51,6 @@ interface DispatchProps
     deleteMeasurement(measurement: Measurement): void;
     deleteAllMeasurements(): void;
     changeRangeFilter(rangeFilter: RangeFilter): void;
-    changeSelection(selectionId: string): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
@@ -94,7 +89,7 @@ class MeasurementListComponent extends PureComponent<Props, State>
                 csvExport: exportCSV(this.props.measurements)
             }));
         }
-        if (oldProps.selection !== this.props.selection ||
+        if (oldProps.view !== this.props.view ||
             oldProps.rangeFilter !== this.props.rangeFilter)
         {
             this.props.loadMeasurements();
@@ -108,6 +103,7 @@ class MeasurementListComponent extends PureComponent<Props, State>
             <div>
                 <TwoColumnPage
                     menu={this.renderMenu}
+                    menuWidth='auto'
                     content={
                         <div>
                             <ErrorBox error={request.error} />
@@ -125,13 +121,6 @@ class MeasurementListComponent extends PureComponent<Props, State>
                     <RangeFilterSwitcher
                         rangeFilter={this.props.rangeFilter}
                         onFilterChange={this.props.changeRangeFilter} />
-                </Box>
-                <Box title='Selection'>
-                    <SelectionSelectEditor
-                        selections={this.props.selections}
-                        selection={this.props.selection}
-                        measurements={this.props.measurements}
-                        onSelectSelection={this.changeSelection} />
                 </Box>
                 <Box title='Export'>
                     <Download file='measurements.csv' content={this.state.csvExport}>
@@ -191,7 +180,9 @@ class MeasurementListComponent extends PureComponent<Props, State>
             <Expander title='Delete measurement'>
                 <DeleteIcon
                     onClick={() => this.deleteMeasurement(data.original)}
-                    size={30}>Delete</DeleteIcon>
+                    size={30}>
+                    Delete
+                </DeleteIcon>
             </Expander>
         );
     }
@@ -201,10 +192,6 @@ class MeasurementListComponent extends PureComponent<Props, State>
         return <MeasurementRecord measurement={measurement} project={this.props.project} />;
     }
 
-    changeSelection = (selection: Selection) =>
-    {
-        this.props.changeSelection(selection === null ? null : selection.id);
-    }
     deleteMeasurement = (measurement: Measurement) =>
     {
         this.props.deleteMeasurement(measurement);
@@ -225,12 +212,10 @@ export const MeasurementList = withRouter(connect<StateProps, DispatchProps>((st
     measurements: state.session.pages.measurementsPage.measurements,
     measurementRequest: state.session.pages.measurementsPage.measurementsRequest,
     rangeFilter: getRangeFilter(state),
-    selections: getSelections(state),
-    selection: getMeasurementsPageSelection(state)
+    view: getMeasurementsPageView(state)
 }), ({
     loadMeasurements: () => loadMeasurementsAction.started({}),
     deleteMeasurement: deleteMeasurementAction.started,
     deleteAllMeasurements: () => deleteAllMeasurementsAction.started({}),
     changeRangeFilter: changeRangeFilterAction,
-    changeSelection: setMeasurementsSelectionAction
 }))(MeasurementListComponent));

@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import {Route, RouteComponentProps, withRouter} from 'react-router';
 import {push} from 'react-router-redux';
 import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
-import {RangeFilter} from '../../lib/measurement/selection/range-filter';
+import {RangeFilter} from '../../lib/view/range-filter';
 import {Project} from '../../lib/project/project';
 import {AppState} from '../../state/app/reducers';
 import {changeRangeFilterAction} from '../../state/session/pages/actions';

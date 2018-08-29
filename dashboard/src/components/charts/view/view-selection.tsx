@@ -3,8 +3,7 @@ import MdEdit from 'react-icons/lib/md/edit';
 import {connect} from 'react-redux';
 import {Button, Input} from 'reactstrap';
 import styled from 'styled-components';
-import {RangeFilter} from '../../../lib/measurement/selection/range-filter';
-import {Selection} from '../../../lib/measurement/selection/selection';
+import {RangeFilter} from '../../../lib/view/range-filter';
 import {Project} from '../../../lib/project/project';
 import {createView, View} from '../../../lib/view/view';
 import {AppState} from '../../../state/app/reducers';
@@ -17,8 +16,6 @@ import {
     setChartXAxisAction
 } from '../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../state/session/project/reducer';
-import {SelectionActions} from '../../../state/session/selection/actions';
-import {getSelections} from '../../../state/session/selection/reducer';
 import {ViewActions} from '../../../state/session/view/actions';
 import {getViews, getViewsState} from '../../../state/session/view/reducer';
 import {getResultKeys} from '../../../util/measurement';
@@ -32,7 +29,6 @@ interface OwnProps
 interface StateProps
 {
     views: View[];
-    selections: Selection[];
     project: Project;
     viewRequest: Request;
     xAxis: string;
@@ -48,7 +44,6 @@ interface DispatchProps
     addChartDataset(params: AddDatasetParams): void;
     deleteChartDataset(dataset: ChartDataset): void;
     selectChartView(params: SelectChartViewParams): void;
-    changeSelection(selection: Selection): void;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -180,7 +175,6 @@ export const ViewSelection = connect<StateProps, DispatchProps, OwnProps>((state
     views: getViews(state),
     viewRequest: getViewsState(state).viewRequest,
     project: getSelectedProject(state),
-    selections: getSelections(state),
     xAxis: state.session.pages.chartState.xAxis,
     datasets: state.session.pages.chartState.datasets,
     rangeFilter: state.session.pages.global.rangeFilter
@@ -192,5 +186,4 @@ export const ViewSelection = connect<StateProps, DispatchProps, OwnProps>((state
     addChartDataset: addChartDatasetAction.started,
     deleteChartDataset: deleteChartDatasetAction,
     selectChartView: selectChartViewAction,
-    changeSelection: SelectionActions.update.started
 })(ViewSelectionComponent);

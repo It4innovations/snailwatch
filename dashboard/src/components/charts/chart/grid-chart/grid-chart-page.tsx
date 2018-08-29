@@ -4,15 +4,13 @@ import {RouteComponentProps, withRouter} from 'react-router';
 import styled from 'styled-components';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
-import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
-import {Selection} from '../../../../lib/measurement/selection/selection';
 import {Project} from '../../../../lib/project/project';
+import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
 import {SelectChartViewParams} from '../../../../state/session/pages/chart-page/actions';
 import {loadGridChartMeasurements} from '../../../../state/session/pages/grid-chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
-import {getSelections} from '../../../../state/session/selection/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
 import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
@@ -42,7 +40,6 @@ type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 
 interface State
 {
-    selection: Selection;
     xAxis: string;
 }
 
@@ -73,7 +70,6 @@ const Label = styled.div`
 class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
 {
     readonly state: State = {
-        selection: null,
         xAxis: ''
     };
 
@@ -164,7 +160,6 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
 
 export const GridChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
-    selections: getSelections(state),
     views: getViews(state),
     measurements: state.session.pages.gridChartPage.measurements
 }), ({

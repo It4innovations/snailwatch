@@ -9,14 +9,14 @@ import {getSelectedProject} from '../../project/reducer';
 import {getUser} from '../../user/reducer';
 import {getRangeFilter} from '../reducers';
 import {deleteAllMeasurementsAction, deleteMeasurementAction, loadMeasurementsAction} from './actions';
-import {getMeasurementsPageSelection} from './reducer';
+import {getMeasurementsPageView} from './reducer';
 
 const loadMeasurements = createRequestEpic(loadMeasurementsAction, (action, state, deps) => {
     const user = getUser(state);
     const project = getSelectedProject(state);
     const rangeFilter = getRangeFilter(state);
 
-    return deps.client.loadMeasurements(user, project, getMeasurementsPageSelection(state), rangeFilter);
+    return deps.client.loadMeasurements(user, project, getMeasurementsPageView(state), rangeFilter);
 });
 
 const deleteMeasurement = createRequestEpic(deleteMeasurementAction, (action, state, deps) => {

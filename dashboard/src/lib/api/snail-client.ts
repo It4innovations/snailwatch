@@ -1,9 +1,8 @@
 import {Observable} from 'rxjs';
 import {Measurement} from '../measurement/measurement';
-import {RangeFilter} from '../measurement/selection/range-filter';
-import {Selection} from '../measurement/selection/selection';
 import {Project} from '../project/project';
 import {User} from '../user/user';
+import {RangeFilter} from '../view/range-filter';
 import {View} from '../view/view';
 
 export interface SnailClient
@@ -20,15 +19,10 @@ export interface SnailClient
     regenerateUploadToken(user: User, project: Project): Observable<string>;
 
     loadMeasurements(user: User, project: Project,
-                     selection: Selection,
+                     view: View,
                      range: RangeFilter): Observable<Measurement[]>;
     deleteMeasurement(user: User, measurement: Measurement): Observable<boolean>;
     deleteAllMeasurements(user: User): Observable<boolean>;
-
-    loadSelections(user: User, project: Project): Observable<Selection[]>;
-    createSelection(user: User, project: Project, selection: Selection): Observable<Selection>;
-    deleteSelection(user: User, view: Selection): Observable<boolean>;
-    updateSelection(user: User, view: Selection): Observable<boolean>;
 
     loadViews(user: User, project: Project): Observable<View[]>;
     createView(user: User, project: Project, view: View): Observable<View>;

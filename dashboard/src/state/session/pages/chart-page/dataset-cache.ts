@@ -1,11 +1,11 @@
 import {Measurement} from '../../../../lib/measurement/measurement';
-import {RangeFilter} from '../../../../lib/measurement/selection/range-filter';
-import {Selection} from '../../../../lib/measurement/selection/selection';
+import {RangeFilter} from '../../../../lib/view/range-filter';
 import {equals} from 'ramda';
+import {View} from '../../../../lib/view/view';
 
 interface CacheRecord
 {
-    selection: Selection;
+    view: View;
     rangeFilter: RangeFilter;
     measurements: Measurement[];
 }
@@ -22,21 +22,21 @@ function isRangeFilterEqual(a: RangeFilter, b: RangeFilter): boolean
     else return a.entryCount === b.entryCount;
 }
 
-export function insertMeasurementsRecord(selection: Selection, rangeFilter: RangeFilter, measurements: Measurement[])
+export function insertMeasurementsRecord(view: View, rangeFilter: RangeFilter, measurements: Measurement[])
 {
-    items[selection.id] = {
-        selection,
+    items[view.id] = {
+        view,
         rangeFilter,
         measurements
     };
 }
-export function getMeasurementsRecord(selection: Selection, rangeFilter: RangeFilter): Measurement[] | null
+export function getMeasurementsRecord(view: View, rangeFilter: RangeFilter): Measurement[] | null
 {
-    const id = selection.id;
+    const id = view.id;
     if (!items.hasOwnProperty(id)) return null;
 
     const item = items[id];
-    if (equals(item.selection.filters, selection.filters) && isRangeFilterEqual(rangeFilter, item.rangeFilter))
+    if (equals(item.view.filters, view.filters) && isRangeFilterEqual(rangeFilter, item.rangeFilter))
     {
         return item.measurements;
     }

@@ -1,5 +1,5 @@
 import {combineEpics} from 'redux-observable';
-import {throwError as observableThrowError} from 'rxjs';
+import {throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {ApiError} from '../../../lib/errors/api';
 import {createRequestEpic} from '../../../util/request';
@@ -11,10 +11,10 @@ const loginUserEpic = createRequestEpic(loginUser, (action, state, deps) =>
         catchError(error => {
             if (error instanceof ApiError && error.status === 403)
             {
-                return observableThrowError('You have entered invalid credentials');
+                return throwError('You have entered invalid credentials');
             }
 
-            return observableThrowError(error);
+            return throwError(error);
         }))
 );
 const changePasswordEpic = createRequestEpic(changePassword, (action, state, deps) =>
