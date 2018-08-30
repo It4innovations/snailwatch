@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {
     CartesianGrid,
-    ErrorBar,
+    ErrorBar, Label,
     Legend,
     Line,
     LineChart as ReLineChart,
@@ -18,6 +18,7 @@ import {Tick} from '../tick';
 import {LineLegend} from './line-legend';
 import {LinePoint} from './line-point';
 import {PointTooltip} from './point-tooltip';
+import {chain} from 'ramda';
 
 export interface LineChartDataset
 {
@@ -76,8 +77,14 @@ export class LineChart extends PureComponent<Props>
         const datasets = this.props.datasets.map(v =>
             groupMeasurements(v.measurements, this.props.groupMode, this.props.xAxis, [v.yAxis])
         );
-        const points = createLinePoints(datasets);
+        let points = createLinePoints(datasets);
         const dotActive = this.selectMeasurements && !preview;
+
+        const empty = chain(d => d.measurements, this.props.datasets).length === 0;
+        if (empty)
+        {
+            points = [{x: '', data: []}];
+        }
 
         return (
             <ReLineChart data={points}
@@ -89,7 +96,9 @@ export class LineChart extends PureComponent<Props>
                     dataKey='x'
                     tickLine={!preview}
                     tick={props => !this.props.preview && <Tick {...props} />}
-                    padding={{left: padding, right: padding}} />
+                    padding={{left: padding, right: padding}}>
+                    {empty && <Label value='No data available' position='center' />}
+                </XAxis>
                 <YAxis padding={{bottom: padding, top: padding}} />
                 {!preview && <Tooltip content={<PointTooltip xAxis={this.props.xAxis} />} />}
                 {!preview && <Legend content={<LineLegend palette={DATASET_COLORS} />} />}

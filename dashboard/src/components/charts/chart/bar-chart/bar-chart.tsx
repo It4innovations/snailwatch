@@ -40,7 +40,18 @@ export class BarChart extends PureComponent<Props>
     {
         const yAxes = this.props.yAxes;
         const grouped = groupMeasurements(this.props.measurements, this.props.groupMode, this.props.xAxis, yAxes);
-        const data = linearizeGroups(grouped);
+        let data = linearizeGroups(grouped);
+
+        const empty = data.length === 0;
+        if (empty)
+        {
+            data = [{
+                x: '',
+                items: {},
+                hasDateAxis: false,
+                measurements: []
+            }];
+        }
 
         const height = 400;
         return (
@@ -51,10 +62,10 @@ export class BarChart extends PureComponent<Props>
                         dataKey='x'
                         height={40}
                         tick={props => <Tick {...props} />}>
-                        <Label value={this.props.xAxis} position='bottom' />
+                        {empty && <Label value='No data available' position='center' />}
                     </XAxis>
                     <YAxis />
-                    <Tooltip content={<BarTooltip xAxis={this.props.xAxis} />} />
+                    {!empty && <Tooltip content={<BarTooltip xAxis={this.props.xAxis} />} />}
                     <Legend align='right' />
                     {yAxes.map((axis, index) =>
                         <Bar key={`${axis}.${index}`}
