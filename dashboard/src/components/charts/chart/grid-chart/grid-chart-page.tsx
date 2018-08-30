@@ -97,7 +97,7 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
                         onFilterChange={this.changeRangeFilter} />
                 </Box>
                 <Box title='X axis'>
-                    <MeasurementKeys keys={this.props.project.measurementKeys}
+                    <MeasurementKeys project={this.props.project}
                                      value={this.state.xAxis}
                                      onChange={this.changeXAxis} />
                 </Box>

@@ -1,12 +1,13 @@
-import {find, groupBy} from 'ramda';
+import {find, groupBy, sort} from 'ramda';
 import React, {PureComponent} from 'react';
 import {Input} from 'reactstrap';
+import {Project} from '../../../lib/project/project';
 import {formatKey} from '../../../util/measurement';
 
 interface Props
 {
-    keys: string[];
     value: string;
+    project: Project;
     defaults?: string[];
     className?: string;
     onChange(key: string): void;
@@ -31,10 +32,10 @@ export class MeasurementKeys extends PureComponent<Props>
 {
     componentDidMount()
     {
-        const defaults = this.props.defaults === undefined ? [...DEFAULTS] : this.props.defaults;
+        const defaults = this.props.defaults === undefined ? this.generateDefaults() : this.props.defaults;
         if (this.props.value === '')
         {
-            const def = this.findDefault(defaults, this.props.keys);
+            const def = this.findDefault(defaults, this.props.project.measurementKeys);
             if (def !== null && def !== '')
             {
                 this.props.onChange(def);
@@ -44,7 +45,8 @@ export class MeasurementKeys extends PureComponent<Props>
 
     render()
     {
-        const groups = this.createGroups(this.props.keys);
+        const keys = sort((a, b) => a.localeCompare(b), this.props.project.measurementKeys);
+        const groups = this.createGroups(keys);
 
         return (
             <div className={this.props.className}>
@@ -89,5 +91,12 @@ export class MeasurementKeys extends PureComponent<Props>
     findDefault = (defaults: string[], keys: string[]): string | null =>
     {
         return find(d => keys.indexOf(d) !== -1, defaults) || null;
+    }
+
+    generateDefaults = (): string[] =>
+    {
+        const commitKey = this.props.project.commitKey.trim();
+        if (commitKey === '') return [...DEFAULTS];
+        return [commitKey, ...DEFAULTS];
     }
 }

@@ -5,8 +5,8 @@ import {RouteComponentProps, withRouter} from 'react-router';
 import styled from 'styled-components';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
-import {RangeFilter} from '../../../../lib/view/range-filter';
 import {Project} from '../../../../lib/project/project';
+import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
 import {setChartXAxisAction} from '../../../../state/session/pages/chart-page/actions';
@@ -14,13 +14,13 @@ import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
 import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
+import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
 import {ChartDataset} from '../chart-dataset';
 import {MeasurementList} from '../measurement-list';
-import {XAxisSelector} from '../x-axis-selector';
 import {LineChart, LineChartDataset} from './line-chart';
 import {LineChartSettings} from './line-chart-settings';
 import {LineChartSettingsComponent} from './line-chart-settings-component';
@@ -97,9 +97,9 @@ class LineChartPageComponent extends PureComponent<Props, State>
                         onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
                 <Box title='X axis'>
-                    <XAxisSelector measurementKeys={this.props.project.measurementKeys}
-                                   xAxis={this.props.xAxis}
-                                   onChange={this.props.setXAxis} />
+                    <MeasurementKeys project={this.props.project}
+                                     value={this.props.xAxis}
+                                     onChange={this.props.setXAxis} />
                 </Box>
                 <Box title='View list'>
                     <ViewSelection onEditView={this.setSelectedView} />

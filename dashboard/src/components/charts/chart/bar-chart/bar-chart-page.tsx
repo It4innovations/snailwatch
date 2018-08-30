@@ -13,6 +13,7 @@ import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
 import {Request} from '../../../../util/request';
 import {Box} from '../../../global/box';
+import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {RequestView} from '../../../global/request-view';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
@@ -20,7 +21,6 @@ import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
 import {ChartDataset} from '../chart-dataset';
 import {MeasurementList} from '../measurement-list';
-import {XAxisSelector} from '../x-axis-selector';
 import {BarChart} from './bar-chart';
 
 interface OwnProps
@@ -80,9 +80,9 @@ class BarChartPageComponent extends PureComponent<Props, State>
                         onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
                 <Box title='X axis'>
-                    <XAxisSelector measurementKeys={this.props.project.measurementKeys}
-                                   xAxis={this.props.xAxis}
-                                   onChange={this.props.setXAxis} />
+                    <MeasurementKeys project={this.props.project}
+                                     value={this.props.xAxis}
+                                     onChange={this.props.setXAxis} />
                 </Box>
                 <Box title='View list'>
                     <ViewSelection onEditView={this.setSelectedView} />
