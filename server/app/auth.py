@@ -1,4 +1,5 @@
 import datetime
+import uuid
 
 import werkzeug.security
 from eve.auth import TokenAuth
@@ -60,3 +61,7 @@ def hash_password(password):
 
 def check_password(user, password):
     return werkzeug.security.check_password_hash(user['password'], password)
+
+
+def generate_token():
+    return str(uuid.uuid4().hex)

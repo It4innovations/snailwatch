@@ -1,5 +1,4 @@
 import datetime
-import uuid
 
 from flask import current_app as app, request
 
@@ -8,7 +7,7 @@ from app.db.project import ProjectRepo
 from app.util import get_dict_keys
 from .uploadtoken import UploadTokenRepo
 from .user import UserRepo
-from ..auth import hash_password
+from ..auth import generate_token, hash_password
 
 
 def init_database(app):
@@ -41,7 +40,7 @@ def after_insert_project(projects):
     session_repo = UploadTokenRepo(app)
 
     for project in projects:
-        session_repo.create_token(project, user, uuid.uuid4().hex)
+        session_repo.create_token(project, user, generate_token())
 
 
 def before_insert_measurement(measurements):

@@ -1,5 +1,4 @@
 import datetime
-import uuid
 
 from .repository import Repository
 
@@ -17,7 +16,9 @@ class LoginSessionRepo(Repository):
         })
 
     def create_session(self, user_id):
-        token = str(uuid.uuid4().hex)
+        from app.auth import generate_token
+
+        token = generate_token()
         session = {
             'user_id': user_id,
             'token': token,

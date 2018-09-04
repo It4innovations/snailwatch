@@ -1,10 +1,8 @@
-import uuid
-
 import requests
 from eve import ID_FIELD
-from flask import request, abort, jsonify, Response
+from flask import Response, abort, jsonify, request
 
-from .auth import check_password, hash_password
+from .auth import check_password, generate_token, hash_password
 from .db.loginsession import LoginSessionRepo
 from .db.measurement import MeasurementRepo
 from .db.project import ProjectRepo
@@ -97,7 +95,7 @@ def setup_routes(app):
             if user['_id'] not in project['writers']:
                 abort(403)
 
-            new_token = uuid.uuid4().hex
+            new_token = generate_token()
             token_repo.update_token(old_token, new_token)
 
             return jsonify(new_token)
