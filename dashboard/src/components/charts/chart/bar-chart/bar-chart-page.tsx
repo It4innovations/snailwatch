@@ -19,7 +19,6 @@ import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
-import {ChartDataset} from '../chart-dataset';
 import {MeasurementList} from '../measurement-list';
 import {BarChart} from './bar-chart';
 
@@ -32,8 +31,8 @@ interface StateProps
 {
     project: Project;
     views: View[];
+    selectedViews: string[];
     xAxis: string;
-    datasets: ChartDataset[];
     measurementRequest: Request;
 }
 interface DispatchProps
@@ -99,7 +98,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
             <div>
                 {view && <ViewManager view={view} onClose={this.deselectView} />}
                 <h4>Stacked bar chart</h4>
-                {this.props.datasets.map(this.renderDataset)}
+                {this.props.selectedViews.map(this.renderDataset)}
                 <MeasurementsWrapper>
                     <h4>Selected measurements</h4>
                     <MeasurementList measurements={this.state.selectedMeasurements}
@@ -108,14 +107,14 @@ class BarChartPageComponent extends PureComponent<Props, State>
             </div>
         );
     }
-    renderDataset = (dataset: ChartDataset): JSX.Element =>
+    renderDataset = (viewId: string): JSX.Element =>
     {
-        const view = this.props.views.find(v => v.id === dataset.view);
-        if (!view) return <Fragment key={dataset.id}>Select a view</Fragment>;
+        const view = this.props.views.find(v => v.id === viewId);
+        if (!view) return <Fragment key={viewId}>Select a view</Fragment>;
 
         return (
-            <BarChart key={dataset.id}
-                      measurements={dataset.measurements}
+            <BarChart key={viewId}
+                      measurements={view.measurements}
                       xAxis={this.props.xAxis}
                       yAxes={view.yAxes}
                       groupMode={this.state.groupMode}
@@ -141,7 +140,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
 export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
     views: getViews(state),
-    datasets: state.session.pages.chartState.datasets,
+    selectedViews: state.session.pages.chartState.selectedViews,
     xAxis: state.session.pages.chartState.xAxis,
     measurementRequest: state.session.pages.chartState.measurementsRequest
 }), {

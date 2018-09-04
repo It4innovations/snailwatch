@@ -7,6 +7,7 @@ export interface View
     name: string;
     filters: Filter[];
     yAxes: string[];
+    measurements: [];
     created: Moment;
 }
 
@@ -17,6 +18,7 @@ export function createView(view: Partial<View> = {}): View
         name: '',
         filters: [],
         yAxes: [],
+        measurements: [],
         created: moment(),
         ...view
     };

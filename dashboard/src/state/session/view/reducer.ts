@@ -4,6 +4,7 @@ import {createCrudReducer} from '../../../util/crud';
 import {createRequest, Request} from '../../../util/request';
 import {AppState} from '../../app/reducers';
 import {clearSession} from '../actions';
+import {reloadViewMeasurementsAction} from '../pages/chart-page/actions';
 import {ViewActions} from './actions';
 
 export interface ViewState
@@ -18,7 +19,11 @@ const initialState: ViewState = {
 };
 
 let reducer = reducerWithInitialState<ViewState>({ ...initialState })
-.case(clearSession, () => ({ ...initialState }));
+.case(clearSession, () => ({ ...initialState }))
+.case(reloadViewMeasurementsAction.done, (state, action) => ({
+    ...state,
+    views: action.result
+}));
 
 reducer = createCrudReducer<ViewState, View>(
     reducer,

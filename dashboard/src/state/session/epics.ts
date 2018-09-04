@@ -1,14 +1,12 @@
 import {combineEpics} from 'redux-observable';
-import {EMPTY, from, of} from 'rxjs';
+import {EMPTY, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 import {ofAction} from '../../util/redux-observable';
 import {AppEpic} from '../app/app-epic';
 import {initProjectSession, initUserSession} from './actions';
-import {reloadChartDatasetsAction} from './pages/chart-page/actions';
 import {chartEpics} from './pages/chart-page/epics';
 import {gridChartPageEpics} from './pages/grid-chart-page/epics';
 import {measurementsEpics} from './pages/measurements-page/epics';
-import {getRangeFilter} from './pages/reducers';
 import {ProjectActions} from './project/actions';
 import {projectEpics} from './project/epics';
 import {getSelectedProject} from './project/reducer';
@@ -36,12 +34,7 @@ const initProjectSessionEpic: AppEpic = (action$, store) =>
             const project = getSelectedProject(store.value);
             if (isUserAuthenticated(store.value) && project !== null)
             {
-                return from([
-                    ViewActions.load.started(),
-                    reloadChartDatasetsAction.started({
-                        rangeFilter: getRangeFilter(store.value)
-                    })
-                ]);
+                return of(ViewActions.load.started());
             }
             return EMPTY;
         })

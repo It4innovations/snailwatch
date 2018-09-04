@@ -93,6 +93,7 @@ export function parseView(view: ViewDAO): View
         name: view.name,
         filters: view.filters.map(parseFilter),
         yAxes: view.yAxes,
+        measurements: [],
         created: moment(view._created)
     };
 }

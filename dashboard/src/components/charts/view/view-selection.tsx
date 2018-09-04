@@ -8,19 +8,16 @@ import {Project} from '../../../lib/project/project';
 import {createView, View} from '../../../lib/view/view';
 import {AppState} from '../../../state/app/reducers';
 import {
-    addChartDatasetAction,
-    AddDatasetParams,
-    deleteChartDatasetAction,
     selectChartViewAction,
     SelectChartViewParams,
-    setChartXAxisAction
+    setChartXAxisAction, updateSelectedViewsAction
 } from '../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../state/session/project/reducer';
 import {ViewActions} from '../../../state/session/view/actions';
 import {getViews, getViewsState} from '../../../state/session/view/reducer';
+import {toggle} from '../../../util/array';
 import {getResultKeys} from '../../../util/measurement';
 import {Request} from '../../../util/request';
-import {ChartDataset} from '../chart/chart-dataset';
 
 interface OwnProps
 {
@@ -32,8 +29,8 @@ interface StateProps
     project: Project;
     viewRequest: Request;
     xAxis: string;
-    datasets: ChartDataset[];
     rangeFilter: RangeFilter;
+    selectedViews: string[];
 }
 interface DispatchProps
 {
@@ -41,8 +38,7 @@ interface DispatchProps
     createView(view: View): void;
     updateView(view: View): void;
     deleteView(view: View): void;
-    addChartDataset(params: AddDatasetParams): void;
-    deleteChartDataset(dataset: ChartDataset): void;
+    updateSelectedViews(views: string[]): void;
     selectChartView(params: SelectChartViewParams): void;
 }
 
@@ -91,17 +87,16 @@ class ViewSelectionComponent extends PureComponent<Props, State>
                        onChange={this.changeViewQuery}
                        bsSize='sm'
                        placeholder='Use regex to filter views' />
-                {this.renderViews(this.props.views, this.props.datasets)}
+                {this.renderViews(this.props.views, this.props.selectedViews)}
                 <CreateButton size='sm' color='success' onClick={this.createView}>Create view</CreateButton>
             </div>
         );
     }
-    renderViews = (views: View[], datasets: ChartDataset[]): JSX.Element =>
+    renderViews = (views: View[], selectedViews: string[]): JSX.Element =>
     {
         const query = this.state.viewQuery.trim();
         const regex = new RegExp(query, 'i');
         const filtered = views.filter(v => regex.test(v.name));
-        const datasetViews = datasets.map(d => d.view);
 
         if (views.length === 0)
         {
@@ -120,7 +115,7 @@ class ViewSelectionComponent extends PureComponent<Props, State>
                                checked={false}
                                onChange={() => this.selectView(v)} />
                         <input type='checkbox'
-                               checked={datasetViews.indexOf(v.id) !== -1}
+                               checked={selectedViews.indexOf(v.id) !== -1}
                                onChange={() => this.toggleView(v)} />
                         <div>{v.name}</div>
                         <EditButton title='Edit view'>
@@ -134,15 +129,7 @@ class ViewSelectionComponent extends PureComponent<Props, State>
 
     toggleView = (view: View) =>
     {
-        const dataset = this.props.datasets.find(d => d.view === view.id);
-        if (dataset === undefined)
-        {
-            this.props.addChartDataset({
-                rangeFilter: this.props.rangeFilter,
-                view: view.id
-            });
-        }
-        else this.props.deleteChartDataset(dataset);
+        this.props.updateSelectedViews(toggle(this.props.selectedViews, view.id));
     }
     selectView = (view: View) =>
     {
@@ -176,14 +163,13 @@ export const ViewSelection = connect<StateProps, DispatchProps, OwnProps>((state
     viewRequest: getViewsState(state).viewRequest,
     project: getSelectedProject(state),
     xAxis: state.session.pages.chartState.xAxis,
-    datasets: state.session.pages.chartState.datasets,
-    rangeFilter: state.session.pages.global.rangeFilter
+    rangeFilter: state.session.pages.global.rangeFilter,
+    selectedViews: state.session.pages.chartState.selectedViews
 }), {
     createView: ViewActions.create.started,
     updateView: ViewActions.update.started,
     deleteView: ViewActions.delete.started,
     changeXAxis: setChartXAxisAction,
-    addChartDataset: addChartDatasetAction.started,
-    deleteChartDataset: deleteChartDatasetAction,
+    updateSelectedViews: updateSelectedViewsAction,
     selectChartView: selectChartViewAction,
 })(ViewSelectionComponent);

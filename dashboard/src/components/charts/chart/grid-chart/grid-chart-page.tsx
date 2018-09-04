@@ -106,10 +106,9 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
     }
     renderContent = (): JSX.Element =>
     {
-        const views = this.props.views.sort((a: View, b: View) => a.name.localeCompare(b.name));
         return (
             <Grid>
-                {views.map(this.renderView)}
+                {this.props.views.map(this.renderView)}
             </Grid>
         );
     }

@@ -19,7 +19,6 @@ import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
-import {ChartDataset} from '../chart-dataset';
 import {MeasurementList} from '../measurement-list';
 import {LineChart, LineChartDataset} from './line-chart';
 import {LineChartSettings} from './line-chart-settings';
@@ -34,8 +33,8 @@ interface StateProps
 {
     project: Project;
     views: View[];
+    selectedViews: string[];
     xAxis: string;
-    datasets: ChartDataset[];
 }
 interface DispatchProps
 {
@@ -114,7 +113,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
     }
     renderGraph = (): JSX.Element =>
     {
-        const datasets = this.expandDatasets(this.props.datasets);
+        const datasets = this.expandDatasets(this.props.selectedViews);
         const view = this.props.views.find(v => v.id === this.state.selectedView);
         return (
             <>
@@ -143,10 +142,10 @@ class LineChartPageComponent extends PureComponent<Props, State>
         );
     }
 
-    expandDatasets = (datasets: ChartDataset[]): LineChartDataset[] =>
+    expandDatasets = (viewIds: string[]): LineChartDataset[] =>
     {
-        return chain(d => {
-            const view = this.props.views.find(v => v.id === d.view);
+        return chain(viewId => {
+            const view = this.props.views.find(v => v.id === viewId);
             if (view === undefined)
             {
                 return [];
@@ -155,9 +154,9 @@ class LineChartPageComponent extends PureComponent<Props, State>
             return view.yAxes.map(yAxis => ({
                 name: `${view.name} (${formatKey(yAxis)})`,
                 yAxis,
-                measurements: d.measurements
+                measurements: view.measurements
             }));
-        }, datasets);
+        }, viewIds);
     }
 
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
@@ -182,8 +181,8 @@ class LineChartPageComponent extends PureComponent<Props, State>
 export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
     views: getViews(state),
-    xAxis: state.session.pages.chartState.xAxis,
-    datasets: state.session.pages.chartState.datasets
+    selectedViews: state.session.pages.chartState.selectedViews,
+    xAxis: state.session.pages.chartState.xAxis
 }), {
     setXAxis: setChartXAxisAction
 })(LineChartPageComponent));

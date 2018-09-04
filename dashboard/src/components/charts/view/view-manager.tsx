@@ -96,7 +96,6 @@ export const ViewManager = connect<StateProps, DispatchProps, OwnProps>((state: 
     views: getViews(state),
     project: getSelectedProject(state),
     xAxis: state.session.pages.chartState.xAxis,
-    datasets: state.session.pages.chartState.datasets,
     rangeFilter: state.session.pages.global.rangeFilter,
     viewRequest: getViewsState(state).viewRequest
 }), {
