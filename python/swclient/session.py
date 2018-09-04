@@ -29,19 +29,24 @@ class Session:
                                       response.status_code, response.content)
         return response.json()
 
-    def upload_measurement(
-            self, benchmark, environment, result, timestamp=None):
+    def _serialize_measurement(self, benchmark, environment, result, timestamp=None):
         if timestamp is None:
             timestamp = datetime.datetime.utcnow()
         timestamp = timestamp.replace(microsecond=0)
 
-        payload = {
+        return {
             'benchmark': benchmark,
             'timestamp': timestamp.isoformat(),
             'environment': environment,
             'result': result
         }
-        return self._post("measurements", payload)
+
+    def upload_measurement(self, benchmark, environment, result, timestamp=None):
+        return self._post("measurements", self._serialize_measurement(benchmark, environment, result, timestamp))
+
+    def upload_measurements(self, measurements):
+        serialized = [self._serialize_measurement(*m) for m in measurements]
+        return self._post("measurements", serialized)
 
     def create_user(self, username, password):
         payload = {

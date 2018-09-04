@@ -66,3 +66,18 @@ def test_session_upload(sw_env):
 
     result = list(sw_env.db.measurements.find({"benchmark": "test1"}))
     assert len(result) == 2
+
+
+def test_session_bulk_upload(sw_env):
+    sw_env.start()
+    s = Session(sw_env.server_url, sw_env.upload_token)
+
+    measurements = [
+        ("test1", {"machine": "tester"}, {"result": {"value": "123", "type": "integer"}}, None),
+        ("test1", {"machine": "tester"}, {"result": {"value": "321", "type": "size"}}, None)
+    ]
+
+    s.upload_measurements(measurements)
+
+    result = list(sw_env.db.measurements.find({"benchmark": "test1"}))
+    assert len(result) == 2
