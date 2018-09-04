@@ -1,9 +1,13 @@
+import datetime
+
 import werkzeug.security
 from eve.auth import TokenAuth
 from flask import current_app as app, Response, abort
 
 from .db.uploadtoken import UploadTokenRepo
 from .db.loginsession import LoginSessionRepo
+
+AUTH_TOKEN_EXPIRATION_SEC = 3600 * 24 * 30
 
 
 class Authenticator(TokenAuth):
@@ -24,6 +28,11 @@ class TokenAuthenticator(Authenticator):
         repo = LoginSessionRepo(app)
         session = repo.find_session(token)
         if session:
+            ts_utc = datetime.datetime.utcnow().replace(tzinfo=None)
+            time_delta = ts_utc - session['timestamp'].replace(tzinfo=None)
+            if time_delta.total_seconds() >= AUTH_TOKEN_EXPIRATION_SEC:
+                return False
+
             self.set_request_auth_value(session['user_id'])
             return True
 

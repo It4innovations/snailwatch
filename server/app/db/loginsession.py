@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from .repository import Repository
@@ -19,7 +20,8 @@ class LoginSessionRepo(Repository):
         token = str(uuid.uuid4().hex)
         session = {
             'user_id': user_id,
-            'token': token
+            'token': token,
+            'timestamp': datetime.datetime.utcnow()
         }
 
         session['_id'] = self.table.insert_one(session).inserted_id
