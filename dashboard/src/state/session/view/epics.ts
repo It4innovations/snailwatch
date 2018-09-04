@@ -17,7 +17,7 @@ const deleteView = createRequestEpic(ViewActions.delete, (action, state, deps) =
     deps.client.deleteView(getUser(state), action.payload)
 );
 
-export const analysisEpics = combineEpics(
+export const viewEpics = combineEpics(
     loadViews,
     createView,
     updateView,

@@ -13,7 +13,7 @@ import {getSelectedProject} from './project/reducer';
 import {userEpics} from './user/epics';
 import {isUserAuthenticated} from './user/reducer';
 import {ViewActions} from './view/actions';
-import {analysisEpics} from './view/epics';
+import {viewEpics} from './view/epics';
 
 const initUserSessionEpic: AppEpic = (action$, store) =>
     action$.pipe(
@@ -44,7 +44,7 @@ export const sessionEpics = combineEpics(
     initUserSessionEpic,
     initProjectSessionEpic,
     userEpics,
-    analysisEpics,
+    viewEpics,
     projectEpics,
     chartEpics,
     gridChartPageEpics,
