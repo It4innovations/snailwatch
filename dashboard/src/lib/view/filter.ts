@@ -75,7 +75,7 @@ export function applyFilters<T>(data: T[], filters: Filter[]): T[]
     {
         result = result.filter(item => testFilter(item, filter));
     }
-    return data;
+    return result;
 }
 
 function evaluateOperator(operator: Operator,

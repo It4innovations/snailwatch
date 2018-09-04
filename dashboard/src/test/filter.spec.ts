@@ -1,5 +1,5 @@
 import {buildRequestFilter} from '../lib/api/filter';
-import {BadValueFilteredError, createFilter, Filter, Operator, testFilter} from '../lib/view/filter';
+import {applyFilters, BadValueFilteredError, createFilter, Filter, Operator, testFilter} from '../lib/view/filter';
 
 describe('Filter', () =>
 {
@@ -134,6 +134,34 @@ describe('Filter', () =>
             expect(testFilter(obj, filter)).toBe(data.result);
         });
     }
+});
+describe('applyFilter', () =>
+{
+    it('applies filter', () => {
+        const filter = createFilter('item', '==', 'a');
+        const objs = [
+            { item: 'a' },
+            { item: 'b' },
+            { item: 'a' },
+            { item: 'c' }
+        ];
+
+        expect(applyFilters(objs, [filter])).toEqual([objs[0], objs[2]]);
+    });
+    it('applies multiple filters', () => {
+        const filters = [
+            createFilter('item', '==', 'a'),
+            createFilter('test', '==', 'c')
+        ];
+        const objs = [
+            { item: 'a', test: 'x' },
+            { item: 'b', test: 'b' },
+            { item: 'a', test: 'c' },
+            { item: 'c', test: 'a' }
+        ];
+
+        expect(applyFilters(objs, filters)).toEqual([objs[2]]);
+    });
 });
 describe('buildRequestFilter', () => {
     it('correctly groups multiple path entries', () => {
