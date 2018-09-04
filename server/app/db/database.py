@@ -1,9 +1,11 @@
 import datetime
+from functools import reduce
 
 from flask import current_app as app, request
 
 from app.db.loginsession import LoginSessionRepo
 from app.db.project import ProjectRepo
+from app.db.view import ViewRepo
 from app.util import get_dict_keys
 from .uploadtoken import UploadTokenRepo
 from .user import UserRepo
@@ -54,19 +56,38 @@ def before_insert_measurement(measurements):
         'ip': request.remote_addr
     }
 
+    benchmarks = {}
+    keys = set()
     for measurement in measurements:
         measurement['info'] = info
         measurement['project'] = project_id
         if 'timestamp' not in measurement:
             measurement['timestamp'] = datetime.datetime.utcnow()
 
-        keys = get_dict_keys({
+        keys.update(get_dict_keys({
             'benchmark': measurement['benchmark'],
             'timestamp': measurement['timestamp'],
             'environment': measurement['environment'],
             'result': measurement['result'],
-        })
-        project_repo.add_measurement_keys(project_id, keys)
+        }))
+        benchmarks.setdefault(measurement['benchmark'], []).append(measurement)
+
+    project_repo.add_measurement_keys(project_id, list(keys))
+
+    view_repo = ViewRepo(app)
+    for (benchmark, measurements) in benchmarks.items():
+        views = list(view_repo.get_views_with_benchmark(benchmark))
+        if not views and benchmark:
+            y_axes = [set(m['result'].keys()) for m in measurements if m['result']]
+            union = reduce(lambda a, b: a.union(b), y_axes, set())
+            y_axes = reduce(lambda a, b: a.intersection(b), y_axes, union)
+            y_axes = ['result.{}.value'.format(y) for y in y_axes]
+
+            view_repo.create_internal(project_id, benchmark, [{
+                'path': 'benchmark',
+                'operator': '==',
+                'value': benchmark
+            }], y_axes)
 
 
 def set_db_callbacks(app):
