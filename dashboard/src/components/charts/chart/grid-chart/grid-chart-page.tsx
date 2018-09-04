@@ -94,7 +94,7 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
                 <Box title='Range'>
                     <RangeFilterSwitcher
                         rangeFilter={this.props.rangeFilter}
-                        onFilterChange={this.changeRangeFilter} />
+                        onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
                 <Box title='X axis'>
                     <MeasurementKeys project={this.props.project}
@@ -149,11 +149,6 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
     changeXAxis = (xAxis: string) =>
     {
         this.setState(() => ({ xAxis }));
-    }
-    changeRangeFilter = (rangeFilter: RangeFilter) =>
-    {
-        this.props.onChangeRangeFilter(rangeFilter);
-        this.props.loadMeasurements();
     }
 }
 
