@@ -1,6 +1,6 @@
 import {routerReducer, RouterState} from 'react-router-redux';
 import {Reducer} from 'redux';
-import {createTransform, persistReducer} from 'redux-persist';
+import {createTransform, persistReducer, createMigrate, PersistedState} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import {
     deserializeDates,
@@ -17,9 +17,15 @@ export interface AppState
     router: RouterState;
 }
 
+const migrations = {
+    0: (state: PersistedState & SessionState) => state
+};
+
 const sessionPersist = {
     key: 'session',
+    version: 0,
     storage,
+    migrate: createMigrate(migrations),
     transforms: [
         createTransform(
             null,
