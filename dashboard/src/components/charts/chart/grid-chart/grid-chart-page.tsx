@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {Project} from '../../../../lib/project/project';
+import {applyFilters} from '../../../../lib/view/filter';
 import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
@@ -114,10 +115,11 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
     }
     renderView = (view: View): JSX.Element =>
     {
+        const measurements = applyFilters(this.props.measurements, view.filters);
         const datasets = view.yAxes.map(yAxis => ({
             name: `${view.name} (${formatKey(yAxis)})`,
             yAxis,
-            measurements: this.props.measurements
+            measurements
         }));
         return (
             <Dataset key={view.id}
