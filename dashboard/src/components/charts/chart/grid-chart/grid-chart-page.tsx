@@ -1,3 +1,4 @@
+import {sort} from 'ramda';
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
@@ -13,12 +14,15 @@ import {SelectChartViewParams} from '../../../../state/session/pages/chart-page/
 import {loadGridChartMeasurements} from '../../../../state/session/pages/grid-chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
+import {compareDate} from '../../../../util/date';
 import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {LineChart} from '../line-chart/line-chart';
+import {GridChartPageFilter} from './grid-chart-page-filter';
+import {GridChartSortMode} from './grid-chart-sort-mode';
 
 interface OwnProps
 {
@@ -39,10 +43,12 @@ interface DispatchProps
 
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 
-interface State
-{
-    xAxis: string;
-}
+const initialState = {
+    xAxis: '',
+    sortMode: GridChartSortMode.CreationTime,
+    query: ''
+};
+type State = Readonly<typeof initialState>;
 
 const Grid = styled.div`
   display: flex;
@@ -55,7 +61,7 @@ const Dataset = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-right: 4px;
-  padding: 20px;
+  padding: 10px;
   border: 1px solid #8c8c8c;
   border-radius: 5px;
 
@@ -68,11 +74,9 @@ const Label = styled.div`
   text-align: center;
 `;
 
-class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
+class GridChartPageComponent extends PureComponent<Props, State>
 {
-    readonly state: State = {
-        xAxis: ''
-    };
+    readonly state: State = initialState;
 
     componentDidMount()
     {
@@ -102,14 +106,21 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
                                      value={this.state.xAxis}
                                      onChange={this.changeXAxis} />
                 </Box>
+                <Box>
+                    <GridChartPageFilter query={this.state.query}
+                                         sortMode={this.state.sortMode}
+                                         onChangeQuery={this.changeQuery}
+                                         onChangeSortMode={this.changeSortMode} />
+                </Box>
             </>
         );
     }
     renderContent = (): JSX.Element =>
     {
+        const views = this.applyFilter(this.props.views);
         return (
             <Grid>
-                {this.props.views.map(this.renderView)}
+                {views.map(this.renderView)}
             </Grid>
         );
     }
@@ -140,6 +151,18 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
         );
     }
 
+    applyFilter = (views: View[]): View[] =>
+    {
+        const query = this.state.query.trim();
+        const regex = new RegExp(query, 'i');
+        const filtered = views.filter(v => regex.test(v.name));
+        const sortFn: (a: View, b: View) => number = this.state.sortMode === GridChartSortMode.CreationTime ?
+            (a, b) => compareDate(a.created, b.created) :
+            (a, b) => a.name.localeCompare(b.name);
+
+        return sort(sortFn, filtered);
+    }
+
     selectView = (view: View) =>
     {
         this.props.selectView({
@@ -150,7 +173,15 @@ class GridChartPageComponent extends PureComponent<Props, Readonly<State>>
 
     changeXAxis = (xAxis: string) =>
     {
-        this.setState(() => ({ xAxis }));
+        this.setState({ xAxis });
+    }
+    changeSortMode = (sortMode: GridChartSortMode) =>
+    {
+        this.setState({ sortMode });
+    }
+    changeQuery = (query: string) =>
+    {
+        this.setState({ query });
     }
 }
 

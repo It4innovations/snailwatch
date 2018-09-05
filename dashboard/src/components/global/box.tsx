@@ -2,15 +2,12 @@ import React, {PureComponent, ReactNode} from 'react';
 import {Card} from 'reactstrap';
 import styled from 'styled-components';
 
-interface DefaultProps
+interface Props
 {
+    title?: ReactNode | string;
     className?: string;
     hideable?: boolean;
 }
-type Props =
-{
-    title: ReactNode | string;
-} & Partial<DefaultProps>;
 
 type State = Readonly<{
     visible: boolean;
@@ -27,7 +24,8 @@ const Title = styled.div<{hideable: boolean}>`
 
 export class Box extends PureComponent<Props, State>
 {
-    static defaultProps: DefaultProps = {
+    static defaultProps: Props = {
+        title: '',
         className: '',
         hideable: false
     };
@@ -45,7 +43,11 @@ export class Box extends PureComponent<Props, State>
     {
         return (
             <SlimCard body outline color='secondary' className={this.props.className}>
-                <Title onClick={this.handleClick} hideable={this.props.hideable}>{this.props.title}</Title>
+                {this.props.title &&
+                    <Title onClick={this.handleClick} hideable={this.props.hideable}>
+                        {this.props.title}
+                    </Title>
+                }
                 {this.state.visible && <>{this.props.children}</>}
             </SlimCard>
         );
