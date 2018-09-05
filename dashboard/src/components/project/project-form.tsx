@@ -40,8 +40,8 @@ export class ProjectForm extends PureComponent<Props, Readonly<State>>
     {
         if (prevProps.project !== this.props.project)
         {
-            this.setState(() => ({
-                project: {...this.props.project}
+            this.setState((state, props) => ({
+                project: {...props.project}
             }));
         }
     }
@@ -78,8 +78,8 @@ export class ProjectForm extends PureComponent<Props, Readonly<State>>
     changeProjectAttribute = (key: keyof Project) => (event: ChangeEvent<HTMLInputElement>) =>
     {
         const value = event.currentTarget.value;
-        this.setState(() => ({
-            project: {...this.state.project, [key]: value.trim()}
+        this.setState(state => ({
+            project: {...state.project, [key]: value.trim()}
         }));
     }
     isDirty = () =>

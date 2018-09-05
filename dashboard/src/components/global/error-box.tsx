@@ -20,7 +20,7 @@ export class ErrorBox extends PureComponent<Props, State>
     {
         if (this.props.error !== prev.error)
         {
-            this.setState(() => ({ opened: true }));
+            this.setState({ opened: true });
         }
     }
 
@@ -39,6 +39,6 @@ export class ErrorBox extends PureComponent<Props, State>
 
     dismiss = () =>
     {
-        this.setState(() => ({ opened: false }));
+        this.setState({ opened: false });
     }
 }

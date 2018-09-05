@@ -73,9 +73,7 @@ export class LoginForm extends PureComponent<Props, State>
 
     change = (key: keyof State, value: string) =>
     {
-        const changeObj = {};
-        changeObj[key] = value;
-        this.setState(() => changeObj);
+        this.setState(state => ({ ...state, [key]: value }));
     }
 
     handleSubmit = (event: FormEvent<HTMLFormElement>) =>

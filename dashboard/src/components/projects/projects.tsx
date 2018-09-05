@@ -104,9 +104,7 @@ class ProjectsComponent extends PureComponent<Props, State>
 
     startProjectCreate = () =>
     {
-        this.setState(() => ({
-            creatingProject: true
-        }));
+        this.setState({ creatingProject: true });
     }
     createProject = (name: string) =>
     {

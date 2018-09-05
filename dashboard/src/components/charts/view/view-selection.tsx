@@ -141,7 +141,7 @@ class ViewSelectionComponent extends PureComponent<Props, State>
     changeViewQuery = (event: ChangeEvent<HTMLInputElement>) =>
     {
         const viewQuery = event.currentTarget.value;
-        this.setState(() => ({ viewQuery }));
+        this.setState({ viewQuery });
     }
 
     createView = () =>

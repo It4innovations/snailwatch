@@ -34,7 +34,7 @@ export class PasswordForm extends PureComponent<Props, State>
         error: ''
     };
 
-    static getDerivedStateFromProps(nextProps: Props, prevState: State): Partial<State>
+    static getDerivedStateFromProps(nextProps: Props): Partial<State>
     {
         if (nextProps.changePasswordRequest.completed)
         {
@@ -114,7 +114,7 @@ export class PasswordForm extends PureComponent<Props, State>
         const error = this.validateForm();
         if (error !== null)
         {
-            this.setState(() => ({ error }));
+            this.setState({ error });
         }
         else this.props.onChangePassword(this.state.form.old, this.state.form.new);
     }

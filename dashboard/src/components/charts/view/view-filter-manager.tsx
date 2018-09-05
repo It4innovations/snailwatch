@@ -37,8 +37,8 @@ export class ViewFilterManager extends PureComponent<Props, State>
     {
         if (prevProps.view !== this.props.view && this.state.editing)
         {
-            this.setState(() => ({
-                view: this.props.view
+            this.setState((state, props) => ({
+                view: props.view
             }));
         }
     }
@@ -82,17 +82,17 @@ export class ViewFilterManager extends PureComponent<Props, State>
 
     startEdit = () =>
     {
-        this.setState(() => ({
+        this.setState((state, props) => ({
             editing: true,
-            view: {...this.props.view}
+            view: {...props.view}
         }));
     }
     stopEdit = () =>
     {
-        this.setState(() => ({
+        this.setState({
             editing: false,
             viewError: ''
-        }));
+        });
     }
 
     commitSelection = () =>

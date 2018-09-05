@@ -59,20 +59,18 @@ export class ViewName extends PureComponent<Props, State>
 
     onChange = (value: string) =>
     {
-        this.setState(() => ({ value }));
+        this.setState({ value });
     }
     startEdit = () =>
     {
-        this.setState(() => ({
+        this.setState((state, props) => ({
             editing: true,
-            value: this.props.value
+            value: props.value
         }));
     }
     commit = () =>
     {
-        this.setState(() => ({
-            editing: false
-        }));
+        this.setState({ editing: false });
         this.props.onChange(this.state.value);
     }
 }

@@ -161,20 +161,20 @@ class LineChartPageComponent extends PureComponent<Props, State>
 
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
     {
-        this.setState(() => ({ selectedMeasurements  }));
+        this.setState({ selectedMeasurements  });
     }
     changeSettings = (settings: LineChartSettings) =>
     {
-        this.setState(() => ({ settings }));
+        this.setState({ settings });
     }
 
     setSelectedView = (selectedView: View) =>
     {
-        this.setState(() => ({ selectedView: selectedView.id }));
+        this.setState({ selectedView: selectedView.id });
     }
     deselectView = () =>
     {
-        this.setState(() => ({ selectedView: null }));
+        this.setState({ selectedView: null });
     }
 }
 

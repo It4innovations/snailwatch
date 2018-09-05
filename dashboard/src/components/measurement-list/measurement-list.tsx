@@ -85,8 +85,8 @@ class MeasurementListComponent extends PureComponent<Props, State>
     {
         if (oldProps.measurements !== this.props.measurements)
         {
-            this.setState(() => ({
-                csvExport: exportCSV(this.props.measurements)
+            this.setState((state, props) => ({
+                csvExport: exportCSV(props.measurements)
             }));
         }
         if (oldProps.view !== this.props.view ||

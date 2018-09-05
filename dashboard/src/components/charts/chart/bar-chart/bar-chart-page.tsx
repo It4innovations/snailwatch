@@ -124,16 +124,16 @@ class BarChartPageComponent extends PureComponent<Props, State>
 
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
     {
-        this.setState(() => ({ selectedMeasurements  }));
+        this.setState({ selectedMeasurements  });
     }
 
     setSelectedView = (selectedView: View) =>
     {
-        this.setState(() => ({ selectedView: selectedView.id }));
+        this.setState({ selectedView: selectedView.id });
     }
     deselectView = () =>
     {
-        this.setState(() => ({ selectedView: null }));
+        this.setState({ selectedView: null });
     }
 }
 

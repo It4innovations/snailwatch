@@ -115,14 +115,10 @@ export class SuggestInput<T = string> extends PureComponent<Props<T>, State<T>>
         const value = params.value.trim().toLowerCase();
         const suggestions = this.props.calculateSuggestions(value);
 
-        this.setState(() => ({
-            suggestions
-        }));
+        this.setState({ suggestions });
     }
     clearSuggestions = () =>
     {
-        this.setState(() => ({
-            suggestions: []
-        }));
+        this.setState({ suggestions: [] });
     }
 }
