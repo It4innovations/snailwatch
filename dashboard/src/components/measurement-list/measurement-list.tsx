@@ -1,5 +1,4 @@
 import Download from '@axetroy/react-download';
-import {sort} from 'ramda';
 import React, {PureComponent} from 'react';
 import MdDelete from 'react-icons/lib/md/delete';
 import {connect} from 'react-redux';
@@ -135,9 +134,6 @@ class MeasurementListComponent extends PureComponent<Props, State>
     }
     renderMeasurements = (): JSX.Element =>
     {
-        const measurements = sort((m1: Measurement, m2: Measurement) =>
-            m1.timestamp.isBefore(m2.timestamp) ? 1 : -1, this.props.measurements);
-
         const columns = [{
             id: 'benchmark',
             Header: 'Benchmark',
@@ -159,7 +155,7 @@ class MeasurementListComponent extends PureComponent<Props, State>
 
         return (
             <ReactTable
-                data={measurements}
+                data={this.props.measurements}
                 noDataText='No measurements found'
                 columns={columns}
                 loading={this.props.measurementRequest.loading}
@@ -167,7 +163,7 @@ class MeasurementListComponent extends PureComponent<Props, State>
                 minRows={5}
                 filterable={false}
                 multiSort={false}
-                sorted={[{
+                defaultSorted={[{
                     id: 'timestamp',
                     desc: true
                 }]}
