@@ -3,10 +3,10 @@ import uuid
 
 import werkzeug.security
 from eve.auth import TokenAuth
-from flask import current_app as app, Response, abort
+from flask import Response, abort, current_app as app
 
-from .db.uploadtoken import UploadTokenRepo
 from .db.loginsession import LoginSessionRepo
+from .db.uploadtoken import UploadTokenRepo
 
 AUTH_TOKEN_EXPIRATION_SEC = 3600 * 24 * 30
 
@@ -26,18 +26,12 @@ class AdminAuthenticator(Authenticator):
 
 class TokenAuthenticator(Authenticator):
     def check_auth(self, token, allowed_roles, resource, method):
-        repo = LoginSessionRepo(app)
-        session = repo.find_session(token)
-        if session:
-            ts_utc = datetime.datetime.utcnow().replace(tzinfo=None)
-            time_delta = ts_utc - session['timestamp'].replace(tzinfo=None)
-            if time_delta.total_seconds() >= AUTH_TOKEN_EXPIRATION_SEC:
-                return False
-
+        session = get_session_for_token(token)
+        if not session:
+            return False
+        else:
             self.set_request_auth_value(session['user_id'])
             return True
-
-        return False
 
 
 class MeasurementAuthenticator(Authenticator):
@@ -65,3 +59,24 @@ def check_password(user, password):
 
 def generate_token():
     return str(uuid.uuid4().hex)
+
+
+def get_request_token(request):
+    return request.headers.get('Authorization', None)
+
+
+def get_session_for_token(token):
+    repo = LoginSessionRepo(app)
+    session = repo.find_session(token)
+    if session:
+        ts_utc = datetime.datetime.utcnow().replace(tzinfo=None)
+        time_delta = ts_utc - session['timestamp'].replace(tzinfo=None)
+        if time_delta.total_seconds() >= AUTH_TOKEN_EXPIRATION_SEC:
+            return None
+
+        return session
+    return None
+
+
+def get_session_from_request(request):
+    return get_session_for_token(get_request_token(request))

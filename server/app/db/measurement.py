@@ -19,7 +19,7 @@ def serialize_filters(filters):
     where = {}
     for (key, filters) in obj.items():
         equals = [f for f in filters if f['operator'] == '==']
-        if len(equals) > 0:
+        if equals:
             where[key] = equals[0]['value']
         else:
             keys = map(lambda f: OPERATOR_TABLE[f['operator']], filters)
@@ -41,10 +41,10 @@ class MeasurementRepo(Repository):
             'owner': user[ID_FIELD]
         })
 
-    def get_measurements(self, user, filters):
+    def get_measurements(self, user, filters, limit):
         where = serialize_filters(filters)
         where.update({
             'owner': user[ID_FIELD]
         })
 
-        return self.table.find(where)
+        return self.table.find(where).limit(limit).sort([('timestamp', -1)])

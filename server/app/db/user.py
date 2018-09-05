@@ -1,7 +1,7 @@
 from eve import ID_FIELD
 
+from app.auth import get_session_from_request
 from .repository import Repository
-from .loginsession import LoginSessionRepo
 
 
 class UserRepo(Repository):
@@ -29,12 +29,7 @@ class UserRepo(Repository):
         })
 
     def get_user_from_request(self, request):
-        token = request.headers.get('Authorization', None)
-        if not token:
-            return None
-        login_repo = LoginSessionRepo(self.app)
-
-        session = login_repo.find_session(token)
+        session = get_session_from_request(request)
         if not session:
             return None
 
