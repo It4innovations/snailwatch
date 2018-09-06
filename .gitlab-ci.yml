@@ -27,7 +27,7 @@ test:server:
     - pip3 install flake8 pytest pymongo python/
     - pip3 install -r server/requirements.txt
   script:
-    - flake8 .
+    - flake8 python server tests
     - MONGO=mongo python3 -m pytest --verbose tests
   artifacts:
     paths:

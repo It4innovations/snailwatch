@@ -12,7 +12,8 @@ def parse_args():
     subparsers = parser.add_subparsers(title="action", dest="action")
 
     create_user_parser = subparsers.add_parser('create-user')
-    create_user_parser.add_argument("token", help="Admin token (required for creating users)")
+    create_user_parser.add_argument(
+        "token", help="Admin token(required for creating users)")
     create_user_parser.add_argument("username")
 
     upload_parser = subparsers.add_parser('upload')
@@ -57,4 +58,4 @@ def main():
                                    data["result"],
                                    timestamp)
     else:
-        print("Enter a valid subcommand (create-user, login, upload or upload-file)")
+        print("Enter a valid subcommand (create-user, upload or upload-file)")

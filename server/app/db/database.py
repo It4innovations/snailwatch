@@ -78,7 +78,8 @@ def before_insert_measurement(measurements):
     for (benchmark, measurements) in benchmarks.items():
         views = list(view_repo.get_views_with_benchmark(benchmark))
         if not views and benchmark:
-            y_axes = [set(m['result'].keys()) for m in measurements if m['result']]
+            y_axes = [set(m['result'].keys())
+                      for m in measurements if m['result']]
             union = reduce(lambda a, b: a.union(b), y_axes, set())
             y_axes = reduce(lambda a, b: a.intersection(b), y_axes, union)
             y_axes = ['result.{}.value'.format(y) for y in y_axes]

@@ -28,7 +28,8 @@ class Analyser(object):
         if not observed:
             return []
 
-        measurements = self.measurement_repo.get_measurements(user, view['filters'], 1000)
+        measurements = self.measurement_repo\
+            .get_measurements(user, view['filters'], 1000)
 
         regressions = []
         for o in observed:
@@ -48,7 +49,8 @@ class Analyser(object):
 
 
 def calculate_averages(measurements, trigger, observed):
-    by_trigger = group_by(measurements, lambda m: get_value(m, trigger, lambda i: str(i)))
+    by_trigger = group_by(measurements,
+                          lambda m: get_value(m, trigger, lambda i: str(i)))
     averages = {}
     for (key, subset) in by_trigger.items():
         values = (get_value(m, observed, lambda i: float(i)) for m in subset)

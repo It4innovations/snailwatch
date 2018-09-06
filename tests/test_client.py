@@ -73,8 +73,14 @@ def test_session_bulk_upload(sw_env):
     s = Session(sw_env.server_url, sw_env.upload_token)
 
     measurements = [
-        ("test1", {"machine": "tester"}, {"result": {"value": "123", "type": "integer"}}, None),
-        ("test1", {"machine": "tester"}, {"result": {"value": "321", "type": "size"}}, None)
+        ("test1",
+         {"machine": "tester"},
+         {"result": {"value": "123", "type": "integer"}},
+         None),
+        ("test1",
+         {"machine": "tester"},
+         {"result": {"value": "321", "type": "size"}},
+         None)
     ]
 
     s.upload_measurements(measurements)
