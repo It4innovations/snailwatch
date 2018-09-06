@@ -12,6 +12,20 @@ class Session:
         self.server_url = server_url
         self.token = token
 
+    def upload_measurement(self, benchmark, environment, result, timestamp=None):
+        return self._post("measurements", self._serialize_measurement(benchmark, environment, result, timestamp))
+
+    def upload_measurements(self, measurements):
+        serialized = [self._serialize_measurement(*m) for m in measurements]
+        return self._post("measurements", serialized)
+
+    def create_user(self, username, password):
+        payload = {
+            'username': username,
+            'password': password
+        }
+        return self._post("users", payload)
+
     def _post(self, address, payload):
         http_headers = {
             'Content-Type': 'application/json',
@@ -23,7 +37,7 @@ class Session:
             json=payload,
             headers=http_headers)
 
-        if response.status_code != 201:
+        if response.status_code <= 199 or response.status_code >= 300:
             raise SnailwatchException('Remote request failed, '
                                       'status: {}, message: {}',
                                       response.status_code, response.content)
@@ -40,17 +54,3 @@ class Session:
             'environment': environment,
             'result': result
         }
-
-    def upload_measurement(self, benchmark, environment, result, timestamp=None):
-        return self._post("measurements", self._serialize_measurement(benchmark, environment, result, timestamp))
-
-    def upload_measurements(self, measurements):
-        serialized = [self._serialize_measurement(*m) for m in measurements]
-        return self._post("measurements", serialized)
-
-    def create_user(self, username, password):
-        payload = {
-            'username': username,
-            'password': password
-        }
-        return self._post("users", payload)

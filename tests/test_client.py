@@ -16,8 +16,8 @@ def test_session_create_user(sw_env):
 def test_cmd_upload(sw_env):
     sw_env.start()
     sw_env.run_cmd_client((sw_env.server_url,
-                           sw_env.upload_token,
                            "upload",
+                           sw_env.upload_token,
                            "test1",
                            json.dumps({"machine": "tester"}),
                            json.dumps({"result":
@@ -41,8 +41,8 @@ def test_cmd_upload_file(sw_env, tmpdir):
     sw_env.start()
 
     sw_env.run_cmd_client((sw_env.server_url,
-                           sw_env.upload_token,
                            "upload-file",
+                           sw_env.upload_token,
                            str(data.realpath())))
 
     result = list(sw_env.db.measurements.find({"benchmark": "test1"}))

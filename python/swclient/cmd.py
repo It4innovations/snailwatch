@@ -9,20 +9,22 @@ from .session import Session
 def parse_args():
     parser = argparse.ArgumentParser("swclient")
     parser.add_argument("server_url", help="Address of Snailwatch server")
-    parser.add_argument("token", help="Security token")
     subparsers = parser.add_subparsers(title="action", dest="action")
 
     create_user_parser = subparsers.add_parser('create-user')
+    create_user_parser.add_argument("token", help="Admin token (required for creating users)")
     create_user_parser.add_argument("username")
 
-    create_user_parser = subparsers.add_parser('upload')
-    create_user_parser.add_argument("benchmark")
-    create_user_parser.add_argument("env")
-    create_user_parser.add_argument("result")
-    create_user_parser.add_argument("--timestamp")
+    upload_parser = subparsers.add_parser('upload')
+    upload_parser.add_argument("token", help="Upload token")
+    upload_parser.add_argument("benchmark")
+    upload_parser.add_argument("env")
+    upload_parser.add_argument("result")
+    upload_parser.add_argument("--timestamp")
 
-    create_user_parser = subparsers.add_parser('upload-file')
-    create_user_parser.add_argument("filename")
+    upload_file_parser = subparsers.add_parser('upload-file')
+    upload_file_parser.add_argument("token", help="Upload token")
+    upload_file_parser.add_argument("filename")
 
     return parser.parse_args()
 
@@ -55,4 +57,4 @@ def main():
                                    data["result"],
                                    timestamp)
     else:
-        print("Enter a valid subcommand (create-user, upload or upload-file)")
+        print("Enter a valid subcommand (create-user, login, upload or upload-file)")
