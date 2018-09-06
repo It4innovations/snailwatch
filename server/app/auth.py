@@ -1,9 +1,10 @@
 import datetime
 import uuid
+from functools import wraps
 
 import werkzeug.security
 from eve.auth import TokenAuth
-from flask import Response, abort, current_app as app
+from flask import Response, abort, current_app as app, request, jsonify
 
 from .db.loginsession import LoginSessionRepo
 from .db.uploadtoken import UploadTokenRepo
@@ -47,6 +48,22 @@ class MeasurementAuthenticator(Authenticator):
         else:
             return TokenAuthenticator().check_auth(token, allowed_roles,
                                                    resource, method)
+
+
+def authenticate():
+    resp = jsonify('Could not verify your token.\n')
+    resp.status_code = 401
+    return resp
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = get_request_token(request)
+        if not token or not get_session_for_token(token):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
 
 
 def hash_password(password):
