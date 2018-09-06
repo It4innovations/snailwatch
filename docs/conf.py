@@ -46,21 +46,27 @@ extensions = [
     'sphinxcontrib.redoc'
 ]
 
-url = 'https://snailwatch.it4i.cz{}/api/schema'
+service_url = 'https://snailwatch.it4i.cz'
 version = ''
 if os.environ.get('READTHEDOCS_VERSION', '') == 'dev':
     version = '/dev'
+
+spec = '{}{}/api/schema'.format(service_url, version)
 
 redoc = [
     {
         'name': 'Snailwatch API',
         'page': 'api',
-        'spec': url.format(version),
+        'spec': spec,
         'opts': {
-            'suppress-warnings': True
+            'suppress-warnings': False
         }
     }
 ]
+
+rst_prolog = """
+.. |service-url| replace:: {service_url}
+""".format(service_url=service_url)
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -177,5 +183,6 @@ texinfo_documents = [
 
 # -- Extension configuration -------------------------------------------------
 extlinks = {
-    'api': (API_URL + '%s', None)
+    'api': (API_URL + '%s', None),
+    'web': (service_url + '%s', None)
 }
