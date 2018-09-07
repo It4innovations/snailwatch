@@ -176,7 +176,12 @@ DOMAIN = {
     'users': {
         'schema': user_schema,
         'resource_methods': ['GET', 'POST'],
-        'authentication': AdminAuthenticator
+        'authentication': AdminAuthenticator,
+        'datasource': {
+            'projection': {
+                'username': 1
+            }
+        }
     },
     'projects': {
         'schema': project_schema,
