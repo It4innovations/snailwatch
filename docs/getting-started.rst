@@ -1,7 +1,8 @@
 Getting started
 ===============
 This guide shows reference API calls for logging in, creating a project, getting its upload token and uploading
-a measurement. This assumes that you already have a user account (TODO).
+a measurement. This assumes that you already have a user account
+(see the :doc:`Overview <overview>` on how to create one).
 
 If you don't want to manually create HTTP requests, you can use our provided Python :doc:`library <client>`.
 

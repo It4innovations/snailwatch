@@ -14,7 +14,7 @@ repository on DockerHub or build it yourself using the Dockerfile located in the
     $ docker pull kobzol/snailwatch:dashboard
 
     # or build it yourself
-    $ docker build -t snailwatch-dashboard -f dashboard/Dockerfile
+    $ docker build -t sw-dashboard -f dashboard/Dockerfile
 
 The app inside the container is located at ``/dashboard`` and is by default served on port 3000.
 
@@ -29,17 +29,18 @@ You can install dependencies of the dashboard using npm:
     $ cd dashboard
     $ npm install
 
-    # build a production version into the `build` directory
+    # create a production version in the `build` directory
     $ npm run build
 
 Configuration
 -------------
-When deploying the dashboard, you have to provide the address of the API server using an environment variable.
+When deploying the dashboard, you should provide the address of the API server
+using an environment variable.
 
 +----------------+------------+-----------------------+-------------------------------------+
 | Name           | Required   | Default               | Description                         |
 +================+============+=======================+=====================================+
-| API_SERVER     | True       | http://localhost:5000 | Address of the Snailwatch server.   |
+| API_SERVER     | False      | http://localhost:5000 | Address of the Snailwatch server.   |
 +----------------+------------+-----------------------+-------------------------------------+
 
 Starting the dashboard
@@ -47,4 +48,19 @@ Starting the dashboard
 
 .. code-block:: bash
 
+    # Start using Docker
+    $ docker run -e "API_SERVER=http://my-deployed-server" -p 3000:3000 sw-dashboard
+
+    # Start directly
     $ API_SERVER=http://my-deployed-server node build/server.js
+
+Deploying at non-root path
+--------------------------
+It is possible to deploy the dashboard at a non-root URL (e. g. /my-dashboard).
+You have to pass the URL to the dashboard both during the build and launch
+of the Docker container.
+
+.. code-block:: bash
+
+    $ docker build -t sw-dashboard --build-arg PUBLIC_URL=/my-dashboard .
+    $ docker run -e "URL_PREFIX=/my-dashboard" ... sw-dashboard

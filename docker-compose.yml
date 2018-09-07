@@ -4,22 +4,24 @@ services:
     image: kobzol/snailwatch:server
     restart: on-failure
     environment:
-      SW_MONGO_HOST: mongo
+      ADMIN_TOKEN: ${ADMIN_TOKEN?You have to specify an admin token}
+      MONGO_HOST: mongo
     depends_on:
       - mongo
     ports:
-      - "5000:5000"
+      - ${SERVER_PORT:-5000}:5000
   dashboard:
     image: kobzol/snailwatch:dashboard
     restart: on-failure
     environment:
-      SW_API_SERVER: http://localhost:5000
+      API_SERVER: http://localhost:${SERVER_PORT:-5000}
+      URL_PREFIX: ${URL_PREFIX:-/}
     depends_on:
       - server
     ports:
-      - "3000:3000"
+      - ${DASHBOARD_PORT:-3000}:3000
   mongo:
     image: mongo:3-jessie
     restart: on-failure
     volumes:
-     - /home/kobzol/data/snailwatch:/data/db
+      - ${DB_DIR?You have to specify a database directory}:/data/db

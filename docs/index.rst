@@ -7,20 +7,20 @@ It consists of a server that stores the measured results and a web dashboard tha
 
 .. image:: pipeline.png
 
-| The service is hosted at |service-url|, but you can also deploy it :doc:`yourself <deploy-overview>`.
 | To learn more about Snailwatch, read the :doc:`Overview <overview>`.
-| To jump directly into the action, go to the :doc:`Getting started <getting-started>` guide.
+| Before you can use Snailwatch, you have to :doc:`deploy it <deploy-overview>`.
+| After it's deployed, you can jump directly :doc:`into the action <getting-started>`.
 
 Complete Snailwatch API documentation can be found :doc:`here <api>`.
 
 
 .. toctree::
     :maxdepth: 2
-    :caption: User guide:
 
     overview
     getting-started
     client
+    api
 
 .. toctree::
     :maxdepth: 2
@@ -29,4 +29,3 @@ Complete Snailwatch API documentation can be found :doc:`here <api>`.
     deploy-overview
     server-deploy
     dashboard-deploy
-    api

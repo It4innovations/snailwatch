@@ -1,8 +1,7 @@
 Server deployment
 =================
 To deploy the service, you can either use our provided Docker images (recommended) or setup the dependencies manually.
-The server requires a MongoDB instance, that is not included in the Docker container. An example Docker compose setup
-can be found in the root of the repository (``docker-compose.yml``).
+The server requires a MongoDB instance, that is not included in the Docker container.
 
 Docker
 ------
@@ -15,7 +14,7 @@ repository on DockerHub or build it yourself using the Dockerfile located in the
     $ docker pull kobzol/snailwatch:server
 
     # or build it yourself
-    $ docker build -t snailwatch-server -f server/Dockerfile
+    $ docker build -t sw-server -f server/Dockerfile
 
 The app inside the container is located at ``/server`` and is by default server on port 5000.
 
@@ -59,7 +58,8 @@ can launch the server itself using:
 
 .. code-block:: bash
 
-    $ python start.py
+    # Start using Docker (MongoDB instance has to be available in its network)
+    $ docker run -e "ADMIN_TOKEN=abc" -p 5000:5000 sw-server
 
-    # or if using Docker (MongoDB instance has to be available in its network)
-    $ docker run -e"ADMIN_TOKEN=abc" -p 5000:5000 snailwatch-server
+    # Start directly
+    $ python start.py

@@ -64,10 +64,6 @@ redoc = [
     }
 ]
 
-rst_prolog = """
-.. |service-url| replace:: {service_url}
-""".format(service_url=service_url)
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -183,6 +179,5 @@ texinfo_documents = [
 
 # -- Extension configuration -------------------------------------------------
 extlinks = {
-    'api': (API_URL + '%s', None),
-    'web': (service_url + '%s', None)
+    'api': (API_URL + '%s', None)
 }
