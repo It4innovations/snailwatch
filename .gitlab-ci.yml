@@ -1,6 +1,7 @@
 stages:
   - test
-  - publish
+  - build
+  - push
   - deploy
 
 variables:
@@ -35,9 +36,9 @@ test:server:
     when: on_failure
     expire_in: 1 week
 
-publish:dashboard:
+build:dashboard:
   image: docker:latest
-  stage: publish
+  stage: build
   tags:
     - deployment
   only:
@@ -48,9 +49,9 @@ publish:dashboard:
   script:
     - docker build -t snailwatch-dashboard-${CI_COMMIT_REF_SLUG} --build-arg PUBLIC_URL=`[ ${CI_COMMIT_REF_SLUG} == 'dev' ] && echo "/dev" || echo "/"` .
 
-publish:server:
+build:server:
   image: docker:latest
-  stage: publish
+  stage: build
   tags:
     - deployment
   only:
@@ -60,6 +61,30 @@ publish:server:
     - cd server
   script:
     - docker build -t snailwatch-server-${CI_COMMIT_REF_SLUG} .
+
+push:dashboard:
+  image: docker:latest
+  stage: push
+  tags:
+    - deployment
+  only:
+    - master
+  script:
+    - echo $CI_DOCKERHUB_PW | docker login -u kobzol --password-stdin
+    - docker tag snailwatch-dashboard-master kobzol/snailwatch:dashboard
+    - docker push kobzol/snailwatch:dashboard
+
+push:server:
+  image: docker:latest
+  stage: push
+  tags:
+    - deployment
+  only:
+    - master
+  script:
+    - echo $CI_DOCKERHUB_PW | docker login -u kobzol --password-stdin
+    - docker tag snailwatch-server-master kobzol/snailwatch:server
+    - docker push kobzol/snailwatch:server
 
 deploy:
   image: deployer
