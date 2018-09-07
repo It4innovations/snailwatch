@@ -15,7 +15,6 @@ export interface SnailClient
     loadProject(user: User, name: string): Observable<Project>;
     updateProject(user: User, project: Project): Observable<boolean>;
 
-    loadUploadToken(user: User, project: Project): Observable<string>;
     regenerateUploadToken(user: User, project: Project): Observable<string>;
 
     loadMeasurements(user: User, project: Project,

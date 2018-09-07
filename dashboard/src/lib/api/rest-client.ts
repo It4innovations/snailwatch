@@ -85,12 +85,6 @@ export class RestClient implements SnailClient
         return this.projectCrud.update(user, project, serializeProject(project));
     }
 
-    loadUploadToken(user: User, project: Project): Observable<string>
-    {
-        return this.requestManager.request(`/get-upload-token/${project.id}`, 'GET', {}, {
-            token: user.token
-        }).pipe(map((token: string) => token));
-    }
     regenerateUploadToken(user: User, project: Project): Observable<string>
     {
         return this.requestManager.request('/revoke-upload-token', 'POST', {

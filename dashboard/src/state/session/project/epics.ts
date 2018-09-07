@@ -8,8 +8,8 @@ import {AppEpic} from '../../app/app-epic';
 import {Navigation} from '../../nav/routes';
 import {initProjectSession} from '../actions';
 import {getUser} from '../user/reducer';
-import {deselectProject, loadUploadToken, ProjectActions, regenerateUploadToken, selectProject} from './actions';
-import {getSelectedProject} from './reducer';
+import {deselectProject, ProjectActions, regenerateUploadToken, selectProject} from './actions';
+import {getProjectById, getProjects} from './reducer';
 
 const loadProjectsEpic = createRequestEpic(ProjectActions.load, (action, state, deps) =>
     deps.client.loadProjects(getUser(state))
@@ -38,11 +38,8 @@ const initSessionAfterProjectSelect: AppEpic = action$ =>
         )
     );
 
-const loadUploadTokenEpic = createRequestEpic(loadUploadToken, (action, state, deps) =>
-    deps.client.loadUploadToken(getUser(state), getSelectedProject(state))
-);
 const regenerateUploadTokenEpic = createRequestEpic(regenerateUploadToken, (action, state, deps) =>
-    deps.client.regenerateUploadToken(getUser(state), getSelectedProject(state))
+    deps.client.regenerateUploadToken(getUser(state), getProjectById(getProjects(state), action.payload.project))
 );
 
 const goToProjectSelectionAfterUnselecting: AppEpic = (action$) =>
@@ -56,7 +53,6 @@ export const projectEpics = combineEpics(
     createProjectEpic,
     updateProjectEpic,
     initSessionAfterProjectSelect,
-    loadUploadTokenEpic,
     regenerateUploadTokenEpic,
     goToProjectSelectionAfterUnselecting
 );

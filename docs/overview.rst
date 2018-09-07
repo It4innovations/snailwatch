@@ -9,15 +9,17 @@ To start using Snailwatch, you first have to :doc:`deploy it <deploy-overview>`.
 After it's deployed, you have to create a user account to use it.
 You can do that using :api:`this <#tag/User/paths/~1users/post>` API endpoint.
 
-With a user account, you can create a project and fetch it's upload token.
+With a user account, you can create a project and read it's upload token.
 You can do both either using the dashboard or with the API. A project roughly
 corresponds to a single repository, but you may also have multiple repositories
 belonging to a single project. You can create a project in the dashboard
 or using :api:`this endpoint <#tag/Project/paths/~1projects/post>`.
 
-The final component required for uploading measurements is an upload token. The token is displayed in the Project
-section of the dashboard, but you can also read it programatically
-:api:`here <#tag/Project/paths/~1get-upload-token~1{project-id}/get>`.
+The final component required for uploading measurements is an upload token.
+The token is displayed in the Project section of the dashboard, but you can
+also read it programatically
+:api:`here <#tag/Project/paths/~1get-upload-token~1{project-id}/get>` or by
+fetching a project from the API.
 
 With the upload token you can start to upload measurements. The recommended way of
 automatically uploading benchmark results is to use a CI service such as `Travis <https://travis-ci.org/>`_ or

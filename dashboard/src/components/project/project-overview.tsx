@@ -15,8 +15,8 @@ import {API_SERVER} from '../../configuration';
 import {Project} from '../../lib/project/project';
 import {User} from '../../lib/user/user';
 import {AppState} from '../../state/app/reducers';
-import {loadUploadToken, ProjectActions, regenerateUploadToken} from '../../state/session/project/actions';
-import {getSelectedProject, getUploadToken} from '../../state/session/project/reducer';
+import {ProjectActions, regenerateUploadToken, RegenerateUploadTokenParams} from '../../state/session/project/actions';
+import {getSelectedProject} from '../../state/session/project/reducer';
 import {getUser} from '../../state/session/user/reducer';
 import {Request} from '../../util/request';
 import {RequestComponent} from '../global/request-component';
@@ -29,13 +29,10 @@ interface StateProps
     user: User;
     project: Project;
     projectRequest: Request;
-    uploadToken: string | null;
-    uploadTokenRequest: Request;
 }
 interface DispatchProps
 {
-    loadUploadToken(): void;
-    regenerateUploadToken(): void;
+    regenerateUploadToken(params: RegenerateUploadTokenParams): void;
     changeProject(project: Project): void;
 }
 
@@ -48,11 +45,6 @@ const UploadTokenWrapper = styled.div`
 
 class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps<void>>
 {
-    componentDidMount()
-    {
-        this.props.loadUploadToken();
-    }
-
     render()
     {
         return (
@@ -83,9 +75,9 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
     }
     renderUploadTokenSection = (): JSX.Element =>
     {
-        if (this.props.uploadTokenRequest.error)
+        if (this.props.projectRequest.error)
         {
-            return <div>Couldn't load upload token: {this.props.uploadTokenRequest.error}</div>;
+            return <div>Couldn't load upload token: {this.props.projectRequest.error}</div>;
         }
 
         return (
@@ -99,7 +91,7 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
                 <div>You can create a new token if you want. This will revoke the previous token.</div>
                 <Button color='danger'
                         onClick={this.regenerateUploadToken}
-                        disabled={this.props.uploadTokenRequest.loading}>
+                        disabled={this.props.projectRequest.loading}>
                     Regenerate token
                 </Button>
             </>
@@ -107,7 +99,7 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
     }
     renderUploadToken = (): JSX.Element =>
     {
-        if (this.props.uploadTokenRequest.loading)
+        if (this.props.projectRequest.loading)
         {
             return <div>Loading...</div>;
         }
@@ -115,9 +107,9 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
         return (
             <>
                 <Badge color='info'>
-                    {this.props.uploadToken}
+                    {this.props.project.uploadToken}
                 </Badge>
-                <CopyToClipboard text={this.props.uploadToken}
+                <CopyToClipboard text={this.props.project.uploadToken}
                                  onCopy={() => toast.info('Upload token copied to clipboard!')}>
                     <span title='Copy upload token to clipboard'>
                         <MdContentCopy size={22} />
@@ -164,16 +156,18 @@ session.upload_measurement(
 
     getUploadToken = (): string =>
     {
-        if (this.props.uploadToken !== null)
+        if (this.props.project && this.props.project.uploadToken)
         {
-            return this.props.uploadToken;
+            return this.props.project.uploadToken;
         }
         return '<upload-token>';
     }
 
     regenerateUploadToken = () =>
     {
-        this.props.regenerateUploadToken();
+        this.props.regenerateUploadToken({
+            project: this.props.project.id
+        });
     }
 }
 
@@ -181,10 +175,7 @@ export const ProjectOverview = withRouter(connect<StateProps, DispatchProps>((st
     user: getUser(state),
     project: getSelectedProject(state),
     projectRequest: state.session.project.projectRequest,
-    uploadToken: getUploadToken(state),
-    uploadTokenRequest: state.session.project.uploadTokenRequest
 }), {
-    loadUploadToken: () => loadUploadToken.started({}),
-    regenerateUploadToken: () => regenerateUploadToken.started({}),
+    regenerateUploadToken: regenerateUploadToken.started,
     changeProject: ProjectActions.update.started
 })(ProjectOverviewComponent));

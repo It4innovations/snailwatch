@@ -13,5 +13,8 @@ export const ProjectActions = createCrudActions<Project, LoadProjectsParams>('pr
 export const selectProject = actionCreator.async<string, string>('select');
 export const deselectProject = actionCreator('deselect');
 
-export const loadUploadToken = actionCreator.async<{}, string>('load-upload-token');
-export const regenerateUploadToken = actionCreator.async<{}, string>('generate-upload-token');
+export interface RegenerateUploadTokenParams
+{
+    project: string;
+}
+export const regenerateUploadToken = actionCreator.async<RegenerateUploadTokenParams, string>('generate-upload-token');

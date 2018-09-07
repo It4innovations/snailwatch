@@ -22,6 +22,7 @@ export interface ProjectDAO extends DAO
     measurementKeys: string[];
     repository: string;
     commitKey: string;
+    uploadToken: string;
 }
 export interface MeasurementDAO extends DAO
 {
@@ -61,8 +62,9 @@ export function parseProject(project: ProjectDAO): Project
         id: project._id,
         name: project.name,
         measurementKeys: project.measurementKeys,
-        repository: project.repository || '',
-        commitKey: project.commitKey || '',
+        repository: project.repository,
+        commitKey: project.commitKey,
+        uploadToken: project.uploadToken,
         createdAt: moment(project._created)
     };
 }

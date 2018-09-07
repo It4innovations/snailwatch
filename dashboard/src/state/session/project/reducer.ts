@@ -6,23 +6,19 @@ import {createCrudReducer} from '../../../util/crud';
 import {createRequest, hookRequestActions, Request} from '../../../util/request';
 import {AppState} from '../../app/reducers';
 import {clearSession} from '../actions';
-import {deselectProject, loadUploadToken, ProjectActions, regenerateUploadToken, selectProject} from './actions';
+import {deselectProject, ProjectActions, regenerateUploadToken, selectProject} from './actions';
 
 export interface ProjectState
 {
     projects: Project[];
     selectedProject: string | null;
-    uploadToken: string | null;
     projectRequest: Request;
-    uploadTokenRequest: Request;
 }
 
 const initialState: ProjectState = {
     projects: [],
     selectedProject: null,
-    uploadToken: null,
     projectRequest: createRequest(),
-    uploadTokenRequest: createRequest()
 };
 
 let reducer = reducerWithInitialState<ProjectState>({ ...initialState })
@@ -43,10 +39,15 @@ reducer = compose(
         })
     ),
     (r: typeof reducer) => hookRequestActions(r,
-        [loadUploadToken, regenerateUploadToken],
-        state => state.uploadTokenRequest,
+        regenerateUploadToken,
+        state => state.projectRequest,
         (state, action) => ({
-            uploadToken: action.payload.result
+            projects: state.projects.map(p =>
+                p.id === action.payload.params.project ? {
+                    ...p,
+                    uploadToken: action.payload.result
+                } : p
+            )
         })
     )
 )(reducer);
@@ -60,10 +61,10 @@ reducer = createCrudReducer<ProjectState, Project>(
 
 export const getProjects = (state: AppState) => state.session.project.projects;
 export const getSelectedProjectName = (state: AppState) => state.session.project.selectedProject;
+export const getProjectById = (projects: Project[], id: string) => projects.find(p => p.id === id) || null;
 export const getProjectByName = (projects: Project[], name: string) => projects.find(p => p.name === name) || null;
 export const getSelectedProject = createSelector(getProjects, getSelectedProjectName,
     (projects: Project[], name: string) => name === null ? null : getProjectByName(projects, name)
 );
-export const getUploadToken = (state: AppState) => state.session.project.uploadToken;
 
 export const projectReducer = reducer;

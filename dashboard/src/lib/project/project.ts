@@ -7,6 +7,7 @@ export interface Project
     measurementKeys: string[];
     repository: string;
     commitKey: string;
+    uploadToken: string;
     createdAt: Moment;
 }
 
@@ -18,6 +19,7 @@ export function createProject(project: Partial<Project> = {}): Project
         repository: '',
         measurementKeys: [],
         commitKey: 'environment.commit',
+        uploadToken: '',
         createdAt: moment(),
         ...project
     };

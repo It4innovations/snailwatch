@@ -1,6 +1,7 @@
 import datetime
 from functools import reduce
 
+from eve import ID_FIELD
 from flask import current_app as app, request
 
 from .auth import generate_token, hash_password
@@ -9,6 +10,13 @@ from .db.uploadtoken import UploadTokenRepo
 from .db.user import UserRepo
 from .db.view import ViewRepo
 from .util import get_dict_keys
+
+
+def add_upload_token_to_projects(projects):
+    repo = UploadTokenRepo(app)
+    for project in projects:
+        project['uploadToken'] = repo.find_token_by_project(
+            project[ID_FIELD])['token']
 
 
 def before_insert_user(users):
@@ -35,6 +43,14 @@ def after_insert_project(projects):
 
     for project in projects:
         session_repo.create_token(project, user, generate_token())
+
+
+def after_fetch_project(project):
+    add_upload_token_to_projects([project])
+
+
+def after_fetch_projects(projects):
+    add_upload_token_to_projects(projects['_items'])
 
 
 def before_insert_measurement(measurements):
@@ -88,3 +104,5 @@ def init_hooks(app):
     app.on_insert_projects += before_insert_project
     app.on_inserted_projects += after_insert_project
     app.on_insert_measurements += before_insert_measurement
+    app.on_fetched_item_projects += after_fetch_project
+    app.on_fetched_resource_projects += after_fetch_projects
