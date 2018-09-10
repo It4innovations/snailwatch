@@ -1,4 +1,4 @@
-from app import start
+from app.snailwatch import start
 
 if __name__ == '__main__':
     start()
