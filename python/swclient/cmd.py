@@ -49,13 +49,22 @@ def main():
     elif args.action == "upload-file":
         with open(args.filename) as f:
             data = json.load(f)
-        timestamp = None
-        if "timestamp" in data:
-            timestamp = dateutil.parser.parse(data.timestamp)
 
-        session.upload_measurement(data["benchmark"],
-                                   data["environment"],
-                                   data["result"],
-                                   timestamp)
+        if not isinstance(data, list):
+            data = [data]
+        measurements = []
+
+        for item in data:
+            timestamp = None
+            if "timestamp" in item:
+                timestamp = dateutil.parser.parse(item["timestamp"])
+            measurements.append((
+                item["benchmark"],
+                item["environment"],
+                item["result"],
+                timestamp
+            ))
+
+        session.upload_measurements(measurements)
     else:
         print("Enter a valid subcommand (create-user, upload or upload-file)")
