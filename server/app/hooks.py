@@ -4,6 +4,8 @@ from functools import reduce
 from eve import ID_FIELD
 from flask import current_app as app, request
 
+from .settings import AUTH_FIELD
+from .regressions import check_regressions
 from .auth import generate_token, hash_password
 from .db.project import ProjectRepo
 from .db.uploadtoken import UploadTokenRepo
@@ -19,13 +21,13 @@ def add_upload_token_to_projects(projects):
             project[ID_FIELD])['token']
 
 
-def before_insert_user(users):
+def before_insert_users(users):
     for user in users:
         user['password'] = hash_password(user['password'])
     return users
 
 
-def before_insert_project(projects):
+def before_insert_projects(projects):
     user_repo = UserRepo(app)
     user = user_repo.get_user_from_request(request)
 
@@ -36,7 +38,7 @@ def before_insert_project(projects):
         project['commitKey'] = 'environment.commit'
 
 
-def after_insert_project(projects):
+def after_insert_projects(projects):
     user_repo = UserRepo(app)
     user = user_repo.get_user_from_request(request)
     session_repo = UploadTokenRepo(app)
@@ -53,7 +55,7 @@ def after_fetch_projects(projects):
     add_upload_token_to_projects(projects['_items'])
 
 
-def before_insert_measurement(measurements):
+def before_insert_measurements(measurements):
     session_repo = UploadTokenRepo(app)
     session = session_repo.get_token_from_request(request)
 
@@ -99,10 +101,18 @@ def before_insert_measurement(measurements):
             }], y_axes)
 
 
+def after_insert_measurements(measurements):
+    session_repo = UploadTokenRepo(app)
+    session = session_repo.get_token_from_request(request)
+    user = UserRepo(app).find_user_by_id(session[AUTH_FIELD])
+    check_regressions(user)
+
+
 def init_hooks(app):
-    app.on_insert_users += before_insert_user
-    app.on_insert_projects += before_insert_project
-    app.on_inserted_projects += after_insert_project
-    app.on_insert_measurements += before_insert_measurement
+    app.on_insert_users += before_insert_users
+    app.on_insert_projects += before_insert_projects
+    app.on_inserted_projects += after_insert_projects
+    app.on_insert_measurements += before_insert_measurements
+    app.on_inserted_measurements += after_insert_measurements
     app.on_fetched_item_projects += after_fetch_project
     app.on_fetched_resource_projects += after_fetch_projects

@@ -1,3 +1,4 @@
+from eve import ID_FIELD
 from eve.methods.post import post_internal
 
 from .repository import Repository
@@ -14,6 +15,11 @@ class ViewRepo(Repository):
                 'operator': '==',
                 'value': benchmark
             }]
+        })
+
+    def get_views_for_user(self, user):
+        return self.table.find({
+            'owner': user[ID_FIELD]
         })
 
     def create_internal(self, project_id, name, filters, y_axes):

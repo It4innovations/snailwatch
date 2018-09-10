@@ -1,7 +1,11 @@
+import operator
 from functools import reduce
 
+from flask import current_app as app
+
+from app.db.view import ViewRepo
+from .db.measurement import MeasurementRepo
 from .util import group_by
-import operator
 
 
 class MeasurementGroup(object):
@@ -18,34 +22,30 @@ class Regression(object):
         self.orig_group = orig_group
 
 
-class Analyser(object):
-    def __init__(self, measurement_repo):
-        self.measurement_repo = measurement_repo
+# assumes that trigger values are unique
+def get_regressions(user, view, trigger, max_ratio):
+    observed = view['yAxes']
+    if not observed:
+        return []
 
-    # assumes that trigger values are unique
-    def get_regressions(self, user, view, trigger, max_ratio):
-        observed = view['yAxes']
-        if not observed:
-            return []
+    measurements = MeasurementRepo(app)\
+        .get_measurements(user, view['filters'], 1000)
 
-        measurements = self.measurement_repo\
-            .get_measurements(user, view['filters'], 1000)
+    regressions = []
+    for o in observed:
+        groups = calculate_averages(measurements, trigger, o).items()
+        groups = sorted(groups, key=lambda item: item[1].date, reverse=True)
+        for (i, group) in enumerate(groups[:-1]):
+            current = group[1]
+            older = groups[i + 1][1]
+            avg = older.average
+            if avg == 0:
+                continue
 
-        regressions = []
-        for o in observed:
-            groups = calculate_averages(measurements, trigger, o).items()
-            groups = sorted(groups, key=lambda item: item.date, reverse=True)
-            for (i, group) in enumerate(groups[:-1]):
-                current = group[1]
-                older = groups[i + 1][1]
-                avg = older.average
-                if avg == 0:
-                    continue
+            if current.average / older.average > max_ratio:
+                regressions.append(Regression(older, current))
 
-                if current.average / older.average > max_ratio:
-                    regressions.append(Regression(older, current))
-
-        return regressions
+    return regressions
 
 
 def calculate_averages(measurements, trigger, observed):
@@ -64,7 +64,6 @@ def calculate_averages(measurements, trigger, observed):
             subset,
             min(m['timestamp'] for m in subset)
         )
-
     return averages
 
 
@@ -73,3 +72,12 @@ def get_value(obj, path, transform):
         return transform(reduce(operator.getitem, path.split('.'), obj))
     except (KeyError, ValueError):
         return None
+
+
+def check_regressions(user):
+    view_repo = ViewRepo(app)
+
+    regressions = []
+    for view in view_repo.get_views_for_user(user):
+        regressions += get_regressions(user, view, "environment.commit", 1.10)
+    return regressions
