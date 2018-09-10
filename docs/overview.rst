@@ -5,37 +5,57 @@ dashboard. You upload measured results of your performance tests (benchmarks) us
 in the dashboard.
 
 To start using Snailwatch, you first have to :doc:`deploy it <deploy-overview>`.
+In the :doc:`Getting started <getting-started>` guide you can find a complete
+API workflow that uploads a measurement to Snailwatch.
 
-After it's deployed, you have to create a user account to use it.
-You can do that using :api:`this <#tag/User/paths/~1users/post>` API endpoint.
+To use Snailwatch, first you have to create a user account. With it you can
+create new projects. A project roughly corresponds to a single repository,
+but you may also have multiple repositories belonging to a single project.
 
-With a user account, you can create a project and read it's upload token.
-You can do both either using the dashboard or with the API. A project roughly
-corresponds to a single repository, but you may also have multiple repositories
-belonging to a single project. You can create a project in the dashboard
-or using :api:`this endpoint <#tag/Project/paths/~1projects/post>`.
+With a project, you can start uploading measurements. It's up to you how and when
+you upload performance data to Snailwatch. A typical use case would be to use a
+CI service such as `Travis <https://travis-ci.org/>`_ or
+`GitLab <https://gitlab.com>`_ and run your performance tests after each commit.
+You can then either use our Python :doc:`client <client>` or the :doc:`API <api>` directly
+to upload the results to Snailwatch.
 
-The final component required for uploading measurements is an upload token.
-The token is displayed in the Project section of the dashboard, but you can
-also read it programatically
-:api:`here <#tag/Project/paths/~1get-upload-token~1{project-id}/get>` or by
-fetching a project from the API.
+A measurement represents the result of a benchmark that is run against your code.
+Here's an example measurement that Snailwatch expects:
 
-With the upload token you can start to upload measurements. The recommended way of
-automatically uploading benchmark results is to use a CI service such as `Travis <https://travis-ci.org/>`_ or
-`GitLab <https://gitlab.com>`_.
+.. code-block:: javascript
 
-In a typical usage scenario, after every new commit is pushed to your repository, the CI service will run a script
-that launches your performance tests and uploads the results to Snailwatch. We provide a small Python library to ease the
-measurement uploads. You can see its usage :doc:`here <client>`.
+    {
+        benchmark: "MyFirstBenchmark",
+        environment: {
+            commit: "abcdef",
+            branch: "master",
+            cpus: 8
+        },
+        result: {
+            runtime: {
+                type: "time",
+                value: "13.37"
+            }
+        }
+    }
 
-.. note ::
+The **benchmark** field is used in the dashboard to categorize the measurements.
+Because of that it should not be overly specific, i.e. `BenchmarkA` is a valid name,
+`BenchmarkA-master-8cpus-large_dataset` not so much.
 
-    There are three types of tokens in Snailwatch:
+This kind of data belongs to the **environment**, which describes parameters of
+the benchmarked code and the benchmark itself.
+It can contain e.g. the version of code (branch, commit ID), scaling parameters
+(number of CPUs, threads, nodes) or input data size. It is used to filter the
+measurements in the dashboard.
 
-    1. Admin token - configured when you deploy the app. Required for creating users.
-    2. Session token - one per user login, required for all other API calls except measurement uploads.
-    3. Upload token - one per each project, required for measurement uploads.
+The last (and most important) part of the measurement is the measured **result**.
+It is a dictionary where each key represents a single measured entity.
+Typically you want to measure execution time, but you can also record other data,
+for example memory working set size or average latency. In addition to the value
+of the result, you also have to specify its *type*. It can be one of these values:
+``"time", "size", "integer", "string"``. Right now the type is not used, but it
+may be useful in the future for different visualizations of various result types.
 
-In the :doc:`Getting started <getting-started>` guide you can find a complete API workflow that uploads a measurement
-to Snailwatch.
+You can find the full schema of measurements in the
+:api:`API documentation <#tag/Measurement/paths/~1measurements/post>`.

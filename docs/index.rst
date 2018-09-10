@@ -8,14 +8,13 @@ It consists of a server that stores the measured results and a web dashboard tha
 .. image:: pipeline.png
 
 | To learn more about Snailwatch, read the :doc:`Overview <overview>`.
-| Before you can use Snailwatch, you have to :doc:`deploy it <deploy-overview>`.
-| After it's deployed, you can jump directly :doc:`into the action <getting-started>`.
 
 Complete Snailwatch API documentation can be found :doc:`here <api>`.
 
 
 .. toctree::
     :maxdepth: 2
+    :caption: Usage guide:
 
     overview
     getting-started

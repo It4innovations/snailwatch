@@ -5,6 +5,13 @@ from .common import SnailwatchException
 
 
 class Session:
+    """
+    This class simplifies Snailwatch API usage.
+
+    :param server_url: URL of the Snailwatch server
+    :param token: upload token for uploading measurements, admin token for
+        creating users
+    """
 
     def __init__(self, server_url, token):
         if "://" not in server_url:
@@ -14,15 +21,36 @@ class Session:
 
     def upload_measurement(self, benchmark, environment, result,
                            timestamp=None):
+        """
+        Uploads a measurement to the server.
+
+        :param benchmark: Benchmark name
+        :param environment: Environment of the benchmark
+        :param result: Measured result
+        :param timestamp: Time of the measurement
+        """
         return self._post("measurements",
                           self._serialize_measurement(benchmark, environment,
                                                       result, timestamp))
 
     def upload_measurements(self, measurements):
+        """
+        Uploads multiple measurements at once.
+        Each measurement should be specified as a tuple
+        `(benchmark, environment, result, timestamp)`.
+
+        :param measurements: List of measurements
+        """
         serialized = [self._serialize_measurement(*m) for m in measurements]
         return self._post("measurements", serialized)
 
     def create_user(self, username, password):
+        """
+        Create a user account.
+
+        :param username: Username
+        :param password: Password (minimum 8 characters)
+        """
         payload = {
             'username': username,
             'password': password

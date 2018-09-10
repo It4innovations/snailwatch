@@ -6,32 +6,38 @@ import dateutil.parser
 from .session import Session
 
 
-def parse_args():
+def create_parser():
     parser = argparse.ArgumentParser("swclient")
     parser.add_argument("server_url", help="Address of Snailwatch server")
     subparsers = parser.add_subparsers(title="action", dest="action")
 
-    create_user_parser = subparsers.add_parser('create-user')
+    create_user_parser = subparsers.add_parser("create-user",
+                                               help="Create a user account")
     create_user_parser.add_argument(
-        "token", help="Admin token(required for creating users)")
-    create_user_parser.add_argument("username")
+        "token", help="Admin token")
+    create_user_parser.add_argument("username", help="Username")
 
-    upload_parser = subparsers.add_parser('upload')
+    upload_parser = subparsers.add_parser(
+        "upload", help="Upload a single measurement to Snailwatch")
     upload_parser.add_argument("token", help="Upload token")
-    upload_parser.add_argument("benchmark")
-    upload_parser.add_argument("env")
-    upload_parser.add_argument("result")
-    upload_parser.add_argument("--timestamp")
+    upload_parser.add_argument("benchmark", help="Benchmark name")
+    upload_parser.add_argument("env", help="Environment of the benchmark")
+    upload_parser.add_argument("result", help="Measured result")
+    upload_parser.add_argument("--timestamp",
+                               help="Time of measurement "
+                                    "(YYYY-MM-DDTHH:mm:ss)")
 
-    upload_file_parser = subparsers.add_parser('upload-file')
+    upload_file_parser = subparsers.add_parser(
+        "upload-file", help="Upload measurement(s) from JSON file")
     upload_file_parser.add_argument("token", help="Upload token")
-    upload_file_parser.add_argument("filename")
+    upload_file_parser.add_argument("filename",
+                                    help="Path to measurement file")
 
-    return parser.parse_args()
+    return parser
 
 
 def main():
-    args = parse_args()
+    args = create_parser().parse_args()
 
     session = Session(args.server_url, args.token)
 

@@ -1,12 +1,22 @@
 Getting started
 ===============
-This guide shows reference API calls for logging in, creating a project,
-reading its upload token and uploading your first measurement. This assumes that you
-already have a user account (see the :doc:`Overview <overview>` on how to create one).
+This guide shows reference API calls for creating a user, logging in,
+creating a project and uploading your first measurement.
 
-If you don't want to manually create HTTP requests, you can use our provided Python :doc:`library <client>`.
+1. Create a user account. You can do it with our provided Python
+:doc:`library <client>` or with :api:`this <#tag/User/paths/~1login/post>`
+endpoint:
 
-1. Log in to get a session token :api:`(endpoint) <#tag/User/paths/~1login/post>`:
+.. code-block:: bash
+
+    $ curl -H "Content-Type: application/json" -h "Authorization: <admin-token>" <server>/users \
+      -d '{"username": "user", "password": "12345"}'
+
+.. note::
+    Creating a user requires the Admin token, which is configured when deploying
+    the app.
+
+2. Log in to get a session token :api:`(endpoint) <#tag/User/paths/~1login/post>`:
 
 .. code-block:: bash
 
@@ -14,10 +24,10 @@ If you don't want to manually create HTTP requests, you can use our provided Pyt
       -d '{"username": "user", "password": "12345"}'
     # { "id": "1234", "token": "abcdef" }
 
-This request will return a session token that you have to put into the ``Authorization`` header for subsequent
-requests.
+This request will return a session token that you have to put into the ``Authorization``
+header for the request to create a project.
 
-2. Create a project :api:`(endpoint) <#tag/Project/paths/~1projects/post>`:
+3. Create a project :api:`(endpoint) <#tag/Project/paths/~1projects/post>`:
 
 .. code-block:: bash
 
@@ -28,7 +38,8 @@ requests.
 You will get back a JSON object with the project's upload token, which is needed
 for uploading measurements.
 
-3. Upload measurements :api:`(endpoint) <#tag/Measurement/paths/~1measurements/post>`:
+4. Upload measurements :api:`(endpoint) <#tag/Measurement/paths/~1measurements/post>`.
+You can also use the Python client to upload measurements (recommended):
 
 .. code-block:: bash
 
@@ -45,3 +56,11 @@ for uploading measurements.
             }
         }
     }'
+
+.. note ::
+
+    There are three types of tokens in Snailwatch:
+
+    1. Admin token - configured when you deploy the app. Required for creating users.
+    2. Session token - one per user login, required for all other API calls except measurement uploads.
+    3. Upload token - one per each project, required for measurement uploads.

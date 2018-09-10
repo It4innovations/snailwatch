@@ -16,7 +16,7 @@ Example CLI usage:
     $ python -m swclient <server> upload-file benchmarks.json
 
 The most common way to use this library is from a script that is run by a CI service.
-Your script may look something like this (simplified example that measures each benchmark only once):
+Your script may look something like this (simplified example that measures a single benchmark once):
 
 .. code-block:: python
 
@@ -31,7 +31,7 @@ Your script may look something like this (simplified example that measures each 
         <your-upload-token>
     )
 
-    session.upload_measurement(
+    session.upload_measurements([(
         'BenchmarkA',       # benchmark name
         {                   # environment of the measurement
             'commit': os.environ['CI_COMMIT'],
@@ -44,4 +44,25 @@ Your script may look something like this (simplified example that measures each 
                 'type': 'time'
             }
         }
-    )
+    )])
+
+.. note::
+    When uploading multiple measurements at once, always use the method
+    `upload_measurements` instead of calling `upload_measurement` repeatedly.
+    It saves both bandwidth and CPU usage of the server.
+
+
+CLI documentation
+-----------------
+
+.. argparse::
+   :module: swclient.cmd
+   :func: create_parser
+   :prog: python -m swclient
+
+
+API documentation
+---------------------
+
+.. autoclass:: swclient.session.Session
+    :members:

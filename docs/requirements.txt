@@ -1,1 +1,2 @@
 git+https://github.com/ikalnytskyi/sphinxcontrib-redoc@version/2.0
+sphinx-argparse

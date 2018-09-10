@@ -9,7 +9,7 @@ There is an example Docker compose setup can be found in the root of the
 repository (``docker-compose.yml``). It launches both the server and the dashboard
 along with a MongoDB instance and connects them together.
 
-If you have docker-compose installed, you can launch it like this:
+If you have docker-compose installed, you can launch Snailwatch with this command:
 
 .. code-block:: bash
 
@@ -19,8 +19,8 @@ If you have docker-compose installed, you can launch it like this:
 | `DB_DIR` is a directory where the MongoDB storage will be placed.
 
 The server will be available at port 5000 and the dashboard at port 3000 on
-localhost. You can change these ports by using environment variables
-`SERVER_PORT` and `DASHBOARD_PORT` when launching the compose script.
+localhost. You can change these ports by passing the environment variables
+`SERVER_PORT` and `DASHBOARD_PORT` to the compose script.
 
 For more advanced deployment options and additional configuration, check the
 :doc:`server <server-deploy>` and :doc:`dashboard <dashboard-deploy>` deployment
