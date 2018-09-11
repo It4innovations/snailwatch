@@ -1,7 +1,8 @@
 import React, {PureComponent} from 'react';
 import {
     CartesianGrid,
-    ErrorBar, Label,
+    ErrorBar,
+    Label,
     Legend,
     Line,
     LineChart as ReLineChart,
@@ -18,7 +19,6 @@ import {Tick} from '../tick';
 import {LineLegend} from './line-legend';
 import {LinePoint} from './line-point';
 import {PointTooltip} from './point-tooltip';
-import {chain} from 'ramda';
 
 export interface LineChartDataset
 {
@@ -81,7 +81,7 @@ export class LineChart extends PureComponent<Props>
         let points = createLinePoints(datasets, this.props.dateFormat);
         const dotActive = this.selectMeasurements && !preview;
 
-        const empty = chain(d => d.measurements, this.props.datasets).length === 0;
+        const empty = points.length === 0;
         if (empty)
         {
             points = [{x: '', data: []}];
@@ -119,7 +119,7 @@ export class LineChart extends PureComponent<Props>
                         fill={DATASET_COLORS.getColor(index)}>
                         {(!preview && this.props.showDeviation) &&
                         <ErrorBar
-                            dataKey={`data[${index}].deviation`}
+                            dataKey={`data[${index}].range`}
                             stroke={DATASET_COLORS.getColor(index)}
                             strokeWidth={2} />
                         }

@@ -20,8 +20,7 @@ export class PointTooltip extends PureComponent<TooltipProps & Props>
 {
     render()
     {
-        if (this.props.payload === null ||
-            this.props.payload === undefined ||
+        if (!this.props.payload ||
             this.props.payload.length < 1) return null;
 
         const payloads = this.props.payload as {} as Payload[];
@@ -46,7 +45,7 @@ export class PointTooltip extends PureComponent<TooltipProps & Props>
             name: payload.name,
             fill: payload.fill,
             value: point.value,
-            deviation: { low: point.deviation[0], high: point.deviation[1] },
+            deviation: point.deviation,
             measurements: point.group.measurements
         };
     }

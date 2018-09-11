@@ -1,10 +1,11 @@
-import {MeasurementGroup} from '../chart-utils';
+import {Deviation, MeasurementGroup} from '../chart-utils';
 
 export interface LineData
 {
     group: MeasurementGroup | null;
     value: number | null;
-    deviation: number[] | null;
+    deviation: Deviation | null;
+    range: number[] | null;
 }
 export interface LinePoint
 {

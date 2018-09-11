@@ -2,19 +2,32 @@ import {isMoment, Moment} from 'moment';
 import {all, chain, Dictionary, filter, groupBy, map, max, min, reduce, sort, sum, uniq, values, zipObj} from 'ramda';
 import {GroupMode} from '../../../lib/measurement/group-mode';
 import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement';
+import {standardDeviation} from '../../../util/math';
 import {getValueWithPath} from '../../../util/object';
 import {LinePoint} from './line-chart/line-point';
 
+export interface Deviation
+{
+    /**
+     * Standard deviation.
+     */
+    value: number;
+    /**
+     * Average - minimum.
+     */
+    low: number;
+    /**
+     * Maximum - average.
+     */
+    high: number;
+}
 export interface MeasurementGroup
 {
     items: {
         [key: string]: {
             values: number[];
             average: number;
-            deviation: {
-                low: number;
-                high: number;
-            };
+            deviation: Deviation;
         };
     };
     x: string;
@@ -38,7 +51,6 @@ export function groupMeasurements(measurements: Measurement[], groupMode: GroupM
     measurements = getValidMeasurements(measurements, axisX, axesY);
     const batches = batchMeasurement(measurements, groupMode, axisX, dateFormat);
     const groups: Dictionary<MeasurementGroup> = map(batch => createGroup(batch, axisX, axesY), batches);
-
     return filter(isGroupValid, groups);
 }
 export function linearizeGroups(groups: Dictionary<MeasurementGroup>, dateFormat: string): MeasurementGroup[]
@@ -82,14 +94,16 @@ export function createLinePoints(datasets: Dictionary<MeasurementGroup>[], dateF
                 return {
                     group: d[x],
                     value: item.average,
-                    deviation: [item.deviation.low, item.deviation.high]
+                    deviation: item.deviation,
+                    range: [item.deviation.low, item.deviation.high]
                 };
             }
 
             return {
                 group: null,
                 value: null,
-                deviation: null
+                deviation: null,
+                range: null
             };
         })
     }));
@@ -112,7 +126,9 @@ function createGroup(batch: Measurement[], axisX: string, axisY: string[]): Meas
         const vals: number[] = batch.map(value =>
             Number(getValueWithPath(value, axis)));
         const average = sum(vals) / vals.length;
+        const stddev = standardDeviation(vals);
         const deviation = {
+            value: stddev,
             low: average - (reduce(min, vals[0], vals) as number),
             high: (reduce(max, vals[0], vals) as number) - average
         };

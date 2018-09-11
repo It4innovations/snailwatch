@@ -4,6 +4,7 @@ import {TooltipProps} from 'recharts';
 import styled from 'styled-components';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {compareDate} from '../../../util/date';
+import {Deviation} from './chart-utils';
 
 export interface TooltipDataset
 {
@@ -11,7 +12,7 @@ export interface TooltipDataset
     fill: string;
     measurements: Measurement[];
     value: number;
-    deviation?: { low: number; high: number; };
+    deviation: Deviation;
 }
 
 interface Props
@@ -70,8 +71,8 @@ export class Tooltip extends PureComponent<TooltipProps & Props>
                 <DatasetLabel color={dataset.fill}>{name}</DatasetLabel>
                 {!single &&
                 <DatasetInfo>
-                    <div>Average: {dataset.value}</div>
-                    <div>Deviation: [{dataset.deviation.low}, {dataset.deviation.high}]</div>
+                    <div>Average: {dataset.value.toFixed(2)}</div>
+                    <div>Std. deviation: {dataset.deviation.value.toFixed(2)}</div>
                     <div>Measurements: {dataset.measurements.length}</div>
                     <div>Timestamp: {this.generateTimestamp(dataset.measurements)}</div>
                 </DatasetInfo>
