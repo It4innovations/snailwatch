@@ -19,6 +19,7 @@ import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
+import {CHART_DATE_FORMAT} from '../configuration';
 import {MeasurementList} from '../measurement-list';
 import {LineChart, LineChartDataset} from './line-chart';
 import {LineChartSettings} from './line-chart-settings';
@@ -129,7 +130,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     showDeviation={this.state.settings.showDeviation}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     datasets={datasets}
-                    dateFormat='DD. MM. YYYY' />
+                    dateFormat={CHART_DATE_FORMAT} />
                 <Row>
                     <MeasurementsWrapper>
                         <h4>Selected measurements</h4>

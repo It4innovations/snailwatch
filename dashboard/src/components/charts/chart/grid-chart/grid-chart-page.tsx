@@ -20,6 +20,7 @@ import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
+import {CHART_DATE_FORMAT} from '../configuration';
 import {LineChart} from '../line-chart/line-chart';
 import {GridChartPageFilter} from './grid-chart-page-filter';
 import {GridChartSortMode} from './grid-chart-sort-mode';
@@ -147,7 +148,7 @@ class GridChartPageComponent extends PureComponent<Props, State>
                     connectPoints={true}
                     showPoints={false}
                     showDeviation={false}
-                    dateFormat='DD. MM. YYYY' />
+                    dateFormat={CHART_DATE_FORMAT} />
             </Dataset>
         );
     }

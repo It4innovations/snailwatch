@@ -95,6 +95,7 @@ export class LineChart extends PureComponent<Props>
                 <CartesianGrid stroke='#CCCCCC' />
                 <XAxis
                     dataKey='x'
+                    interval={0}
                     tickLine={!preview}
                     tick={props => !this.props.preview && <Tick {...props} />}
                     padding={{left: padding, right: padding}}>

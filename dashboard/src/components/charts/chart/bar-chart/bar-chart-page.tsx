@@ -19,6 +19,7 @@ import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
+import {CHART_DATE_FORMAT} from '../configuration';
 import {MeasurementList} from '../measurement-list';
 import {BarChart} from './bar-chart';
 
@@ -118,7 +119,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
                       xAxis={this.props.xAxis}
                       yAxes={view.yAxes}
                       groupMode={this.state.groupMode}
-                      dateFormat='DD. MM. YYYY'
+                      dateFormat={CHART_DATE_FORMAT}
                       onMeasurementsSelected={this.changeSelectedMeasurements} />
         );
     }
