@@ -64,7 +64,7 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
                         {this.authRoute(Routes.Profile, Profile)}
                         {this.authRoute(Routes.Overview, ProjectOverview, true)}
                         {this.authRoute(Routes.MeasurementList, MeasurementList, true)}
-                        {this.authRoute(Routes.Views, ChartsPage, true)}
+                        {this.authRoute(Routes.Dashboard, ChartsPage, true)}
                         {this.authRoute(Routes.Projects, Projects)}
                         {this.authRoute(Routes.Logout, this.logoutUser)}
                         {this.getAuthenticatedFallback()}
@@ -81,7 +81,7 @@ class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteC
         {
             if (this.isProjectSelected())
             {
-                return <Redirect to={Navigation.Views} />;
+                return <Redirect to={Navigation.Dashboard} />;
             }
             else return <Redirect to={Navigation.Projects} />;
         }
