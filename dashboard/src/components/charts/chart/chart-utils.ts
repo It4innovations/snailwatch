@@ -31,26 +31,26 @@ export function getValidMeasurements(measurements: Measurement[], axisX: string,
 
 export function groupMeasurements(measurements: Measurement[], groupMode: GroupMode,
                                   axisX: string,
-                                  axesY: string[]):
+                                  axesY: string[],
+                                  dateFormat: string):
     Dictionary<MeasurementGroup>
 {
     measurements = getValidMeasurements(measurements, axisX, axesY);
-    const batches = batchMeasurement(measurements, groupMode, axisX);
+    const batches = batchMeasurement(measurements, groupMode, axisX, dateFormat);
     const groups: Dictionary<MeasurementGroup> = map(batch => createGroup(batch, axisX, axesY), batches);
 
     return filter(isGroupValid, groups);
 }
-export function linearizeGroups(groups: Dictionary<MeasurementGroup>): MeasurementGroup[]
+export function linearizeGroups(groups: Dictionary<MeasurementGroup>, dateFormat: string): MeasurementGroup[]
 {
-    return sort((a, b) => compareXValue(a.x, b.x), values(groups)).map(transformDateAxis);
+    return sort((a, b) => compareXValue(a.x, b.x), values(groups)).map(v => transformDateAxis(v, dateFormat));
 }
 
-export function formatXValue(value: string): string
+export function formatXValue(value: string, dateFormat: string): string
 {
-    const DATE_FORMAT = 'DD. MM. YYYY HH:mm:ss';
     if (isMoment(value))
     {
-        return value.format(DATE_FORMAT);
+        return value.format(dateFormat);
     }
 
     return value;
@@ -70,7 +70,7 @@ export function compareXValue(a: string, b: string): number
     return a.localeCompare(b);
 }
 
-export function createLinePoints(datasets: Dictionary<MeasurementGroup>[]): LinePoint[]
+export function createLinePoints(datasets: Dictionary<MeasurementGroup>[], dateFormat: string): LinePoint[]
 {
     const keys = uniq(chain(d => Object.keys(d), datasets));
     const vals: LinePoint[] = keys.map(x => ({
@@ -96,7 +96,7 @@ export function createLinePoints(datasets: Dictionary<MeasurementGroup>[]): Line
 
     return sort((a, b) => compareXValue(a.x, b.x), vals).map(val => ({
         ...val,
-        x: formatXValue(val.x)
+        x: formatXValue(val.x, dateFormat)
     }));
 }
 
@@ -140,7 +140,9 @@ function isGroupValid(group: MeasurementGroup): boolean
 /**
  * Groups measurements into disjoint sets according to the given group mode.
  */
-function batchMeasurement(measurements: Measurement[], groupMode: GroupMode, axis: string = ''):
+function batchMeasurement(measurements: Measurement[], groupMode: GroupMode, axis = '',
+                          dateFormat: string = 'DD. MM. YYYY HH:mm:ss'
+):
     Dictionary<Measurement[]>
 {
     switch (groupMode)
@@ -148,7 +150,7 @@ function batchMeasurement(measurements: Measurement[], groupMode: GroupMode, axi
         case GroupMode.Benchmark:
             return groupBy(m => m.benchmark, measurements);
         case GroupMode.AxisX:
-            return groupBy(m => formatXValue(getXAxisValue(m, axis)), measurements);
+            return groupBy(m => formatXValue(getXAxisValue(m, axis), dateFormat), measurements);
         case GroupMode.Environment:
             return groupBy(hashMeasurement, measurements);
         default:
@@ -161,13 +163,13 @@ function getXAxisValue(measurement: Measurement, axis: string): string
     return getValueWithPath(measurement, axis);
 }
 
-function transformDateAxis(group: MeasurementGroup): MeasurementGroup
+function transformDateAxis(group: MeasurementGroup, dateFormat: string): MeasurementGroup
 {
     if (group.hasDateAxis)
     {
         return {
             ...group,
-            x: formatXValue(group.x)
+            x: formatXValue(group.x, dateFormat)
         };
     }
 

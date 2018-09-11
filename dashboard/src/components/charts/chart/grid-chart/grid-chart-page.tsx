@@ -146,7 +146,8 @@ class GridChartPageComponent extends PureComponent<Props, State>
                     groupMode={GroupMode.AxisX}
                     connectPoints={true}
                     showPoints={false}
-                    showDeviation={false} />
+                    showDeviation={false}
+                    dateFormat='DD. MM. YYYY' />
             </Dataset>
         );
     }

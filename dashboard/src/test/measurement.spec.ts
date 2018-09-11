@@ -1,6 +1,8 @@
 import {groupMeasurements} from '../components/charts/chart/chart-utils';
 import {GroupMode} from '../lib/measurement/group-mode';
 import {Measurement} from '../lib/measurement/measurement';
+import moment from 'moment';
+
 
 function createMeasurement(measurement: Partial<Measurement>): Measurement
 {
@@ -8,6 +10,8 @@ function createMeasurement(measurement: Partial<Measurement>): Measurement
 }
 
 describe('Measurement grouper', () => {
+    const dateFormat = 'DD. MM. YYYY HH:mm:ss';
+
     it('calculates average correctly', () => {
         const measurements: Measurement[] = [
             createMeasurement({ environment: { a: '1' }, result: {b: { value: '5', type: 'time' }} }),
@@ -15,7 +19,7 @@ describe('Measurement grouper', () => {
         ];
 
         const key = 'result.b.value';
-        const grouped = groupMeasurements(measurements, GroupMode.AxisX, 'environment.a', [key]);
+        const grouped = groupMeasurements(measurements, GroupMode.AxisX, 'environment.a', [key], dateFormat);
         expect(grouped.hasOwnProperty('1')).toEqual(true);
         expect(grouped['1'].x === '1');
         expect(grouped['1'].items[key].average === 10);
@@ -24,7 +28,7 @@ describe('Measurement grouper', () => {
         const measurements: Measurement[] = [];
 
         const key = 'result.b.value';
-        const grouped = groupMeasurements(measurements, GroupMode.AxisX, 'environment.a', [key]);
+        const grouped = groupMeasurements(measurements, GroupMode.AxisX, 'environment.a', [key], dateFormat);
         expect(Object.keys(grouped).length).toEqual(0);
     });
     it('ignores measurements without valid x-axis', () => {
@@ -34,7 +38,7 @@ describe('Measurement grouper', () => {
         ];
 
         const key = 'result.b.value';
-        const grouped = groupMeasurements(measurements, GroupMode.AxisX, 'environment.a', [key]);
+        const grouped = groupMeasurements(measurements, GroupMode.AxisX, 'environment.a', [key], dateFormat);
         expect(Object.keys(grouped['1'].items).length).toEqual(1);
     });
     it('ignores measurements that do not have all y-axes', () => {
@@ -59,11 +63,40 @@ describe('Measurement grouper', () => {
         ];
 
         const keys = ['result.b.value', 'result.c.value'];
-        const grouped = groupMeasurements(measurements, GroupMode.AxisX, 'environment.a', keys);
+        const grouped = groupMeasurements(measurements, GroupMode.AxisX, 'environment.a', keys, dateFormat);
 
         for (const key of keys)
         {
             expect(grouped['1'].items[key].values.length).toEqual(2);
         }
+    });
+    it('groups measurements by date format correctly', () => {
+        const format = 'DD. MM. YYYY';
+        const measurements: Measurement[] = [
+            createMeasurement({
+                timestamp: moment('01. 01. 2018 11:12:13', dateFormat),
+                environment: { a: '1' },
+                result: {
+                    b: { value: '5', type: 'time' },
+                }}),
+            createMeasurement({
+                timestamp: moment('01. 01. 2018 14:10:03', dateFormat),
+                environment: { a: '1' },
+                result: {
+                    b: { value: '5', type: 'time' }
+                }}),
+            createMeasurement({
+                timestamp: moment('02. 01. 2018 11:12:13', dateFormat),
+                environment: { a: '1' },
+                result: {
+                    b: { value: '5', type: 'time' }
+                }}),
+        ];
+
+        const keys = ['result.b.value'];
+        const grouped = groupMeasurements(measurements, GroupMode.AxisX, 'timestamp', keys, format);
+        expect(Object.keys(grouped).length).toEqual(2);
+        expect(grouped['01. 01. 2018'].measurements).toEqual(measurements.slice(0, 2));
+        expect(grouped['02. 01. 2018'].measurements).toEqual(measurements.slice(2));
     });
 });

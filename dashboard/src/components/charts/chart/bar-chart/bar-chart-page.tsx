@@ -118,6 +118,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
                       xAxis={this.props.xAxis}
                       yAxes={view.yAxes}
                       groupMode={this.state.groupMode}
+                      dateFormat='DD. MM. YYYY'
                       onMeasurementsSelected={this.changeSelectedMeasurements} />
         );
     }

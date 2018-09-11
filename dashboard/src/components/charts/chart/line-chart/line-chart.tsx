@@ -39,6 +39,7 @@ interface Props
     showPoints: boolean;
     showDeviation: boolean;
     preview?: boolean;
+    dateFormat: string;
     onMeasurementsSelected?(measurements: Measurement[]): void;
 }
 
@@ -75,9 +76,9 @@ export class LineChart extends PureComponent<Props>
 
         const padding = preview ? 0 : 20;
         const datasets = this.props.datasets.map(v =>
-            groupMeasurements(v.measurements, this.props.groupMode, this.props.xAxis, [v.yAxis])
+            groupMeasurements(v.measurements, this.props.groupMode, this.props.xAxis, [v.yAxis], this.props.dateFormat)
         );
-        let points = createLinePoints(datasets);
+        let points = createLinePoints(datasets, this.props.dateFormat);
         const dotActive = this.selectMeasurements && !preview;
 
         const empty = chain(d => d.measurements, this.props.datasets).length === 0;

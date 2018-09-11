@@ -115,6 +115,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
     {
         const datasets = this.expandDatasets(this.props.selectedViews);
         const view = this.props.views.find(v => v.id === this.state.selectedView);
+
         return (
             <>
                 <h4>Line chart</h4>
@@ -127,7 +128,8 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     showPoints={this.state.settings.showPoints}
                     showDeviation={this.state.settings.showDeviation}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
-                    datasets={datasets} />
+                    datasets={datasets}
+                    dateFormat='DD. MM. YYYY' />
                 <Row>
                     <MeasurementsWrapper>
                         <h4>Selected measurements</h4>

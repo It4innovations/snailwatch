@@ -24,6 +24,7 @@ interface Props
     xAxis: string;
     yAxes: string[];
     groupMode: GroupMode;
+    dateFormat: string;
     onMeasurementsSelected(measurements: Measurement[]): void;
 }
 
@@ -39,8 +40,9 @@ export class BarChart extends PureComponent<Props>
     render()
     {
         const yAxes = this.props.yAxes;
-        const grouped = groupMeasurements(this.props.measurements, this.props.groupMode, this.props.xAxis, yAxes);
-        let data = linearizeGroups(grouped);
+        const grouped = groupMeasurements(this.props.measurements, this.props.groupMode,
+            this.props.xAxis, yAxes, this.props.dateFormat);
+        let data = linearizeGroups(grouped, this.props.dateFormat);
 
         const empty = data.length === 0;
         if (empty)
