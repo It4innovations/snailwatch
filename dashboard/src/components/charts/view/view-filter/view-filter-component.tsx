@@ -1,14 +1,12 @@
 import React, {PureComponent} from 'react';
 import {Input} from 'reactstrap';
 import styled from 'styled-components';
-import {GridChartSortMode} from './grid-chart-sort-mode';
+import {ViewFilter, ViewSortMode} from './view-filter';
 
 interface Props
 {
-    query: string;
-    sortMode: GridChartSortMode;
-    onChangeQuery(query: string): void;
-    onChangeSortMode(sortMode: GridChartSortMode): void;
+    filter: ViewFilter;
+    onChange(filter: ViewFilter): void;
 }
 
 const Wrapper = styled.div`
@@ -21,7 +19,7 @@ const Label = styled.div`
   font-size: 1.25rem;
 `;
 
-export class GridChartPageFilter extends PureComponent<Props>
+export class ViewFilterComponent extends PureComponent<Props>
 {
     render()
     {
@@ -29,7 +27,7 @@ export class GridChartPageFilter extends PureComponent<Props>
             <>
                 <Wrapper>
                     <Label>Filter</Label>
-                    <Input value={this.props.query}
+                    <Input value={this.props.filter.query}
                            onChange={this.changeQuery}
                            bsSize='sm'
                            placeholder='Use regex to filter views' />
@@ -38,10 +36,10 @@ export class GridChartPageFilter extends PureComponent<Props>
                     <Label>Sort by</Label>
                     <Input type='select'
                            bsSize='sm'
-                           value={this.props.sortMode}
+                           value={this.props.filter.sortMode}
                            onChange={this.changeSortMode}>
-                        <option value={GridChartSortMode.CreationTime}>Creation time</option>
-                        <option value={GridChartSortMode.Name}>View name</option>
+                        <option value={ViewSortMode.CreationTime}>Creation time</option>
+                        <option value={ViewSortMode.Name}>View name</option>
                     </Input>
                 </Wrapper>
             </>
@@ -50,10 +48,16 @@ export class GridChartPageFilter extends PureComponent<Props>
 
     changeQuery = (event: React.ChangeEvent<HTMLInputElement>) =>
     {
-        this.props.onChangeQuery(event.currentTarget.value);
+        this.props.onChange({
+            ...this.props.filter,
+            query: event.currentTarget.value
+        });
     }
     changeSortMode = (event: React.ChangeEvent<HTMLInputElement>) =>
     {
-        this.props.onChangeSortMode(Number(event.currentTarget.value) as GridChartSortMode);
+        this.props.onChange({
+            ...this.props.filter,
+            sortMode: Number(event.currentTarget.value) as ViewSortMode
+        });
     }
 }

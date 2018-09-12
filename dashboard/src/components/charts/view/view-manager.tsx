@@ -3,9 +3,11 @@ import MdClose from 'react-icons/lib/md/close';
 import {connect} from 'react-redux';
 import {Button} from 'reactstrap';
 import styled from 'styled-components';
+import {Measurement} from '../../../lib/measurement/measurement';
 import {Project} from '../../../lib/project/project';
 import {View} from '../../../lib/view/view';
 import {AppState} from '../../../state/app/reducers';
+import {getGlobalMeasurements} from '../../../state/session/pages/reducers';
 import {getSelectedProject} from '../../../state/session/project/reducer';
 import {ViewActions} from '../../../state/session/view/actions';
 import {getViews, getViewsState} from '../../../state/session/view/reducer';
@@ -25,6 +27,7 @@ interface StateProps
     views: View[];
     project: Project;
     viewRequest: Request;
+    globalMeasurements: Measurement[];
 }
 interface DispatchProps
 {
@@ -60,7 +63,7 @@ class ViewManagerComponent extends PureComponent<Props>
                 <ViewFilterManager
                     view={this.props.view}
                     onChange={this.props.changeView}
-                    measurements={[]}
+                    measurements={this.props.globalMeasurements}
                     measurementKeys={this.props.project.measurementKeys} />
                 <KeysWrapper>
                     <div>Y axes</div>
@@ -97,7 +100,8 @@ export const ViewManager = connect<StateProps, DispatchProps, OwnProps>((state: 
     project: getSelectedProject(state),
     xAxis: state.session.pages.chartState.xAxis,
     rangeFilter: state.session.pages.global.rangeFilter,
-    viewRequest: getViewsState(state).viewRequest
+    viewRequest: getViewsState(state).viewRequest,
+    globalMeasurements: getGlobalMeasurements(state)
 }), {
     changeView: ViewActions.update.started,
     deleteView: ViewActions.delete.started,

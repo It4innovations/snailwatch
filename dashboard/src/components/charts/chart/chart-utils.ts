@@ -1,8 +1,8 @@
 import {isMoment, Moment} from 'moment';
-import {all, chain, Dictionary, filter, groupBy, map, max, min, reduce, sort, sum, uniq, values, zipObj} from 'ramda';
+import {all, chain, Dictionary, filter, groupBy, map, sort, sum, uniq, values, zipObj} from 'ramda';
 import {GroupMode} from '../../../lib/measurement/group-mode';
 import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement';
-import {standardDeviation} from '../../../util/math';
+import {maximum, minimum, standardDeviation} from '../../../util/math';
 import {getValueWithPath} from '../../../util/object';
 import {LinePoint} from './line-chart/line-point';
 
@@ -24,15 +24,17 @@ export interface Deviation
 export interface MeasurementGroup
 {
     items: {
-        [key: string]: {
-            values: number[];
-            average: number;
-            deviation: Deviation;
-        };
+        [key: string]: AggregatedResult;
     };
     x: string;
     hasDateAxis: boolean;
     measurements: Measurement[];
+}
+export interface AggregatedResult
+{
+    values: number[];
+    average: number;
+    deviation: Deviation;
 }
 
 export function getValidMeasurements(measurements: Measurement[], axisX: string, axesY: string[]): Measurement[]
@@ -42,7 +44,8 @@ export function getValidMeasurements(measurements: Measurement[], axisX: string,
     });
 }
 
-export function groupMeasurements(measurements: Measurement[], groupMode: GroupMode,
+export function groupMeasurements(measurements: Measurement[],
+                                  groupMode: GroupMode,
                                   axisX: string,
                                   axesY: string[],
                                   dateFormat: string):
@@ -129,8 +132,8 @@ function createGroup(batch: Measurement[], axisX: string, axisY: string[]): Meas
         const stddev = standardDeviation(vals);
         const deviation = {
             value: stddev,
-            low: average - (reduce(min, vals[0], vals) as number),
-            high: (reduce(max, vals[0], vals) as number) - average
+            low: average - minimum(vals, vals[0]),
+            high: maximum(vals, vals[0]) - average
         };
 
         return {

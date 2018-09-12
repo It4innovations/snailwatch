@@ -1,10 +1,13 @@
 import {combineEpics} from 'redux-observable';
-import {EMPTY, of} from 'rxjs';
+import {EMPTY, from, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
+import {createEntryRangeFilter} from '../../lib/view/range-filter';
 import {ofAction} from '../../util/redux-observable';
 import {AppEpic} from '../app/app-epic';
 import {initProjectSession, initUserSession} from './actions';
+import {loadGlobalMeasurements} from './pages/actions';
 import {chartEpics} from './pages/chart-page/epics';
+import {pageEpics} from './pages/epics';
 import {gridChartPageEpics} from './pages/grid-chart-page/epics';
 import {measurementsEpics} from './pages/measurements-page/epics';
 import {ProjectActions} from './project/actions';
@@ -34,7 +37,10 @@ const initProjectSessionEpic: AppEpic = (action$, store) =>
             const project = getSelectedProject(store.value);
             if (isUserAuthenticated(store.value) && project !== null)
             {
-                return of(ViewActions.load.started());
+                return from([
+                    ViewActions.load.started(),
+                    loadGlobalMeasurements.started(createEntryRangeFilter(2000))
+                ]);
             }
             return EMPTY;
         })
@@ -47,6 +53,7 @@ export const sessionEpics = combineEpics(
     viewEpics,
     projectEpics,
     chartEpics,
+    pageEpics,
     gridChartPageEpics,
     measurementsEpics
 );

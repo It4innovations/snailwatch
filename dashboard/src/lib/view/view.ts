@@ -1,4 +1,5 @@
 import {default as moment, Moment} from 'moment';
+import {Measurement} from '../measurement/measurement';
 import {Filter} from './filter';
 
 export interface View
@@ -7,7 +8,7 @@ export interface View
     name: string;
     filters: Filter[];
     yAxes: string[];
-    measurements: [];
+    measurements: Measurement[];
     created: Moment;
 }
 

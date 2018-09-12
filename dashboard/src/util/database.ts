@@ -1,4 +1,5 @@
-import {Dictionary, dissoc, max, reduce, uniq, zipObj} from 'ramda';
+import {Dictionary, dissoc, uniq, zipObj} from 'ramda';
+import {maximum} from './math';
 
 export interface Database<T>
 {
@@ -43,5 +44,5 @@ export function getDatabaseItems<T>(database: Database<T>): T[]
 
 export function getNextId<T>(objects: T[], accessor: (t: T) => number = t => Number(t['id'])): string
 {
-    return (reduce(max, 0, objects.map(accessor)) as number + 1).toString();
+    return (maximum(objects, 0, accessor) + 1).toString();
 }

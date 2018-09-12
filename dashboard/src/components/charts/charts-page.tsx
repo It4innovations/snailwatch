@@ -3,6 +3,7 @@ import React, {PureComponent} from 'react';
 import FaBarChart from 'react-icons/lib/fa/bar-chart';
 import FaLineChart from 'react-icons/lib/fa/line-chart';
 import FaTh from 'react-icons/lib/fa/th';
+import FaList from 'react-icons/lib/fa/list';
 import {connect} from 'react-redux';
 import {Route, RouteComponentProps, withRouter} from 'react-router';
 import {push} from 'react-router-redux';
@@ -17,6 +18,7 @@ import {getSelectedProject} from '../../state/session/project/reducer';
 import {BarChartPage} from './chart/bar-chart/bar-chart-page';
 import {GridChartPage} from './chart/grid-chart/grid-chart-page';
 import {LineChartPage} from './chart/line-chart/line-chart-page';
+import {TrendsPage} from './chart/trends/trends-page';
 import style from './charts-page.scss';
 
 interface StateProps
@@ -36,7 +38,8 @@ type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 const chartToTab = {
     '': 0,
     'line': 1,
-    'bar': 2
+    'bar': 2,
+    'trends': 3
 };
 
 class ChartsPageComponent extends PureComponent<Props>
@@ -76,6 +79,11 @@ class ChartsPageComponent extends PureComponent<Props>
                             <FaBarChart size={26} />
                         </div>
                     </Tab>
+                    <Tab>
+                        <div title='Trends'>
+                            <FaList size={26} />
+                        </div>
+                    </Tab>
                 </TabList>
                 <TabPanel>
                     <GridChartPage rangeFilter={this.props.rangeFilter}
@@ -89,6 +97,10 @@ class ChartsPageComponent extends PureComponent<Props>
                 <TabPanel>
                     <BarChartPage rangeFilter={this.props.rangeFilter}
                                   onChangeRangeFilter={this.props.changeRangeFilter} />
+                </TabPanel>
+                <TabPanel>
+                    <TrendsPage rangeFilter={this.props.rangeFilter}
+                                onChangeRangeFilter={this.props.changeRangeFilter} />
                 </TabPanel>
             </Tabs>
         );
@@ -110,7 +122,7 @@ class ChartsPageComponent extends PureComponent<Props>
     }
     moveToLineChart = () =>
     {
-        this.changeTab(1);
+        this.changeTab(chartToTab['line']);
     }
 }
 
