@@ -2,14 +2,16 @@ import chroma from 'chroma-js';
 import * as ellipsize from 'ellipsize';
 import {Moment} from 'moment';
 import React, {PureComponent} from 'react';
-import ReactTable from 'react-table';
+import ReactTable, {RowInfo} from 'react-table';
 import styled from 'styled-components';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
+import {Project} from '../../../../lib/project/project';
 import {aggregateSum, calculateRelPerformance, RelPerformance} from '../../../../lib/trends/trends';
 import {View} from '../../../../lib/view/view';
 import {compareDate} from '../../../../util/date';
 import {compareNumber} from '../../../../util/math';
+import {MeasurementRecord} from '../../../global/measurement-record';
 import {groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
 import {CHART_DATE_FORMAT} from '../configuration';
 
@@ -17,6 +19,7 @@ interface Props
 {
     views: View[];
     measurements: Measurement[];
+    project: Project;
     axisX: string;
     trendWindow: number;
 }
@@ -154,12 +157,49 @@ export class TrendsTable extends PureComponent<Props>
                 defaultPageSize={100}
                 minRows={10}
                 filterable={false}
-                multiSort={false}
                 defaultSorted={[{
                     id: 'name'
-                }]} />
+                }]}
+                SubComponent={this.renderMeasurements}
+            />
         );
     }
+    renderMeasurements = (rowInfo: RowInfo): JSX.Element =>
+    {
+        const group: ViewGroup = rowInfo['original'];
+        return (
+            <ReactTable
+                data={group.view.measurements}
+                getTrProps={this.getMeasurementRowProps}
+                columns={[{
+                    id: 'name',
+                    Header: 'Name',
+                    accessor: (m: Measurement) => m.timestamp.format('DD. MM. YYYY HH:mm:ss')
+                }]}
+                TheadComponent={this.renderMeasurementHeader}
+                SubComponent={this.renderSubcomponent}
+            />
+        );
+    }
+    getMeasurementRowProps = () =>
+    {
+        return {
+            style: {
+                paddingLeft: '20px'
+            }
+        };
+    }
+    renderMeasurementHeader = (): JSX.Element =>
+    {
+        return null;
+    }
+
+    renderSubcomponent = (rowInfo: RowInfo): JSX.Element =>
+    {
+        const measurement: Measurement = rowInfo['original'];
+        return <MeasurementRecord measurement={measurement} project={this.props.project} />;
+    }
+
     textWithTitle = (text: string, title: string) =>
     {
         return () => <div title={title}>{text}</div>;

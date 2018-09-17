@@ -52,6 +52,7 @@ class TrendsPageComponent extends PureComponent<Props, State>
             <TrendsTable
                 views={this.props.views}
                 measurements={this.props.measurements}
+                project={this.props.project}
                 axisX={this.state.xAxis}
                 trendWindow={5} />
         );
