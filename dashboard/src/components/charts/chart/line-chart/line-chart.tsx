@@ -102,7 +102,9 @@ export class LineChart extends PureComponent<Props>
                     {empty && <Label value='No data available' position='center' />}
                 </XAxis>
                 <YAxis padding={{bottom: padding, top: padding}} />
-                {!preview && <Tooltip content={<PointTooltip xAxis={this.props.xAxis} />} />}
+                {!preview && <Tooltip wrapperStyle={{ zIndex: 999 }}
+                                      offset={50}
+                                      content={<PointTooltip xAxis={this.props.xAxis} />} />}
                 {!preview && <Legend content={<LineLegend palette={DATASET_COLORS} />} />}
                 {datasets.map((scatter, index) =>
                     <Line
@@ -113,6 +115,7 @@ export class LineChart extends PureComponent<Props>
                         connectNulls={true}
                         dot={this.props.showPoints}
                         activeDot={dotActive && {
+                            stroke: '#444444',
                             onClick: (data: {payload: LinePoint}) => this.selectMeasurements(data, index)
                         }}
                         stroke={(this.props.connectPoints ? DATASET_COLORS.getColor(index) : '#00000000')}

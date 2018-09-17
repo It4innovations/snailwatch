@@ -67,7 +67,9 @@ export class BarChart extends PureComponent<Props>
                         {empty && <Label value='No data available' position='center' />}
                     </XAxis>
                     <YAxis />
-                    {!empty && <Tooltip content={<BarTooltip xAxis={this.props.xAxis} />} />}
+                    {!empty && <Tooltip wrapperStyle={{ zIndex: 999 }}
+                                        offset={50}
+                                        content={<BarTooltip xAxis={this.props.xAxis} />} />}
                     <Legend align='right' />
                     {yAxes.map((axis, index) =>
                         <Bar key={`${axis}.${index}`}

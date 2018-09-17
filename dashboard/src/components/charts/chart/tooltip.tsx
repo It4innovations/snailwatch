@@ -30,7 +30,7 @@ const TooltipWrapper = styled.div`
 const Dataset = styled.div`
   border-bottom: 1px solid black;
   padding-bottom: 2px;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   :last-child {
     border-bottom: none;
   }
