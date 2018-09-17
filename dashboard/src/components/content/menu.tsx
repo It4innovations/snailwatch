@@ -68,7 +68,6 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
     renderAuthenticatedLinks = (): JSX.Element =>
     {
         const links: JSX.Element[] = [];
-        links.push(this.authLink('Profile', Navigation.Profile));
 
         if (this.props.selectedProject === null)
         {
@@ -95,6 +94,12 @@ class MenuComponent extends PureComponent<Props & RouteComponentProps<void>>
     renderExpandableMenu = (): JSX.Element =>
     {
         const items: JSX.Element[] = [];
+
+        items.push(
+            <DropdownItem key='profile'>
+                <Link to={Navigation.Profile}>Profile</Link>
+            </DropdownItem>
+        );
 
         if (this.props.selectedProject !== null)
         {
