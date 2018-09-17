@@ -7,7 +7,12 @@ import styled from 'styled-components';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {Project} from '../../../../lib/project/project';
-import {aggregateSum, calculateRelPerformance, RelPerformance} from '../../../../lib/trends/trends';
+import {
+    aggregateSum,
+    aggregateSumDescribe,
+    calculateRelPerformance,
+    RelPerformance
+} from '../../../../lib/trends/trends';
 import {View} from '../../../../lib/view/view';
 import {compareDate} from '../../../../util/date';
 import {compareNumber} from '../../../../util/math';
@@ -122,8 +127,9 @@ export class TrendsTable extends PureComponent<Props>
         {
             id: 'value',
             Header: 'Value',
+            Cell: this.renderValue,
             style,
-            accessor: (group: ViewGroup) => group.value
+            accessor: (group: ViewGroup) => group
         },
         {
             ...this.createValueColumn('change'),
@@ -198,6 +204,15 @@ export class TrendsTable extends PureComponent<Props>
     {
         const measurement: Measurement = rowInfo['original'];
         return <MeasurementRecord measurement={measurement} project={this.props.project} />;
+    }
+
+    renderValue = (props: {value: ViewGroup}): JSX.Element =>
+    {
+        return (
+            <div title={aggregateSumDescribe(props.value.view)}>
+                {props.value.value}
+            </div>
+        );
     }
 
     textWithTitle = (text: string, title: string) =>

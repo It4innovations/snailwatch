@@ -8,6 +8,7 @@ import {
 } from '../../components/charts/chart/chart-utils';
 import {compareDate} from '../../util/date';
 import {exponentialAverage} from '../../util/math';
+import {formatKey} from '../../util/measurement';
 import {GroupMode} from '../measurement/group-mode';
 import {Measurement} from '../measurement/measurement';
 import {applyFilters} from '../view/filter';
@@ -24,6 +25,10 @@ export interface RelPerformance
 export function aggregateSum(group: MeasurementGroup): number
 {
     return sum(map((res: AggregatedResult) => res.average, objValues(group.items)));
+}
+export function aggregateSumDescribe(view: View): string
+{
+    return view.yAxes.map(formatKey).join(' + ');
 }
 
 export function calculateRelPerformance(view: View, measurements: Measurement[], axisX: string,
