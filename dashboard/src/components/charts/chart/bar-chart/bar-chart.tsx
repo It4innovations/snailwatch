@@ -1,3 +1,4 @@
+import chroma from 'chroma-js';
 import React, {PureComponent} from 'react';
 import {
     Bar,
@@ -28,12 +29,7 @@ interface Props
     onMeasurementsSelected(measurements: Measurement[]): void;
 }
 
-const BAR_COLORS = new ColorPalette([
-    '#8884D8',
-    '#DD5522',
-    '#118844',
-    '#02EECC'
-]);
+const BAR_COLORS = new ColorPalette(chroma.brewer.Set2);
 
 export class BarChart extends PureComponent<Props>
 {

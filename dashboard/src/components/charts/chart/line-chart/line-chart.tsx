@@ -1,3 +1,4 @@
+import chroma from 'chroma-js';
 import React, {PureComponent} from 'react';
 import {
     CartesianGrid,
@@ -43,12 +44,7 @@ interface Props
     onMeasurementsSelected?(measurements: Measurement[]): void;
 }
 
-const DATASET_COLORS = new ColorPalette([
-    '#DD551D',
-    '#A14CDD',
-    '#DD2288',
-    '#46DDA6'
-]);
+const DATASET_COLORS = new ColorPalette(chroma.brewer.Set1);
 
 export class LineChart extends PureComponent<Props>
 {
