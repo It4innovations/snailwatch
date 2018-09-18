@@ -35,7 +35,6 @@ export function calculateRelPerformance(view: View, measurements: Measurement[],
                                         trendWindow: number, dateFormat: string,
                                         aggregate: (group: MeasurementGroup) => number = aggregateSum): RelPerformance
 {
-    measurements = applyFilters(measurements, view.filters);
     const groups = groupMeasurements(
         measurements, GroupMode.AxisX, axisX,
         view.yAxes, dateFormat

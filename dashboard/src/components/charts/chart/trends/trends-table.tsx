@@ -4,7 +4,6 @@ import {Moment} from 'moment';
 import React, {PureComponent} from 'react';
 import ReactTable, {RowInfo} from 'react-table';
 import styled from 'styled-components';
-import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {Project} from '../../../../lib/project/project';
 import {
@@ -13,11 +12,12 @@ import {
     calculateRelPerformance,
     RelPerformance
 } from '../../../../lib/trends/trends';
+import {applyFilters} from '../../../../lib/view/filter';
 import {View} from '../../../../lib/view/view';
 import {compareDate} from '../../../../util/date';
 import {compareNumber} from '../../../../util/math';
 import {MeasurementRecord} from '../../../global/measurement-record';
-import {groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
+import {MeasurementGroup} from '../chart-utils';
 import {CHART_DATE_FORMAT} from '../configuration';
 
 interface Props
@@ -32,6 +32,7 @@ interface Props
 interface ViewGroup
 {
     view: View;
+    measurements: Measurement[];
     axisX: string;
     value: string;
     relPerformance: RelPerformance;
@@ -87,20 +88,18 @@ export class TrendsTable extends PureComponent<Props>
     render()
     {
         const data: ViewGroup[] = this.props.views.map(view => {
-            const groups = groupMeasurements(
-                view.measurements, GroupMode.AxisX, this.props.axisX,
-                view.yAxes, CHART_DATE_FORMAT
-            );
-            const linearized = linearizeGroups(groups, CHART_DATE_FORMAT);
-
-            const relPerformance = calculateRelPerformance(view, this.props.measurements, this.props.axisX,
+            const measurements = applyFilters(this.props.measurements, view.filters);
+            const relPerformance = calculateRelPerformance(view, measurements, this.props.axisX,
                 this.props.trendWindow, CHART_DATE_FORMAT);
+            const groups = relPerformance.groups;
+
             return {
-                relPerformance: relPerformance,
+                relPerformance,
                 view,
-                groups: linearized,
-                axisX: this.getAxisX(view, linearized),
-                value: this.getValue(view, linearized),
+                measurements,
+                groups,
+                axisX: this.getAxisX(view, groups),
+                value: this.getValue(view, groups),
             };
         });
 
@@ -173,15 +172,21 @@ export class TrendsTable extends PureComponent<Props>
     renderMeasurements = (rowInfo: RowInfo): JSX.Element =>
     {
         const group: ViewGroup = rowInfo['original'];
+        const data = group.measurements;
+        if (data.length === 0) return null;
+
         return (
             <ReactTable
-                data={group.view.measurements}
+                data={data}
                 getTrProps={this.getMeasurementRowProps}
                 columns={[{
                     id: 'name',
                     Header: 'Name',
                     accessor: (m: Measurement) => m.timestamp.format('DD. MM. YYYY HH:mm:ss')
                 }]}
+                defaultPageSize={10}
+                minRows={4}
+                noDataText='No measurements found'
                 TheadComponent={this.renderMeasurementHeader}
                 SubComponent={this.renderSubcomponent}
             />
