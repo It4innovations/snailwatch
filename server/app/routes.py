@@ -72,32 +72,26 @@ def setup_routes(app):
         else:
             api_error(400, "Password missing")
 
-    @app.route('/revoke-upload-token', methods=['POST'])
+    @app.route('/projects/<project_id>/upload-token', methods=['POST'])
     @requires_auth(with_user=True)
-    def revoke_upload_token(user):
-        data = request.get_json()
-        project_id = data.get('project', None)
+    def revoke_upload_token(user, project_id):
+        project_repo = ProjectRepo(app)
+        project = project_repo.find_project_by_id(project_id)
+        if not project:
+            api_error(404, "Project not found")
 
-        if project_id:
-            project_repo = ProjectRepo(app)
-            project = project_repo.find_project_by_id(project_id)
-            if not project:
-                api_error(404, "Project not found")
+        token_repo = UploadTokenRepo(app)
+        old_token = token_repo.find_token_by_project(project_id)
 
-            token_repo = UploadTokenRepo(app)
-            old_token = token_repo.find_token_by_project(project_id)
+        if user['_id'] not in project['writers']:
+            api_error(403, "You can't modify this project")
 
-            if user['_id'] not in project['writers']:
-                api_error(403, "You can't modify this project")
+        new_token = generate_token()
+        token_repo.update_token(old_token, new_token)
 
-            new_token = generate_token()
-            token_repo.update_token(old_token, new_token)
+        return jsonify(new_token)
 
-            return jsonify(new_token)
-        else:
-            api_error(400, "Project id missing")
-
-    @app.route('/get-upload-token/<project_id>', methods=['GET'])
+    @app.route('/projects/<project_id>/upload-token', methods=['GET'])
     @requires_auth(with_user=True)
     def get_upload_token(user, project_id):
         if project_id:
@@ -127,14 +121,13 @@ def setup_routes(app):
 
         return jsonify()
 
-    @app.route('/export-measurements', methods=['POST'])
-    def export_measurements_route():
+    @app.route('/projects/<project_id>/export-measurements', methods=['POST'])
+    def export_measurements_route(project_id):
         data = request.form
-        project_id = data.get('project', None)
         format = data.get('format', None)
         token = data.get('token', None)
 
-        if token and project_id and format in ('json', 'csv'):
+        if token and format in ('json', 'csv'):
             session = get_session_for_token(token)
             if not session:
                 api_error(403)

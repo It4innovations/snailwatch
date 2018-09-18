@@ -133,7 +133,8 @@ class SnailWatchEnv(Env):
 
     def get_upload_token(self, project_id):
         return self._request(
-            "get-upload-token/" + project_id, None, self.user_token)
+            "projects/{}/upload-token".format(project_id), None,
+            self.user_token)
 
     def login(self, username, password):
         payload = {

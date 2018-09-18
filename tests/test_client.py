@@ -143,9 +143,11 @@ def test_export(sw_env):
         'token': sw_env.user_token
     }
 
-    with requests.post("{}/export-measurements".format(sw_env.server_url),
+    with requests.post("{}/projects/{}/export-measurements".format(
+            sw_env.server_url, sw_env.project_id),
                        data=form,
                        stream=True) as r:
+        assert r.status_code == 200
         shutil.copyfileobj(r.raw, stream)
     data = json.loads(stream.getvalue().decode('utf-8'))
 
@@ -181,6 +183,6 @@ def test_clear_measurements(sw_env):
                            .format(sw_env.server_url, sw_env.project_id),
                            headers={
                                'Authorization': s.token
-                           })
+                           }).status_code == 200
 
     assert sw_env.db.measurements.count() == 0

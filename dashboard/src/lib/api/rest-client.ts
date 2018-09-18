@@ -87,7 +87,7 @@ export class RestClient implements SnailClient
 
     regenerateUploadToken(user: User, project: Project): Observable<string>
     {
-        return this.requestManager.request('/revoke-upload-token', 'POST', {
+        return this.requestManager.request(`${this.projectPath(project)}/upload-token`, 'POST', {
             project: project.id
         }, {
             token: user.token
@@ -141,7 +141,7 @@ export class RestClient implements SnailClient
     }
     deleteProjectMeasurements(user: User, project: Project): Observable<boolean>
     {
-        return this.requestManager.request(`/projects/${project.id}/measurements`, 'DELETE', {}, {
+        return this.requestManager.request(`${this.projectPath(project)}/measurements`, 'DELETE', {}, {
             token: user.token
         }).pipe(map(() => true));
     }
@@ -161,5 +161,10 @@ export class RestClient implements SnailClient
     updateView(user: User, view: View): Observable<boolean>
     {
         return this.viewCrud.update(user, view, serializeView(view));
+    }
+
+    private projectPath(project: Project): string
+    {
+        return `/projects/${project.id}`;
     }
 }

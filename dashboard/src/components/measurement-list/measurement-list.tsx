@@ -108,20 +108,25 @@ class MeasurementListComponent extends PureComponent<Props>
                         onFilterChange={this.props.changeRangeFilter} />
                 </Box>
                 <Box title='Export'>
-                    <form method='post' action={`${API_SERVER}/export-measurements`}>
-                        <input type='hidden' name='token' value={this.props.user.token} />
-                        <input type='hidden' name='project' value={this.props.project.id} />
-                        <Input type='select' name='format' bsSize='sm'>
-                            <option value='csv'>CSV</option>
-                            <option value='json'>JSON</option>
-                        </Input>
-                        <ExportButton type='submit' title='Export all measurements'>Export</ExportButton>
-                    </form>
+                    {this.renderExport()}
                 </Box>
                 <Box title='Actions'>
                     <Button onClick={this.deleteAllMeasurements} color='danger'>Delete all data</Button>
                 </Box>
             </div>
+        );
+    }
+    renderExport = (): JSX.Element =>
+    {
+        return (
+            <form method='post' action={`${API_SERVER}/projects/${this.props.project.id}/export-measurements`}>
+                <input type='hidden' name='token' value={this.props.user.token} />
+                <Input type='select' name='format' bsSize='sm'>
+                    <option value='csv'>CSV</option>
+                    <option value='json'>JSON</option>
+                </Input>
+                <ExportButton type='submit' title='Export all measurements'>Export</ExportButton>
+            </form>
         );
     }
     renderMeasurements = (): JSX.Element =>

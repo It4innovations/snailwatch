@@ -40,8 +40,8 @@ Here's an example measurement that Snailwatch expects:
     }
 
 The **benchmark** field is used in the dashboard to categorize the measurements.
-Because of that it should not be overly specific, i.e. `BenchmarkA` is a valid name,
-`BenchmarkA-master-8cpus-large_dataset` not so much.
+Because of that it should not be overly specific, i.e. `BenchmarkA` is a
+reasonable benchmark name, `BenchmarkA-master-8cpus-large_dataset` not so much.
 
 This kind of data belongs to the **environment**, which describes parameters of
 the benchmarked code and the benchmark itself.
