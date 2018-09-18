@@ -11,7 +11,6 @@ import {exponentialAverage} from '../../util/math';
 import {formatKey} from '../../util/measurement';
 import {GroupMode} from '../measurement/group-mode';
 import {Measurement} from '../measurement/measurement';
-import {applyFilters} from '../view/filter';
 import {View} from '../view/view';
 
 export interface RelPerformance
