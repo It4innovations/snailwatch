@@ -139,9 +139,9 @@ export class RestClient implements SnailClient
     {
         return this.measurementCrud.delete(user, measurement);
     }
-    deleteAllMeasurements(user: User): Observable<boolean>
+    deleteProjectMeasurements(user: User, project: Project): Observable<boolean>
     {
-        return this.requestManager.request(`/clear-measurements`, 'POST', {}, {
+        return this.requestManager.request(`/projects/${project.id}/measurements`, 'DELETE', {}, {
             token: user.token
         }).pipe(map(() => true));
     }

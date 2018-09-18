@@ -186,7 +186,8 @@ class MeasurementListComponent extends PureComponent<Props>
     }
     deleteAllMeasurements = () =>
     {
-        const response = confirm('Do you really want to delete all measurements?');
+        const response = confirm('Do you really want to delete all ' +
+        `measurements from ${this.props.project.name}?`);
         if (response)
         {
             this.props.deleteAllMeasurements();

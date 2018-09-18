@@ -90,6 +90,9 @@ class SnailWatchEnv(Env):
     def upload_session(self):
         return Session(self.server_url, self.upload_token)
 
+    def user_session(self):
+        return Session(self.server_url, self.user_token)
+
     def admin_session(self):
         return Session(self.server_url, self.admin_token)
 

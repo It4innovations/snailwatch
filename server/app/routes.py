@@ -116,12 +116,14 @@ def setup_routes(app):
         else:
             api_error(400, "Project id missing")
 
-    # TODO: clear measurements for specific project
-    @app.route('/clear-measurements', methods=['POST'])
-    @requires_auth(with_user=True)
-    def clear_measurements(user):
-        measurement_repo = MeasurementRepo(app)
-        measurement_repo.clear_measurements_for_user(user)
+    @app.route('/projects/<project_id>/measurements', methods=['DELETE'])
+    @requires_auth()
+    def clear_measurements(project_id):
+        project = ProjectRepo(app).find_project_by_id(project_id)
+        if not project:
+            api_error(404)
+
+        MeasurementRepo(app).clear_measurements_for_project(project)
 
         return jsonify()
 

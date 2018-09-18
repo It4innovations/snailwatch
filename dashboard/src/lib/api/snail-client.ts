@@ -21,7 +21,7 @@ export interface SnailClient
                      view: View,
                      range: RangeFilter): Observable<Measurement[]>;
     deleteMeasurement(user: User, measurement: Measurement): Observable<boolean>;
-    deleteAllMeasurements(user: User): Observable<boolean>;
+    deleteProjectMeasurements(user: User, project: Project): Observable<boolean>;
 
     loadViews(user: User, project: Project): Observable<View[]>;
     createView(user: User, project: Project, view: View): Observable<View>;

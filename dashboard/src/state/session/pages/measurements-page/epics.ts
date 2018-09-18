@@ -29,7 +29,7 @@ const deleteAllMeasurements: AppEpic = (action$, store, deps) =>
         ofAction(deleteAllMeasurementsAction.started),
         switchMap((action: Action<{}>) =>
             mapRequestToActions(deleteAllMeasurementsAction, action,
-                deps.client.deleteAllMeasurements(getUser(store.value))).pipe(
+                deps.client.deleteProjectMeasurements(getUser(store.value), getSelectedProject(store.value))).pipe(
                 mergeMap(result => observableFrom([
                     result,
                     loadMeasurementsAction.started({})

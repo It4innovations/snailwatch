@@ -157,3 +157,30 @@ def test_export(sw_env):
         assert d['result'] == measurements[i][2]
         assert datetime.datetime.strptime(
             d['timestamp'], "%d. %m. %Y %H:%M:%S") == measurements[i][3]
+
+
+def test_clear_measurements(sw_env):
+    sw_env.start()
+    s = sw_env.upload_session()
+
+    measurements = [
+        ("test1",
+         {"machine": "tester1"},
+         {"result": {"value": 123, "type": "integer"}},
+         None),
+        ("test2",
+         {"machine": "tester2"},
+         {"result": {"value": 321, "type": "size"}},
+         None)
+    ]
+
+    s.upload_measurements(measurements)
+
+    s = sw_env.user_session()
+    assert requests.delete("{}/projects/{}/measurements"
+                           .format(sw_env.server_url, sw_env.project_id),
+                           headers={
+                               'Authorization': s.token
+                           })
+
+    assert sw_env.db.measurements.count() == 0
