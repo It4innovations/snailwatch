@@ -1,13 +1,16 @@
-
-from swclient.session import Session
-from swclient.common import SnailwatchException
-import pytest
+import datetime
 import json
+import shutil
+from io import BytesIO
+
+import pytest
+import requests
+from swclient.common import SnailwatchException
 
 
 def test_session_create_user(sw_env):
     sw_env.start(do_init=False)
-    s = Session(sw_env.server_url, sw_env.admin_token)
+    s = sw_env.admin_session()
     s.create_user("SnailMaster", "SnailPassword")
     assert sw_env.db.users.find_one(
         {"username": "SnailMaster"})["username"] == "SnailMaster"
@@ -77,7 +80,7 @@ def test_cmd_upload_file_bulk(sw_env, tmpdir):
 
 def test_session_upload(sw_env):
     sw_env.start()
-    s = Session(sw_env.server_url, sw_env.upload_token)
+    s = sw_env.upload_session()
     s.upload_measurement("test1",
                          {"machine": "tester"},
                          {"result": {"value": "123", "type": "integer"}})
@@ -96,7 +99,7 @@ def test_session_upload(sw_env):
 
 def test_session_bulk_upload(sw_env):
     sw_env.start()
-    s = Session(sw_env.server_url, sw_env.upload_token)
+    s = sw_env.upload_session()
 
     measurements = [
         ("test1",
@@ -113,3 +116,44 @@ def test_session_bulk_upload(sw_env):
 
     result = list(sw_env.db.measurements.find({"benchmark": "test1"}))
     assert len(result) == 2
+
+
+def test_export(sw_env):
+    sw_env.start()
+    s = sw_env.upload_session()
+
+    time = datetime.datetime.now().replace(microsecond=0)
+    measurements = [
+        ("test1",
+         {"machine": "tester1"},
+         {"result": {"value": 123, "type": "integer"}},
+         time),
+        ("test2",
+         {"machine": "tester2"},
+         {"result": {"value": 321, "type": "size"}},
+         time)
+    ]
+
+    s.upload_measurements(measurements)
+
+    stream = BytesIO()
+    form = {
+        'format': 'json',
+        'project': sw_env.project_id,
+        'token': sw_env.user_token
+    }
+
+    with requests.post("{}/export-measurements".format(sw_env.server_url),
+                       data=form,
+                       stream=True) as r:
+        shutil.copyfileobj(r.raw, stream)
+    data = json.loads(stream.getvalue().decode('utf-8'))
+
+    assert len(data) == 2
+
+    for i, d in enumerate(data):
+        assert d['benchmark'] == measurements[i][0]
+        assert d['environment'] == measurements[i][1]
+        assert d['result'] == measurements[i][2]
+        assert datetime.datetime.strptime(
+            d['timestamp'], "%d. %m. %Y %H:%M:%S") == measurements[i][3]

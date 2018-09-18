@@ -1,4 +1,3 @@
-import Download from '@axetroy/react-download';
 import React, {PureComponent} from 'react';
 import MdDelete from 'react-icons/lib/md/delete';
 import {connect} from 'react-redux';
@@ -6,9 +5,9 @@ import {RouteComponentProps, withRouter} from 'react-router';
 import json from 'react-syntax-highlighter/languages/hljs/json';
 import {registerLanguage} from 'react-syntax-highlighter/light';
 import ReactTable, {RowInfo} from 'react-table';
-import {Button} from 'reactstrap';
+import {Button, Input} from 'reactstrap';
 import styled from 'styled-components';
-import {exportCSV} from '../../lib/export/export';
+import {API_SERVER} from '../../configuration';
 import {Measurement} from '../../lib/measurement/measurement';
 import {Project} from '../../lib/project/project';
 import {User} from '../../lib/user/user';
@@ -54,12 +53,6 @@ interface DispatchProps
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 
-const initialState = {
-    csvExport: ''
-};
-
-type State = Readonly<typeof initialState>;
-
 const DATETIME_FORMAT = 'DD. MM. YYYY HH:mm:ss';
 
 const Expander = styled.div`
@@ -69,25 +62,18 @@ const Expander = styled.div`
 const DeleteIcon = styled(MdDelete)`
   cursor: pointer;
 `;
+const ExportButton = styled(Button)`
+  margin-top: 5px;
+`;
 
-class MeasurementListComponent extends PureComponent<Props, State>
+class MeasurementListComponent extends PureComponent<Props>
 {
-    readonly state: State = {
-        csvExport: exportCSV([])
-    };
-
     componentDidMount()
     {
         this.props.loadMeasurements();
     }
     componentDidUpdate(oldProps: Props)
     {
-        if (oldProps.measurements !== this.props.measurements)
-        {
-            this.setState((state, props) => ({
-                csvExport: exportCSV(props.measurements)
-            }));
-        }
         if (oldProps.view !== this.props.view ||
             oldProps.rangeFilter !== this.props.rangeFilter)
         {
@@ -122,9 +108,15 @@ class MeasurementListComponent extends PureComponent<Props, State>
                         onFilterChange={this.props.changeRangeFilter} />
                 </Box>
                 <Box title='Export'>
-                    <Download file='measurements.csv' content={this.state.csvExport}>
-                        <Button>CSV</Button>
-                    </Download>
+                    <form method='post' action={`${API_SERVER}/export-measurements`}>
+                        <input type='hidden' name='token' value={this.props.user.token} />
+                        <input type='hidden' name='project' value={this.props.project.id} />
+                        <Input type='select' name='format' bsSize='sm'>
+                            <option value='csv'>CSV</option>
+                            <option value='json'>JSON</option>
+                        </Input>
+                        <ExportButton type='submit' title='Export all measurements'>Export</ExportButton>
+                    </form>
                 </Box>
                 <Box title='Actions'>
                     <Button onClick={this.deleteAllMeasurements} color='danger'>Delete all data</Button>

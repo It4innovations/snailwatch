@@ -9,7 +9,7 @@ import requests
 import shutil
 
 from pymongo import MongoClient
-
+from swclient.session import Session
 
 TEST_DIR = os.path.dirname(__file__)
 ROOT = os.path.dirname(TEST_DIR)
@@ -86,6 +86,12 @@ class SnailWatchEnv(Env):
             "MONGO_PORT": "27017",
             "PORT": str(self.port)})
         return env
+
+    def upload_session(self):
+        return Session(self.server_url, self.upload_token)
+
+    def admin_session(self):
+        return Session(self.server_url, self.admin_token)
 
     def start(self, do_init=True):
         env = self.make_env()

@@ -27,3 +27,12 @@ def serialize_filters(filters):
             }
 
     return where
+
+
+def get_measurement_data(measurement):
+    return {
+        'benchmark': measurement['benchmark'],
+        'timestamp': measurement['timestamp'],
+        'environment': measurement['environment'],
+        'result': measurement['result']
+    }

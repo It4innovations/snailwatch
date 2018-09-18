@@ -66,6 +66,7 @@ def before_insert_measurements(measurements):
         'ip': request.remote_addr
     }
 
+    # Gather measurement keys
     benchmarks = {}
     keys = set()
     for measurement in measurements:
@@ -84,6 +85,7 @@ def before_insert_measurements(measurements):
 
     project_repo.add_measurement_keys(project_id, list(keys))
 
+    # Create default views
     view_repo = ViewRepo(app)
     for (benchmark, measurements) in benchmarks.items():
         views = list(view_repo.get_views_with_benchmark(benchmark))

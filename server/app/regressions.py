@@ -1,11 +1,8 @@
-import operator
-from functools import reduce
-
 from flask import current_app as app
 
-from app.db.view import ViewRepo
 from .db.measurement import MeasurementRepo
-from .util import group_by
+from .db.view import ViewRepo
+from .util import get_value, group_by
 
 
 class MeasurementGroup(object):
@@ -65,13 +62,6 @@ def calculate_averages(measurements, trigger, observed):
             min(m['timestamp'] for m in subset)
         )
     return averages
-
-
-def get_value(obj, path, transform):
-    try:
-        return transform(reduce(operator.getitem, path.split('.'), obj))
-    except (KeyError, ValueError):
-        return None
 
 
 def check_regressions(user):

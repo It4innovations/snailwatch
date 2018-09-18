@@ -4,10 +4,11 @@ from functools import wraps
 
 import werkzeug.security
 from eve.auth import TokenAuth
-from flask import Response, abort, current_app as app, request, jsonify
+from flask import Response, abort, current_app as app, jsonify, request, g
 
 from .db.loginsession import LoginSessionRepo
 from .db.uploadtoken import UploadTokenRepo
+from .errors import api_error
 
 AUTH_TOKEN_EXPIRATION_SEC = 3600 * 24 * 30
 
@@ -56,14 +57,24 @@ def authenticate():
     return resp
 
 
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = get_request_token(request)
-        if not token or not get_session_for_token(token):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
+def requires_auth(with_user=False):
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            token = get_request_token(request)
+            if not token or not get_session_for_token(token):
+                return authenticate()
+            if with_user:
+                from .db.user import UserRepo
+                user = UserRepo(app).get_user_from_request(request)
+                if not user:
+                    return api_error(404, "User not found")
+
+                return f(user, *args, **kwargs)
+            else:
+                return f(*args, **kwargs)
+        return decorated
+    return decorator
 
 
 def hash_password(password):
@@ -97,3 +108,7 @@ def get_session_for_token(token):
 
 def get_session_from_request(request):
     return get_session_for_token(get_request_token(request))
+
+
+def set_auth_value(token):
+    g.auth_value = token

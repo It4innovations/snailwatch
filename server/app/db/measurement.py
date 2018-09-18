@@ -13,7 +13,7 @@ class MeasurementRepo(Repository):
             'owner': user[ID_FIELD]
         })
 
-    def get_measurements(self, user, filters, limit):
+    def get_measurements(self, user, filters=tuple(), limit=0):
         where = serialize_filters(filters)
         where.update({
             'owner': user[ID_FIELD]
