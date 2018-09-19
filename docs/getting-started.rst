@@ -9,7 +9,7 @@ endpoint:
 
 .. code-block:: bash
 
-    $ curl -H "Content-Type: application/json" -h "Authorization: <admin-token>" <server>/users \
+    $ curl -H "Content-Type: application/json" -h "Authorization: <admin-token>" http://localhost:5000/users \
       -d '{"username": "user", "password": "12345"}'
 
 .. note::
@@ -20,7 +20,7 @@ endpoint:
 
 .. code-block:: bash
 
-    $ curl -H "Content-Type: application/json" <server>/login \
+    $ curl -H "Content-Type: application/json" http://localhost:5000/login \
       -d '{"username": "user", "password": "12345"}'
     # { "id": "1234", "token": "abcdef" }
 
@@ -32,7 +32,7 @@ header for the request to create a project.
 .. code-block:: bash
 
     $ curl -H "Content-Type: application/json" -H "Authorization: <session-token>" \
-      <server>/projects -d '{"name": "MyAwesomeProject"}'
+      http://localhost:5000/projects -d '{"name": "MyAwesomeProject"}'
     # { "name": "MyAwesomeProject", ..., "uploadToken": ... }
 
 You will get back a JSON object with the project's upload token, which is needed
@@ -44,7 +44,7 @@ You can also use the Python client to upload measurements (recommended):
 .. code-block:: bash
 
     $ curl -H "Content-Type: application/json" -H "Authorization: <upload-token>" \
-    <server>/measurements -d '{
+    http://localhost:5000/measurements -d '{
         "benchmark": "MyFirstBenchmark",
         "environment": {
             "commit": "abcdef"
