@@ -18,4 +18,10 @@ export interface SelectChartViewParams
     view: View;
     xAxis: string;
 }
-export const selectChartViewAction = actionCreator<SelectChartViewParams>('select');
+export const selectChartViewAction = actionCreator<SelectChartViewParams>('select-view-from-grid-chart');
+
+export interface SelectViewParams
+{
+    viewId: string;
+}
+export const selectViewAction = actionCreator<SelectViewParams>('select-view');

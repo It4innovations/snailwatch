@@ -1,11 +1,12 @@
 import {combineEpics} from 'redux-observable';
-import {forkJoin as observableForkJoin, from, Observable, of} from 'rxjs';
+import {EMPTY, forkJoin as observableForkJoin, from, Observable, of} from 'rxjs';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {ofAction, ofActions} from '../../../../util/redux-observable';
 import {createRequestEpic} from '../../../../util/request';
+import {isBlank} from '../../../../util/string';
 import {AppEpic} from '../../../app/app-epic';
 import {ServiceContainer} from '../../../app/di';
 import {AppState} from '../../../app/reducers';
@@ -18,6 +19,7 @@ import {getRangeFilter} from '../reducers';
 import {
     reloadViewMeasurementsAction,
     selectChartViewAction,
+    selectViewAction,
     setChartXAxisAction,
     updateSelectedViewsAction,
 } from './actions';
@@ -56,7 +58,7 @@ const reloadDatasets = createRequestEpic(reloadViewMeasurementsAction, (action, 
     }));
 });
 
-const handleViewSelect: AppEpic = action$ =>
+const handleViewGridChartSelect: AppEpic = action$ =>
     action$.pipe(
         ofAction(selectChartViewAction),
         switchMap(action =>
@@ -65,6 +67,22 @@ const handleViewSelect: AppEpic = action$ =>
                 updateSelectedViewsAction([action.payload.view.id])
             ])
         )
+    );
+
+const handleViewSelect: AppEpic = (action$, store) =>
+    action$.pipe(
+        ofAction(selectViewAction),
+        switchMap(action => {
+            const project = getSelectedProject(store.value);
+            if (!project) return EMPTY;
+
+            const xAxis = isBlank(project.commitKey) ? 'timestamp' : project.commitKey; // TODO: get from URL?
+
+            return from([
+                setChartXAxisAction(xAxis),
+                updateSelectedViewsAction([action.payload.viewId])
+            ]);
+        })
     );
 
 const reloadDatasetsAfterViewChange: AppEpic = (action$, store) =>
@@ -85,6 +103,7 @@ const reloadDatasetsAfterRangeFilterChange: AppEpic = action$ =>
 
 export const chartEpics = combineEpics(
     handleViewSelect,
+    handleViewGridChartSelect,
     reloadDatasets,
     reloadDatasetsAfterViewChange,
     reloadDatasetsAfterRangeFilterChange

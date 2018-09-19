@@ -5,14 +5,19 @@ import FaLineChart from 'react-icons/lib/fa/line-chart';
 import FaTh from 'react-icons/lib/fa/th';
 import FaList from 'react-icons/lib/fa/list';
 import {connect} from 'react-redux';
-import {Route, RouteComponentProps, withRouter} from 'react-router';
+import {Redirect, Route, RouteComponentProps, Switch, withRouter} from 'react-router';
 import {push} from 'react-router-redux';
 import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 import {RangeFilter} from '../../lib/view/range-filter';
 import {Project} from '../../lib/project/project';
 import {AppState} from '../../state/app/reducers';
+import {Navigation} from '../../state/nav/routes';
 import {changeRangeFilterAction} from '../../state/session/pages/actions';
-import {selectChartViewAction, SelectChartViewParams} from '../../state/session/pages/chart-page/actions';
+import {
+    selectChartViewAction,
+    SelectChartViewParams, selectViewAction,
+    SelectViewParams
+} from '../../state/session/pages/chart-page/actions';
 import {getRangeFilter} from '../../state/session/pages/reducers';
 import {getSelectedProject} from '../../state/session/project/reducer';
 import {BarChartPage} from './chart/bar-chart/bar-chart-page';
@@ -30,6 +35,7 @@ interface DispatchProps
 {
     changeRangeFilter(rangeFilter: RangeFilter): void;
     selectDataset(params: SelectChartViewParams): void;
+    selectView(params: SelectViewParams): void;
     navigate(path: string): void;
 }
 
@@ -47,13 +53,29 @@ class ChartsPageComponent extends PureComponent<Props>
     render()
     {
         const match = this.props.match;
+        const paths = Object.keys(chartToTab);
 
         return (
-            <Route path={match.url + '/:chart?'}
-                   exact={true}
-                   render={(props: RouteComponentProps<{chart: string}>) =>
-                       this.renderBody(props.match.params.chart)} />
+            <Switch>
+                {paths.map(path =>
+                    <Route path={`${match.url}/${path}/:viewId`}
+                           exact={true}
+                           render={(props) => this.selectViewAndRedirect(path, props)} />
+                )}
+                <Route path={`${match.url}/:chart?`}
+                       render={(props: RouteComponentProps<{chart: string}>) =>
+                           this.renderBody(props.match.params.chart)} />
+            </Switch>
         );
+    }
+    selectViewAndRedirect = (path: string, props: RouteComponentProps<{viewId: string}>): JSX.Element =>
+    {
+        const viewId = props.match.params.viewId;
+        this.props.selectView({
+            viewId
+        });
+
+        return <Redirect to={`${Navigation.Dashboard}/${path}`} />;
     }
 
     renderBody = (chart: string): JSX.Element =>
@@ -132,5 +154,6 @@ export const ChartsPage = withRouter(connect<StateProps, DispatchProps>((state: 
 }), {
     changeRangeFilter: changeRangeFilterAction,
     selectDataset: selectChartViewAction,
+    selectView: selectViewAction,
     navigate: (path: string) => push(path)
 })(ChartsPageComponent));
