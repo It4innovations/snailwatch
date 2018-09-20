@@ -9,8 +9,10 @@ import {View} from '../view/view';
 import {CrudHandler} from './crud-handler';
 import {
     MeasurementDAO,
+    parseLoginResponse,
     parseMeasurement,
     parseProject,
+    parseUser,
     parseView,
     ProjectDAO,
     serializeDate,
@@ -29,6 +31,7 @@ import {SnailClient} from './snail-client';
 export class RestClient implements SnailClient
 {
     private readonly requestManager: RequestManager;
+    private readonly userCrud: CrudHandler<User, UserDAO>;
     private readonly projectCrud: CrudHandler<Project, ProjectDAO>;
     private readonly measurementCrud: CrudHandler<Measurement, MeasurementDAO>;
     private readonly viewCrud: CrudHandler<View, ViewDAO>;
@@ -36,43 +39,44 @@ export class RestClient implements SnailClient
     constructor(url: string)
     {
         this.requestManager = new RequestManager(url);
+        this.userCrud = new CrudHandler(this.requestManager, '/users', parseUser);
         this.projectCrud = new CrudHandler(this.requestManager, '/projects', parseProject);
         this.measurementCrud = new CrudHandler(this.requestManager, '/measurements', parseMeasurement);
         this.viewCrud = new CrudHandler(this.requestManager, '/views', parseView);
     }
 
-    loginUser(username: string, password: string): Observable<User>
+    loadUser(token: string, id: string): Observable<User>
+    {
+        return this.userCrud.loadOne(token, id);
+    }
+    loginUser(username: string, password: string): Observable<{ user: User, token: string }>
     {
         return this.requestManager.request('/login', 'POST', {
             username,
             password
-        }).pipe(map((user: UserDAO) => ({
-            id: user.id,
-            token: user.token,
-            username
-        })));
+        }).pipe(map(parseLoginResponse));
     }
-    changePassword(user: User, oldPassword: string, newPassword: string): Observable<boolean>
+    changePassword(token: string, oldPassword: string, newPassword: string): Observable<boolean>
     {
         return this.requestManager.request('/change-password', 'POST', {
             oldPassword,
             newPassword
         }, {
-            token: user.token
+            token
         }).pipe(map(() => true));
     }
 
-    createProject(user: User, project: Project): Observable<Project>
+    createProject(token: string, project: Project): Observable<Project>
     {
-        return this.projectCrud.create(user, serializeProject(project));
+        return this.projectCrud.create(token, serializeProject(project));
     }
-    loadProjects(user: User): Observable<Project[]>
+    loadProjects(token: string): Observable<Project[]>
     {
-        return this.projectCrud.load(user);
+        return this.projectCrud.load(token);
     }
-    loadProject(user: User, name: string): Observable<Project>
+    loadProject(token: string, name: string): Observable<Project>
     {
-        return this.projectCrud.load(user, where({ name })).pipe(map(projects => {
+        return this.projectCrud.load(token, where({ name })).pipe(map(projects => {
             if (projects.length === 0)
             {
                 throw new Error(`Project ${name} not found`);
@@ -80,21 +84,22 @@ export class RestClient implements SnailClient
             return projects[0];
         }));
     }
-    updateProject(user: User, project: Project): Observable<boolean>
+    updateProject(token: string, project: Project): Observable<boolean>
     {
-        return this.projectCrud.update(user, project, serializeProject(project));
+        return this.projectCrud.update(token, project, serializeProject(project));
     }
 
-    regenerateUploadToken(user: User, project: Project): Observable<string>
+    regenerateUploadToken(token: string, project: Project): Observable<string>
     {
         return this.requestManager.request(`${this.projectPath(project)}/upload-token`, 'POST', {
             project: project.id
         }, {
-            token: user.token
-        }).pipe(map((token: string) => token));
+            token
+        });
     }
 
-    loadMeasurements(user: User, project: Project,
+    loadMeasurements(token: string,
+                     project: Project,
                      view: View,
                      range: RangeFilter): Observable<Measurement[]>
     {
@@ -133,34 +138,34 @@ export class RestClient implements SnailClient
             args = {...args, max_results: range.entryCount };
         }
 
-        return this.measurementCrud.load(user, args);
+        return this.measurementCrud.load(token, args);
     }
-    deleteMeasurement(user: User, measurement: Measurement): Observable<boolean>
+    deleteMeasurement(token: string, measurement: Measurement): Observable<boolean>
     {
-        return this.measurementCrud.delete(user, measurement);
+        return this.measurementCrud.delete(token, measurement);
     }
-    deleteProjectMeasurements(user: User, project: Project): Observable<boolean>
+    deleteProjectMeasurements(token: string, project: Project): Observable<boolean>
     {
         return this.requestManager.request(`${this.projectPath(project)}/measurements`, 'DELETE', {}, {
-            token: user.token
+            token
         }).pipe(map(() => true));
     }
 
-    loadViews(user: User, project: Project): Observable<View[]>
+    loadViews(token: string, project: Project): Observable<View[]>
     {
-        return this.viewCrud.load(user, where(withProject(project), sort('_created')));
+        return this.viewCrud.load(token, where(withProject(project), sort('_created')));
     }
-    createView(user: User, project: Project, view: View): Observable<View>
+    createView(token: string, project: Project, view: View): Observable<View>
     {
-        return this.viewCrud.create(user, withProject(project, serializeView(view)));
+        return this.viewCrud.create(token, withProject(project, serializeView(view)));
     }
-    deleteView(user: User, view: View): Observable<boolean>
+    deleteView(token: string, view: View): Observable<boolean>
     {
-        return this.viewCrud.delete(user, view);
+        return this.viewCrud.delete(token, view);
     }
-    updateView(user: User, view: View): Observable<boolean>
+    updateView(token: string, view: View): Observable<boolean>
     {
-        return this.viewCrud.update(user, view, serializeView(view));
+        return this.viewCrud.update(token, view, serializeView(view));
     }
 
     private projectPath(project: Project): string

@@ -11,7 +11,7 @@ import {AppEpic} from '../../../app/app-epic';
 import {ServiceContainer} from '../../../app/di';
 import {AppState} from '../../../app/reducers';
 import {getSelectedProject} from '../../project/reducer';
-import {getUser} from '../../user/reducer';
+import {getToken} from '../../user/reducer';
 import {ViewActions} from '../../view/actions';
 import {getViews} from '../../view/reducer';
 import {changeRangeFilterAction} from '../actions';
@@ -34,7 +34,7 @@ function loadMeasurements(state: AppState, deps: ServiceContainer,
         return of(cache);
     }
 
-    return deps.client.loadMeasurements(getUser(state), getSelectedProject(state), view, rangeFilter).pipe(
+    return deps.client.loadMeasurements(getToken(state), getSelectedProject(state), view, rangeFilter).pipe(
         tap(measurements => {
             insertMeasurementsRecord(view, rangeFilter, measurements);
         })

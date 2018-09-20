@@ -7,24 +7,25 @@ import {View} from '../view/view';
 
 export interface SnailClient
 {
-    loginUser(username: string, password: string): Observable<User>;
-    changePassword(user: User, oldPassword: string, newPassword: string): Observable<boolean>;
+    loadUser(token: string, id: string): Observable<User>;
+    loginUser(username: string, password: string): Observable<{ user: User, token: string }>;
+    changePassword(token: string, oldPassword: string, newPassword: string): Observable<boolean>;
 
-    createProject(user: User, project: Project): Observable<Project>;
-    loadProjects(user: User): Observable<Project[]>;
-    loadProject(user: User, name: string): Observable<Project>;
-    updateProject(user: User, project: Project): Observable<boolean>;
+    createProject(token: string, project: Project): Observable<Project>;
+    loadProjects(token: string): Observable<Project[]>;
+    loadProject(token: string, name: string): Observable<Project>;
+    updateProject(token: string, project: Project): Observable<boolean>;
 
-    regenerateUploadToken(user: User, project: Project): Observable<string>;
+    regenerateUploadToken(token: string, project: Project): Observable<string>;
 
-    loadMeasurements(user: User, project: Project,
+    loadMeasurements(token: string, project: Project,
                      view: View,
                      range: RangeFilter): Observable<Measurement[]>;
-    deleteMeasurement(user: User, measurement: Measurement): Observable<boolean>;
-    deleteProjectMeasurements(user: User, project: Project): Observable<boolean>;
+    deleteMeasurement(token: string, measurement: Measurement): Observable<boolean>;
+    deleteProjectMeasurements(token: string, project: Project): Observable<boolean>;
 
-    loadViews(user: User, project: Project): Observable<View[]>;
-    createView(user: User, project: Project, view: View): Observable<View>;
-    deleteView(user: User, view: View): Observable<boolean>;
-    updateView(user: User, view: View): Observable<boolean>;
+    loadViews(token: string, project: Project): Observable<View[]>;
+    createView(token: string, project: Project, view: View): Observable<View>;
+    deleteView(token: string, view: View): Observable<boolean>;
+    updateView(token: string, view: View): Observable<boolean>;
 }

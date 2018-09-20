@@ -7,7 +7,7 @@ import {createRequestEpic} from '../../../util/request';
 import {AppEpic} from '../../app/app-epic';
 import {initUserSession} from '../actions';
 import {changePassword, loginUser} from './actions';
-import {getUser} from './reducer';
+import {getToken} from './reducer';
 
 const loginUserEpic = createRequestEpic(loginUser, (action, state, deps) =>
     deps.client.loginUser(action.payload.username, action.payload.password).pipe(
@@ -21,7 +21,7 @@ const loginUserEpic = createRequestEpic(loginUser, (action, state, deps) =>
         }))
 );
 const changePasswordEpic = createRequestEpic(changePassword, (action, state, deps) =>
-    deps.client.changePassword(getUser(state), action.payload.oldPassword, action.payload.newPassword)
+    deps.client.changePassword(getToken(state), action.payload.oldPassword, action.payload.newPassword)
 );
 
 const initUserSessionAfterLogin: AppEpic = action$ =>

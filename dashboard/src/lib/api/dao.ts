@@ -1,6 +1,7 @@
 import moment, {Moment} from 'moment';
 import {Measurement} from '../measurement/measurement';
 import {Project} from '../project/project';
+import {User} from '../user/user';
 import {Filter, Operator} from '../view/filter';
 import {View} from '../view/view';
 
@@ -10,10 +11,16 @@ export interface DAO
     _created: string;
 }
 
-export interface UserDAO
+export interface LoginResponseDAO extends DAO
 {
-    id: string;
+    username: string;
+    email: string;
     token: string;
+}
+export interface UserDAO extends DAO
+{
+    username: string;
+    email: string;
 }
 
 export interface ProjectDAO extends DAO
@@ -45,6 +52,27 @@ export interface ViewDAO extends DAO
 export interface ArrayResponse<T>
 {
     _items: T[];
+}
+
+export function parseLoginResponse(user: LoginResponseDAO): { user: User, token: string }
+{
+    return {
+        user: {
+
+            id: user._id,
+            username: user.username,
+            email: user.email,
+        },
+        token: user.token
+    };
+}
+export function parseUser(user: UserDAO): User
+{
+    return {
+        id: user._id,
+        username: user.username,
+        email: user.email
+    };
 }
 
 export function parseFilter(filter: Filter): Filter

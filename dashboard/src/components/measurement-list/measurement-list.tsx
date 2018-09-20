@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import {API_SERVER} from '../../configuration';
 import {Measurement} from '../../lib/measurement/measurement';
 import {Project} from '../../lib/project/project';
-import {User} from '../../lib/user/user';
 import {RangeFilter} from '../../lib/view/range-filter';
 import {View} from '../../lib/view/view';
 import {AppState} from '../../state/app/reducers';
@@ -23,7 +22,7 @@ import {
 import {getMeasurementsPageView} from '../../state/session/pages/measurements-page/reducer';
 import {getRangeFilter} from '../../state/session/pages/reducers';
 import {getSelectedProject} from '../../state/session/project/reducer';
-import {getUser} from '../../state/session/user/reducer';
+import {getToken} from '../../state/session/user/reducer';
 import {Request} from '../../util/request';
 import {RangeFilterSwitcher} from '../charts/range-filter-switcher';
 import {Box} from '../global/box';
@@ -35,7 +34,7 @@ registerLanguage('json', json);
 
 interface StateProps
 {
-    user: User;
+    token: string;
     project: Project;
     measurements: Measurement[];
     measurementRequest: Request;
@@ -120,7 +119,7 @@ class MeasurementListComponent extends PureComponent<Props>
     {
         return (
             <form method='post' action={`${API_SERVER}/projects/${this.props.project.id}/export-measurements`}>
-                <input type='hidden' name='token' value={this.props.user.token} />
+                <input type='hidden' name='token' value={this.props.token} />
                 <Input type='select' name='format' bsSize='sm'>
                     <option value='csv'>CSV</option>
                     <option value='json'>JSON</option>
@@ -201,7 +200,7 @@ class MeasurementListComponent extends PureComponent<Props>
 }
 
 export const MeasurementList = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
-    user: getUser(state),
+    token: getToken(state),
     project: getSelectedProject(state),
     measurements: state.session.pages.measurementsPage.measurements,
     measurementRequest: state.session.pages.measurementsPage.measurementsRequest,

@@ -42,6 +42,10 @@ class ProfileComponent extends PureComponent<Props>
                         <InputGroupAddon addonType='prepend'>Username</InputGroupAddon>
                         <Input id='username' value={this.props.user.username} disabled />
                     </InputGroup>
+                    <InputGroup>
+                        <InputGroupAddon addonType='prepend'>E-mail</InputGroupAddon>
+                        <Input id='email' value={this.props.user.email} disabled />
+                    </InputGroup>
                 </Section>
                 <Section>
                     <h4>Change password</h4>
