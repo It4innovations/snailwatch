@@ -1,10 +1,12 @@
-import {isMoment, Moment} from 'moment';
-import {all, chain, Dictionary, filter, groupBy, map, sort, sum, uniq, values, zipObj} from 'ramda';
+import {isMoment, Moment, default as moment} from 'moment';
+import {all, chain, Dictionary, filter, groupBy, map, reduce, sort, sum, uniq, values, zipObj} from 'ramda';
 import {GroupMode} from '../../../lib/measurement/group-mode';
 import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement';
+import {compareDate} from '../../../util/date';
 import {maximum, minimum, standardDeviation} from '../../../util/math';
 import {getValueWithPath} from '../../../util/object';
 import {LinePoint} from './line-chart/line-point';
+
 
 export interface Deviation
 {
@@ -58,7 +60,10 @@ export function groupMeasurements(measurements: Measurement[],
 }
 export function linearizeGroups(groups: Dictionary<MeasurementGroup>, dateFormat: string): MeasurementGroup[]
 {
-    return sort((a, b) => compareXValue(a.x, b.x), values(groups)).map(v => transformDateAxis(v, dateFormat));
+    return sort(
+        (a, b) => compareDate(getMinTimestamp(a), getMinTimestamp(b)),
+        values(groups)
+    ).map(v => transformDateAxis(v, dateFormat));
 }
 
 export function formatXValue(value: string, dateFormat: string): string
@@ -115,6 +120,11 @@ export function createLinePoints(datasets: Dictionary<MeasurementGroup>[], dateF
         ...val,
         x: formatXValue(val.x, dateFormat)
     }));
+}
+
+function getMinTimestamp(group: MeasurementGroup): Moment
+{
+    return reduce((a, b) => compareDate(a, b) === -1 ? a : b, moment(), group.measurements.map(m => m.timestamp));
 }
 
 function hasAxis(measurement: Measurement, axis: string)
