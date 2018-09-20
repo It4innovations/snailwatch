@@ -119,7 +119,6 @@ class LineChartPageComponent extends PureComponent<Props, State>
 
         return (
             <>
-                <h4>Line chart</h4>
                 <LineChart
                     xAxis={this.props.xAxis}
                     height={400}

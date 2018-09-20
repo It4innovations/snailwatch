@@ -119,7 +119,7 @@ class GridChartPageComponent extends PureComponent<Props, State>
         const views = applyFilter(this.props.views, this.state.viewFilter);
         return (
             <Grid>
-                {views.map(this.renderView)}
+                {views.length === 0 ? 'No data available, upload some measurements.' : views.map(this.renderView)}
             </Grid>
         );
     }

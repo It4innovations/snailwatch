@@ -52,6 +52,9 @@ interface State
 const MeasurementsWrapper = styled.div`
   width: 900px;
 `;
+const ChartsWrapper = styled.div`
+  min-height: 300px;
+`;
 
 class BarChartPageComponent extends PureComponent<Props, State>
 {
@@ -98,8 +101,10 @@ class BarChartPageComponent extends PureComponent<Props, State>
         return (
             <div>
                 {view && <ViewManager view={view} onClose={this.deselectView} />}
-                <h4>Stacked bar chart</h4>
-                {this.props.selectedViews.map(this.renderDataset)}
+                <ChartsWrapper>
+                    {this.props.selectedViews.length === 0 ? 'Select a view' :
+                        this.props.selectedViews.map(this.renderDataset)}
+                </ChartsWrapper>
                 <MeasurementsWrapper>
                     <h4>Selected measurements</h4>
                     <MeasurementList measurements={this.state.selectedMeasurements}
