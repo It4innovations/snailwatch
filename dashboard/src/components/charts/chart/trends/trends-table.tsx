@@ -103,7 +103,7 @@ export class TrendsTable extends PureComponent<Props>
                 axisX: this.getAxisX(view, groups),
                 value: this.getValue(view, groups),
             };
-        });
+        }).filter(g => g.measurements.length !== 0);
 
         const style = {
             textAlign: 'center'
