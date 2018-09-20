@@ -1,7 +1,15 @@
+{% macro formatValue(value) %}
+    {% if value is string %}
+        {{ value }}
+    {% else %}
+        {{ "{:.2f}".format(value) }}
+    {% endif %}
+{% endmacro %}
+
 {% macro regression(group, title, reference=None) %}
     <tr>
         <td style="padding: 4px; border: 1px solid #000000;">{{ title }}</td>
-        <td style="padding: 4px; border: 1px solid #000000;">{{ group.average }}
+        <td style="padding: 4px; border: 1px solid #000000;">{{ formatValue(group.average) }}
             {% if reference %}
                 {% set sign = "+" if group.average >= reference.average else "-" %}
                 <span style="color: #E12A33;">({{ "{}{:.2f} %".format(sign, ((group.average / reference.average) - 1) * 100) }})</span>
@@ -12,7 +20,7 @@
     </tr>
 {% endmacro %}
 
-Snailwatch has detected the following regressions in <b style="font-size: 1.2rem;">{{ project['name'] }}</b>:
+Snailwatch has detected the following regressions in <b>{{ project['name'] }}</b>:
 
 {% for reg in regressions %}
     <div>
