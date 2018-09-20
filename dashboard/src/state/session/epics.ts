@@ -1,5 +1,5 @@
 import {combineEpics} from 'redux-observable';
-import {EMPTY, from, of} from 'rxjs';
+import {EMPTY, from} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 import {createEntryRangeFilter} from '../../lib/view/range-filter';
 import {ofAction} from '../../util/redux-observable';
@@ -13,8 +13,9 @@ import {measurementsEpics} from './pages/measurements-page/epics';
 import {ProjectActions} from './project/actions';
 import {projectEpics} from './project/epics';
 import {getSelectedProject} from './project/reducer';
+import {UserActions} from './user/actions';
 import {userEpics} from './user/epics';
-import {isUserAuthenticated} from './user/reducer';
+import {getUser, isUserAuthenticated} from './user/reducer';
 import {ViewActions} from './view/actions';
 import {viewEpics} from './view/epics';
 
@@ -24,7 +25,10 @@ const initUserSessionEpic: AppEpic = (action$, store) =>
         switchMap(() => {
             if (isUserAuthenticated(store.value))
             {
-                return of(ProjectActions.load.started());
+                return from([
+                    UserActions.loadOne.started(getUser(store.value).id),
+                    ProjectActions.load.started()
+                ]);
             }
             return EMPTY;
         })

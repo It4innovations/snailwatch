@@ -56,18 +56,15 @@ class ProjectsComponent extends PureComponent<Props, State>
         creatingProject: false
     };
 
-    static getDerivedStateFromProps(nextProps: Props, prevState: State): Partial<State>
+    componentDidUpdate(prevProps: Props)
     {
-        if (prevState.creatingProject &&
-            !nextProps.projectRequest.loading &&
-            !nextProps.projectRequest.error)
+        if (this.state.creatingProject &&
+            !this.props.projectRequest.loading &&
+            !this.props.projectRequest.error &&
+            this.props.projects !== prevProps.projects)
         {
-            return {
-                creatingProject: false
-            };
+            this.setState({ creatingProject: false });
         }
-
-        return null;
     }
 
     render()

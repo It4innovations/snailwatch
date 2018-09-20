@@ -43,7 +43,9 @@ def setup_routes(app):
             if check_password(user, password):
                 token = login_repo.create_session(user[ID_FIELD])['token']
                 return jsonify({
-                    "id": str(user[ID_FIELD]),
+                    ID_FIELD: str(user[ID_FIELD]),
+                    "username": user['username'],
+                    "email": user['email'],
                     "token": token
                 })
             else:
@@ -132,7 +134,7 @@ def setup_routes(app):
             if not session:
                 api_error(403)
 
-            set_auth_value(session['token'])
+            set_auth_value(session['user_id'])
             user = UserRepo(app).find_user_by_id(session['user_id'])
             if not user:
                 api_error(403)

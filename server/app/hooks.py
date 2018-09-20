@@ -24,6 +24,8 @@ def add_upload_token_to_projects(projects):
 def before_insert_users(users):
     for user in users:
         user['password'] = hash_password(user['password'])
+        if 'email' not in user:
+            user['email'] = ''
     return users
 
 
@@ -44,7 +46,8 @@ def after_insert_projects(projects):
     session_repo = UploadTokenRepo(app)
 
     for project in projects:
-        session_repo.create_token(project, user, generate_token())
+        project['uploadToken'] = generate_token()
+        session_repo.create_token(project, user, project['uploadToken'])
 
 
 def after_fetch_project(project):

@@ -3,6 +3,7 @@ import uuid
 from functools import wraps
 
 import werkzeug.security
+from eve import ID_FIELD
 from eve.auth import TokenAuth
 from flask import Response, abort, current_app as app, jsonify, request, g
 
@@ -20,10 +21,25 @@ class Authenticator(TokenAuth):
               response=resp)
 
 
-class AdminAuthenticator(Authenticator):
+class UserAuthenticator(Authenticator):
     def check_auth(self, token, allowed_roles, resource, method):
-        from app.settings import ADMIN_AUTH_TOKEN
-        return token == ADMIN_AUTH_TOKEN
+        # new user creation
+        if method == 'POST':
+            from app.settings import ADMIN_AUTH_TOKEN
+            return token == ADMIN_AUTH_TOKEN
+
+        # check login session
+        if not TokenAuthenticator().check_auth(token, allowed_roles,
+                                               resource, method):
+            return False
+
+        session = get_session_for_token(token)
+        user_id = str(session['user_id'])
+        accessed_id = request.view_args[ID_FIELD]
+        if user_id != accessed_id:
+            abort(403, description='You are not allowed to access '
+                                   'this resource')
+        return True
 
 
 class TokenAuthenticator(Authenticator):

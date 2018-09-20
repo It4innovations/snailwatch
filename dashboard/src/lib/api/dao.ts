@@ -74,6 +74,13 @@ export function parseUser(user: UserDAO): User
         email: user.email
     };
 }
+export function serializeUser(user: User): {}
+{
+    return {
+        username: user.username,
+        email: user.email
+    };
+}
 
 export function parseFilter(filter: Filter): Filter
 {

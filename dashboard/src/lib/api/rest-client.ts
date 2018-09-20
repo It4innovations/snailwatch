@@ -17,6 +17,7 @@ import {
     ProjectDAO,
     serializeDate,
     serializeProject,
+    serializeUser,
     serializeView,
     sort,
     UserDAO,
@@ -48,6 +49,10 @@ export class RestClient implements SnailClient
     loadUser(token: string, id: string): Observable<User>
     {
         return this.userCrud.loadOne(token, id);
+    }
+    updateUser(token: string, user: User): Observable<boolean>
+    {
+        return this.userCrud.update(token, user, serializeUser(user));
     }
     loginUser(username: string, password: string): Observable<{ user: User, token: string }>
     {

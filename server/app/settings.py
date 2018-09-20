@@ -1,6 +1,6 @@
 # the app. import has to be there, because Eve/Flask imports this file from
 # a different location
-from app.auth import AdminAuthenticator, MeasurementAuthenticator
+from app.auth import UserAuthenticator, MeasurementAuthenticator
 from app.configuration import get_mongo_db, get_mongo_host, get_mongo_port, \
     get_mongo_username, get_mongo_password, get_admin_token
 
@@ -107,7 +107,8 @@ identifier_regex = '[a-zA-Z_/-][a-zA-Z0-9_/-]*'
 # schemas
 user_schema = {
     'username': string(unique=True),
-    'password': string()
+    'password': string(),
+    'email': string(required=False, empty=True)
 }
 project_schema = {
     'name': {
@@ -175,11 +176,14 @@ view_schema = {
 DOMAIN = {
     'users': {
         'schema': user_schema,
-        'resource_methods': ['GET', 'POST'],
-        'authentication': AdminAuthenticator,
+        'resource_methods': ['POST'],
+        'item_methods': ['GET', 'PATCH'],
+        'auth_field': None,
+        'authentication': UserAuthenticator,
         'datasource': {
             'projection': {
-                'username': 1
+                'username': 1,
+                'email': 1
             }
         }
     },

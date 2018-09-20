@@ -16,20 +16,22 @@ interface OptionalActionsCreator<P, S = {}, E = {}> {
     failed: OptionalCreator<Failure<P, E>>;
 }
 
-export interface CrudActionWrapper<T>
+export interface CrudActionWrapper<T, LoadParams = {}>
 {
-    load: OptionalActionsCreator<{}, T[], {}>;
+    load: OptionalActionsCreator<LoadParams, T[], {}>;
+    loadOne: OptionalActionsCreator<LoadParams, T, {}>;
     create: AsyncActionCreators<T, T, {}>;
     update: AsyncActionCreators<T, boolean, {}>;
     delete: AsyncActionCreators<T, boolean, {}>;
 }
 
-export function createCrudActions<T, LoadParams = {}>(name: string): CrudActionWrapper<T>
+export function createCrudActions<T, LoadParams = {}>(name: string): CrudActionWrapper<T, LoadParams>
 {
     const creator = actionCreatorFactory(name);
 
     return {
-        load: creator.async<LoadParams, T[]>('load') as OptionalActionsCreator<{}, T[], {}>,
+        load: creator.async<LoadParams, T[]>('load') as OptionalActionsCreator<LoadParams, T[], {}>,
+        loadOne: creator.async<LoadParams, T>('load-one') as OptionalActionsCreator<LoadParams, T, {}>,
         create: creator.async<T, T>('create'),
         update: creator.async<T, boolean>('update'),
         delete: creator.async<T, boolean>('delete')
@@ -57,7 +59,7 @@ export function createCrudReducer<State, Item extends {id: string}>(
                 [itemKey]: [...(state[itemKey] as {} as Item[]), action.payload.result]
             } as {} as State)
         ),
-        (r: typeof reducer) => hookRequestActions(reducer,
+        (r: typeof reducer) => hookRequestActions(r,
             crudActions.update,
             requestSelector,
             (state, action) => ({

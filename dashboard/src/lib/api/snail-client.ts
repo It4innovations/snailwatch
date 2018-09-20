@@ -8,6 +8,7 @@ import {View} from '../view/view';
 export interface SnailClient
 {
     loadUser(token: string, id: string): Observable<User>;
+    updateUser(token: string, user: User): Observable<boolean>;
     loginUser(username: string, password: string): Observable<{ user: User, token: string }>;
     changePassword(token: string, oldPassword: string, newPassword: string): Observable<boolean>;
 
