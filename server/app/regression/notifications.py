@@ -6,6 +6,7 @@ from os.path import dirname
 from smtplib import SMTP_SSL
 
 import jinja2
+from flask import current_app as app
 
 from ..configuration import get_email_sender, get_public_url, \
     get_smtp_password, get_smtp_server, get_smtp_user
@@ -50,6 +51,7 @@ def notify_regressions(user, project, regressions):
         clean_key=clean_key,
         public_url=public_url
     )
+    email = user['email']
 
     try:
         send_email(
@@ -57,10 +59,12 @@ def notify_regressions(user, project, regressions):
             get_smtp_user(),
             get_smtp_password(),
             get_email_sender(),
-            user['email'],
+            email,
             'Snailwatch: regression(s) detected in {}'.format(
                 project['name']),
             msg
         )
-    except Exception:
+        app.logger.info('Sent regression e-mail to {}'.format(email))
+    except Exception as e:
+        app.logger.error('Regression e-mail send failed: {}'.format(str(e)))
         traceback.print_exc()

@@ -120,6 +120,8 @@ def after_insert_measurements(measurements):
     project = ProjectRepo(app).find_project_by_id(session['project'])
     check_and_notify_regressions(project, user)
 
+    app.logger.info('{} measurements inserted'.format(len(measurements)))
+
 
 def init_hooks(app):
     app.on_insert_users += before_insert_users
