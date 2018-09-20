@@ -1,5 +1,5 @@
-from app.db.loginsession import LoginSessionRepo
 from .uploadtoken import UploadTokenRepo
+from ..db.loginsession import LoginSessionRepo
 
 
 def init_database(app):

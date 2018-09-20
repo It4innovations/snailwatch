@@ -4,14 +4,21 @@ from functools import reduce
 from eve import ID_FIELD
 from flask import current_app as app, request
 
-from .settings import AUTH_FIELD
-from .regressions import check_regressions
 from .auth import generate_token, hash_password
 from .db.project import ProjectRepo
 from .db.uploadtoken import UploadTokenRepo
 from .db.user import UserRepo
 from .db.view import ViewRepo
+from .regression.notifications import notify_regressions
+from .regression.regressions import check_regressions
+from .settings import AUTH_FIELD
 from .util import get_dict_keys
+
+
+def check_and_notify_regressions(project, user):
+    regressions = check_regressions(user)
+    if regressions:
+        notify_regressions(user, project, regressions)
 
 
 def add_upload_token_to_projects(projects):
@@ -110,7 +117,8 @@ def after_insert_measurements(measurements):
     session_repo = UploadTokenRepo(app)
     session = session_repo.get_token_from_request(request)
     user = UserRepo(app).find_user_by_id(session[AUTH_FIELD])
-    check_regressions(user)
+    project = ProjectRepo(app).find_project_by_id(session['project'])
+    check_and_notify_regressions(project, user)
 
 
 def init_hooks(app):

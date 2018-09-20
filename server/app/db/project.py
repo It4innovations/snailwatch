@@ -12,6 +12,17 @@ class ProjectRepo(Repository):
             ID_FIELD: self.normalize_id(id)
         })
 
+    def increment_upload_id(self, project_id):
+        pid = self.normalize_id(project_id)
+
+        return self.table.find_and_modify({
+            ID_FIELD: pid
+        }, {
+            '$inc': {
+                'uploadId': 1
+            }
+        })['uploadId']
+
     def add_measurement_keys(self, project_id, keys):
         pid = self.normalize_id(project_id)
 

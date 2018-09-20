@@ -75,9 +75,10 @@ def string(unique=False, empty=False, required=True):
     }
 
 
-def number():
+def boolean(required=True):
     return {
-        'type': 'number'
+        'type': 'boolean',
+        'required': required
     }
 
 
@@ -168,7 +169,14 @@ view_schema = {
     'project': ref('projects'),
     'name': string(),
     'filters': list_of(filter_type),
-    'yAxes': list_of(string())
+    'yAxes': list_of(string()),
+    'watches': list_of({
+        'type': 'dict',
+        'schema': {
+            'id': string(),
+            'groupBy': string(empty=True)
+        }
+    })
 }
 
 

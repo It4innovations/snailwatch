@@ -5,7 +5,7 @@ from functools import wraps
 import werkzeug.security
 from eve import ID_FIELD
 from eve.auth import TokenAuth
-from flask import Response, abort, current_app as app, jsonify, request, g
+from flask import Response, abort, current_app as app, g, jsonify, request
 
 from .db.loginsession import LoginSessionRepo
 from .db.uploadtoken import UploadTokenRepo
@@ -25,7 +25,7 @@ class UserAuthenticator(Authenticator):
     def check_auth(self, token, allowed_roles, resource, method):
         # new user creation
         if method == 'POST':
-            from app.settings import ADMIN_AUTH_TOKEN
+            from .settings import ADMIN_AUTH_TOKEN
             return token == ADMIN_AUTH_TOKEN
 
         # check login session

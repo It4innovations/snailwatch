@@ -22,10 +22,20 @@ class ViewRepo(Repository):
             'owner': user[ID_FIELD]
         })
 
+    def get_views_with_watches(self, user):
+        return self.table.find({
+            'owner': user[ID_FIELD],
+            'watches': {
+                '$exists': True,
+                '$ne': []
+            }
+        })
+
     def create_internal(self, project_id, name, filters, y_axes):
         return post_internal('views', {
             'project': project_id,
             'name': name,
             'filters': filters,
-            'yAxes': y_axes
+            'yAxes': y_axes,
+            'watches': []
         })

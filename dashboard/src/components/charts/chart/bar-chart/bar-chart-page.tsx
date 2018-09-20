@@ -49,8 +49,18 @@ interface State
     selectedView: string | null;
 }
 
+const Row = styled.div`
+  display: flex;
+  align-items: stretch;
+`;
 const MeasurementsWrapper = styled.div`
   width: 900px;
+`;
+const ViewManagerWrapper = styled.div`
+  flex-grow: 1;
+  margin-left: 15px;
+  padding-left: 15px;
+  border-left: 1px solid #000000;
 `;
 const ChartsWrapper = styled.div`
   min-height: 300px;
@@ -100,16 +110,20 @@ class BarChartPageComponent extends PureComponent<Props, State>
 
         return (
             <div>
-                {view && <ViewManager view={view} onClose={this.deselectView} />}
                 <ChartsWrapper>
                     {this.props.selectedViews.length === 0 ? 'Select a view' :
                         this.props.selectedViews.map(this.renderDataset)}
                 </ChartsWrapper>
-                <MeasurementsWrapper>
-                    <h4>Selected measurements</h4>
-                    <MeasurementList measurements={this.state.selectedMeasurements}
-                                     project={this.props.project} />
-                </MeasurementsWrapper>
+                <Row>
+                    <MeasurementsWrapper>
+                        <h4>Selected measurements</h4>
+                        <MeasurementList measurements={this.state.selectedMeasurements}
+                                         project={this.props.project} />
+                    </MeasurementsWrapper>
+                    <ViewManagerWrapper>
+                        {view && <ViewManager view={view} onClose={this.deselectView} />}
+                    </ViewManagerWrapper>
+                </Row>
             </div>
         );
     }

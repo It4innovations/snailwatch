@@ -1,9 +1,10 @@
 import moment, {Moment} from 'moment';
+import {Omit} from '../../util/types';
 import {Measurement} from '../measurement/measurement';
 import {Project} from '../project/project';
 import {User} from '../user/user';
 import {Filter, Operator} from '../view/filter';
-import {View} from '../view/view';
+import {View, Watch} from '../view/view';
 
 export interface DAO
 {
@@ -47,6 +48,7 @@ export interface ViewDAO extends DAO
         value: string;
     }[];
     yAxes: string[];
+    watches: Watch[];
 }
 
 export interface ArrayResponse<T>
@@ -74,7 +76,7 @@ export function parseUser(user: UserDAO): User
         email: user.email
     };
 }
-export function serializeUser(user: User): {}
+export function serializeUser(user: User): Omit<UserDAO, keyof DAO>
 {
     return {
         username: user.username,
@@ -103,7 +105,8 @@ export function parseProject(project: ProjectDAO): Project
         createdAt: moment(project._created)
     };
 }
-export function serializeProject(project: Project): Partial<ProjectDAO>
+
+export function serializeProject(project: Project): Omit<ProjectDAO, keyof DAO | 'measurementKeys' | 'uploadToken'>
 {
     return {
         name: project.name,
@@ -130,14 +133,16 @@ export function parseView(view: ViewDAO): View
         name: view.name,
         filters: view.filters.map(parseFilter),
         yAxes: view.yAxes,
+        watches: view.watches,
         measurements: [],
         created: moment(view._created)
     };
 }
-export function serializeView(view: View): Partial<ViewDAO>
+
+export function serializeView(view: View): Omit<ViewDAO, keyof DAO>
 {
-    const { name, filters, yAxes } = view;
-    return { name, filters: filters.map(serializeFilter), yAxes };
+    const { name, filters, yAxes, watches } = view;
+    return { name, filters: filters.map(serializeFilter), yAxes, watches };
 }
 
 export function serializeDate(date: Moment): string

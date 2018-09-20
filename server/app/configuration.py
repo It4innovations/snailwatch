@@ -31,3 +31,23 @@ def get_mongo_username():
 
 def get_mongo_password():
     return get_option('MONGO_PASSWORD')
+
+
+def get_smtp_server():
+    return get_option('SMTP_SERVER', 'localhost')
+
+
+def get_smtp_user():
+    return get_option('SMTP_USER')
+
+
+def get_smtp_password():
+    return get_option('SMTP_PASSWORD')
+
+
+def get_email_sender():
+    return get_option('EMAIL_SENDER', get_smtp_user())
+
+
+def get_public_url():
+    return get_option('PUBLIC_URL')

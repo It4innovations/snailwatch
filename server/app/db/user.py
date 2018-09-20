@@ -1,7 +1,7 @@
 from eve import ID_FIELD
 
-from app.auth import get_session_from_request
 from .repository import Repository
+from ..auth import get_session_from_request
 
 
 class UserRepo(Repository):

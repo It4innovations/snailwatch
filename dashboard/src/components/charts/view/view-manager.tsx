@@ -5,7 +5,7 @@ import {Button} from 'reactstrap';
 import styled from 'styled-components';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {Project} from '../../../lib/project/project';
-import {View} from '../../../lib/view/view';
+import {createWatch, View, Watch} from '../../../lib/view/view';
 import {AppState} from '../../../state/app/reducers';
 import {getGlobalMeasurements} from '../../../state/session/pages/reducers';
 import {getSelectedProject} from '../../../state/session/project/reducer';
@@ -16,6 +16,7 @@ import {ResultKeysMultiselect} from '../../global/keys/result-keys-multiselect';
 import {RequestComponent} from '../../global/request-component';
 import {ViewFilterManager} from './view-filter-manager';
 import {ViewName} from './view-name';
+import {WatchComponent} from './watch-component';
 
 interface OwnProps
 {
@@ -42,11 +43,20 @@ const Row = styled.div`
   align-items: center;
   justify-content: space-between;
 `;
+const Column = styled.div`
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+`;
 const KeysWrapper = styled.div`
   margin: 5px 0;
 `;
 const DeleteButton = styled(Button)`
   width: 100px;
+`;
+const LastRow = styled(Row)`
+  flex-grow: 1;
+  align-items: flex-end;
 `;
 
 class ViewManagerComponent extends PureComponent<Props>
@@ -54,7 +64,7 @@ class ViewManagerComponent extends PureComponent<Props>
     render()
     {
         return (
-            <>
+            <Column>
                 <Row>
                     <ViewName value={this.props.view.name}
                               onChange={this.changeName} />
@@ -72,9 +82,26 @@ class ViewManagerComponent extends PureComponent<Props>
                                            onChange={this.changeYAxes}
                                            requireSelection={true} />
                 </KeysWrapper>
-                <DeleteButton onClick={this.deleteView} color='danger'>Delete</DeleteButton>
-                <RequestComponent request={this.props.viewRequest} />
-            </>
+                <div>
+                    <div>Watches</div>
+                    {this.props.view.watches.map(watch =>
+                        <WatchComponent key={watch.id}
+                                        project={this.props.project}
+                                        watch={watch}
+                                        onChange={this.changeWatch}
+                                        onDelete={this.deleteWatch} />
+                    )}
+                    <Button color='success' onClick={this.addWatch}>Add watch</Button>
+                </div>
+                <LastRow>
+                    <div>
+                        <DeleteButton onClick={this.deleteView} color='danger' title='Delete view'>
+                            Delete
+                        </DeleteButton>
+                    </div>
+                    <RequestComponent request={this.props.viewRequest} />
+                </LastRow>
+            </Column>
         );
     }
 
@@ -84,6 +111,26 @@ class ViewManagerComponent extends PureComponent<Props>
         {
             this.props.changeView({ ...this.props.view, name });
         }
+    }
+    addWatch = () =>
+    {
+        const watch = createWatch({
+            groupBy: this.props.project.commitKey
+        });
+        this.changeWatches([...this.props.view.watches, watch]);
+    }
+    changeWatch = (watch: Watch) =>
+    {
+        this.changeWatches(this.props.view.watches.map(w => w.id === watch.id ? watch : w));
+    }
+    deleteWatch = (watch: Watch) =>
+    {
+        this.changeWatches(this.props.view.watches.filter(w => w.id !== watch.id));
+    }
+
+    changeWatches = (watches: Watch[]) =>
+    {
+        this.props.changeView({ ...this.props.view, watches });
     }
     changeYAxes = (yAxes: string[]) =>
     {

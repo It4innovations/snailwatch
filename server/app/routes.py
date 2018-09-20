@@ -1,3 +1,5 @@
+import datetime
+
 import requests
 from eve import ID_FIELD
 from flask import Response, jsonify, request
@@ -9,8 +11,11 @@ from .db.measurement import MeasurementRepo
 from .db.project import ProjectRepo
 from .db.uploadtoken import UploadTokenRepo
 from .db.user import UserRepo
+from .db.view import ViewRepo
 from .errors import api_error, bad_credentials
 from .export import export_measurements
+from .regression.notifications import notify_regressions
+from .regression.regressions import MeasurementGroup, Regression
 
 
 def setup_routes(app):
@@ -157,3 +162,19 @@ def setup_routes(app):
             )
         else:
             api_error(400, "Bad request")
+
+    @app.route('/send-email', methods=['POST'])
+    @requires_auth(with_user=True)
+    def send_email(user):
+        project_repo = ProjectRepo(app)
+        project = project_repo.find_project_by_id('5b4c7c7ce540cd0614a03d00')
+
+        notify_regressions(user, project, [Regression(
+            list(ViewRepo(app).get_views_for_user(user))[0],
+            'environment.commit',
+            MeasurementGroup('result.time.value', 100, [1, 2, 3], datetime.datetime.now()),
+            MeasurementGroup('result.time.value', 128, [1, 2, 3, 4],
+                             datetime.datetime.now())
+        )])
+
+        return jsonify()

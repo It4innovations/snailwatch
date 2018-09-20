@@ -16,7 +16,7 @@ class LoginSessionRepo(Repository):
         })
 
     def create_session(self, user_id):
-        from app.auth import generate_token
+        from ..auth import generate_token
 
         token = generate_token()
         session = {
