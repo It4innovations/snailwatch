@@ -39,8 +39,10 @@ interface ViewGroup
 }
 
 const ColorCell = styled.div<{ color: string; }>`
-  background-color: ${props => props.color}
+  background-color: ${props => props.color};
+  color: #FFFFFF;
   padding: 7px 5px;
+  text-shadow: 1px 1px 1px #000000;
 `;
 
 function ChangeCell(selector: (view: ViewGroup) => number, window: number): React.SFC<{ value: ViewGroup }>
@@ -134,6 +136,7 @@ export class TrendsTable extends PureComponent<Props>
             ...this.createValueColumn('change'),
             accessor: (group: ViewGroup) => group,
             Header: this.textWithTitle('Change', 'Change relative to last group'),
+            maxWidth: 160,
             Cell: ChangeCell(g => g.relPerformance.change, 2),
             sortMethod: (a: ViewGroup, b: ViewGroup) => compareNumber(a.relPerformance.change, b.relPerformance.change)
         },
@@ -142,6 +145,7 @@ export class TrendsTable extends PureComponent<Props>
             accessor: (group: ViewGroup) => group,
             Header: this.textWithTitle('Trend',
                 `Change relative to the exponential average of the last ${this.props.trendWindow} groups`),
+            maxWidth: 160,
             Cell: ChangeCell(g => g.relPerformance.trend, this.props.trendWindow),
             sortMethod: (a: ViewGroup, b: ViewGroup) => compareNumber(a.relPerformance.trend, b.relPerformance.trend)
         },
