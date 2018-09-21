@@ -41,14 +41,11 @@ function loadMeasurements(state: AppState, deps: ServiceContainer,
     );
 }
 
-const reloadDatasets = createRequestEpic(reloadViewMeasurementsAction, (action, state, deps) => {
+const reloadViews = createRequestEpic(reloadViewMeasurementsAction, (action, state, deps) => {
     const {rangeFilter} = action.payload;
-    const selectedViews = state.session.pages.chartState.selectedViews;
     const views = getViews(state);
 
     return observableForkJoin(views.map(view => {
-        if (selectedViews.indexOf(view.id) === -1) return of(view);
-
         return loadMeasurements(state, deps, view, rangeFilter).pipe(
             map(measurements => ({
                 ...view,
@@ -104,7 +101,7 @@ const reloadDatasetsAfterRangeFilterChange: AppEpic = action$ =>
 export const chartEpics = combineEpics(
     handleViewSelect,
     handleViewGridChartSelect,
-    reloadDatasets,
+    reloadViews,
     reloadDatasetsAfterViewChange,
     reloadDatasetsAfterRangeFilterChange
 );

@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {Project} from '../../../../lib/project/project';
-import {applyFilters} from '../../../../lib/view/filter';
 import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
@@ -13,11 +12,11 @@ import {SelectChartViewParams} from '../../../../state/session/pages/chart-page/
 import {loadGridChartMeasurements} from '../../../../state/session/pages/grid-chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
+import {RangeHelp, XAxisHelp} from '../../../../strings';
 import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
-import {RangeHelp, XAxisHelp} from '../../../../strings';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {applyFilter, ViewFilter, ViewSortMode} from '../../view/view-filter/view-filter';
 import {ViewFilterComponent} from '../../view/view-filter/view-filter-component';
@@ -126,7 +125,7 @@ class GridChartPageComponent extends PureComponent<Props, State>
     }
     renderView = (view: View): JSX.Element =>
     {
-        const measurements = applyFilters(this.props.measurements, view.filters);
+        const measurements = view.measurements;
         const datasets = view.yAxes.map(yAxis => ({
             name: `${view.name} (${formatKey(yAxis)})`,
             yAxis,

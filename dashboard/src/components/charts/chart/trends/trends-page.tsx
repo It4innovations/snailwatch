@@ -12,7 +12,8 @@ import {getViews} from '../../../../state/session/view/reducer';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
-import {TrendGroupHelp} from '../../../../strings';
+import {RangeHelp, TrendGroupHelp} from '../../../../strings';
+import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {TrendsTable} from './trends-table';
 
 interface OwnProps
@@ -62,6 +63,11 @@ class TrendsPageComponent extends PureComponent<Props, State>
     {
         return (
             <>
+                <Box title='Range' help={RangeHelp}>
+                    <RangeFilterSwitcher
+                        rangeFilter={this.props.rangeFilter}
+                        onFilterChange={this.props.onChangeRangeFilter} />
+                </Box>
                 <Box title='Group by' help={TrendGroupHelp}>
                     <MeasurementKeys value={this.state.xAxis}
                                      project={this.props.project}

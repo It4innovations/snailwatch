@@ -43,7 +43,7 @@ const initProjectSessionEpic: AppEpic = (action$, store) =>
             {
                 return from([
                     ViewActions.load.started(),
-                    loadGlobalMeasurements.started(createEntryRangeFilter(2000))
+                    loadGlobalMeasurements.started(createEntryRangeFilter(1000))
                 ]);
             }
             return EMPTY;

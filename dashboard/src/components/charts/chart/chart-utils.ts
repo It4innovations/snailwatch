@@ -53,8 +53,8 @@ export function groupMeasurements(measurements: Measurement[],
                                   dateFormat: string):
     Dictionary<MeasurementGroup>
 {
-    measurements = getValidMeasurements(measurements, axisX, axesY);
-    const batches = batchMeasurement(measurements, groupMode, axisX, dateFormat);
+    const valid = getValidMeasurements(measurements, axisX, axesY);
+    const batches = batchMeasurement(valid, groupMode, axisX, dateFormat);
     const groups: Dictionary<MeasurementGroup> = map(batch => createGroup(batch, axisX, axesY), batches);
     return filter(isGroupValid, groups);
 }

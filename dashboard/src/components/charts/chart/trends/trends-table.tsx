@@ -12,7 +12,6 @@ import {
     calculateRelPerformance,
     RelPerformance
 } from '../../../../lib/trends/trends';
-import {applyFilters} from '../../../../lib/view/filter';
 import {View} from '../../../../lib/view/view';
 import {compareDate} from '../../../../util/date';
 import {compareNumber} from '../../../../util/math';
@@ -99,7 +98,7 @@ export class TrendsTable extends PureComponent<Props>
     render()
     {
         const data: ViewGroup[] = this.props.views.map(view => {
-            const measurements = applyFilters(this.props.measurements, view.filters);
+            const measurements = view.measurements;
             const relPerformance = calculateRelPerformance(view, measurements, this.props.axisX,
                 this.props.trendWindow, CHART_DATE_FORMAT);
             const groups = relPerformance.groups;

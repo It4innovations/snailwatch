@@ -69,7 +69,7 @@ const ChartsWrapper = styled.div`
 
 class BarChartPageComponent extends PureComponent<Props, State>
 {
-    state: State = {
+    readonly state: State = {
         groupMode: GroupMode.AxisX,
         selectedMeasurements: [],
         selectedView: null
