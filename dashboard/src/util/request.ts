@@ -21,13 +21,14 @@ export interface Request
     finishedAt: Moment;
 }
 
-export function createRequest(): Request
+export function createRequest(request: Partial<Request> = {}): Request
 {
     return {
         loading: false,
         error: null,
         completed: false,
-        finishedAt: null
+        finishedAt: null,
+        ...request
     };
 }
 export function requestStarted(): Request

@@ -1,8 +1,10 @@
+import moment from 'moment';
 import {createStore} from 'redux';
 import {ActionsObservable, StateObservable} from 'redux-observable';
 import {of as observableOf, throwError as observableThrowError} from 'rxjs';
 import actionCreatorFactory, {Action, Failure, Success} from 'typescript-fsa';
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
+import {selectActiveRequest} from '../components/global/request/multi-request-component';
 import {AppState} from '../state/app/reducers';
 import {createRequest, createRequestEpic, hookRequestActions, mapRequestToActions} from '../util/request';
 
@@ -115,5 +117,43 @@ describe('hookRequestActions', () => {
         expect(store.getState().request.completed).toEqual(true);
         expect(store.getState().request.loading).toEqual(false);
         expect(store.getState().request.error).toEqual(null);
+    });
+});
+
+describe('selectActiveRequest', () => {
+    it('Returns null for empty request array', () => {
+        expect(selectActiveRequest([])).toBe(null);
+    });
+    it('Chooses the latest completed request if there\'s no loading', () => {
+        const requests = [
+            createRequest({
+                completed: true,
+                finishedAt: moment().subtract(2, 'minute')
+            }),
+            createRequest(),
+            createRequest({
+                completed: true,
+                finishedAt: moment().subtract(1, 'minute')
+            })
+        ];
+
+        expect(selectActiveRequest(requests)).toEqual(requests[2]);
+    });
+    it('Chooses the first loading request', () => {
+        const requests = [
+            createRequest({
+                completed: true,
+                finishedAt: moment().subtract(2, 'minute')
+            }),
+            createRequest({
+                loading: true
+            }),
+            createRequest({
+                completed: true,
+                finishedAt: moment().subtract(1, 'minute')
+            })
+        ];
+
+        expect(selectActiveRequest(requests)).toEqual(requests[1]);
     });
 });
