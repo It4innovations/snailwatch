@@ -29,8 +29,8 @@ def get_regressions(user, view, max_ratio):
     if not view['watches']:
         return []
 
-    measurements = list(MeasurementRepo(app)\
-        .get_measurements(user, view['filters'], 1000))
+    measurements = list(MeasurementRepo(app)
+                        .get_measurements(user, view['filters'], 1000))
 
     regressions = []
     for watch in view['watches']:
