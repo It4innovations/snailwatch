@@ -17,6 +17,7 @@ import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
+import {RangeHelp, XAxisHelp} from '../../../../strings';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {applyFilter, ViewFilter, ViewSortMode} from '../../view/view-filter/view-filter';
 import {ViewFilterComponent} from '../../view/view-filter/view-filter-component';
@@ -97,12 +98,12 @@ class GridChartPageComponent extends PureComponent<Props, State>
     {
         return (
             <>
-                <Box title='Range'>
+                <Box title='Range' help={RangeHelp}>
                     <RangeFilterSwitcher
                         rangeFilter={this.props.rangeFilter}
                         onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
-                <Box title='X axis'>
+                <Box title='X axis' help={XAxisHelp}>
                     <MeasurementKeys project={this.props.project}
                                      value={this.state.xAxis}
                                      onChange={this.changeXAxis} />

@@ -16,6 +16,7 @@ import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {RequestView} from '../../../global/request-view';
 import {TwoColumnPage} from '../../../global/two-column-page';
+import {RangeHelp, ViewListHelp, XAxisHelp} from '../../../../strings';
 import {RangeFilterSwitcher} from '../../range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
@@ -87,17 +88,17 @@ class BarChartPageComponent extends PureComponent<Props, State>
     {
         return (
             <>
-                <Box title='Range'>
+                <Box title='Range' help={RangeHelp}>
                     <RangeFilterSwitcher
                         rangeFilter={this.props.rangeFilter}
                         onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
-                <Box title='X axis'>
+                <Box title='X axis' help={XAxisHelp}>
                     <MeasurementKeys project={this.props.project}
                                      value={this.props.xAxis}
                                      onChange={this.props.setXAxis} />
                 </Box>
-                <Box title='View list'>
+                <Box title='View list' help={ViewListHelp}>
                     <ViewSelection onEditView={this.setSelectedView} />
                 </Box>
                 <RequestView request={this.props.measurementRequest} />

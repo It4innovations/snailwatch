@@ -16,6 +16,7 @@ import {applyFilters} from '../../../../lib/view/filter';
 import {View} from '../../../../lib/view/view';
 import {compareDate} from '../../../../util/date';
 import {compareNumber} from '../../../../util/math';
+import {Help} from '../../../global/help';
 import {MeasurementRecord} from '../../../global/measurement-record';
 import {MeasurementGroup} from '../chart-utils';
 import {CHART_DATE_FORMAT} from '../configuration';
@@ -43,6 +44,14 @@ const ColorCell = styled.div<{ color: string; }>`
   color: #FFFFFF;
   padding: 7px 5px;
   text-shadow: 1px 1px 1px #000000;
+`;
+const Row = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const HeaderHelp = styled(Help)`
+  margin-left: 5px;
 `;
 
 function ChangeCell(selector: (view: ViewGroup) => number, window: number): React.SFC<{ value: ViewGroup }>
@@ -104,11 +113,9 @@ export class TrendsTable extends PureComponent<Props>
                 value: this.getValue(view, groups),
             };
         }).filter(g => g.measurements.length !== 0);
-
         const style = {
             textAlign: 'center'
         };
-
         const columns = [{
             id: 'name',
             Header: 'View',
@@ -118,7 +125,7 @@ export class TrendsTable extends PureComponent<Props>
         },
         {
             id: 'group',
-            Header: 'Group',
+            Header: this.textWithHelp('Group', 'Value of the grouping attribute of the most recent group.'),
             style,
             Cell: this.ellipsizedCell(12),
             maxWidth: 150,
@@ -126,8 +133,18 @@ export class TrendsTable extends PureComponent<Props>
             accessor: (group: ViewGroup) => group.axisX
         },
         {
+            id: 'observed',
+            Header: this.textWithHelp('Observed', 'Attribute(s) whose value is observed (you can change this ' +
+                'in the corresponding view.'),
+            style,
+            Cell: this.ellipsizedCell(12),
+            maxWidth: 150,
+            filterable: true,
+            accessor: (group: ViewGroup) => aggregateSumDescribe(group.view)
+        },
+        {
             id: 'value',
-            Header: 'Value',
+            Header: this.textWithHelp('Value', 'Average value of the observed attribute of the most recent group.'),
             Cell: this.renderValue,
             style,
             accessor: (group: ViewGroup) => group
@@ -135,7 +152,7 @@ export class TrendsTable extends PureComponent<Props>
         {
             ...this.createValueColumn('change'),
             accessor: (group: ViewGroup) => group,
-            Header: this.textWithTitle('Change', 'Change relative to last group'),
+            Header: this.textWithHelp('Change', 'Change relative to last group'),
             maxWidth: 160,
             Cell: ChangeCell(g => g.relPerformance.change, 2),
             sortMethod: (a: ViewGroup, b: ViewGroup) => compareNumber(a.relPerformance.change, b.relPerformance.change)
@@ -143,7 +160,7 @@ export class TrendsTable extends PureComponent<Props>
         {
             ...this.createValueColumn('trend'),
             accessor: (group: ViewGroup) => group,
-            Header: this.textWithTitle('Trend',
+            Header: this.textWithHelp('Trend',
                 `Change relative to the exponential average of the last ${this.props.trendWindow} groups`),
             maxWidth: 160,
             Cell: ChangeCell(g => g.relPerformance.trend, this.props.trendWindow),
@@ -224,9 +241,14 @@ export class TrendsTable extends PureComponent<Props>
         );
     }
 
-    textWithTitle = (text: string, title: string) =>
+    textWithHelp = (text: string, title: string) =>
     {
-        return () => <div title={title}>{text}</div>;
+        return () => (
+            <Row>
+                <span>{text}</span>
+                <HeaderHelp content={title} />
+            </Row>
+        );
     }
     ellipsizedCell = (length: number = 10) =>
     {

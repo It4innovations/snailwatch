@@ -58,7 +58,8 @@ class ChartsPageComponent extends PureComponent<Props>
         return (
             <Switch>
                 {paths.map(path =>
-                    <Route path={`${match.url}/${path}/:viewId`}
+                    <Route key={`route/${path}`}
+                           path={`${match.url}/${path}/:viewId`}
                            exact={true}
                            render={(props) => this.selectViewAndRedirect(path, props)} />
                 )}

@@ -29,6 +29,7 @@ import {Box} from '../global/box';
 import {ErrorBox} from '../global/error-box';
 import {MeasurementRecord} from '../global/measurement-record';
 import {TwoColumnPage} from '../global/two-column-page';
+import {ExportHelp, RangeHelp} from '../../strings';
 
 registerLanguage('json', json);
 
@@ -101,12 +102,12 @@ class MeasurementListComponent extends PureComponent<Props>
     {
         return (
             <div>
-                <Box title='Range'>
+                <Box title='Range' help={RangeHelp}>
                     <RangeFilterSwitcher
                         rangeFilter={this.props.rangeFilter}
                         onFilterChange={this.props.changeRangeFilter} />
                 </Box>
-                <Box title='Export'>
+                <Box title='Export' help={ExportHelp}>
                     {this.renderExport()}
                 </Box>
                 <Box title='Actions'>

@@ -3,6 +3,7 @@ import React, {ChangeEvent, PureComponent} from 'react';
 import {Button, Input, InputGroup, InputGroupAddon, InputGroupAddonProps} from 'reactstrap';
 import styled from 'styled-components';
 import {Project} from '../../lib/project/project';
+import {Help} from '../global/help';
 
 interface Props
 {
@@ -16,13 +17,21 @@ interface State
 }
 
 const Label = styled(InputGroupAddon as React.ComponentType<InputGroupAddonProps & {className?: string; }>)`
-  width: 120px;
-  span {
+  width: 130px;
+  & > span, > div {
     width: 100%;
   }
 `;
 const SaveButton = styled(Button)`
   margin-top: 5px;
+`;
+const LabelRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+const LabelHelp = styled(Help)`
+  margin-left: 5px;
 `;
 
 export class ProjectForm extends PureComponent<Props, Readonly<State>>
@@ -60,13 +69,24 @@ export class ProjectForm extends PureComponent<Props, Readonly<State>>
                     <Input value={project.id} disabled />
                 </InputGroup>
                 <InputGroup>
-                    <Label addonType='prepend' title='URL of your repository'>Repository</Label>
+                    <Label addonType='prepend'>
+                        <LabelRow className='input-group-text'>
+                            <span>Repository</span>
+                            <LabelHelp content={'URL of the repository of this project. ' +
+                            'Will be used to generate links to commits.'} />
+                        </LabelRow>
+                    </Label>
                     <Input value={project.repository}
                            onChange={this.changeProjectAttribute('repository')} />
                 </InputGroup>
                 <InputGroup>
-                    <Label addonType='prepend' title='Key in uploaded measurements that contains the commit ID'>
-                        Commit key</Label>
+                    <Label addonType='prepend'>
+                        <LabelRow className='input-group-text'>
+                            <span>Commit key</span>
+                            <LabelHelp content={'Attribute of uploaded measurements that contains the commit ID. ' +
+                            'Default value is \'environment.commit\'.'} />
+                        </LabelRow>
+                    </Label>
                     <Input value={project.commitKey}
                            onChange={this.changeProjectAttribute('commitKey')} />
                 </InputGroup>
