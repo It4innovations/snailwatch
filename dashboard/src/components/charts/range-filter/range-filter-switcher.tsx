@@ -136,11 +136,11 @@ export class RangeFilterSwitcher extends PureComponent<Props>
     {
         this.changeDate(this.props.rangeFilter.from, moment(date));
     }
-    changeRangeType = (useRange: boolean) =>
+    changeRangeType = (useFirst: boolean) =>
     {
         this.props.onFilterChange({
             ...this.props.rangeFilter,
-            useDateFilter: !useRange
+            useDateFilter: useFirst
         });
     }
 }
