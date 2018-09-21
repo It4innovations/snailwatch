@@ -17,7 +17,7 @@ import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
-import {RangeFilterSwitcher} from '../../range-filter-switcher';
+import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {applyFilter, ViewFilter, ViewSortMode} from '../../view/view-filter/view-filter';
 import {ViewFilterComponent} from '../../view/view-filter/view-filter-component';
 import {CHART_DATE_FORMAT} from '../configuration';

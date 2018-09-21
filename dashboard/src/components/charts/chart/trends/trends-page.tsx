@@ -13,7 +13,7 @@ import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeHelp, TrendGroupHelp} from '../../../../strings';
-import {RangeFilterSwitcher} from '../../range-filter-switcher';
+import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {TrendsTable} from './trends-table';
 
 interface OwnProps

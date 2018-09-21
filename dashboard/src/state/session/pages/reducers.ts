@@ -30,8 +30,8 @@ export const initialState: GlobalState = {
     rangeFilter: {
         from: moment().subtract(1, 'M'),
         to: moment(),
-        entryCount: 100,
-        useDateFilter: false
+        entryCount: 1000,
+        useDateFilter: true
     },
     measurements: [],
     measurementsRequest: createRequest()

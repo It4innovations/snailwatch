@@ -17,7 +17,7 @@ import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {RequestView} from '../../../global/request-view';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeHelp, ViewListHelp, XAxisHelp} from '../../../../strings';
-import {RangeFilterSwitcher} from '../../range-filter-switcher';
+import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
 import {CHART_DATE_FORMAT} from '../configuration';

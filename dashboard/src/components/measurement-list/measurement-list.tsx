@@ -24,7 +24,7 @@ import {getRangeFilter} from '../../state/session/pages/reducers';
 import {getSelectedProject} from '../../state/session/project/reducer';
 import {getToken} from '../../state/session/user/reducer';
 import {Request} from '../../util/request';
-import {RangeFilterSwitcher} from '../charts/range-filter-switcher';
+import {RangeFilterSwitcher} from '../charts/range-filter/range-filter-switcher';
 import {Box} from '../global/box';
 import {ErrorBox} from '../global/error-box';
 import {MeasurementRecord} from '../global/measurement-record';
