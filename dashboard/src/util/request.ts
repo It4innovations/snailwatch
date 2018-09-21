@@ -1,3 +1,4 @@
+import {default as moment, Moment} from 'moment';
 import {Action as ReduxAction} from 'redux';
 import {ActionsObservable, StateObservable} from 'redux-observable';
 import {from as observableFrom, Observable} from 'rxjs';
@@ -17,6 +18,7 @@ export interface Request
     loading: boolean;
     error: string;
     completed: boolean;
+    finishedAt: Moment;
 }
 
 export function createRequest(): Request
@@ -24,7 +26,8 @@ export function createRequest(): Request
     return {
         loading: false,
         error: null,
-        completed: false
+        completed: false,
+        finishedAt: null
     };
 }
 export function requestStarted(): Request
@@ -32,7 +35,8 @@ export function requestStarted(): Request
     return {
         loading: true,
         error: null,
-        completed: false
+        completed: false,
+        finishedAt: null
     };
 }
 export function requestErrored(error: string): Request
@@ -40,7 +44,8 @@ export function requestErrored(error: string): Request
     return {
         loading: false,
         error,
-        completed: true
+        completed: true,
+        finishedAt: moment()
     };
 }
 export function requestDone(): Request
@@ -48,7 +53,8 @@ export function requestDone(): Request
     return {
         loading: false,
         error: null,
-        completed: true
+        completed: true,
+        finishedAt: moment()
     };
 }
 
@@ -57,7 +63,8 @@ export function isRequest(request: {}): boolean
     return isObject(request) &&
         request.hasOwnProperty('loading') &&
         request.hasOwnProperty('error') &&
-        request.hasOwnProperty('completed');
+        request.hasOwnProperty('completed') &&
+        request.hasOwnProperty('finishedAt');
 }
 
 function replaceKey<T, Value>(obj: T, valueSelector: (obj: T) => Value, value: Value)

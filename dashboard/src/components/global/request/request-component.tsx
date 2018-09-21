@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
-import {Request} from '../../util/request';
-import {ErrorBox} from './error-box';
-import {Loading} from './loading';
+import {Request} from '../../../util/request';
+import {ErrorBox} from '../error-box';
+import {Loading} from '../loading';
 
 interface Props
 {

@@ -2,24 +2,28 @@ import {invertObj} from 'ramda';
 import React, {PureComponent} from 'react';
 import FaBarChart from 'react-icons/lib/fa/bar-chart';
 import FaLineChart from 'react-icons/lib/fa/line-chart';
-import FaTh from 'react-icons/lib/fa/th';
 import FaList from 'react-icons/lib/fa/list';
+import FaTh from 'react-icons/lib/fa/th';
 import {connect} from 'react-redux';
 import {Redirect, Route, RouteComponentProps, Switch, withRouter} from 'react-router';
 import {push} from 'react-router-redux';
 import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
-import {RangeFilter} from '../../lib/view/range-filter';
+import styled from 'styled-components';
 import {Project} from '../../lib/project/project';
+import {RangeFilter} from '../../lib/view/range-filter';
 import {AppState} from '../../state/app/reducers';
 import {Navigation} from '../../state/nav/routes';
 import {changeRangeFilterAction} from '../../state/session/pages/actions';
 import {
     selectChartViewAction,
-    SelectChartViewParams, selectViewAction,
+    SelectChartViewParams,
+    selectViewAction,
     SelectViewParams
 } from '../../state/session/pages/chart-page/actions';
 import {getRangeFilter} from '../../state/session/pages/reducers';
 import {getSelectedProject} from '../../state/session/project/reducer';
+import {Request} from '../../util/request';
+import {MultiRequestComponent} from '../global/request/multi-request-component';
 import {BarChartPage} from './chart/bar-chart/bar-chart-page';
 import {GridChartPage} from './chart/grid-chart/grid-chart-page';
 import {LineChartPage} from './chart/line-chart/line-chart-page';
@@ -30,6 +34,8 @@ interface StateProps
 {
     project: Project;
     rangeFilter: RangeFilter;
+    measurementRequest: Request;
+    viewRequest: Request;
 }
 interface DispatchProps
 {
@@ -47,6 +53,12 @@ const chartToTab = {
     'bar': 2,
     'trends': 3
 };
+
+const Row = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+`;
 
 class ChartsPageComponent extends PureComponent<Props>
 {
@@ -86,28 +98,31 @@ class ChartsPageComponent extends PureComponent<Props>
         return (
             <Tabs selectedIndex={index}
                   onSelect={this.changeTab}>
-                <TabList className={style.tabList}>
-                    <Tab>
-                        <div title='Chart overview'>
-                            <FaTh size={26} />
-                        </div>
-                    </Tab>
-                    <Tab>
-                        <div title='Line chart'>
-                            <FaLineChart size={26} />
-                        </div>
-                    </Tab>
-                    <Tab>
-                        <div title='Stacked bar chart'>
-                            <FaBarChart size={26} />
-                        </div>
-                    </Tab>
-                    <Tab>
-                        <div title='Trends'>
-                            <FaList size={26} />
-                        </div>
-                    </Tab>
-                </TabList>
+                <Row>
+                    <TabList className={style.tabList}>
+                        <Tab>
+                            <div title='Chart overview'>
+                                <FaTh size={26} />
+                            </div>
+                        </Tab>
+                        <Tab>
+                            <div title='Line chart'>
+                                <FaLineChart size={26} />
+                            </div>
+                        </Tab>
+                        <Tab>
+                            <div title='Stacked bar chart'>
+                                <FaBarChart size={26} />
+                            </div>
+                        </Tab>
+                        <Tab>
+                            <div title='Trends'>
+                                <FaList size={26} />
+                            </div>
+                        </Tab>
+                    </TabList>
+                    <MultiRequestComponent requests={[this.props.viewRequest, this.props.measurementRequest]} />
+                </Row>
                 <TabPanel>
                     <GridChartPage rangeFilter={this.props.rangeFilter}
                                    onChangeRangeFilter={this.props.changeRangeFilter}
@@ -151,7 +166,9 @@ class ChartsPageComponent extends PureComponent<Props>
 
 export const ChartsPage = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     project: getSelectedProject(state),
-    rangeFilter: getRangeFilter(state)
+    rangeFilter: getRangeFilter(state),
+    measurementRequest: state.session.pages.chartState.measurementsRequest,
+    viewRequest: state.session.view.viewRequest
 }), {
     changeRangeFilter: changeRangeFilterAction,
     selectDataset: selectChartViewAction,

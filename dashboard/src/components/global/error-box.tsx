@@ -1,5 +1,6 @@
 import React, {PureComponent} from 'react';
 import {Alert} from 'reactstrap';
+import styled from 'styled-components';
 
 interface Props
 {
@@ -11,6 +12,15 @@ const initialState = {
 };
 
 type State = Readonly<typeof initialState>;
+
+const ErrorAlert = styled(Alert)`
+  margin-bottom: 0 !important;
+  padding: 6px 28px 6px 6px !important;
+  
+  .close {
+    padding: 6px !important;
+  }
+`;
 
 export class ErrorBox extends PureComponent<Props, State>
 {
@@ -29,11 +39,11 @@ export class ErrorBox extends PureComponent<Props, State>
         if (!this.props.error) return null;
 
         return (
-            <Alert color='danger'
+            <ErrorAlert color='danger'
                    isOpen={this.state.opened}
                    toggle={this.dismiss}>
                 {this.props.error.toString()}
-            </Alert>
+            </ErrorAlert>
         );
     }
 

@@ -19,7 +19,7 @@ import {ProjectActions, regenerateUploadToken, RegenerateUploadTokenParams} from
 import {getSelectedProject} from '../../state/session/project/reducer';
 import {getUser} from '../../state/session/user/reducer';
 import {Request} from '../../util/request';
-import {RequestComponent} from '../global/request-component';
+import {RequestComponent} from '../global/request/request-component';
 import {ProjectForm} from './project-form';
 
 registerLanguage('python', python);

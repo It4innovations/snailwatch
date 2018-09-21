@@ -12,7 +12,7 @@ import {getSelectedProject} from '../../state/session/project/reducer';
 import {changePasswordAction, ChangePasswordParams, UserActions} from '../../state/session/user/actions';
 import {getUser} from '../../state/session/user/reducer';
 import {Request} from '../../util/request';
-import {RequestComponent} from '../global/request-component';
+import {RequestComponent} from '../global/request/request-component';
 import {PasswordForm} from './password-form';
 
 interface StateProps

@@ -1,8 +1,9 @@
+import {compose} from 'redux';
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
-import {createRequest, Request} from '../../../../util/request';
+import {createRequest, hookRequestActions, Request} from '../../../../util/request';
 import {clearSession} from '../../actions';
 import {ViewActions} from '../../view/actions';
-import {setChartXAxisAction, updateSelectedViewsAction} from './actions';
+import {reloadViewMeasurementsAction, setChartXAxisAction, updateSelectedViewsAction} from './actions';
 
 export interface ChartPageState
 {
@@ -29,5 +30,11 @@ let reducer = reducerWithInitialState<ChartPageState>({ ...initialState })
     ...state,
     selectedViews: state.selectedViews.filter(d => d !== action.params.id)
 }));
+
+reducer = compose(
+    (r: typeof reducer) => hookRequestActions(r, reloadViewMeasurementsAction,
+        state => state.measurementsRequest
+    )
+)(reducer);
 
 export const chartReducer = reducer;

@@ -4,19 +4,17 @@ import {RouteComponentProps, withRouter} from 'react-router';
 import styled from 'styled-components';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
-import {RangeFilter} from '../../../../lib/view/range-filter';
 import {Project} from '../../../../lib/project/project';
+import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
 import {setChartXAxisAction} from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
-import {Request} from '../../../../util/request';
+import {RangeHelp, ViewListHelp, XAxisHelp} from '../../../../strings';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
-import {RequestView} from '../../../global/request-view';
 import {TwoColumnPage} from '../../../global/two-column-page';
-import {RangeHelp, ViewListHelp, XAxisHelp} from '../../../../strings';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
@@ -35,7 +33,6 @@ interface StateProps
     views: View[];
     selectedViews: string[];
     xAxis: string;
-    measurementRequest: Request;
 }
 interface DispatchProps
 {
@@ -101,7 +98,6 @@ class BarChartPageComponent extends PureComponent<Props, State>
                 <Box title='View list' help={ViewListHelp}>
                     <ViewSelection onEditView={this.setSelectedView} />
                 </Box>
-                <RequestView request={this.props.measurementRequest} />
             </>
         );
     }
@@ -164,7 +160,6 @@ export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnPro
     views: getViews(state),
     selectedViews: state.session.pages.chartState.selectedViews,
     xAxis: state.session.pages.chartState.xAxis,
-    measurementRequest: state.session.pages.chartState.measurementsRequest
 }), {
     setXAxis: setChartXAxisAction,
 })(BarChartPageComponent));

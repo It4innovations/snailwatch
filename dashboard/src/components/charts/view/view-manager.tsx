@@ -10,10 +10,8 @@ import {AppState} from '../../../state/app/reducers';
 import {getGlobalMeasurements} from '../../../state/session/pages/reducers';
 import {getSelectedProject} from '../../../state/session/project/reducer';
 import {ViewActions} from '../../../state/session/view/actions';
-import {getViews, getViewsState} from '../../../state/session/view/reducer';
-import {Request} from '../../../util/request';
+import {getViews} from '../../../state/session/view/reducer';
 import {ResultKeysMultiselect} from '../../global/keys/result-keys-multiselect';
-import {RequestComponent} from '../../global/request-component';
 import {ViewFilterManager} from './view-filter-manager';
 import {ViewName} from './view-name';
 import {WatchComponent} from './watch-component';
@@ -27,7 +25,6 @@ interface StateProps
 {
     views: View[];
     project: Project;
-    viewRequest: Request;
     globalMeasurements: Measurement[];
 }
 interface DispatchProps
@@ -99,7 +96,6 @@ class ViewManagerComponent extends PureComponent<Props>
                             Delete
                         </DeleteButton>
                     </div>
-                    <RequestComponent request={this.props.viewRequest} />
                 </LastRow>
             </Column>
         );
@@ -147,7 +143,6 @@ export const ViewManager = connect<StateProps, DispatchProps, OwnProps>((state: 
     project: getSelectedProject(state),
     xAxis: state.session.pages.chartState.xAxis,
     rangeFilter: state.session.pages.global.rangeFilter,
-    viewRequest: getViewsState(state).viewRequest,
     globalMeasurements: getGlobalMeasurements(state)
 }), {
     changeView: ViewActions.update.started,
