@@ -35,8 +35,8 @@ export function createView(view: Partial<View> = {}): View
 export function createWatch(watch: Partial<Watch>): Watch
 {
     return {
-        ...watch,
         id: uuid.v4(),
-        groupBy: ''
+        groupBy: '',
+        ...watch
     };
 }
