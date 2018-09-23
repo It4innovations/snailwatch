@@ -23,5 +23,5 @@ export function formatKey(key: string): string
 
 export function getResultKeys(keys: string[]): string[]
 {
-    return keys.filter(key => key.match(/^result\..*(?<!type)$/));
+    return keys.filter(key => key.match(/^result\..*\.value$/));
 }
