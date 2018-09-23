@@ -1,7 +1,8 @@
+import moment from 'moment';
 import {groupMeasurements} from '../components/charts/chart/chart-utils';
 import {GroupMode} from '../lib/measurement/group-mode';
 import {Measurement} from '../lib/measurement/measurement';
-import moment from 'moment';
+import {formatKey, getResultKeys} from '../util/measurement';
 
 
 function createMeasurement(measurement: Partial<Measurement>): Measurement
@@ -98,5 +99,27 @@ describe('Measurement grouper', () => {
         expect(Object.keys(grouped).length).toEqual(2);
         expect(grouped['01. 01. 2018'].measurements).toEqual(measurements.slice(0, 2));
         expect(grouped['02. 01. 2018'].measurements).toEqual(measurements.slice(2));
+    });
+});
+describe('formatKey', () => {
+    it('Removes prefix of keys', () => {
+        expect(formatKey('environment.data')).toEqual('data');
+        expect(formatKey('environment.data.value')).toEqual('data.value');
+        expect(formatKey('data')).toEqual('data');
+    });
+    it('Removes suffix of result value keys', () => {
+        expect(formatKey('result.data.value')).toEqual('data');
+        expect(formatKey('result.data.type')).toEqual('data.type');
+    });
+});
+describe('getResultKeys', () => {
+    it('Returns result value keys from input array', () => {
+        expect(getResultKeys([
+            'enviroment.commit',
+            'result.x1.value',
+            'result.x1.time',
+            'result.x2.value',
+            'result.x2.time'
+        ])).toEqual(['result.x1.value', 'result.x2.value']);
     });
 });
