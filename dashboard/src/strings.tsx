@@ -3,7 +3,7 @@ import React from 'react';
 export const RangeHelp = 'Choose how many measurements you want to display. ' +
     'You can either select last N uploaded measurements or pick a date range.';
 
-export const XAxisHelp = 'Choose what attribute will be used as the X-axis. If you select timestamp, ' +
+export const XAxisHelp = 'Choose what attribute will be displayed on the X axis. If you select timestamp, ' +
     'the measurements will be grouped by day.';
 
 export const ViewListHelp = <>Select which views will be displayed in the chart.

@@ -1,20 +1,24 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, ReactNode} from 'react';
 import MdClose from 'react-icons/lib/md/close';
 import {connect} from 'react-redux';
 import {Button} from 'reactstrap';
 import styled from 'styled-components';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {Project} from '../../../lib/project/project';
+import {User} from '../../../lib/user/user';
 import {createWatch, View, Watch} from '../../../lib/view/view';
 import {AppState} from '../../../state/app/reducers';
 import {getGlobalMeasurements} from '../../../state/session/pages/reducers';
 import {getSelectedProject} from '../../../state/session/project/reducer';
+import {getUser} from '../../../state/session/user/reducer';
 import {ViewActions} from '../../../state/session/view/actions';
 import {getViews} from '../../../state/session/view/reducer';
+import {Help} from '../../global/help';
 import {ResultKeysMultiselect} from '../../global/keys/result-keys-multiselect';
 import {ViewFilterManager} from './view-filter-manager';
 import {ViewName} from './view-name';
-import {WatchComponent} from './watch-component';
+import Toggle from 'react-bootstrap-toggle';
+
 
 interface OwnProps
 {
@@ -25,6 +29,7 @@ interface StateProps
 {
     views: View[];
     project: Project;
+    user: User;
     globalMeasurements: Measurement[];
 }
 interface DispatchProps
@@ -55,11 +60,30 @@ const LastRow = styled(Row)`
   flex-grow: 1;
   align-items: flex-end;
 `;
+const TitleRow = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const TitleHelp = styled(Help)`
+  margin-left: 5px;
+`;
 
 class ViewManagerComponent extends PureComponent<Props>
 {
     render()
     {
+        const email = () => !this.props.user.email ? 'your e-mail' : <b>{this.props.user.email}</b>;
+        const watchHelp = (
+            <>
+                Enable regression detection for this view. If a regression is
+                detected in your measurements, an e-mail will be sent to {email()}
+                {' '}(changeable in Profile settings).<br /><br />
+                Regression happens when the value of your selected Y axes increases by more than 10 % relative
+                to the last group. Measurements are grouped by their commits (the commit attribute can be changed in
+                Project settings, it is currently set to <b>{this.props.project.commitKey}</b>).
+            </>
+        );
+
         return (
             <Column>
                 <Row>
@@ -73,22 +97,15 @@ class ViewManagerComponent extends PureComponent<Props>
                     measurements={this.props.globalMeasurements}
                     measurementKeys={this.props.project.measurementKeys} />
                 <KeysWrapper>
-                    <div>Y axes</div>
+                    {this.renderHelpTitle('Y axes', 'Select attributes that will be displayed on the Y axis.')}
                     <ResultKeysMultiselect keys={this.props.project.measurementKeys}
                                            values={this.props.view.yAxes}
                                            onChange={this.changeYAxes}
                                            requireSelection={true} />
                 </KeysWrapper>
                 <div>
-                    <div>Watches</div>
-                    {this.props.view.watches.map(watch =>
-                        <WatchComponent key={watch.id}
-                                        project={this.props.project}
-                                        watch={watch}
-                                        onChange={this.changeWatch}
-                                        onDelete={this.deleteWatch} />
-                    )}
-                    <Button color='success' onClick={this.addWatch}>Add watch</Button>
+                    {this.renderHelpTitle('Watch', watchHelp)}
+                    {this.renderWatch(this.props.view.watches)}
                 </div>
                 <LastRow>
                     <div>
@@ -100,6 +117,26 @@ class ViewManagerComponent extends PureComponent<Props>
             </Column>
         );
     }
+    renderHelpTitle = (title: string, help: ReactNode | string): JSX.Element =>
+    {
+        return (
+            <TitleRow>
+                <div>{title}</div>
+                <TitleHelp content={help} />
+            </TitleRow>
+        );
+    }
+    renderWatch = (watches: Watch[]): JSX.Element =>
+    {
+        return <Toggle
+            on='Enabled'
+            off='Disabled'
+            size='sm'
+            offstyle='secondary'
+            onClick={this.changeWatch}
+            active={watches.length > 0}
+        />;
+    }
 
     changeName = (name: string) =>
     {
@@ -108,20 +145,17 @@ class ViewManagerComponent extends PureComponent<Props>
             this.props.changeView({ ...this.props.view, name });
         }
     }
-    addWatch = () =>
+
+    changeWatch = (enabled: boolean) =>
     {
-        const watch = createWatch({
-            groupBy: this.props.project.commitKey
-        });
-        this.changeWatches([...this.props.view.watches, watch]);
-    }
-    changeWatch = (watch: Watch) =>
-    {
-        this.changeWatches(this.props.view.watches.map(w => w.id === watch.id ? watch : w));
-    }
-    deleteWatch = (watch: Watch) =>
-    {
-        this.changeWatches(this.props.view.watches.filter(w => w.id !== watch.id));
+        if (enabled)
+        {
+            const watch = createWatch({
+                groupBy: this.props.project.commitKey
+            });
+            this.changeWatches([watch]);
+        }
+        else this.changeWatches([]);
     }
 
     changeWatches = (watches: Watch[]) =>
@@ -141,6 +175,7 @@ class ViewManagerComponent extends PureComponent<Props>
 export const ViewManager = connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     views: getViews(state),
     project: getSelectedProject(state),
+    user: getUser(state),
     xAxis: state.session.pages.chartState.xAxis,
     rangeFilter: state.session.pages.global.rangeFilter,
     globalMeasurements: getGlobalMeasurements(state)

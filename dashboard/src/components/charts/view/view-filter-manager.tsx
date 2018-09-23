@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {Filter} from '../../../lib/view/filter';
 import {createView, View} from '../../../lib/view/view';
+import {Help} from '../../global/help';
 import {FilterList} from '../filter/filter-list';
 
 interface Props
@@ -48,7 +49,12 @@ export class ViewFilterManager extends PureComponent<Props, State>
         const view = this.getSelectedView();
         return (
             <div>
-                <Row>Filters {this.renderEditButton()}</Row>
+                <Row>
+                    <span>Filters</span>
+                    {this.renderEditButton()}
+                    <Help content='Create conditions that will be used to select a subset
+                    of the measurements.' />
+                </Row>
                 <FilterList
                     filters={view.filters}
                     measurementKeys={this.props.measurementKeys}

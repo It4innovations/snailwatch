@@ -57,8 +57,9 @@ const MeasurementsWrapper = styled.div`
 const ViewManagerWrapper = styled.div`
   flex-grow: 1;
   margin-left: 15px;
-  padding-left: 15px;
-  border-left: 1px solid #000000;
+  padding: 15px;
+  border: 1px solid #000000;
+  border-radius: 5px;
 `;
 const ChartsWrapper = styled.div`
   min-height: 300px;
@@ -117,9 +118,11 @@ class BarChartPageComponent extends PureComponent<Props, State>
                         <MeasurementList measurements={this.state.selectedMeasurements}
                                          project={this.props.project} />
                     </MeasurementsWrapper>
-                    <ViewManagerWrapper>
-                        {view && <ViewManager view={view} onClose={this.deselectView} />}
-                    </ViewManagerWrapper>
+                    {view &&
+                        <ViewManagerWrapper>
+                            <ViewManager view={view} onClose={this.deselectView} />
+                        </ViewManagerWrapper>
+                    }
                 </Row>
             </div>
         );
