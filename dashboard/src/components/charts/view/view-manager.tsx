@@ -58,6 +58,7 @@ const DeleteButton = styled(Button)`
 `;
 const LastRow = styled(Row)`
   flex-grow: 1;
+  margin-top: 5px;
   align-items: flex-end;
 `;
 const TitleRow = styled.div`
@@ -108,11 +109,9 @@ class ViewManagerComponent extends PureComponent<Props>
                     {this.renderWatch(this.props.view.watches)}
                 </div>
                 <LastRow>
-                    <div>
-                        <DeleteButton onClick={this.deleteView} color='danger' title='Delete view'>
-                            Delete
-                        </DeleteButton>
-                    </div>
+                    <DeleteButton onClick={this.deleteView} color='danger' title='Delete view'>
+                        Delete
+                    </DeleteButton>
                 </LastRow>
             </Column>
         );
