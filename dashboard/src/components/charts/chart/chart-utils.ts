@@ -116,7 +116,7 @@ export function createLinePoints(datasets: Dictionary<MeasurementGroup>[], dateF
         })
     }));
 
-    return sort((a, b) => compareXValue(a.x, b.x), vals).map(val => ({
+    return sort((a, b) => compareDate(getPointTimestamp(a), getPointTimestamp(b)), vals).map(val => ({
         ...val,
         x: formatXValue(val.x, dateFormat)
     }));
@@ -125,6 +125,15 @@ export function createLinePoints(datasets: Dictionary<MeasurementGroup>[], dateF
 function getMinTimestamp(group: MeasurementGroup): Moment
 {
     return reduce((a, b) => compareDate(a, b) === -1 ? a : b, moment(), group.measurements.map(m => m.timestamp));
+}
+function getPointTimestamp(data: LinePoint): Moment
+{
+    return reduce((a, b) => compareDate(a, b) === -1 ? a : b,
+        moment(),
+        data.data.map(d =>
+            d.group === null ? moment() : getMinTimestamp(d.group)
+        )
+    );
 }
 
 function hasAxis(measurement: Measurement, axis: string)
