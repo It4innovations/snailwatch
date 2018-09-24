@@ -75,7 +75,7 @@ export class LineChart extends PureComponent<Props>
             groupMeasurements(v.measurements, this.props.groupMode, this.props.xAxis, [v.yAxis], this.props.dateFormat)
         );
         let points = createLinePoints(datasets, this.props.dateFormat);
-        const dotActive = this.selectMeasurements && !preview;
+        const dotActive = this.props.onMeasurementsSelected && !preview;
 
         const empty = points.length === 0;
         if (empty)
@@ -117,10 +117,10 @@ export class LineChart extends PureComponent<Props>
                         stroke={(this.props.connectPoints ? DATASET_COLORS.getColor(index) : '#00000000')}
                         fill={DATASET_COLORS.getColor(index)}>
                         {(!preview && this.props.showDeviation) &&
-                        <ErrorBar
-                            dataKey={`data[${index}].range`}
-                            stroke={DATASET_COLORS.getColor(index)}
-                            strokeWidth={2} />
+                            <ErrorBar
+                                dataKey={`data[${index}].range`}
+                                stroke={DATASET_COLORS.getColor(index)}
+                                strokeWidth={2} />
                         }
                     </Line>
                 )}
