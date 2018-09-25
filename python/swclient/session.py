@@ -57,6 +57,19 @@ class Session:
         }
         return self._post("users", payload)
 
+    def create_project(self, name, repository=''):
+        """
+        Create a project.
+
+        :param name: Name of the project
+        :param repository: URL of the project repository
+        """
+        payload = {
+            'name': name,
+            'repository': repository
+        }
+        return self._post("projects", payload)
+
     def _post(self, address, payload):
         http_headers = {
             'Content-Type': 'application/json',

@@ -16,6 +16,30 @@ def test_session_create_user(sw_env):
         {"username": "SnailMaster"})["username"] == "SnailMaster"
 
 
+def test_session_create_project(sw_env):
+    sw_env.start()
+    s = sw_env.user_session()
+
+    name = "P1"
+    repo = "https://myrepo.com"
+    s.create_project(name, repo)
+
+    assert sw_env.db.projects.find_one(
+        {"name": name})["repository"] == repo
+
+
+def test_cmd_create_project(sw_env):
+    sw_env.start()
+    sw_env.run_cmd_client((sw_env.server_url,
+                           "create-project",
+                           sw_env.user_token,
+                           "P1"))
+
+    result = list(sw_env.db.projects.find({ "name": "P1" }))
+    assert len(result) == 1
+    assert result[0]['repository'] == ''
+
+
 def test_cmd_upload(sw_env):
     sw_env.start()
     sw_env.run_cmd_client((sw_env.server_url,

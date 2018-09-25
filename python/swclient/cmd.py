@@ -13,9 +13,16 @@ def create_parser():
 
     create_user_parser = subparsers.add_parser("create-user",
                                                help="Create a user account")
-    create_user_parser.add_argument(
-        "token", help="Admin token")
+    create_user_parser.add_argument("token", help="Admin token")
     create_user_parser.add_argument("username", help="Username")
+
+    create_project_parser = subparsers.add_parser("create-project",
+                                                  help="Create a project")
+    create_project_parser.add_argument("token", help="Session token")
+    create_project_parser.add_argument("name", help="Project name")
+    create_project_parser.add_argument("--repository",
+                                       default="",
+                                       help="URL of the project repository")
 
     upload_parser = subparsers.add_parser(
         "upload", help="Upload a single measurement to Snailwatch")
@@ -44,6 +51,8 @@ def main():
     if args.action == "create-user":
         password = getpass.getpass()
         session.create_user(args.username, password)
+    elif args.action == "create-project":
+        session.create_project(args.name, args.repository)
     elif args.action == "upload":
         timestamp = None
         if args.timestamp:

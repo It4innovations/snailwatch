@@ -43,7 +43,8 @@ def before_insert_projects(projects):
     for project in projects:
         project['writers'] = [user['_id']]
         project['measurementKeys'] = []
-        project['repository'] = ''
+        if 'repository' not in project:
+            project['repository'] = ''
         project['commitKey'] = 'environment.commit'
 
 
