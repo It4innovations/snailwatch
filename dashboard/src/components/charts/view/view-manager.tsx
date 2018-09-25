@@ -1,7 +1,8 @@
 import React, {PureComponent, ReactNode} from 'react';
+import Toggle from 'react-bootstrap-toggle';
 import MdClose from 'react-icons/lib/md/close';
 import {connect} from 'react-redux';
-import {Button} from 'reactstrap';
+import {Button, ButtonGroup} from 'reactstrap';
 import styled from 'styled-components';
 import {Measurement} from '../../../lib/measurement/measurement';
 import {Project} from '../../../lib/project/project';
@@ -17,7 +18,6 @@ import {Help} from '../../global/help';
 import {ResultKeysMultiselect} from '../../global/keys/result-keys-multiselect';
 import {ViewFilterManager} from './view-filter-manager';
 import {ViewName} from './view-name';
-import Toggle from 'react-bootstrap-toggle';
 
 
 interface OwnProps
@@ -34,6 +34,7 @@ interface StateProps
 }
 interface DispatchProps
 {
+    addView(view: View): void;
     changeView(view: View): void;
     deleteView(view: View): void;
 }
@@ -53,12 +54,13 @@ const Column = styled.div`
 const KeysWrapper = styled.div`
   margin: 5px 0;
 `;
-const DeleteButton = styled(Button)`
-  width: 100px;
+const ActionButton = styled(Button)`
+  margin-left: 10px;
 `;
 const LastRow = styled(Row)`
   flex-grow: 1;
   margin-top: 5px;
+  justify-content: flex-end;
   align-items: flex-end;
 `;
 const TitleRow = styled.div`
@@ -109,9 +111,10 @@ class ViewManagerComponent extends PureComponent<Props>
                     {this.renderWatch(this.props.view.watches)}
                 </div>
                 <LastRow>
-                    <DeleteButton onClick={this.deleteView} color='danger' title='Delete view'>
-                        Delete
-                    </DeleteButton>
+                    <ButtonGroup>
+                        <ActionButton onClick={this.copyView} color='info' title='Copy view'>Copy</ActionButton>
+                        <ActionButton onClick={this.deleteView} color='danger' title='Delete view'>Delete</ActionButton>
+                    </ButtonGroup>
                 </LastRow>
             </Column>
         );
@@ -169,6 +172,16 @@ class ViewManagerComponent extends PureComponent<Props>
     {
         this.props.deleteView(this.props.view);
     }
+    copyView = () =>
+    {
+        this.props.addView({
+            ...this.props.view,
+            name: `${this.props.view.name} (copy)`,
+            filters: [...this.props.view.filters],
+            yAxes: [...this.props.view.yAxes],
+            watches: this.props.view.watches.map(w => createWatch({ groupBy: w.groupBy }))
+        });
+    }
 }
 
 export const ViewManager = connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
@@ -179,6 +192,7 @@ export const ViewManager = connect<StateProps, DispatchProps, OwnProps>((state: 
     rangeFilter: state.session.pages.global.rangeFilter,
     globalMeasurements: getGlobalMeasurements(state)
 }), {
+    addView: ViewActions.create.started,
     changeView: ViewActions.update.started,
     deleteView: ViewActions.delete.started,
 })(ViewManagerComponent);

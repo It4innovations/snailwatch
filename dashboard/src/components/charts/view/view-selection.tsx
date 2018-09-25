@@ -3,6 +3,7 @@ import MdEdit from 'react-icons/lib/md/edit';
 import {connect} from 'react-redux';
 import {Button, Input} from 'reactstrap';
 import styled from 'styled-components';
+import {sort} from 'ramda';
 import {RangeFilter} from '../../../lib/view/range-filter';
 import {Project} from '../../../lib/project/project';
 import {createView, View} from '../../../lib/view/view';
@@ -96,7 +97,7 @@ class ViewSelectionComponent extends PureComponent<Props, State>
     {
         const query = this.state.viewQuery.trim();
         const regex = new RegExp(query, 'i');
-        const filtered = views.filter(v => regex.test(v.name));
+        const filtered = sort((a, b) => a.name.localeCompare(b.name), views.filter(v => regex.test(v.name)));
 
         if (views.length === 0)
         {
