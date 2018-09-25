@@ -8,7 +8,8 @@ We will use our provided Python :doc:`client <client>` in this guide, so first m
 that its dependencies are installed. If you want
 to use raw API calls instead, please check the curl examples `below <#example-api-calls>`_.
 
-All commands below are assumed to run from the root of the Snailwatch repository.
+The following commands/scripts assume that ``swclient`` is either installed or that
+you launch them from the ``python`` subdirectory in the Snailwatch repository.
 
 Create a user
 -------------
@@ -17,7 +18,7 @@ Run the following script to create a user named *snail*:
 
 .. code-block:: bash
 
-    $ python -m python.swclient http://localhost:5000 create-user <admin-token> snail
+    $ python -m swclient http://localhost:5000 create-user <admin-token> snail
 
 After you run this command, you will be prompted to enter a password for the user.
 For convenience, `swclient` will also directly log you in and
@@ -42,7 +43,7 @@ Next run the client again to create a project:
 
 .. code-block:: bash
 
-    $ python -m python.swclient http://localhost:5000 create-project <session-token> killerapp \
+    $ python -m swclient http://localhost:5000 create-project <session-token> killerapp \
       --repository https://github.com/killerapp/killerapp
 
 If the project was created successfully, you should see this on the standard output:

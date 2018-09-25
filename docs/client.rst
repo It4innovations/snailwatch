@@ -25,11 +25,13 @@ If you want to use it in your code as a library, we recommend to install `swclie
 
 CLI usage
 ---------
+The following examples assume that ``swclient`` is either installed or that
+you launch the commands from the ``python`` subdirectory in the Snailwatch repository.
 
 .. code-block:: bash
 
     # create user (email is optional)
-    $ python -m swclient <server> create-user <admin-token> <username> --email <email>
+    $ python -m python.swclient <server> create-user <admin-token> <username> --email <email>
 
     # create project (repository URL is optional)
     $ python -m swclient <server> create-project <session-token> name --repository <repository>
