@@ -12,7 +12,8 @@ All commands below are assumed to run from the root of the Snailwatch repository
 
 Create a user
 -------------
-The first thing that we have to do is to create a user account. Run the following script:
+The first thing that we have to do is to create a user account.
+Run the following script to create a user named *snail*:
 
 .. code-block:: bash
 
