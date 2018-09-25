@@ -15,6 +15,7 @@ import {AppState} from '../../state/app/reducers';
 import {Navigation} from '../../state/nav/routes';
 import {changeRangeFilterAction} from '../../state/session/pages/actions';
 import {
+    reloadViewMeasurementsAction,
     selectChartViewAction,
     SelectChartViewParams,
     selectViewAction,
@@ -40,6 +41,7 @@ interface StateProps
 interface DispatchProps
 {
     changeRangeFilter(rangeFilter: RangeFilter): void;
+    reloadDatasets(rangeFilter: RangeFilter): void;
     selectDataset(params: SelectChartViewParams): void;
     selectView(params: SelectViewParams): void;
     navigate(path: string): void;
@@ -62,6 +64,11 @@ const Row = styled.div`
 
 class ChartsPageComponent extends PureComponent<Props>
 {
+    componentDidMount()
+    {
+        this.props.reloadDatasets(this.props.rangeFilter);
+    }
+
     render()
     {
         const match = this.props.match;
@@ -171,6 +178,7 @@ export const ChartsPage = withRouter(connect<StateProps, DispatchProps>((state: 
     viewRequest: state.session.view.viewRequest
 }), {
     changeRangeFilter: changeRangeFilterAction,
+    reloadDatasets: reloadViewMeasurementsAction.started,
     selectDataset: selectChartViewAction,
     selectView: selectViewAction,
     navigate: (path: string) => push(path)

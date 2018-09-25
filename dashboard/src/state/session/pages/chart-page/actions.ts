@@ -7,11 +7,7 @@ const actionCreator = actionCreatorFactory('chart-state');
 export const setChartXAxisAction = actionCreator<string>('set-x-axis');
 export const updateSelectedViewsAction = actionCreator<string[]>('update');
 
-export interface ReloadDatasetsParams
-{
-    rangeFilter: RangeFilter;
-}
-export const reloadViewMeasurementsAction = actionCreator.async<ReloadDatasetsParams, View[]>('reload');
+export const reloadViewMeasurementsAction = actionCreator.async<RangeFilter, View[]>('reload');
 
 export interface SelectChartViewParams
 {

@@ -4,7 +4,12 @@ import {Measurement} from '../../../../lib/measurement/measurement';
 import {createRequest, hookRequestActions, Request} from '../../../../util/request';
 import {AppState} from '../../../app/reducers';
 import {getViewById, getViews} from '../../view/reducer';
-import {deleteMeasurementAction, loadMeasurementsAction, setMeasurementsViewAction} from './actions';
+import {
+    deleteAllMeasurementsAction,
+    deleteMeasurementAction,
+    loadMeasurementsAction,
+    setMeasurementsViewAction
+} from './actions';
 
 export interface MeasurementsPageState
 {
@@ -38,6 +43,13 @@ reducer = compose(
         (state, action) => ({
             ...state,
             measurements: state.measurements.filter(m => m.id !== action.payload.params.id)
+        })
+    ),
+    (r: typeof reducer) => hookRequestActions(r, deleteAllMeasurementsAction,
+        state => state.measurementsRequest,
+        (state, action) => ({
+            ...state,
+            measurements: []
         })
     )
 )(reducer);

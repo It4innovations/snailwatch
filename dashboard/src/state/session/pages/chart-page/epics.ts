@@ -15,6 +15,7 @@ import {getToken} from '../../user/reducer';
 import {ViewActions} from '../../view/actions';
 import {getViews} from '../../view/reducer';
 import {changeRangeFilterAction} from '../actions';
+import {deleteAllMeasurementsAction, deleteMeasurementAction} from '../measurements-page/actions';
 import {getRangeFilter} from '../reducers';
 import {
     reloadViewMeasurementsAction,
@@ -23,7 +24,7 @@ import {
     setChartXAxisAction,
     updateSelectedViewsAction,
 } from './actions';
-import {getMeasurementsRecord, insertMeasurementsRecord} from './dataset-cache';
+import {clearCache, getMeasurementsRecord, insertMeasurementsRecord} from './dataset-cache';
 
 function loadMeasurements(state: AppState, deps: ServiceContainer,
                           view: View, rangeFilter: RangeFilter): Observable<Measurement[]>
@@ -42,7 +43,7 @@ function loadMeasurements(state: AppState, deps: ServiceContainer,
 }
 
 const reloadViews = createRequestEpic(reloadViewMeasurementsAction, (action, state, deps) => {
-    const {rangeFilter} = action.payload;
+    const rangeFilter = action.payload;
     const views = getViews(state);
 
     return observableForkJoin(views.map(view => {
@@ -85,20 +86,27 @@ const handleViewSelect: AppEpic = (action$, store) =>
 const reloadDatasetsAfterViewChange: AppEpic = (action$, store) =>
     action$.pipe(
         ofActions([ViewActions.load.done, ViewActions.update.done, updateSelectedViewsAction]),
-        map(() => reloadViewMeasurementsAction.started({
-            rangeFilter: getRangeFilter(store.value)
-        }))
+        map(() => reloadViewMeasurementsAction.started(getRangeFilter(store.value)))
     );
 
 const reloadDatasetsAfterRangeFilterChange: AppEpic = action$ =>
     action$.pipe(
         ofAction(changeRangeFilterAction),
-        map(action => reloadViewMeasurementsAction.started({
-            rangeFilter: action.payload
-        }))
+        map(action => reloadViewMeasurementsAction.started(action.payload))
+    );
+
+
+const clearCacheAfterMeasurementDelete: AppEpic = action$ =>
+    action$.pipe(
+        ofActions([deleteMeasurementAction.started, deleteAllMeasurementsAction.started]),
+        tap(() => {
+            clearCache();
+        }),
+        switchMap(() => EMPTY)
     );
 
 export const chartEpics = combineEpics(
+    clearCacheAfterMeasurementDelete,
     handleViewSelect,
     handleViewGridChartSelect,
     reloadViews,
