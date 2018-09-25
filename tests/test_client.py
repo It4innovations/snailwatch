@@ -76,16 +76,22 @@ def test_cmd_create_project(sw_env):
 
     name = "P1"
     repo = "https://myrepo.com"
-    sw_env.run_cmd_client((sw_env.server_url,
-                           "create-project",
-                           sw_env.user_token,
-                           name,
-                           "--repository",
-                           repo))
+    res = sw_env.run_cmd_client((sw_env.server_url,
+                                 "create-project",
+                                 sw_env.user_token,
+                                 name,
+                                 "--repository",
+                                 repo))
 
-    result = list(sw_env.db.projects.find({"name": name}))
-    assert len(result) == 1
-    assert result[0]["repository"] == repo
+    projects = list(sw_env.db.projects.find({"name": name}))
+    assert len(projects) == 1
+    assert projects[0]["repository"] == repo
+
+    upload_sessions = list(sw_env.db.uploadtokens.find({
+        'project': projects[0]['_id']
+    }))
+    assert len(upload_sessions) == 1
+    assert upload_sessions[0]['token'] in res.decode('utf-8')
 
 
 def test_cmd_upload(sw_env):

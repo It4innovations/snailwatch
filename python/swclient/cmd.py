@@ -68,7 +68,9 @@ def main():
         print("Created user {}, session token: {}".format(
             args.username, token))
     elif args.action == "create-project":
-        session.create_project(args.name, args.repository)
+        project = session.create_project(args.name, args.repository)
+        print("Created project {}, upload token: {}"
+              .format(args.name, project['uploadToken']))
     elif args.action == "upload":
         timestamp = None
         if args.timestamp:
