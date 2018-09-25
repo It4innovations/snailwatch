@@ -69,7 +69,7 @@ export class LineChart extends PureComponent<Props>
     renderChart = (): JSX.Element =>
     {
         const preview = this.props.preview || false;
-        const padding = preview ? 0 : 20;
+        const padding = preview ? 10 : 20;
 
         let {points, groups} = createLineData(this.props.datasets, this.props.groupMode, this.props.xAxis,
             this.props.dateFormat, this.props.settings.showAverageTrend, DATASET_COLORS
