@@ -1,6 +1,8 @@
 import argparse
 import getpass
 import json
+import sys
+
 import dateutil.parser
 
 from .session import Session
@@ -15,13 +17,17 @@ def create_parser():
                                                help="Create a user account")
     create_user_parser.add_argument("token", help="Admin token")
     create_user_parser.add_argument("username", help="Username")
+    create_user_parser.add_argument("--email",
+                                    default='',
+                                    help="E-mail (used for regression "
+                                         "notifications)")
 
     create_project_parser = subparsers.add_parser("create-project",
                                                   help="Create a project")
     create_project_parser.add_argument("token", help="Session token")
     create_project_parser.add_argument("name", help="Project name")
     create_project_parser.add_argument("--repository",
-                                       default="",
+                                       default='',
                                        help="URL of the project repository")
 
     upload_parser = subparsers.add_parser(
@@ -43,14 +49,24 @@ def create_parser():
     return parser
 
 
+def get_password():
+    if sys.stdout.isatty():
+        return getpass.getpass()
+    else:
+        return sys.stdin.readline()
+
+
 def main():
     args = create_parser().parse_args()
 
     session = Session(args.server_url, args.token)
 
     if args.action == "create-user":
-        password = getpass.getpass()
-        session.create_user(args.username, password)
+        password = get_password()
+        session.create_user(args.username, password, args.email)
+        token = session.login(args.username, password)
+        print("Created user {}, session token: {}".format(
+            args.username, token))
     elif args.action == "create-project":
         session.create_project(args.name, args.repository)
     elif args.action == "upload":

@@ -13,7 +13,7 @@ class Session:
         creating users
     """
 
-    def __init__(self, server_url, token):
+    def __init__(self, server_url, token=None):
         if "://" not in server_url:
             server_url = "http://" + server_url
         self.server_url = server_url
@@ -44,18 +44,33 @@ class Session:
         serialized = [self._serialize_measurement(*m) for m in measurements]
         return self._post("measurements", serialized)
 
-    def create_user(self, username, password):
+    def create_user(self, username, password, email=''):
         """
         Create a user account.
 
         :param username: Username
         :param password: Password (minimum 8 characters)
+        :param email: E-mail
+        """
+        payload = {
+            'username': username,
+            'password': password,
+            'email': email
+        }
+        return self._post("users", payload)
+
+    def login(self, username, password):
+        """
+        Login and return a session token.
+        :param username: Username
+        :param password: Password
+        :return: session token
         """
         payload = {
             'username': username,
             'password': password
         }
-        return self._post("users", payload)
+        return self._post("login", payload)['token']
 
     def create_project(self, name, repository=''):
         """
@@ -72,9 +87,11 @@ class Session:
 
     def _post(self, address, payload):
         http_headers = {
-            'Content-Type': 'application/json',
-            'Authorization': self.token
+            'Content-Type': 'application/json'
         }
+
+        if self.token:
+            http_headers['Authorization'] = self.token
 
         response = requests.post(
             '{}/{}'.format(self.server_url, address),

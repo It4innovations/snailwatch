@@ -64,18 +64,21 @@ class SnailWatchEnv(Env):
     user_token = None
     upload_token = None
     db_name = "sw-test"
+    test_user = "tester"
+    test_password = "testpass"
+
+    @staticmethod
+    def run_cmd_client(args, stdin=None):
+        env = os.environ.copy()
+        env["PYTHONPATH"] = PYTHON_DIR
+        return subprocess.check_output(
+            ("python3", "-m", "swclient") + args, env=env, stdin=stdin)
 
     def __init__(self):
         super().__init__()
         self.mongo_client = MongoClient(MONGO_ADDRESS, self.mongo_port)
         self.mongo_client.drop_database(self.db_name)
         self.db = self.mongo_client[self.db_name]
-
-    def run_cmd_client(self, args, stdin=None):
-        env = os.environ.copy()
-        env["PYTHONPATH"] = PYTHON_DIR
-        subprocess.check_call(
-            ("python3", "-m", "swclient") + args, env=env, stdin=stdin)
 
     def make_env(self):
         env = os.environ.copy()
@@ -96,14 +99,18 @@ class SnailWatchEnv(Env):
     def admin_session(self):
         return Session(self.server_url, self.admin_token)
 
+    def login_session(self):
+        return Session(self.server_url)
+
     def start(self, do_init=True):
         env = self.make_env()
         self.start_process("server", ("python3", SNAILWATCH_SERVER), env=env)
         time.sleep(3)
 
         if do_init:
-            self.create_user("tester", "testpass")
-            self.user_token = self.login("tester", "testpass")["token"]
+            self.create_user(self.test_user, self.test_password)
+            self.user_token = self.login(self.test_user,
+                                         self.test_password)["token"]
             self.project_id = self.create_project("project1")["_id"]
             self.upload_token = self.get_upload_token(self.project_id)
 

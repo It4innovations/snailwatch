@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 import shutil
 from io import BytesIO
 
@@ -11,9 +12,13 @@ from swclient.common import SnailwatchException
 def test_session_create_user(sw_env):
     sw_env.start(do_init=False)
     s = sw_env.admin_session()
-    s.create_user("SnailMaster", "SnailPassword")
-    assert sw_env.db.users.find_one(
-        {"username": "SnailMaster"})["username"] == "SnailMaster"
+
+    email = "test@test.com"
+    s.create_user("SnailMaster", "SnailPassword", email)
+    user = sw_env.db.users.find_one({"username": "SnailMaster"})
+    assert user
+    assert user["username"] == "SnailMaster"
+    assert user["email"] == email
 
 
 def test_session_create_project(sw_env):
@@ -28,16 +33,59 @@ def test_session_create_project(sw_env):
         {"name": name})["repository"] == repo
 
 
+def test_session_login(sw_env):
+    sw_env.start(do_init=False)
+    s = sw_env.admin_session()
+
+    user = "a"
+    s.create_user(user, user)
+    token = s.login(user, user)
+
+    sessions = list(sw_env.db.sessions.find({}))
+    assert len(sessions) == 1
+    assert sessions[0]['token'] == token
+
+
+def test_cmd_create_user(sw_env):
+    sw_env.start(do_init=False)
+
+    read, write = os.pipe()
+    os.write(write, b"pass")
+    os.close(write)
+
+    name = "user1"
+    email = "test@test.com"
+    res = sw_env.run_cmd_client((sw_env.server_url,
+                                 "create-user",
+                                 sw_env.admin_token,
+                                 name,
+                                 "--email",
+                                 email), stdin=read)
+
+    result = list(sw_env.db.users.find({"username": name}))
+    assert len(result) == 1
+    assert result[0]["email"] == email
+
+    sessions = list(sw_env.db.sessions.find({}))
+    assert len(sessions) == 1
+    assert sessions[0]['token'] in res.decode('utf-8')
+
+
 def test_cmd_create_project(sw_env):
     sw_env.start()
+
+    name = "P1"
+    repo = "https://myrepo.com"
     sw_env.run_cmd_client((sw_env.server_url,
                            "create-project",
                            sw_env.user_token,
-                           "P1"))
+                           name,
+                           "--repository",
+                           repo))
 
-    result = list(sw_env.db.projects.find({ "name": "P1" }))
+    result = list(sw_env.db.projects.find({"name": name}))
     assert len(result) == 1
-    assert result[0]['repository'] == ''
+    assert result[0]["repository"] == repo
 
 
 def test_cmd_upload(sw_env):
