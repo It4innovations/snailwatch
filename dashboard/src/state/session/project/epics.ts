@@ -33,7 +33,7 @@ const initSessionAfterProjectSelect: AppEpic = action$ =>
                     result: action.payload
                 }),
                 initProjectSession(),
-                push(Navigation.Overview)
+                push(Navigation.Dashboard)
             ])
         )
     );
