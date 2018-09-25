@@ -51,6 +51,10 @@ If the project was created successfully, you should see this on the standard out
 
     Created project killerapp, upload token: <upload-token>
 
+The upload token allows you to upload measurements to Snailwatch and thus it should be
+kept secret. It can be displayed on the Project page in the dashboard, where you can also
+revoke it if the token becomes compromised.
+
 .. note::
     The repository URL argument is optional. If you specify it, Snailwatch will be able to
     generate direct links to individual commits from the dashboard (supports GitHub and GitLab repository URLs).
