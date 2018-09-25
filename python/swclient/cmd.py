@@ -76,9 +76,9 @@ def main():
         if args.timestamp:
             timestamp = dateutil.parser.parse(args.timestamp)
         client.upload_measurement(args.benchmark,
-                                   json.loads(args.env),
-                                   json.loads(args.result),
-                                   timestamp)
+                                  json.loads(args.env),
+                                  json.loads(args.result),
+                                  timestamp)
     elif args.action == "upload-file":
         with open(args.filename) as f:
             data = json.load(f)
