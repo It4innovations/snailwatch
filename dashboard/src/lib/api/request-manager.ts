@@ -76,7 +76,10 @@ export class RequestManager
     private handleError(error: AxiosError)
     {
         if (error.response === undefined) throw new NetworkError();
-        console.error(error, error.response.statusText, error.response.data);
+        if (process.env.NODE_ENV === 'development')
+        {
+            console.error(error, error.response.statusText, error.response.data);
+        }
 
         throw new ApiError(error.response.status, error.message);
     }
