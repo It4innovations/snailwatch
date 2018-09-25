@@ -12,7 +12,7 @@ import {getViews} from '../../../../state/session/view/reducer';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
-import {RangeHelp, TrendGroupHelp} from '../../../../strings';
+import {RangeHelp, TrendGroupHelp} from '../../../../help';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {TrendsTable} from './trends-table';
 

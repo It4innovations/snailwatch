@@ -29,7 +29,7 @@ import {Box} from '../global/box';
 import {ErrorBox} from '../global/error-box';
 import {MeasurementRecord} from '../global/measurement-record';
 import {TwoColumnPage} from '../global/two-column-page';
-import {ExportHelp, RangeHelp} from '../../strings';
+import {ExportHelp, RangeHelp} from '../../help';
 
 registerLanguage('json', json);
 

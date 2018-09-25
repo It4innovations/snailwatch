@@ -15,11 +15,13 @@ import {
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {ColorPalette} from '../../color-palette';
-import {createLinePoints, groupMeasurements} from '../chart-utils';
 import {Tick} from '../tick';
+import {LineChartSettings} from './line-chart-settings';
 import {LineLegend} from './line-legend';
-import {LinePoint} from './line-point';
+import {LabeledGroup, LinePoint} from './line-point';
 import {PointTooltip} from './point-tooltip';
+import {createLineData} from './utils';
+
 
 export interface LineChartDataset
 {
@@ -36,9 +38,7 @@ interface Props
     height: number;
     responsive?: boolean;
     groupMode: GroupMode;
-    connectPoints: boolean;
-    showPoints: boolean;
-    showDeviation: boolean;
+    settings: LineChartSettings;
     preview?: boolean;
     dateFormat: string;
     onMeasurementsSelected?(measurements: Measurement[]): void;
@@ -69,13 +69,11 @@ export class LineChart extends PureComponent<Props>
     renderChart = (): JSX.Element =>
     {
         const preview = this.props.preview || false;
-
         const padding = preview ? 0 : 20;
-        const datasets = this.props.datasets.map(v =>
-            groupMeasurements(v.measurements, this.props.groupMode, this.props.xAxis, [v.yAxis], this.props.dateFormat)
+
+        let {points, groups} = createLineData(this.props.datasets, this.props.groupMode, this.props.xAxis,
+            this.props.dateFormat, this.props.settings.showAverageTrend, DATASET_COLORS
         );
-        let points = createLinePoints(datasets, this.props.dateFormat);
-        const dotActive = this.props.onMeasurementsSelected && !preview;
 
         const empty = points.length === 0;
         if (empty)
@@ -101,30 +99,42 @@ export class LineChart extends PureComponent<Props>
                 {!preview && <Tooltip wrapperStyle={{ zIndex: 999 }}
                                       offset={50}
                                       content={<PointTooltip xAxis={this.props.xAxis} />} />}
-                {!preview && <Legend content={<LineLegend palette={DATASET_COLORS} />} />}
-                {datasets.map((scatter, index) =>
-                    <Line
-                        key={`line.${index}`}
-                        name={this.props.datasets[index].name}
-                        isAnimationActive={false}
-                        dataKey={`data[${index}].value`}
-                        connectNulls={true}
-                        dot={this.props.showPoints}
-                        activeDot={dotActive && {
-                            stroke: '#444444',
-                            onClick: (data: {payload: LinePoint}) => this.selectMeasurements(data, index)
-                        }}
-                        stroke={(this.props.connectPoints ? DATASET_COLORS.getColor(index) : '#00000000')}
-                        fill={DATASET_COLORS.getColor(index)}>
-                        {(!preview && this.props.showDeviation) &&
-                            <ErrorBar
-                                dataKey={`data[${index}].range`}
-                                stroke={DATASET_COLORS.getColor(index)}
-                                strokeWidth={2} />
-                        }
-                    </Line>
-                )}
+                {!preview && <Legend content={<LineLegend groups={groups} />} />}
+                {groups.map((g, i) => this.renderLine(g, i, preview))}
             </ReLineChart>
+        );
+    }
+
+    renderLine = (group: LabeledGroup, index: number, preview: boolean): JSX.Element =>
+    {
+        const dotActive = this.props.onMeasurementsSelected && !preview && !group.isAverageTrend;
+        const showDeviation = !preview && this.props.settings.showDeviation && !group.isAverageTrend;
+        const color = group.color;
+
+        return (
+            <Line
+                key={`line.${index}`}
+                name={group.name}
+                isAnimationActive={false}
+                strokeDasharray={group.isAverageTrend ? '5 5' : ''}
+                legendType={group.isAverageTrend ? 'none' : 'circle'}
+                type={group.isAverageTrend ? 'monotone' : 'linear'}
+                dataKey={`data[${index}].value`}
+                connectNulls={true}
+                dot={this.props.settings.showPoints}
+                activeDot={dotActive && {
+                    stroke: '#444444',
+                    onClick: (data: {payload: LinePoint}) => this.selectMeasurements(data, index)
+                }}
+                stroke={(this.props.settings.connectPoints ? color : '#00000000')}
+                fill={color}>
+                {showDeviation &&
+                    <ErrorBar
+                        dataKey={`data[${index}].range`}
+                        stroke={DATASET_COLORS.getColor(index)}
+                        strokeWidth={2} />
+                }
+            </Line>
         );
     }
 

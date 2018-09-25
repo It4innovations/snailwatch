@@ -11,7 +11,7 @@ import {AppState} from '../../../../state/app/reducers';
 import {setChartXAxisAction} from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
-import {RangeHelp, ViewListHelp, XAxisHelp} from '../../../../strings';
+import {RangeHelp, ViewListHelp, XAxisHelp} from '../../../../help';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';

@@ -1,11 +1,10 @@
-import {isMoment, Moment, default as moment} from 'moment';
-import {all, chain, Dictionary, filter, groupBy, map, reduce, sort, sum, uniq, values, zipObj} from 'ramda';
+import {default as moment, isMoment, Moment} from 'moment';
+import {all, Dictionary, filter, groupBy, map, reduce, sort, sum, values, zipObj} from 'ramda';
 import {GroupMode} from '../../../lib/measurement/group-mode';
 import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement';
 import {compareDate} from '../../../util/date';
 import {maximum, minimum, standardDeviation} from '../../../util/math';
 import {getValueWithPath} from '../../../util/object';
-import {LinePoint} from './line-chart/line-point';
 
 
 export interface Deviation
@@ -90,50 +89,9 @@ export function compareXValue(a: string, b: string): number
     return a.localeCompare(b);
 }
 
-export function createLinePoints(datasets: Dictionary<MeasurementGroup>[], dateFormat: string): LinePoint[]
-{
-    const keys = uniq(chain(d => Object.keys(d), datasets));
-    const vals: LinePoint[] = keys.map(x => ({
-        x,
-        data: datasets.map(d => {
-            if (d.hasOwnProperty(x))
-            {
-                const item = d[x].items[Object.keys(d[x].items)[0]];
-                return {
-                    group: d[x],
-                    value: item.average,
-                    deviation: item.deviation,
-                    range: [item.deviation.low, item.deviation.high]
-                };
-            }
-
-            return {
-                group: null,
-                value: null,
-                deviation: null,
-                range: null
-            };
-        })
-    }));
-
-    return sort((a, b) => compareDate(getPointTimestamp(a), getPointTimestamp(b)), vals).map(val => ({
-        ...val,
-        x: formatXValue(val.x, dateFormat)
-    }));
-}
-
-function getMinTimestamp(group: MeasurementGroup): Moment
+export function getMinTimestamp(group: MeasurementGroup): Moment
 {
     return reduce((a, b) => compareDate(a, b) === -1 ? a : b, moment(), group.measurements.map(m => m.timestamp));
-}
-function getPointTimestamp(data: LinePoint): Moment
-{
-    return reduce((a, b) => compareDate(a, b) === -1 ? a : b,
-        moment(),
-        data.data.map(d =>
-            d.group === null ? moment() : getMinTimestamp(d.group)
-        )
-    );
 }
 
 function hasAxis(measurement: Measurement, axis: string)

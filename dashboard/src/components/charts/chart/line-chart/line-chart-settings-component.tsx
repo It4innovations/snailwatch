@@ -19,48 +19,40 @@ export class LineChartSettingsComponent extends PureComponent<Props>
     render()
     {
         return (
-            <div>
+            <>
                 <Row>
                     <div>Show points: </div>
                     <input type='checkbox'
                            checked={this.props.settings.showPoints}
-                           onChange={this.changeShowPoints} />
+                           onChange={this.change('showPoints')} />
                 </Row>
                 <Row>
                     <div>Show lines: </div>
                     <input type='checkbox'
                            checked={this.props.settings.connectPoints}
-                           onChange={this.changeConnectPoints} />
+                           onChange={this.change('connectPoints')} />
                 </Row>
                 <Row>
                     <div>Show deviation: </div>
                     <input type='checkbox'
                            checked={this.props.settings.showDeviation}
-                           onChange={this.changeShowDeviation} />
+                           onChange={this.change('showDeviation')} />
                 </Row>
-            </div>
+                <Row>
+                    <div>Show trend: </div>
+                    <input type='checkbox'
+                           checked={this.props.settings.showAverageTrend}
+                           onChange={this.change('showAverageTrend')} />
+                </Row>
+            </>
         );
     }
 
-    changeShowPoints = (e: React.SyntheticEvent<HTMLInputElement>) =>
+    change = (attr: keyof LineChartSettings) => (e: React.SyntheticEvent<HTMLInputElement>) =>
     {
         this.props.onChangeSettings({
             ...this.props.settings,
-            showPoints: e.currentTarget.checked
-        });
-    }
-    changeConnectPoints = (e: React.SyntheticEvent<HTMLInputElement>) =>
-    {
-        this.props.onChangeSettings({
-            ...this.props.settings,
-            connectPoints: e.currentTarget.checked
-        });
-    }
-    changeShowDeviation = (e: React.SyntheticEvent<HTMLInputElement>) =>
-    {
-        this.props.onChangeSettings({
-            ...this.props.settings,
-            showDeviation: e.currentTarget.checked
+            [attr]: e.currentTarget.checked
         });
     }
 }

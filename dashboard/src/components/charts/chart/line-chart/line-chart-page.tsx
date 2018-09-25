@@ -16,7 +16,7 @@ import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
-import {RangeHelp, ViewListHelp, XAxisHelp} from '../../../../strings';
+import {LineChartSettingsHelp, RangeHelp, ViewListHelp, XAxisHelp} from '../../../../help';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
@@ -69,13 +69,14 @@ const ViewManagerWrapper = styled.div`
 
 class LineChartPageComponent extends PureComponent<Props, State>
 {
-    state: State = {
+    readonly state: State = {
         groupMode: GroupMode.AxisX,
         selectedMeasurements: [],
         settings: {
             showPoints: false,
             connectPoints: true,
-            showDeviation: false
+            showDeviation: false,
+            showAverageTrend: false
         },
         selectedView: null
     };
@@ -106,7 +107,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                 <Box title='View list' help={ViewListHelp}>
                     <ViewSelection onEditView={this.setSelectedView} />
                 </Box>
-                <Box title='Settings'>
+                <Box title='Settings' help={LineChartSettingsHelp}>
                     <LineChartSettingsComponent
                         settings={this.state.settings}
                         onChangeSettings={this.changeSettings} />
@@ -126,9 +127,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     height={400}
                     responsive={true}
                     groupMode={this.state.groupMode}
-                    connectPoints={this.state.settings.connectPoints}
-                    showPoints={this.state.settings.showPoints}
-                    showDeviation={this.state.settings.showDeviation}
+                    settings={this.state.settings}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     datasets={datasets}
                     dateFormat={CHART_DATE_FORMAT} />

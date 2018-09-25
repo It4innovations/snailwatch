@@ -38,6 +38,7 @@ export class PointTooltip extends PureComponent<TooltipProps & Props>
         const index = this.getIndex(payload.dataKey);
 
         if (payload.payload.data[index].group === null) return null;
+        if (payload.payload.data[index].isAverageTrend) return null;
 
         const point = payload.payload.data[index];
 

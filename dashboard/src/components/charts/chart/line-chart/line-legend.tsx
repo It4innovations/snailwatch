@@ -1,11 +1,12 @@
 import React, {PureComponent} from 'react';
 import {LegendProps} from 'recharts';
 import styled from 'styled-components';
-import {ColorPalette} from '../../color-palette';
 
 interface Props
 {
-    palette: ColorPalette;
+    groups: {
+        color: string;
+    }[];
 }
 
 const List = styled.ul`
@@ -27,14 +28,15 @@ export class LineLegend extends PureComponent<LegendProps & Props>
         const payload = this.props.payload;
         return (
             <List>
-                {payload.map((entry, index) => (
+                {payload.map((entry, index) =>
+                    entry.type !== 'none' &&
                     <Entry key={index}>
                         <Icon height='12' width='12'>
-                            <circle cx='6' cy='6' r='6' fill={this.props.palette.getColor(index)} />
+                            <circle cx='6' cy='6' r='6' fill={this.props.groups[index].color} />
                         </Icon>
                         {entry.value}
                     </Entry>
-                ))}
+                )}
             </List>
         );
     }

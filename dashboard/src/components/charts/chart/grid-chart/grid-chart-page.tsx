@@ -12,7 +12,7 @@ import {SelectChartViewParams} from '../../../../state/session/pages/chart-page/
 import {loadGridChartMeasurements} from '../../../../state/session/pages/grid-chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducer';
 import {getViews} from '../../../../state/session/view/reducer';
-import {RangeHelp, XAxisHelp} from '../../../../strings';
+import {RangeHelp, XAxisHelp} from '../../../../help';
 import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
@@ -22,6 +22,7 @@ import {applyFilter, ViewFilter, ViewSortMode} from '../../view/view-filter/view
 import {ViewFilterComponent} from '../../view/view-filter/view-filter-component';
 import {CHART_DATE_FORMAT} from '../configuration';
 import {LineChart} from '../line-chart/line-chart';
+import {LineChartSettings} from '../line-chart/line-chart-settings';
 
 interface OwnProps
 {
@@ -78,6 +79,13 @@ const Label = styled.div`
 class GridChartPageComponent extends PureComponent<Props, State>
 {
     readonly state: State = initialState;
+
+    private settings: LineChartSettings = {
+        connectPoints: true,
+        showPoints: false,
+        showDeviation: false,
+        showAverageTrend: false
+    };
 
     componentDidMount()
     {
@@ -143,9 +151,7 @@ class GridChartPageComponent extends PureComponent<Props, State>
                     height={150}
                     preview={true}
                     groupMode={GroupMode.AxisX}
-                    connectPoints={true}
-                    showPoints={false}
-                    showDeviation={false}
+                    settings={this.settings}
                     dateFormat={CHART_DATE_FORMAT} />
             </Dataset>
         );
