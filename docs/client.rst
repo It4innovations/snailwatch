@@ -1,37 +1,66 @@
 Client
 ======
-We provide a simple Python library that allows you to create a user and upload measurements.
+We provide a simple Python library called ``swclient`` that allows you to
+create users, projects and upload measurements to Snailwatch.
 You can either use it as a CLI tool or as a library directly in your code.
 
-It is located in the ``python`` directory.
+Installation
+------------
 
-Example CLI usage:
+``swclient`` is located in the ``python`` directory. If you just want to use it as a CLI tool,
+it is enough to install its dependencies from the ``requirements.txt`` file:
 
 .. code-block:: bash
 
-    # uploading data directly
-    $ python -m swclient <server> upload 'my-benchmark' '{"commit": "abc"}' '{"result": {"type": "time", "value": "15"}}'
+    $ pip install -r requirements.txt
 
-    # uploading data from a JSON file
-    $ python -m swclient <server> upload-file benchmarks.json
 
-The most common way to use this library is from a script that is run by a CI service.
+If you want to use it in your code as a library, we recommend to install `swclient`
+(preferably in a `virtual environment <https://docs.python.org/3/library/venv.html>`_):
+
+.. code-block:: bash
+
+    $ python setup.py install
+
+
+CLI usage
+---------
+
+.. code-block:: bash
+
+    # create user (email is optional)
+    $ python -m swclient <server> create-user <admin-token> <username> --email <email>
+
+    # create project (repository URL is optional)
+    $ python -m swclient <server> create-project <session-token> name --repository <repository>
+
+    # upload data directly
+    $ python -m swclient <server> upload <upload-token> my-benchmark '{"commit":"abc"}' '{"result":{"type":"time","value":"15"}}'
+
+    # upload data from a JSON file
+    $ python -m swclient <server> upload-file <upload-token> benchmarks.json
+
+
+Library usage
+-------------
+
+The designed way to use this library is from a script that is run by a CI service.
 Your script may look something like this (simplified example that measures a single benchmark once):
 
 .. code-block:: python
 
     import tests
-    import swclient
+    from swclient.client import Client
     import os
 
     time_a = tests.benchmark_a()
 
-    session = Session(
+    client = Client(
         '<server>/api',
         <your-upload-token>
     )
 
-    session.upload_measurements([(
+    client.upload_measurements([(
         'BenchmarkA',       # benchmark name
         {                   # environment of the measurement
             'commit': os.environ['CI_COMMIT'],
@@ -64,5 +93,5 @@ CLI documentation
 API documentation
 ---------------------
 
-.. autoclass:: swclient.session.Session
+.. autoclass:: swclient.client.Client
     :members:
