@@ -123,7 +123,7 @@ export class RestClient implements SnailClient
         if (range.useDateFilter)
         {
             const from = range.from.startOf('date');
-            const to = range.to.startOf('date');
+            const to = range.to.endOf('date');
 
             filters = [...filters, {
                 path: 'timestamp',
