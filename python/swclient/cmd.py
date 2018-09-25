@@ -5,7 +5,7 @@ import sys
 
 import dateutil.parser
 
-from .session import Session
+from .client import Client
 
 
 def create_parser():
@@ -59,23 +59,23 @@ def get_password():
 def main():
     args = create_parser().parse_args()
 
-    session = Session(args.server_url, args.token)
+    client = Client(args.server_url, args.token)
 
     if args.action == "create-user":
         password = get_password()
-        session.create_user(args.username, password, args.email)
-        token = session.login(args.username, password)
+        client.create_user(args.username, password, args.email)
+        token = client.login(args.username, password)
         print("Created user {}, session token: {}".format(
             args.username, token))
     elif args.action == "create-project":
-        project = session.create_project(args.name, args.repository)
+        project = client.create_project(args.name, args.repository)
         print("Created project {}, upload token: {}"
               .format(args.name, project['uploadToken']))
     elif args.action == "upload":
         timestamp = None
         if args.timestamp:
             timestamp = dateutil.parser.parse(args.timestamp)
-        session.upload_measurement(args.benchmark,
+        client.upload_measurement(args.benchmark,
                                    json.loads(args.env),
                                    json.loads(args.result),
                                    timestamp)
@@ -98,6 +98,6 @@ def main():
                 timestamp
             ))
 
-        session.upload_measurements(measurements)
+        client.upload_measurements(measurements)
     else:
         print("Enter a valid subcommand (create-user, upload or upload-file)")

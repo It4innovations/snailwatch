@@ -4,9 +4,10 @@ import datetime
 from .common import SnailwatchException
 
 
-class Session:
+class Client(object):
     """
-    This class simplifies Snailwatch API usage.
+    This client provides high-level functions for user and project management
+    and measurement uploads.
 
     :param server_url: URL of the Snailwatch server
     :param token: upload token for uploading measurements, admin token for

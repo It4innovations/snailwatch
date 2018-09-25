@@ -11,7 +11,7 @@ from swclient.common import SnailwatchException
 
 def test_session_create_user(sw_env):
     sw_env.start(do_init=False)
-    s = sw_env.admin_session()
+    s = sw_env.admin_client()
 
     email = "test@test.com"
     s.create_user("SnailMaster", "SnailPassword", email)
@@ -23,7 +23,7 @@ def test_session_create_user(sw_env):
 
 def test_session_create_project(sw_env):
     sw_env.start()
-    s = sw_env.user_session()
+    s = sw_env.user_client()
 
     name = "P1"
     repo = "https://myrepo.com"
@@ -35,7 +35,7 @@ def test_session_create_project(sw_env):
 
 def test_session_login(sw_env):
     sw_env.start(do_init=False)
-    s = sw_env.admin_session()
+    s = sw_env.admin_client()
 
     user = "a"
     s.create_user(user, user)
@@ -158,7 +158,7 @@ def test_cmd_upload_file_bulk(sw_env, tmpdir):
 
 def test_session_upload(sw_env):
     sw_env.start()
-    s = sw_env.upload_session()
+    s = sw_env.upload_client()
     s.upload_measurement("test1",
                          {"machine": "tester"},
                          {"result": {"value": "123", "type": "integer"}})
@@ -177,7 +177,7 @@ def test_session_upload(sw_env):
 
 def test_session_bulk_upload(sw_env):
     sw_env.start()
-    s = sw_env.upload_session()
+    s = sw_env.upload_client()
 
     measurements = [
         ("test1",
@@ -198,7 +198,7 @@ def test_session_bulk_upload(sw_env):
 
 def test_export(sw_env):
     sw_env.start()
-    s = sw_env.upload_session()
+    s = sw_env.upload_client()
 
     time = datetime.datetime.now().replace(microsecond=0)
     measurements = [
@@ -241,7 +241,7 @@ def test_export(sw_env):
 
 def test_clear_measurements(sw_env):
     sw_env.start()
-    s = sw_env.upload_session()
+    s = sw_env.upload_client()
 
     measurements = [
         ("test1",
@@ -256,7 +256,7 @@ def test_clear_measurements(sw_env):
 
     s.upload_measurements(measurements)
 
-    s = sw_env.user_session()
+    s = sw_env.user_client()
     assert requests.delete("{}/projects/{}/measurements"
                            .format(sw_env.server_url, sw_env.project_id),
                            headers={
