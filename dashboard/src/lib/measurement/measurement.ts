@@ -27,7 +27,7 @@ export function hashMeasurement(measurement: Measurement): string
 export function getMeasurementKeys(measurements: Measurement[]): string[]
 {
     return getAllKeysMerged(measurements, m => ({
-        timestamp: '',
+        timestamp: m.timestamp,
         benchmark: m.benchmark,
         environment: m.environment,
         result: m.result

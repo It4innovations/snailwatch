@@ -123,9 +123,11 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
         return (
             <>
                     <div>
-                        We provide a simple Python library located at <code>python/sw-client</code> that can
-                        simplify measurement uploads and user creation.<br />
-                        You can use the following snippet as an example how to use it.
+                        We provide a simple Python library located at <code>python/swclient</code> that
+                        simplifies measurement uploads and project/user management.<br />
+                        You can use the following snippet as an example how to use it to upload measurements.<br />
+                        Additional details can be found in the
+                        {' '}<a href='https://snailwatch.readthedocs.io/' target='_blank'>documentation</a>.
                     </div>
                     <SyntaxHighlighter language='python' style={dracula}>
 {`from swclient.client import Client

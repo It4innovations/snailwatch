@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg2922"
+   version="1.1"
+   viewBox="0 0 12.694 9.5045528"
+   height="9.5045528mm"
+   width="12.694mm">
+  <defs
+     id="defs2916">
+    <clipPath
+       id="clipPath1324"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         style="clip-rule:evenodd"
+         id="path1322"
+         d="m 293.5506,172.6485 h 56.13312 v 56.13312 H 293.5506 Z" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1312">
+      <path
+         d="m 181.28436,172.6485 h 56.13312 v 56.13312 h -56.13312 z"
+         id="path1310"
+         style="clip-rule:evenodd" />
+    </clipPath>
+  </defs>
+  <metadata
+     id="metadata2919">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-73.775869,-88.077652)"
+     id="layer1">
+    <g
+       style="stroke-width:0.37252557"
+       id="g1318"
+       transform="matrix(0.22727744,0,0,0.22727744,7.0584402,47.211924)">
+      <g
+         style="stroke-width:0.37252557"
+         clip-path="url(#clipPath1324)"
+         id="g1320">
+        <g
+           style="stroke-width:0.37252557"
+           transform="matrix(1.4033277,0,0,1.4033277,293.5506,172.6485)"
+           id="g1326">
+          <path
+             id="path1328"
+             style="fill:#212529;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.37252557"
+             d="m 39.799999,32.400002 v 2.5 H 0 V 5.1000023 H 2.5 V 32.400002 Z m -2.5,-24.2000012 V 16.6 c 0,0.333334 -0.133335,0.533333 -0.400001,0.600001 -0.266667,0.06667 -0.5,0.03333 -0.700001,-0.100001 L 33.899998,14.700001 21.599998,27 c -0.133333,0.133333 -0.300001,0.200001 -0.5,0.200001 C 20.9,27.200001 20.766666,27.133333 20.699999,27 l -4.5,-4.5 -8.1000005,8.1 -3.8000002,-3.799999 11.3999997,-11.3 c 0.133333,-0.133333 0.266666,-0.2 0.400001,-0.2 0.133333,0 0.300001,0.06667 0.5,0.2 L 21.099998,20 l 9,-9 -2.299999,-2.3999996 C 27.6,8.4000006 27.533333,8.1999998 27.599998,8 27.666664,7.7999997 27.866665,7.6666665 28.199999,7.5999999 h 8.399999 c 0.200001,0 0.366665,0.066667 0.5,0.1999998 0.133336,0.1333332 0.200001,0.2666669 0.200001,0.4000001 z" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

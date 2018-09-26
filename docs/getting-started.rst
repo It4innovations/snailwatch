@@ -110,16 +110,15 @@ data to Snailwatch:
             upload("abc{}".format(commit), measure())
 
 
+Congratulations! You've just uploaded your first measurement to Snailwatch.
+Now you can go to the dashboard URL (by default http://localhost:3000 if you deployed
+Snailwatch locally) and take a look at the data.
+
 .. note::
     The ``time.time`` function is not ideal for benchmarking code in Python, because it
     measures wall clock time. It is only used in this example for simplicity.
     To benchmark Python code properly, you should use other functions, for example
     ``time.clock``.
-
-
-Congratulations! You've just uploaded your first measurement to Snailwatch.
-Now you can go to the dashboard URL (by default http://localhost:3000 if you deployed
-Snailwatch locally) and take a look at the data.
 
 Example API calls
 -----------------

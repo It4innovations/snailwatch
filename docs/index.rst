@@ -7,8 +7,13 @@ historical overview of their performance in a web dashboard. When the performanc
 of some benchmark drops, it can automatically notify you with the details of the
 regression.
 
-.. image:: pipeline.png
+.. figure:: pipeline.svg
+    :width: 80%
+    :alt: Snailwatch pipeline
     :align: center
+
+    Snailwatch pipeline
+
 
 | To learn more about Snailwatch, read the :doc:`Overview <overview>`.
 | Complete Snailwatch API documentation can be found :doc:`here <api>`.
@@ -20,6 +25,8 @@ regression.
 
     overview
     getting-started
+    cookbook
+    dashboard
     client
     api
 
