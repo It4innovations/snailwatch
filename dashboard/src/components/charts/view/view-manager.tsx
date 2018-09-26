@@ -4,7 +4,7 @@ import MdClose from 'react-icons/lib/md/close';
 import {connect} from 'react-redux';
 import {Button, ButtonGroup} from 'reactstrap';
 import styled from 'styled-components';
-import {Measurement} from '../../../lib/measurement/measurement';
+import {getMeasurementKeys, Measurement} from '../../../lib/measurement/measurement';
 import {Project} from '../../../lib/project/project';
 import {User} from '../../../lib/user/user';
 import {createWatch, View, Watch} from '../../../lib/view/view';
@@ -87,6 +87,7 @@ class ViewManagerComponent extends PureComponent<Props>
             </>
         );
 
+        const measurementKeys = getMeasurementKeys(this.props.view.measurements);
         return (
             <Column>
                 <Row>
@@ -101,7 +102,7 @@ class ViewManagerComponent extends PureComponent<Props>
                     measurementKeys={this.props.project.measurementKeys} />
                 <KeysWrapper>
                     {this.renderHelpTitle('Y axes', 'Select attributes that will be displayed on the Y axis.')}
-                    <ResultKeysMultiselect keys={this.props.project.measurementKeys}
+                    <ResultKeysMultiselect keys={measurementKeys}
                                            values={this.props.view.yAxes}
                                            onChange={this.changeYAxes}
                                            requireSelection={true} />
