@@ -40,7 +40,7 @@ HATEOAS = False
 PAGINATION = False
 RENDERERS = ['eve.render.JSONRenderer']
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
-ENFORCE_IF_MATCH = False
+IF_MATCH = False
 MONGO_QUERY_BLACKLIST = []
 BANDWIDTH_SAVER = False
 

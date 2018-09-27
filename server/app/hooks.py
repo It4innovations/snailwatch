@@ -122,6 +122,13 @@ def after_insert_measurements(measurements):
     app.logger.info('{} measurement(s) inserted'.format(len(measurements)))
 
 
+def after_fetch_measurements(measurements):
+    for m in measurements['_items']:
+        del m['_created']
+        del m['_updated']
+        del m['_etag']
+
+
 def init_hooks(app):
     app.on_insert_users += before_insert_users
     app.on_insert_projects += before_insert_projects
@@ -130,3 +137,4 @@ def init_hooks(app):
     app.on_inserted_measurements += after_insert_measurements
     app.on_fetched_item_projects += after_fetch_project
     app.on_fetched_resource_projects += after_fetch_projects
+    app.on_fetched_resource_measurements += after_fetch_measurements

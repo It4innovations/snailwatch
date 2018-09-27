@@ -1,4 +1,4 @@
-git+https://github.com/pyeve/eve@0df8e7c6c78455fc56c20a15584afe407642bdba
+git+https://github.com/pyeve/eve@b04ee6e734cc5e5160bc485b1ba44e8da8eb4920
 flask-cors
 requests
 jinja2
