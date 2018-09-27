@@ -7,7 +7,8 @@ Multi-stage measurements
 ------------------------
 Benchmarked code sometimes consists of smaller parts (stages) that have different
 performance characteristics (initialization, main computation, postprocessing, etc.).
-In that case it may be interesting to observe the ratios of the individual stages.
+In that case, it may be interesting to observe not only the total execution time,
+but also the ratios of the individual stages.
 Large changes in those ratios may mark a bug in the code, which can be obscured if
 the total execution time stays the same.
 
@@ -25,11 +26,18 @@ key in the measurement:
     })
 
 
-Then in the dashboard go to the *Stacked bar chart* subpage and display a view
-containing all of the stages selected as Y axes. You should see a chart similar
-to the image below.
+The ratios can be visualized clearly in a bar chart, which you can
+find in the dashboard on the *Stacked bar chart* |bar| subpage.
+If you then select a view containing all of the stages selected as Y axes,
+you should see a chart similar to the image below.
 
-.. image:: stacked-bar-chart.svg
+.. figure:: stacked-bar-chart.svg
     :width: 60%
     :height: 200
+    :alt: Stacked bar chart displaying ratios of individual computation stages
     :align: center
+
+    Stacked bar chart displaying ratios of individual computation stages
+
+.. |bar| image:: icon-bar-chart.svg
+    :width: 20px
