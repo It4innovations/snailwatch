@@ -1,7 +1,6 @@
 from eve import ID_FIELD
 
 from .repository import Repository
-from ..measurement import serialize_filters
 
 
 class MeasurementRepo(Repository):
@@ -13,8 +12,10 @@ class MeasurementRepo(Repository):
             'project': project[ID_FIELD]
         })
 
-    def get_measurements(self, user, filters=tuple(), limit=0):
-        where = serialize_filters(filters)
+    def get_measurements(self, user, where=None, limit=0):
+        if not where:
+            where = {}
+
         where.update({
             'owner': user[ID_FIELD]
         })

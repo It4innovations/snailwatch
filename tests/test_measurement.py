@@ -1,4 +1,4 @@
-from app.measurement import serialize_filters
+from app.lib.measurement import serialize_filters
 
 
 def test_serialize_filters():

@@ -1,7 +1,6 @@
 from eve import ID_FIELD
 
 from .repository import Repository
-from ..auth import get_session_from_request
 
 
 class UserRepo(Repository):
@@ -27,10 +26,3 @@ class UserRepo(Repository):
                 'password': password
             }
         })
-
-    def get_user_from_request(self, request):
-        session = get_session_from_request(request)
-        if not session:
-            return None
-
-        return self.find_user_by_id(session['user_id'])

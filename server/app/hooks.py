@@ -4,15 +4,15 @@ from functools import reduce
 from eve import ID_FIELD
 from flask import current_app as app, request
 
-from .auth import generate_token, hash_password
+from .auth import generate_token, get_user_from_request, hash_password
 from .db.project import ProjectRepo
 from .db.uploadtoken import UploadTokenRepo
 from .db.user import UserRepo
 from .db.view import ViewRepo
-from .regression.notifications import notify_regressions
-from .regression.regressions import check_regressions
+from .lib.regression.notifications import notify_regressions
+from .lib.regression.regressions import check_regressions
+from .lib.util import get_dict_keys
 from .settings import AUTH_FIELD
-from .util import get_dict_keys
 
 
 def check_and_notify_regressions(project, user):
@@ -37,8 +37,7 @@ def before_insert_users(users):
 
 
 def before_insert_projects(projects):
-    user_repo = UserRepo(app)
-    user = user_repo.get_user_from_request(request)
+    user = get_user_from_request(request)
 
     for project in projects:
         project['writers'] = [user['_id']]
@@ -49,8 +48,7 @@ def before_insert_projects(projects):
 
 
 def after_insert_projects(projects):
-    user_repo = UserRepo(app)
-    user = user_repo.get_user_from_request(request)
+    user = get_user_from_request(request)
     session_repo = UploadTokenRepo(app)
 
     for project in projects:
@@ -121,7 +119,7 @@ def after_insert_measurements(measurements):
     project = ProjectRepo(app).find_project_by_id(session['project'])
     check_and_notify_regressions(project, user)
 
-    app.logger.info('{} measurements inserted'.format(len(measurements)))
+    app.logger.info('{} measurement(s) inserted'.format(len(measurements)))
 
 
 def init_hooks(app):

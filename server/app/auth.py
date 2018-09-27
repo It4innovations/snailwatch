@@ -1,5 +1,6 @@
 import datetime
 import uuid
+from abc import ABC
 from functools import wraps
 
 import werkzeug.security
@@ -9,12 +10,13 @@ from flask import Response, abort, current_app as app, g, jsonify, request
 
 from .db.loginsession import LoginSessionRepo
 from .db.uploadtoken import UploadTokenRepo
+from .db.user import UserRepo
 from .errors import api_error
 
 AUTH_TOKEN_EXPIRATION_SEC = 3600 * 24 * 30
 
 
-class Authenticator(TokenAuth):
+class Authenticator(TokenAuth, ABC):
     def authenticate(self):
         resp = Response(None, 401)
         abort(401, description='Provide token in the Authorization header',
@@ -82,7 +84,7 @@ def requires_auth(with_user=False):
                 return authenticate()
             if with_user:
                 from .db.user import UserRepo
-                user = UserRepo(app).get_user_from_request(request)
+                user = get_user_from_request(request)
                 if not user:
                     return api_error(404, "User not found")
 
@@ -124,6 +126,14 @@ def get_session_for_token(token):
 
 def get_session_from_request(request):
     return get_session_for_token(get_request_token(request))
+
+
+def get_user_from_request(request):
+    session = get_session_from_request(request)
+    if not session:
+        return None
+
+    return UserRepo(app).find_user_by_id(session['user_id'])
 
 
 def set_auth_value(token):
