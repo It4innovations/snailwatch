@@ -11,7 +11,7 @@ from flask import Response, abort, current_app as app, g, jsonify, request
 from .db.loginsession import LoginSessionRepo
 from .db.uploadtoken import UploadTokenRepo
 from .db.user import UserRepo
-from .errors import api_error
+from .request import api_error
 
 AUTH_TOKEN_EXPIRATION_SEC = 3600 * 24 * 30
 

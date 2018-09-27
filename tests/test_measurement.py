@@ -1,4 +1,4 @@
-from app.lib.measurement import serialize_filters
+from app.lib.measurement import filters_to_mongo_selection
 
 
 def test_serialize_filters():
@@ -16,7 +16,7 @@ def test_serialize_filters():
         'value': 5
     }]
 
-    assert serialize_filters(filters) == {
+    assert filters_to_mongo_selection(filters) == {
         'a.b': 1,
         'a.c': {
             '$gte': 5

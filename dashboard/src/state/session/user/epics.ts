@@ -7,7 +7,7 @@ import {createRequestEpic} from '../../../util/request';
 import {AppEpic} from '../../app/app-epic';
 import {initUserSession} from '../actions';
 import {changePasswordAction, loginUserAction, UserActions} from './actions';
-import {getToken} from './reducer';
+import {getToken} from './reducers';
 
 const loadUserEpic = createRequestEpic(UserActions.loadOne, (action, state, deps) =>
     deps.client.loadUser(getToken(state), action.payload)

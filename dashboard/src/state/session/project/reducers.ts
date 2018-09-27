@@ -5,40 +5,48 @@ import {Project} from '../../../lib/project/project';
 import {createCrudReducer} from '../../../util/crud';
 import {createRequest, hookRequestActions, Request} from '../../../util/request';
 import {AppState} from '../../app/reducers';
-import {clearSession} from '../actions';
+import {clearSession, initProjectSession} from '../actions';
 import {deselectProject, ProjectActions, regenerateUploadToken, selectProject} from './actions';
 
 export interface ProjectState
 {
     projects: Project[];
     selectedProject: string | null;
+    projectInitialized: boolean;
     projectRequest: Request;
 }
 
-const initialState: ProjectState = {
+export const initialState: ProjectState = {
     projects: [],
     selectedProject: null,
-    projectRequest: createRequest(),
+    projectInitialized: false,
+    projectRequest: createRequest()
 };
 
-let reducer = reducerWithInitialState<ProjectState>({ ...initialState })
+let reducers = reducerWithInitialState<ProjectState>({ ...initialState })
 .case(clearSession, () => ({ ...initialState }))
 .case(deselectProject, (state) => ({
     ...state,
     selectedProject: null,
+    projectInitialized: false,
     uploadToken: null
+}))
+.case(initProjectSession.done, (state) => ({
+    ...state,
+    projectInitialized: true
 }));
 
-reducer = compose(
-    (r: typeof reducer) => hookRequestActions(r,
+reducers = compose(
+    (r: typeof reducers) => hookRequestActions(r,
         selectProject,
         state => state.projectRequest,
         (state, action) => ({
             ...state,
-            selectedProject: action.payload.params
+            selectedProject: action.payload.params,
+            projectInitialized: false
         })
     ),
-    (r: typeof reducer) => hookRequestActions(r,
+    (r: typeof reducers) => hookRequestActions(r,
         regenerateUploadToken,
         state => state.projectRequest,
         (state, action) => ({
@@ -50,10 +58,10 @@ reducer = compose(
             )
         })
     )
-)(reducer);
+)(reducers);
 
-reducer = createCrudReducer<ProjectState, Project>(
-    reducer,
+reducers = createCrudReducer<ProjectState, Project>(
+    reducers,
     ProjectActions,
     'projects',
     state => state.projectRequest,
@@ -63,8 +71,9 @@ export const getProjects = (state: AppState) => state.session.project.projects;
 export const getSelectedProjectName = (state: AppState) => state.session.project.selectedProject;
 export const getProjectById = (projects: Project[], id: string) => projects.find(p => p.id === id) || null;
 export const getProjectByName = (projects: Project[], name: string) => projects.find(p => p.name === name) || null;
+export const isProjectInitialized = (state: AppState) => state.session.project.projectInitialized;
 export const getSelectedProject = createSelector(getProjects, getSelectedProjectName,
     (projects: Project[], name: string) => name === null ? null : getProjectByName(projects, name)
 );
 
-export const projectReducer = reducer;
+export const projectReducer = reducers;

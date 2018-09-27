@@ -8,7 +8,7 @@ import {RangeFilter} from '../view/range-filter';
 import {View} from '../view/view';
 import {CrudHandler} from './crud-handler';
 import {
-    MeasurementDAO,
+    MeasurementDAO, parseBatchedMeasurements,
     parseLoginResponse,
     parseMeasurement,
     parseProject,
@@ -16,7 +16,7 @@ import {
     parseView,
     ProjectDAO,
     serializeDate,
-    serializeProject,
+    serializeProject, serializeRangeFilter,
     serializeUser,
     serializeView,
     sort,
@@ -27,7 +27,7 @@ import {
 } from './dao';
 import {buildRequestFilter} from './filter';
 import {RequestManager} from './request-manager';
-import {SnailClient} from './snail-client';
+import {BatchedMeasurements, SnailClient} from './snail-client';
 
 export class RestClient implements SnailClient
 {
@@ -144,6 +144,18 @@ export class RestClient implements SnailClient
         }
 
         return this.measurementCrud.load(token, args);
+    }
+    loadMeasurementsBatched(token: string,
+                            project: Project,
+                            views: View[],
+                            range: RangeFilter): Observable<BatchedMeasurements>
+    {
+        return this.requestManager.request(`${this.projectPath(project)}/batched-measurements`, 'POST', {
+            views: views.map(v => v.id),
+            range: serializeRangeFilter(range)
+        }, {
+            token
+        }).pipe(map(parseBatchedMeasurements));
     }
     deleteMeasurement(token: string, measurement: Measurement): Observable<boolean>
     {

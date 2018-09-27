@@ -21,8 +21,8 @@ import {
 } from '../../state/session/pages/measurements-page/actions';
 import {getMeasurementsPageView} from '../../state/session/pages/measurements-page/reducer';
 import {getRangeFilter} from '../../state/session/pages/reducers';
-import {getSelectedProject} from '../../state/session/project/reducer';
-import {getToken} from '../../state/session/user/reducer';
+import {getSelectedProject} from '../../state/session/project/reducers';
+import {getToken} from '../../state/session/user/reducers';
 import {Request} from '../../util/request';
 import {RangeFilterSwitcher} from '../charts/range-filter/range-filter-switcher';
 import {Box} from '../global/box';
@@ -30,6 +30,7 @@ import {ErrorBox} from '../global/error-box';
 import {MeasurementRecord} from '../global/measurement-record';
 import {TwoColumnPage} from '../global/two-column-page';
 import {ExportHelp, RangeHelp} from '../../help';
+import {ProjectGate} from '../project/project-gate';
 
 registerLanguage('json', json);
 
@@ -85,7 +86,7 @@ class MeasurementListComponent extends PureComponent<Props>
     {
         const request = this.props.measurementRequest;
         return (
-            <div>
+            <ProjectGate>
                 <TwoColumnPage
                     menu={this.renderMenu}
                     menuWidth='auto'
@@ -95,7 +96,7 @@ class MeasurementListComponent extends PureComponent<Props>
                             {this.renderMeasurements()}
                         </div>
                     } />
-            </div>
+            </ProjectGate>
         );
     }
     renderMenu = (): JSX.Element =>

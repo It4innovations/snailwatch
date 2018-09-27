@@ -1,8 +1,8 @@
 import {combineReducers} from 'redux';
 import {pagesReducer, PagesState} from './pages/reducers';
-import {projectReducer, ProjectState} from './project/reducer';
-import {userReducer, UserState} from './user/reducer';
-import {viewReducer, ViewState} from './view/reducer';
+import {projectReducer, ProjectState} from './project/reducers';
+import {userReducer, UserState} from './user/reducers';
+import {viewReducer, ViewState} from './view/reducers';
 
 export interface SessionState
 {

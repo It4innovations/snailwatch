@@ -3,7 +3,7 @@ from flask import jsonify
 from ..auth import generate_token, requires_auth
 from ..db.project import ProjectRepo
 from ..db.uploadtoken import UploadTokenRepo
-from ..errors import api_error
+from ..request import api_error
 from ..snailwatch import app
 
 

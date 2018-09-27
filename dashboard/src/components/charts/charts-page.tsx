@@ -22,9 +22,10 @@ import {
     SelectViewParams
 } from '../../state/session/pages/chart-page/actions';
 import {getRangeFilter} from '../../state/session/pages/reducers';
-import {getSelectedProject} from '../../state/session/project/reducer';
+import {getSelectedProject} from '../../state/session/project/reducers';
 import {Request} from '../../util/request';
 import {MultiRequestComponent} from '../global/request/multi-request-component';
+import {ProjectGate} from '../project/project-gate';
 import {BarChartPage} from './chart/bar-chart/bar-chart-page';
 import {GridChartPage} from './chart/grid-chart/grid-chart-page';
 import {LineChartPage} from './chart/line-chart/line-chart-page';
@@ -61,6 +62,18 @@ const Row = styled.div`
     align-items: center;
     justify-content: space-between;
 `;
+
+class ChartsWrapper extends PureComponent<Props>
+{
+    render()
+    {
+        return (
+            <ProjectGate>
+                <ChartsPageComponent {...this.props} />;
+            </ProjectGate>
+        );
+    }
+}
 
 class ChartsPageComponent extends PureComponent<Props>
 {
@@ -182,4 +195,4 @@ export const ChartsPage = withRouter(connect<StateProps, DispatchProps>((state: 
     selectDataset: selectChartViewAction,
     selectView: selectViewAction,
     navigate: (path: string) => push(path)
-})(ChartsPageComponent));
+})(ChartsWrapper));

@@ -8,6 +8,18 @@ class ViewRepo(Repository):
     def __init__(self, app):
         self.table = app.data.driver.db['views']
 
+    def get_view_by_id(self, id):
+        return self.table.find({
+            ID_FIELD: self.normalize_id(id)
+        })
+
+    def get_views_by_id(self, ids):
+        return self.table.find({
+            ID_FIELD: {
+                "$in": tuple(self.normalize_id(id) for id in ids)
+            }
+        })
+
     def get_views_with_benchmark(self, benchmark):
         return self.table.find({
             'filters': [{
@@ -22,9 +34,10 @@ class ViewRepo(Repository):
             'owner': user[ID_FIELD]
         })
 
-    def get_views_with_watches(self, user):
+    def get_views_with_watches(self, user, project):
         return self.table.find({
             'owner': user[ID_FIELD],
+            'project': project[ID_FIELD],
             'watches': {
                 '$exists': True,
                 '$ne': []

@@ -4,7 +4,7 @@ from ..auth import get_session_for_token, set_auth_value
 from ..db.measurement import MeasurementRepo
 from ..db.project import ProjectRepo
 from ..db.user import UserRepo
-from ..errors import api_error
+from ..request import api_error
 from ..lib.export import export_measurements
 from ..snailwatch import app
 

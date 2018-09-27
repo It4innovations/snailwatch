@@ -16,7 +16,7 @@ from .settings import AUTH_FIELD
 
 
 def check_and_notify_regressions(project, user):
-    regressions = check_regressions(user)
+    regressions = check_regressions(user, project)
     if regressions:
         notify_regressions(user, project, regressions)
 

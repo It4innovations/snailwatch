@@ -2,17 +2,15 @@ import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
 import styled from 'styled-components';
+import {RangeHelp, XAxisHelp} from '../../../../help';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
-import {Measurement} from '../../../../lib/measurement/measurement';
 import {Project} from '../../../../lib/project/project';
 import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
 import {SelectChartViewParams} from '../../../../state/session/pages/chart-page/actions';
-import {loadGridChartMeasurements} from '../../../../state/session/pages/grid-chart-page/actions';
-import {getSelectedProject} from '../../../../state/session/project/reducer';
-import {getViews} from '../../../../state/session/view/reducer';
-import {RangeHelp, XAxisHelp} from '../../../../help';
+import {getSelectedProject} from '../../../../state/session/project/reducers';
+import {getViews} from '../../../../state/session/view/reducers';
 import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
@@ -34,14 +32,9 @@ interface StateProps
 {
     project: Project;
     views: View[];
-    measurements: Measurement[];
-}
-interface DispatchProps
-{
-    loadMeasurements(): void;
 }
 
-type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
+type Props = OwnProps & StateProps & RouteComponentProps<void>;
 
 const initialState = {
     xAxis: '',
@@ -86,11 +79,6 @@ class GridChartPageComponent extends PureComponent<Props, State>
         showDeviation: false,
         showAverageTrend: false
     };
-
-    componentDidMount()
-    {
-        this.props.loadMeasurements();
-    }
 
     render()
     {
@@ -175,10 +163,7 @@ class GridChartPageComponent extends PureComponent<Props, State>
     }
 }
 
-export const GridChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
+export const GridChartPage = withRouter(connect<StateProps, {}, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
-    views: getViews(state),
-    measurements: state.session.pages.gridChartPage.measurements
-}), ({
-    loadMeasurements: () => loadGridChartMeasurements.started({})
+    views: getViews(state)
 }))(GridChartPageComponent));

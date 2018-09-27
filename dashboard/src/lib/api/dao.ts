@@ -1,10 +1,13 @@
 import moment, {Moment} from 'moment';
+import {Dictionary, Functor, map} from 'ramda';
 import {Omit} from '../../util/types';
 import {Measurement} from '../measurement/measurement';
 import {Project} from '../project/project';
 import {User} from '../user/user';
 import {Filter, Operator} from '../view/filter';
+import {RangeFilter} from '../view/range-filter';
 import {View, Watch} from '../view/view';
+import {BatchedMeasurements} from './snail-client';
 
 export interface DAO
 {
@@ -38,6 +41,11 @@ export interface MeasurementDAO extends DAO
     timestamp: string;
     environment: {};
     result: {};
+}
+export interface BatchedMeasurementsDAO
+{
+    measurements: Dictionary<MeasurementDAO>;
+    views: Dictionary<string[]>;
 }
 export interface ViewDAO extends DAO
 {
@@ -121,8 +129,16 @@ export function parseMeasurement(measurement: MeasurementDAO): Measurement
         id: measurement._id,
         benchmark: measurement.benchmark,
         timestamp: moment(measurement.timestamp),
-        environment: {...measurement.environment},
-        result: {...measurement.result}
+        environment: measurement.environment,
+        result: measurement.result
+    };
+}
+export function parseBatchedMeasurements(batched: BatchedMeasurementsDAO): BatchedMeasurements
+{
+    return {
+        measurements: map(parseMeasurement, batched.measurements as {} as Functor<MeasurementDAO>) as
+            {} as Dictionary<Measurement>,
+        views: batched.views
     };
 }
 
@@ -148,6 +164,21 @@ export function serializeView(view: View): Omit<ViewDAO, keyof DAO>
 export function serializeDate(date: Moment): string
 {
     return date.format('YYYY-MM-DDTHH:mm:ss');
+}
+
+export function serializeRangeFilter(rangeFilter: RangeFilter): {}
+{
+    if (rangeFilter.useDateFilter)
+    {
+        return {
+            from: serializeDate(rangeFilter.from),
+            to: serializeDate(rangeFilter.to)
+        };
+    }
+
+    return {
+        entryCount: rangeFilter.entryCount
+    };
 }
 
 export function where<T extends {}>(args: {}, obj: T = ({} as T)): T & { where: string; }

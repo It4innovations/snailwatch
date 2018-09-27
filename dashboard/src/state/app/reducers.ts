@@ -4,7 +4,7 @@ import {createMigrate, createTransform, persistReducer} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import {
     deserializeDates,
-    deserializeRangeFilter,
+    ignoreVolatileAttributes,
     serializeDates,
     serializeMeasurements,
     serializeRequests
@@ -24,18 +24,22 @@ const sessionPersist = {
     storage,
     migrate: createMigrate(migrations),
     transforms: [
+        // do not persist range filters and init variables
         createTransform(
             null,
-            deserializeRangeFilter
+            ignoreVolatileAttributes
         ),
+        // serialize Moments to strings and vice-versa
         createTransform(
             serializeDates,
             deserializeDates
         ),
+        // reset requests during serialization
         createTransform(
             serializeRequests,
             null
         ),
+        // do not serialize measurements, they might take a lot of space
         createTransform(
             serializeMeasurements,
             null

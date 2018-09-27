@@ -19,7 +19,7 @@ const initialState: ViewState = {
     viewRequest: createRequest()
 };
 
-let reducer = reducerWithInitialState<ViewState>({ ...initialState })
+let reducers = reducerWithInitialState<ViewState>({ ...initialState })
 .case(clearSession, () => ({ ...initialState }))
 .case(reloadViewMeasurementsAction.done, (state, action) => ({
     ...state,
@@ -40,11 +40,11 @@ let reducer = reducerWithInitialState<ViewState>({ ...initialState })
     }))
 }));
 
-reducer = createCrudReducer<ViewState, View>(
-    reducer,
+reducers = createCrudReducer<ViewState, View>(
+    reducers,
     ViewActions,
     'views',
-    state => state.viewRequest,
+    state => state.viewRequest
 );
 
 export const getViewsState = (state: AppState) => state.session.view;
@@ -52,4 +52,4 @@ export const getViews = (state: AppState) => getViewsState(state).views;
 export const getViewById = (views: View[], id: string) =>
     views.find(view => view.id === id) || null;
 
-export const viewReducer = reducer;
+export const viewReducer = reducers;

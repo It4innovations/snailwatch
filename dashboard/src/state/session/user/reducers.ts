@@ -21,32 +21,32 @@ const initialState: UserState = {
     changePasswordRequest: createRequest()
 };
 
-let reducer = reducerWithInitialState<UserState>({ ...initialState })
+let reducers = reducerWithInitialState<UserState>({ ...initialState })
 .case(clearSession, () => ({ ...initialState }));
 
-reducer = compose(
-    (r: typeof reducer) => hookRequestActions(r, loginUserAction,
+reducers = compose(
+    (r: typeof reducers) => hookRequestActions(r, loginUserAction,
         state => state.userRequest,
         (state, action) => ({
             user: action.payload.result.user,
             token: action.payload.result.token
         })
-), (r: typeof reducer) => hookRequestActions(r, UserActions.loadOne,
+), (r: typeof reducers) => hookRequestActions(r, UserActions.loadOne,
     state => state.userRequest,
     (state, action) => ({
         user: action.payload.result
     })
-), (r: typeof reducer) => hookRequestActions(r, UserActions.update,
+), (r: typeof reducers) => hookRequestActions(r, UserActions.update,
     state => state.userRequest,
     (state, action) => ({
         user: action.payload.params
     })
-), (r: typeof reducer) => hookRequestActions(r, changePasswordAction,
+), (r: typeof reducers) => hookRequestActions(r, changePasswordAction,
         state => state.changePasswordRequest
-))(reducer);
+))(reducers);
 
 export const getUser = (state: AppState) => state.session.user.user;
 export const getToken = (state: AppState) => state.session.user.token;
 export const isUserAuthenticated = (state: AppState) => getUser(state) !== null && getToken(state) !== null;
 
-export const userReducer = reducer;
+export const userReducer = reducers;

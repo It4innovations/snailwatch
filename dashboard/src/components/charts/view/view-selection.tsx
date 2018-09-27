@@ -13,9 +13,9 @@ import {
     SelectChartViewParams,
     setChartXAxisAction, updateSelectedViewsAction
 } from '../../../state/session/pages/chart-page/actions';
-import {getSelectedProject} from '../../../state/session/project/reducer';
+import {getSelectedProject} from '../../../state/session/project/reducers';
 import {ViewActions} from '../../../state/session/view/actions';
-import {getViews, getViewsState} from '../../../state/session/view/reducer';
+import {getViews, getViewsState} from '../../../state/session/view/reducers';
 import {toggle} from '../../../util/array';
 import {getResultKeys} from '../../../util/measurement';
 import {Request} from '../../../util/request';

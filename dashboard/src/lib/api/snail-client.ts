@@ -1,9 +1,16 @@
+import {Dictionary} from 'ramda';
 import {Observable} from 'rxjs';
 import {Measurement} from '../measurement/measurement';
 import {Project} from '../project/project';
 import {User} from '../user/user';
 import {RangeFilter} from '../view/range-filter';
 import {View} from '../view/view';
+
+export interface BatchedMeasurements
+{
+    measurements: Dictionary<Measurement>;  // measurement.id to measurement
+    views: Dictionary<string[]>;            // view.id to measurement.id
+}
 
 export interface SnailClient
 {
@@ -22,6 +29,8 @@ export interface SnailClient
     loadMeasurements(token: string, project: Project,
                      view: View,
                      range: RangeFilter): Observable<Measurement[]>;
+    loadMeasurementsBatched(token: string, project: Project,
+                            views: View[], range: RangeFilter): Observable<BatchedMeasurements>;
     deleteMeasurement(token: string, measurement: Measurement): Observable<boolean>;
     deleteProjectMeasurements(token: string, project: Project): Observable<boolean>;
 

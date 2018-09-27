@@ -8,7 +8,6 @@ import {createRequest, hookRequestActions, Request} from '../../../util/request'
 import {AppState} from '../../app/reducers';
 import {changeRangeFilterAction, loadGlobalMeasurements} from './actions';
 import {ChartPageState, chartReducer} from './chart-page/reducer';
-import {gridChartPageReducer, GridChartPageState} from './grid-chart-page/reducer';
 import {MeasurementsPageState, measurementsReducer} from './measurements-page/reducer';
 
 interface GlobalState
@@ -22,7 +21,6 @@ export interface PagesState
 {
     chartState: ChartPageState;
     measurementsPage: MeasurementsPageState;
-    gridChartPage: GridChartPageState;
     global: GlobalState;
 }
 
@@ -57,7 +55,6 @@ export const getGlobalMeasurements = (state: AppState) => state.session.pages.gl
 
 export const pagesReducer = combineReducers({
     chartState: chartReducer,
-    gridChartPage: gridChartPageReducer,
     measurementsPage: measurementsReducer,
     global: reducer
 });

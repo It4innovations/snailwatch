@@ -1,7 +1,7 @@
 import {combineEpics} from 'redux-observable';
 import {createRequestEpic} from '../../../util/request';
-import {getSelectedProject} from '../project/reducer';
-import {getToken} from '../user/reducer';
+import {getSelectedProject} from '../project/reducers';
+import {getToken} from '../user/reducers';
 import {ViewActions} from './actions';
 
 const loadViews = createRequestEpic(ViewActions.load, (action, state, deps) =>

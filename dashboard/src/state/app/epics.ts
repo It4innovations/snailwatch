@@ -12,7 +12,7 @@ const initAppEpic: AppEpic = action$ =>
         ofAction(initAppAction),
         switchMap(() => from([
             initUserSession(),
-            initProjectSession()
+            initProjectSession.started({})
         ]))
     );
 

@@ -3,7 +3,7 @@ import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {createRequest, hookRequestActions, Request} from '../../../../util/request';
 import {AppState} from '../../../app/reducers';
-import {getViewById, getViews} from '../../view/reducer';
+import {getViewById, getViews} from '../../view/reducers';
 import {
     deleteAllMeasurementsAction,
     deleteMeasurementAction,
