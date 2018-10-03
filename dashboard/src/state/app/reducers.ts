@@ -24,6 +24,11 @@ const sessionPersist = {
     storage,
     migrate: createMigrate(migrations),
     transforms: [
+        // do not serialize measurements, they might take a lot of space
+        createTransform(
+            serializeMeasurements,
+            null
+        ),
         // do not persist range filters and init variables
         createTransform(
             null,
@@ -37,11 +42,6 @@ const sessionPersist = {
         // reset requests during serialization
         createTransform(
             serializeRequests,
-            null
-        ),
-        // do not serialize measurements, they might take a lot of space
-        createTransform(
-            serializeMeasurements,
             null
         )
     ]

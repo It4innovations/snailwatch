@@ -54,6 +54,12 @@ export function serializeMeasurements(obj: {}): {}
     );
 }
 
+// https://stackoverflow.com/a/5878101/1107768
+function isPlainObject(obj: {})
+{
+    return obj !== null && typeof obj === 'object' && obj.constructor === Object;
+}
+
 function traverse(obj: {},
                   predicate: (obj: {}) => boolean,
                   transform: (obj: {}) => {}): {}
@@ -63,7 +69,7 @@ function traverse(obj: {},
         return transform(obj);
     }
 
-    if (isArray(obj) || isObject(obj))
+    if (isArray(obj) || isPlainObject(obj))
     {
         return map(o => traverse(o, predicate, transform), obj as Functor<{}>);
     }
