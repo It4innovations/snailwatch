@@ -44,6 +44,18 @@ describe('Filter', () =>
 
         expect(testFilter(obj, filter)).toBe(true);
     });
+    it('handles regex evaluation', () =>
+    {
+        const filter = createFilter('a', 'contains', '^\\d+$');
+        expect(testFilter({ a: 5 }, filter)).toBe(true);
+        expect(testFilter({ a: '' }, filter)).toBe(false);
+        expect(testFilter({ a: 'asd' }, filter)).toBe(false);
+    });
+    it('handles invalid regex query', () =>
+    {
+        const filter = createFilter('a', 'contains', '[[]]]][*.+\\d+');
+        expect(testFilter({ a: 5 }, filter)).toBe(false);
+    });
 
     const operatorData: {
         operator: Operator,

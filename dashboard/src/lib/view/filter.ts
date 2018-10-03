@@ -57,16 +57,17 @@ export function testFilter<T>(data: T, filter: Filter): boolean
             `Trying to filter integer with string (${filter.path}: ${actual}, ${expected})`);
     }
 
-    if (filter.operator === 'contains' && !isString(actual))
+    try
     {
-        throw new BadValueFilteredError(
-        `Trying to use contains operator on non-string (${filter.path}: ${actual}, ${expected})`);
+        return evaluateOperator(filter.operator,
+            actual,
+            expected
+        );
     }
-
-    return evaluateOperator(filter.operator,
-        actual,
-        expected
-    );
+    catch (e)
+    {
+        return false;
+    }
 }
 export function applyFilters<T>(data: T[], filters: Filter[]): T[]
 {
@@ -96,6 +97,8 @@ function evaluateOperator(operator: Operator,
             return actualValue > referenceValue;
         case '>=':
             return actualValue >= referenceValue;
+        case 'contains':
+            return new RegExp(referenceValue.toString()).test(actualValue.toString());
         default:
             return false;
     }
@@ -114,11 +117,12 @@ function isString(x: {})
 
 function isOperatorExact(operator: Operator): boolean
 {
-    return contains(operator, ['==', '!=']);
+    return contains(operator, ['==', '!=', 'contains']);
 }
 
 function convert(value: string): string | number
 {
+    if (value === '') return value;
     if (isInt(value)) return Number(value);
     return value;
 }
