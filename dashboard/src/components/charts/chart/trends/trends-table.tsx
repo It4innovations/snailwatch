@@ -124,17 +124,17 @@ export class TrendsTable extends PureComponent<Props>
         },
         {
             id: 'group',
-            Header: this.textWithHelp('Group', 'Value of the grouping attribute of the most recent group.'),
+            Header: this.textWithHelp(this.props.axisX, 'Value of the grouping attribute of the most recent group.'),
             style,
             Cell: this.ellipsizedCell(12),
-            maxWidth: 150,
+            maxWidth: 180,
             filterable: true,
             accessor: (group: ViewGroup) => group.axisX
         },
         {
             id: 'observed',
             Header: this.textWithHelp('Observed', 'Attribute(s) whose value is observed (you can change this ' +
-                'in the corresponding view.'),
+                'in the corresponding view).'),
             style,
             Cell: this.ellipsizedCell(12),
             maxWidth: 150,
@@ -143,7 +143,7 @@ export class TrendsTable extends PureComponent<Props>
         },
         {
             id: 'value',
-            Header: this.textWithHelp('Value', 'Average value of the observed attribute of the most recent group.'),
+            Header: this.textWithHelp('Value', 'Average value of the observed attribute(s) of the most recent group.'),
             Cell: this.renderValue,
             style,
             accessor: (group: ViewGroup) => group
@@ -151,7 +151,7 @@ export class TrendsTable extends PureComponent<Props>
         {
             ...this.createValueColumn('change'),
             accessor: (group: ViewGroup) => group,
-            Header: this.textWithHelp('Change', 'Change relative to last group'),
+            Header: this.textWithHelp('Change', 'Change relative to the second most recent group.'),
             maxWidth: 160,
             Cell: ChangeCell(g => g.relPerformance.change, 2),
             sortMethod: (a: ViewGroup, b: ViewGroup) => compareNumber(a.relPerformance.change, b.relPerformance.change)
@@ -160,7 +160,8 @@ export class TrendsTable extends PureComponent<Props>
             ...this.createValueColumn('trend'),
             accessor: (group: ViewGroup) => group,
             Header: this.textWithHelp('Trend',
-                `Change relative to the exponential average of the last ${this.props.trendWindow} groups`),
+                `Change relative to the exponential moving average of the ${this.props.trendWindow} most recent ` +
+                'groups.'),
             maxWidth: 160,
             Cell: ChangeCell(g => g.relPerformance.trend, this.props.trendWindow),
             sortMethod: (a: ViewGroup, b: ViewGroup) => compareNumber(a.relPerformance.trend, b.relPerformance.trend)

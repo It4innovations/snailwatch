@@ -56,7 +56,7 @@ class TrendsPageComponent extends PureComponent<Props, State>
                 measurements={this.props.measurements}
                 project={this.props.project}
                 axisX={this.state.xAxis}
-                trendWindow={5} />
+                trendWindow={10} />
         );
     }
     renderMenu = (): JSX.Element =>
