@@ -25,10 +25,10 @@ def export_measurements_route(project_id):
         if not user:
             api_error(403)
 
-        measurements = MeasurementRepo(app).get_measurements(user)
         project = ProjectRepo(app).find_project_by_id(project_id)
         if not project:
             api_error(404, "Project not found")
+        measurements = MeasurementRepo(app).get_measurements(user, project)
 
         mime = 'application/json' if format == 'json' else 'text/csv'
         headers = {
