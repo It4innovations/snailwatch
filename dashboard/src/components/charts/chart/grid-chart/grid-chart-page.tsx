@@ -122,6 +122,8 @@ class GridChartPageComponent extends PureComponent<Props, State>
     renderView = (view: View): JSX.Element =>
     {
         const measurements = view.measurements;
+        if (measurements.length === 0) return null;
+
         const datasets = view.yAxes.map(yAxis => ({
             name: `${view.name} (${formatKey(yAxis)})`,
             yAxis,

@@ -69,7 +69,7 @@ class ChartsWrapper extends PureComponent<Props>
     {
         return (
             <ProjectGate>
-                <ChartsPageComponent {...this.props} />;
+                <ChartsPageComponent {...this.props} />
             </ProjectGate>
         );
     }
