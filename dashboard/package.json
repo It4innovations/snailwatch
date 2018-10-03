@@ -68,7 +68,7 @@
     "tslint": "^5.11.0",
     "tslint-loader": "^3.5.3",
     "tslint-react": "^3.2.0",
-    "typescript": "^3.0.1",
+    "typescript": "^3.1.1",
     "typescript-fsa": "^2.5.0",
     "typescript-fsa-reducers": "^0.4.5",
     "url": "^0.11.0",
@@ -89,6 +89,7 @@
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/chroma-js": "^1.3.5",
+    "@types/d3-shape": "^1.2.4",
     "@types/express": "^4.11.1",
     "@types/history": "^4.6.2",
     "@types/jest": "^22.0.1",
