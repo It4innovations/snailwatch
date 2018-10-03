@@ -3,7 +3,7 @@ import {all, Dictionary, filter, groupBy, map, reduce, sort, sum, values, zipObj
 import {GroupMode} from '../../../lib/measurement/group-mode';
 import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement';
 import {compareDate} from '../../../util/date';
-import {maximum, minimum, standardDeviation} from '../../../util/math';
+import {standardDeviation} from '../../../util/math';
 import {getValueWithPath} from '../../../util/object';
 
 
@@ -109,8 +109,8 @@ function createGroup(batch: Measurement[], axisX: string, axisY: string[]): Meas
         const stddev = standardDeviation(vals);
         const deviation = {
             value: stddev,
-            low: average - minimum(vals, vals[0]),
-            high: maximum(vals, vals[0]) - average
+            low: average - stddev,
+            high: average + stddev
         };
 
         return {

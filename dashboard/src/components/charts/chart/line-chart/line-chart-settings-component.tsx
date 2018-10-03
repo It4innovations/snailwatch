@@ -33,7 +33,7 @@ export class LineChartSettingsComponent extends PureComponent<Props>
                            onChange={this.change('connectPoints')} />
                 </Row>
                 <Row>
-                    <div>Show deviation: </div>
+                    <div>Show error bars: </div>
                     <input type='checkbox'
                            checked={this.props.settings.showDeviation}
                            onChange={this.change('showDeviation')} />
