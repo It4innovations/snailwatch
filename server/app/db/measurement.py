@@ -37,4 +37,4 @@ class MeasurementRepo(Repository):
             }
         })
 
-        return self.table.find(where)
+        return self.table.find(where).sort([('timestamp', -1)])
