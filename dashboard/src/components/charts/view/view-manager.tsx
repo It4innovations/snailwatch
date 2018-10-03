@@ -91,11 +91,13 @@ class ViewManagerComponent extends PureComponent<Props>
         return (
             <Column>
                 <Row>
-                    <ViewName value={this.props.view.name}
+                    <ViewName key={this.props.view.id}
+                              value={this.props.view.name}
                               onChange={this.changeName} />
                     <Button title='Close view detail' onClick={this.props.onClose}><MdClose /></Button>
                 </Row>
                 <ViewFilterManager
+                    key={this.props.view.id}
                     view={this.props.view}
                     onChange={this.props.changeView}
                     measurements={this.props.globalMeasurements}

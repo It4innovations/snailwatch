@@ -39,7 +39,8 @@ export class ViewFilterManager extends PureComponent<Props, State>
         if (prevProps.view !== this.props.view && this.state.editing)
         {
             this.setState((state, props) => ({
-                view: props.view
+                view: props.view,
+                editing: false
             }));
         }
     }
