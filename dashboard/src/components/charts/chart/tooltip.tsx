@@ -36,7 +36,8 @@ const Dataset = styled.div`
   }
 `;
 const DatasetLabel = styled.div<{color: string}>`
-  color: ${props => props.color}
+  color: ${props => props.color};
+  text-shadow: 1px 1px 1px #AAAAAA;
 `;
 const DatasetInfo = styled.div`
   font-size: 0.75rem;

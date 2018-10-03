@@ -38,7 +38,7 @@ const Wrapper = styled.div`
   padding: 5px;
 `;
 const Body = styled.div`
-  margin: 10px;
+  
 `;
 
 class ContentComponent extends PureComponent<StateProps & DispatchProps & RouteComponentProps<void>>

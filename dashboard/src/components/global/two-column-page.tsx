@@ -7,8 +7,13 @@ type Element = JSX.Element | (() => JSX.Element);
 interface Props
 {
     menu: Element;
-    menuWidth?: string;
     content: Element;
+}
+
+interface OptionalProps
+{
+    menuWidth?: string;
+    alignMenuToTop?: boolean;
 }
 
 const Row = styled.div`
@@ -16,22 +21,30 @@ const Row = styled.div`
   align-items: flex-start;
   width: 100%;
 `;
-const MenuColumn = styled.div<{width?: string}>`
-  width: ${props => props.width ? props.width : '400px'};
-  margin-top: 1px;
+const MenuColumn = styled.div<{ width: string; alignMenuToTop: boolean; }>`
+  width: ${props => props.width};
   margin-right: 10px;
   padding: 10px;
   background: #EAEAEA;
   border: 1px solid black;
   border-radius: 0 5px 5px 0;
   border-left: 0;
+  ${props => props.alignMenuToTop && `
+    border-top-right-radius: 0;
+    border-top: 0;
+  `}
 `;
 const ContentColumn = styled.div`
   flex-grow: 1;
 `;
 
-export class TwoColumnPage extends Component<Props>
+export class TwoColumnPage extends Component<Props & OptionalProps>
 {
+    static defaultProps: OptionalProps = {
+        menuWidth: '400px',
+        alignMenuToTop: true
+    };
+
     render()
     {
         function render(element: Element): JSX.Element
@@ -45,7 +58,9 @@ export class TwoColumnPage extends Component<Props>
 
         return (
             <Row>
-                <MenuColumn width={this.props.menuWidth}>{render(this.props.menu)}</MenuColumn>
+                <MenuColumn width={this.props.menuWidth} alignMenuToTop={this.props.alignMenuToTop}>
+                    {render(this.props.menu)}
+                </MenuColumn>
                 <ContentColumn>{render(this.props.content)}</ContentColumn>
             </Row>
         );

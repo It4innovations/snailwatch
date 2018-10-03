@@ -24,7 +24,6 @@ interface Props
 }
 
 const Appbar = styled(Navbar)`
-  margin-bottom: 5px;
   border-bottom: 1px solid #000000;
 `;
 const SidePanel = styled.div`

@@ -45,7 +45,8 @@ class TrendsPageComponent extends PureComponent<Props, State>
             <TwoColumnPage
                 menu={this.renderMenu}
                 menuWidth='auto'
-                content={this.renderContent} />
+                content={this.renderContent}
+                alignMenuToTop={false} />
         );
     }
     renderContent = (): JSX.Element =>

@@ -79,7 +79,8 @@ class BarChartPageComponent extends PureComponent<Props, State>
             <TwoColumnPage
                 menu={this.renderOptions}
                 menuWidth='auto'
-                content={this.renderGraph} />
+                content={this.renderGraph}
+                alignMenuToTop={false} />
         );
     }
     renderOptions = (): JSX.Element =>
