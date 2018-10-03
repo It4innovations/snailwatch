@@ -1,7 +1,7 @@
 from app.lib.measurement import filters_to_mongo_selection
 
 
-def test_serialize_filters():
+def test_mongo_filters_conversion():
     filters = [{
         'path': 'a.b',
         'operator': '==',

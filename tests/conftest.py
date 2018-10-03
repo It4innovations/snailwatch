@@ -114,7 +114,7 @@ class SnailWatchEnv(Env):
             self.project_id = self.create_project("project1")["_id"]
             self.upload_token = self.get_upload_token(self.project_id)
 
-    def _request(self, address, payload, token):
+    def _request(self, address, payload, token, unwrap=True):
         http_headers = {
             'Content-Type': 'application/json',
         }
@@ -132,11 +132,14 @@ class SnailWatchEnv(Env):
                 json=payload,
                 headers=http_headers)
 
-        if response.status_code not in (200, 201):
-            raise Exception('Remote request failed, '
-                            'status: {}, message: {}',
-                            response.status_code, response.content)
-        return response.json()
+        if unwrap:
+            if response.status_code not in (200, 201):
+                raise Exception('Remote request failed, '
+                                'status: {}, message: {}',
+                                response.status_code, response.content)
+            return response.json()
+        else:
+            return response
 
     def get_upload_token(self, project_id):
         return self._request(
@@ -162,6 +165,39 @@ class SnailWatchEnv(Env):
             'name': name,
         }
         return self._request("projects", payload, self.user_token)
+
+    def create_view(self, view, unwrap=True):
+        return self._request("views", view, self.user_token, unwrap=unwrap)
+
+    def get_batched_measurements(self, project_id, data):
+        return self._request(
+            "projects/{}/batched-measurements".format(project_id), data,
+            self.user_token)
+
+    def template_operator(self, path, operator='==', value=''):
+        return {
+            'path': path,
+            'operator': operator,
+            'value': value
+        }
+
+    def template_view(self,
+                      project_id=None,
+                      name='a',
+                      filters=(),
+                      y_axes=(),
+                      watches=()
+                      ):
+        if not project_id:
+            project_id = self.project_id
+
+        return {
+            'project': project_id,
+            'name': name,
+            'filters': filters,
+            'yAxes': y_axes,
+            'watches': watches
+        }
 
     @property
     def server_url(self):
