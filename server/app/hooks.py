@@ -36,6 +36,11 @@ def before_insert_users(users):
     return users
 
 
+def after_insert_users(users):
+    for user in users:
+        del user['password']
+
+
 def before_insert_projects(projects):
     user = get_user_from_request(request)
 
@@ -130,6 +135,7 @@ def after_fetch_measurements(measurements):
 
 def init_hooks(app):
     app.on_insert_users += before_insert_users
+    app.on_inserted_users += after_insert_users
     app.on_insert_projects += before_insert_projects
     app.on_inserted_projects += after_insert_projects
     app.on_insert_measurements += before_insert_measurements
