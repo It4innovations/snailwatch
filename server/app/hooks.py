@@ -126,7 +126,6 @@ def after_fetch_measurements(measurements):
     for m in measurements['_items']:
         del m['_created']
         del m['_updated']
-        del m['_etag']
 
 
 def init_hooks(app):
