@@ -2,7 +2,7 @@ import {contains} from 'ramda';
 import {getValueWithPath} from '../../util/object';
 import {Filter} from './filter';
 
-export type Operator = '==' | '!=' | '<' | '<=' | '>' | '>=' | 'contains';
+export type Operator = '==' | '!=' | '<' | '<=' | '>' | '>=' | 'contains' | 'is defined';
 
 export interface Filter
 {
@@ -40,7 +40,10 @@ export function testFilter<T>(data: T, filter: Filter): boolean
     if (filter.path === '') return true;
 
     const value = getValueWithPath(data, filter.path);
-    if (value === undefined) return true;
+    if (value === undefined)
+    {
+        return filter.operator !== 'is defined';
+    }
 
     if (!isInt(value) && !isString(value))
     {

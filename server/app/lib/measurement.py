@@ -25,7 +25,7 @@ def filters_to_mongo_selection(filters):
             keys = map(lambda f: OPERATOR_TABLE[f['operator']], filters)
             values = map(lambda f: f['value'], filters)
             where[key] = {
-                key: True if key == 'is defined' else val
+                key: True if key == '$exists' else val
                 for (key, val) in zip(keys, values)
             }
 

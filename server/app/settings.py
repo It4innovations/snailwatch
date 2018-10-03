@@ -82,7 +82,7 @@ def boolean(required=True):
     }
 
 
-filter_operators = ['==', '!=', '<', '<=', '>', '>=', 'contains']
+filter_operators = ['==', '!=', '<', '<=', '>', '>=', 'contains', 'is defined']
 filter_type = {
     'type': 'dict',
     'schema': {

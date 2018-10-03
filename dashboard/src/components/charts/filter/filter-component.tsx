@@ -24,7 +24,8 @@ const operators: Operator[] = [
     '<=',
     '>',
     '>=',
-    'contains'
+    'contains',
+    'is defined'
 ];
 
 const Row = styled.div`
@@ -72,10 +73,12 @@ export class FilterComponent extends PureComponent<Props>
                     onChange={val => this.change('operator', val.currentTarget.value)}>
                     {operators.map(this.renderOperator)}
                 </Operator>
-                <SuggestInput
-                    value={this.props.filter.value}
-                    onChange={val => this.change('value', val)}
-                    calculateSuggestions={this.calculateValueSuggestions} />
+                {this.props.filter.operator !== 'is defined' &&
+                    <SuggestInput
+                        value={this.props.filter.value}
+                        onChange={val => this.change('value', val)}
+                        calculateSuggestions={this.calculateValueSuggestions} />
+                }
                 {this.props.editable &&
                     <IconWrapper title='Delete filter'>
                         <DeleteIcon size={26} onClick={this.remove} />
@@ -104,6 +107,11 @@ export class FilterComponent extends PureComponent<Props>
 
         const filter = {...this.props.filter};
         filter[attribute] = value;
+
+        if (attribute === 'operator' && value === 'is defined')
+        {
+            filter.value = '';
+        }
 
         this.props.onChange(this.props.index, filter);
     }

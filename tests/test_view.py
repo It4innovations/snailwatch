@@ -14,11 +14,18 @@ def test_mongo_filters_conversion():
         'path': 'a.c',
         'operator': '>=',
         'value': 5
+    }, {
+        'path': 'a.f',
+        'operator': 'is defined',
+        'value': ''
     }]
 
     assert filters_to_mongo_selection(filters) == {
         'a.b': 1,
         'a.c': {
             '$gte': 5
+        },
+        'a.f': {
+            '$exists': True
         }
     }
