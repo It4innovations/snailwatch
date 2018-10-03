@@ -56,3 +56,31 @@ def test_view_create(sw_env):
     assert data['filters'] == view['filters']
     assert data['yAxes'] == view['yAxes']
     assert data['watches'] == view['watches']
+
+
+def test_auto_view_creation_after_upload(sw_env):
+    sw_env.start()
+    uploader = sw_env.upload_client()
+
+    benchmark = 'abc'
+    uploader.upload_measurements([
+        (benchmark, {}, {}, None),
+        (benchmark, {}, {}, None)
+    ])
+
+    views = tuple(sw_env.db.views.find({}))
+    assert len(views) == 1
+    assert views[0]['name'] == benchmark
+    assert views[0]['filters'] == [{
+        'path': 'benchmark',
+        'operator': '==',
+        'value': benchmark
+    }]
+
+    uploader.upload_measurements([
+        (benchmark, {}, {}, None),
+        (benchmark, {}, {}, None)
+    ])
+
+    views = tuple(sw_env.db.views.find({}))
+    assert len(views) == 1
