@@ -115,9 +115,13 @@ export class LineChart extends PureComponent<Props>
 
     renderLine = (group: LabeledGroup, index: number, preview: boolean): JSX.Element =>
     {
+        const settings = this.props.settings;
         const dotActive = this.props.onMeasurementsSelected && !preview && !group.isAverageTrend;
-        const showDeviation = !preview && this.props.settings.showDeviation && !group.isAverageTrend;
+        const showDeviation = !preview && settings.showDeviation && !group.isAverageTrend;
+        const showPoints = settings.showPoints && !group.isAverageTrend;
         const color = group.color;
+        const connectPoints = settings.connectPoints || (group.isAverageTrend && settings.showAverageTrend);
+        const stroke = connectPoints ? color : '#00000000';
 
         return (
             <Line
@@ -129,12 +133,12 @@ export class LineChart extends PureComponent<Props>
                 type={group.isAverageTrend ? 'monotone' : 'linear'}
                 dataKey={`data[${index}].value`}
                 connectNulls={true}
-                dot={this.props.settings.showPoints}
+                dot={showPoints}
                 activeDot={dotActive && {
                     stroke: '#444444',
                     onClick: (data: {payload: LinePoint}) => this.selectMeasurements(data, index)
                 }}
-                stroke={(this.props.settings.connectPoints ? color : '#00000000')}
+                stroke={stroke}
                 fill={color}>
                 {showDeviation &&
                     <ErrorBar

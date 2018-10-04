@@ -33,16 +33,16 @@ export class LineChartSettingsComponent extends PureComponent<Props>
                            onChange={this.change('connectPoints')} />
                 </Row>
                 <Row>
-                    <div>Show error bars: </div>
-                    <input type='checkbox'
-                           checked={this.props.settings.showDeviation}
-                           onChange={this.change('showDeviation')} />
-                </Row>
-                <Row>
                     <div>Show trend: </div>
                     <input type='checkbox'
                            checked={this.props.settings.showAverageTrend}
                            onChange={this.change('showAverageTrend')} />
+                </Row>
+                <Row>
+                    <div>Show error bars: </div>
+                    <input type='checkbox'
+                           checked={this.props.settings.showDeviation}
+                           onChange={this.change('showDeviation')} />
                 </Row>
             </>
         );
