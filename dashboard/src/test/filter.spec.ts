@@ -3,9 +3,20 @@ import {applyFilters, BadValueFilteredError, createFilter, Filter, Operator, tes
 
 describe('Filter', () =>
 {
+    it('passes measurements through when path is empty', () =>
+    {
+        const filter = createFilter({ path: '', operator: '==', value: 'x'});
+        const obj = {
+            a: {
+                b: 'x'
+            }
+        };
+
+        expect(testFilter(obj, filter)).toBe(true);
+    });
     it('can navigate to nested properties', () =>
     {
-        const filter = createFilter('a.b', '==', 'x');
+        const filter = createFilter({ path: 'a.b', operator: '==', value: 'x'});
         const obj = {
             a: {
                 b: 'x'
@@ -17,7 +28,7 @@ describe('Filter', () =>
 
     it('handles inexact comparison of numeric string and integer', () =>
     {
-        const filter = createFilter('val', '<', '2');
+        const filter = createFilter({path: 'val', operator: '<', value: '2'});
         const obj = {
             val: 100
         };
@@ -26,7 +37,7 @@ describe('Filter', () =>
     });
     it('throws if non-numeric string is compared inexactly with integer', () =>
     {
-        const filter = createFilter('val', '<', '2');
+        const filter = createFilter({path: 'val', operator: '<', value: '2'});
         const obj = {
             val: 'asd'
         };
@@ -37,7 +48,7 @@ describe('Filter', () =>
     });
     it('handles exact comparison of string and integer', () =>
     {
-        const filter = createFilter('val', '==', '2');
+        const filter = createFilter({path: 'val', operator: '==', value: '2'});
         const obj = {
             val: 2
         };
@@ -46,14 +57,14 @@ describe('Filter', () =>
     });
     it('handles regex evaluation', () =>
     {
-        const filter = createFilter('a', 'contains', '^\\d+$');
+        const filter = createFilter({path: 'a', operator: 'contains', value: '^\\d+$'});
         expect(testFilter({ a: 5 }, filter)).toBe(true);
         expect(testFilter({ a: '' }, filter)).toBe(false);
         expect(testFilter({ a: 'asd' }, filter)).toBe(false);
     });
     it('handles invalid regex query', () =>
     {
-        const filter = createFilter('a', 'contains', '[[]]]][*.+\\d+');
+        const filter = createFilter({path: 'a', operator: 'contains', value: '[[]]]][*.+\\d+'});
         expect(testFilter({ a: 5 }, filter)).toBe(false);
     });
 
@@ -138,7 +149,7 @@ describe('Filter', () =>
     {
         it(`evaluates ${data.left} ${data.operator} ${data.right} is ${data.result} correctly`, () =>
         {
-            const filter = createFilter('val', data.operator, data.right);
+            const filter = createFilter({path: 'val', operator: data.operator, value: data.right});
             const obj = {
                 val: data.left
             };
@@ -150,7 +161,7 @@ describe('Filter', () =>
 describe('applyFilter', () =>
 {
     it('applies filter', () => {
-        const filter = createFilter('item', '==', 'a');
+        const filter = createFilter({path: 'item', operator: '==', value: 'a'});
         const objs = [
             { item: 'a' },
             { item: 'b' },
@@ -162,8 +173,8 @@ describe('applyFilter', () =>
     });
     it('applies multiple filters', () => {
         const filters = [
-            createFilter('item', '==', 'a'),
-            createFilter('test', '==', 'c')
+            createFilter({path: 'item', operator: '==', value: 'a'}),
+            createFilter({path: 'test', operator: '==', value: 'c'})
         ];
         const objs = [
             { item: 'a', test: 'x' },
@@ -177,15 +188,15 @@ describe('applyFilter', () =>
 });
 describe('buildRequestFilter', () => {
     it('correctly groups multiple path entries', () => {
-        const filters: Filter[] = [{
+        const filters: Filter[] = [createFilter({
             path: 'a',
             operator: '<',
             value: '9'
-        }, {
+        }), createFilter({
             path: 'a',
             operator: '>=',
             value: '8'
-        }];
+        })];
 
         const expected = {
             a: {
@@ -196,15 +207,15 @@ describe('buildRequestFilter', () => {
         expect(buildRequestFilter(filters)).toEqual(expected);
     });
     it('correctly selects equal operator', () => {
-        const filters: Filter[] = [{
+        const filters: Filter[] = [createFilter({
             path: 'a',
             operator: '>=',
             value: '9'
-        }, {
+        }), createFilter({
             path: 'a',
             operator: '==',
             value: '8'
-        }];
+        })];
 
         const expected = {
             a: '8'

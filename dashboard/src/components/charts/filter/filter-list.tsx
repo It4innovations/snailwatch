@@ -1,4 +1,3 @@
-import {remove, update} from 'ramda';
 import React, {PureComponent} from 'react';
 import {Button} from 'reactstrap';
 import styled from 'styled-components';
@@ -10,7 +9,6 @@ import {FilterComponent} from './filter-component';
 interface Props
 {
     filters: Filter[];
-    editable: boolean;
     measurementKeys: string[];
     measurements: Measurement[];
     onChange(filters: Filter[]): void;
@@ -19,8 +17,8 @@ interface Props
 const Wrapper = styled.div`
   margin-bottom: 5px;
 `;
-const AddButton = styled(Button)`
-  margin-top: 5px;
+const Filter = styled(FilterComponent)`
+  margin-bottom: 2px;
 `;
 
 export class FilterList extends PureComponent<Props>
@@ -29,21 +27,17 @@ export class FilterList extends PureComponent<Props>
     {
         return (
             <Wrapper>
-                {this.props.filters.map((filter, index) =>
-                    <FilterComponent
-                        key={index}
+                {this.props.filters.map(filter =>
+                    <Filter
+                        key={filter.id}
                         filter={filter}
-                        index={index}
-                        editable={this.props.editable}
                         onRemove={this.removeFilter}
                         onChange={this.changeFilter}
                         pathKeys={this.props.measurementKeys}
                         calculateValueSuggestions={this.calculateValueSuggestions} />)}
-                {this.props.editable &&
-                    <AddButton size='sm'
-                            color='success'
-                            onClick={this.addFilter}>Add filter</AddButton>
-                }
+                <Button size='sm'
+                        color='success'
+                        onClick={this.addFilter}>Add filter</Button>
             </Wrapper>
         );
     }
@@ -52,13 +46,15 @@ export class FilterList extends PureComponent<Props>
     {
         this.props.onChange([...this.props.filters, createFilter()]);
     }
-    removeFilter = (index: number) =>
+    removeFilter = (filter: Filter) =>
     {
-        this.props.onChange(remove(index, 1, this.props.filters));
+        this.props.onChange(this.props.filters.filter(f => f.id !== filter.id));
     }
-    changeFilter = (index: number, filter: Filter) =>
+    changeFilter = (filter: Filter) =>
     {
-        this.props.onChange(update(index, filter, this.props.filters));
+        this.props.onChange(this.props.filters.map(f =>
+            f.id === filter.id ? filter : f
+        ));
     }
 
     // TODO: get values from server?

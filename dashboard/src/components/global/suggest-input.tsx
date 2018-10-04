@@ -30,7 +30,7 @@ const Suggestion = styled.div`
 
 export class SuggestInput<T = string> extends PureComponent<Props<T>, State<T>>
 {
-    state: State<T> = {
+    readonly state: State<T> = {
         suggestions: []
     };
 

@@ -3,12 +3,12 @@ import {map} from 'rxjs/operators';
 import {Measurement} from '../measurement/measurement';
 import {Project} from '../project/project';
 import {User} from '../user/user';
-import {Filter} from '../view/filter';
 import {RangeFilter} from '../view/range-filter';
 import {View} from '../view/view';
 import {CrudHandler} from './crud-handler';
 import {
-    MeasurementDAO, parseBatchedMeasurements,
+    MeasurementDAO,
+    parseBatchedMeasurements,
     parseLoginResponse,
     parseMeasurement,
     parseProject,
@@ -16,7 +16,8 @@ import {
     parseView,
     ProjectDAO,
     serializeDate,
-    serializeProject, serializeRangeFilter,
+    serializeProject,
+    serializeRangeFilter,
     serializeUser,
     serializeView,
     sort,
@@ -25,7 +26,7 @@ import {
     where,
     withProject
 } from './dao';
-import {buildRequestFilter} from './filter';
+import {buildRequestFilter, RequestFilter} from './filter';
 import {RequestManager} from './request-manager';
 import {BatchedMeasurements, SnailClient} from './snail-client';
 
@@ -108,7 +109,7 @@ export class RestClient implements SnailClient
                      view: View,
                      range: RangeFilter): Observable<Measurement[]>
     {
-        let filters: Filter[] = [];
+        let filters: RequestFilter[] = [];
         if (view !== null)
         {
             filters = [...filters, ...view.filters];

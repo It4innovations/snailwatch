@@ -1,21 +1,30 @@
-import {sort} from 'ramda';
+import {equals, sort} from 'ramda';
 import React, {PureComponent} from 'react';
-import MdDelete from 'react-icons/lib/md/delete';
+import FaCheck from 'react-icons/lib/fa/check';
+import FaTrash from 'react-icons/lib/fa/trash';
+import MdCancel from 'react-icons/lib/md/cancel';
+import {Badge, Button, ButtonGroup} from 'reactstrap';
 import Input from 'reactstrap/lib/Input';
 import styled from 'styled-components';
-import {Filter, Operator} from '../../../lib/view/filter';
+import {createFilter, Filter, Operator} from '../../../lib/view/filter';
 import {SuggestInput} from '../../global/suggest-input';
 
 interface Props
 {
     filter: Filter;
-    index: number;
-    editable: boolean;
     pathKeys: string[];
-    onRemove(index: number): void;
-    onChange(index: number, filter: Filter): void;
+    className?: string;
+    onRemove(filter: Filter): void;
+    onChange(filter: Filter): void;
     calculateValueSuggestions(filter: Filter, input: string): string[];
 }
+
+const initialState = {
+    filter: createFilter(),
+    editable: false
+};
+
+type State = Readonly<typeof initialState>;
 
 const operators: Operator[] = [
     '==',
@@ -30,29 +39,46 @@ const operators: Operator[] = [
 
 const Row = styled.div`
   display: flex;
+  align-items: center;
   min-width: 300px;
-`;
-const DeleteIcon = styled(MdDelete)`
-  padding-top: 3px;
 `;
 const Operator = styled(Input)`
   width: 100px !important;
 `;
-const Filter = styled.span`
-  font-size: 14px;
+const Filter = styled(Badge)`
+  font-size: 14px !important;
+  cursor: pointer;
+  &:hover {
+    background-color: #545B62;
+  }
 `;
-const IconWrapper = styled.div`
-  width: 40px;
+const ActionButton = styled(Button)`
+  padding: 0.15rem 0.25rem !important;
+`;
+const ControlWrapper = styled(ButtonGroup)`
+  margin-left: 10px;
 `;
 
-export class FilterComponent extends PureComponent<Props>
+export class FilterComponent extends PureComponent<Props, State>
 {
+    readonly state = initialState;
+
+    componentDidUpdate(prevProps: Props)
+    {
+        if (this.props.filter !== prevProps.filter)
+        {
+            this.setState({
+                editable: false
+            });
+        }
+    }
+
     render()
     {
         return (
-            <Row>
-                {this.props.editable ? this.renderInputs() : this.renderReadonly()}
-            </Row>
+            <div className={this.props.className}>
+                {this.state.editable ? this.renderInputs() : this.renderReadonly()}
+            </div>
         );
     }
 
@@ -61,7 +87,7 @@ export class FilterComponent extends PureComponent<Props>
         return (
             <Row>
                 <SuggestInput
-                    value={this.props.filter.path}
+                    value={this.state.filter.path}
                     onChange={val => this.change('path', val)}
                     calculateSuggestions={this.calculatePathSuggestions}>
                 </SuggestInput>
@@ -69,20 +95,39 @@ export class FilterComponent extends PureComponent<Props>
                     bsSize='sm'
                     type='select'
                     name='operator'
-                    value={this.props.filter.operator}
+                    value={this.state.filter.operator}
                     onChange={val => this.change('operator', val.currentTarget.value)}>
                     {operators.map(this.renderOperator)}
                 </Operator>
-                {this.props.filter.operator !== 'is defined' &&
+                {this.state.filter.operator !== 'is defined' &&
                     <SuggestInput
-                        value={this.props.filter.value}
+                        value={this.state.filter.value}
                         onChange={val => this.change('value', val)}
                         calculateSuggestions={this.calculateValueSuggestions} />
                 }
-                {this.props.editable &&
-                    <IconWrapper title='Delete filter'>
-                        <DeleteIcon size={26} onClick={this.remove} />
-                    </IconWrapper>
+                {this.state.editable &&
+                    <ControlWrapper>
+                        <ActionButton outline
+                                      size='sm'
+                                      color='success'
+                                      title='Confirm changes'
+                                      onClick={this.commit}>
+                            <FaCheck size={20} />
+                        </ActionButton>
+                        <ActionButton outline
+                                      size='sm'
+                                      title='Cancel changes'
+                                      onClick={this.stopEdit}>
+                            <MdCancel size={20} />
+                        </ActionButton>
+                        <ActionButton outline
+                                      size='sm'
+                                      color='danger'
+                                      title='Delete filter'
+                                      onClick={this.remove}>
+                            <FaTrash size={20} />
+                        </ActionButton>
+                    </ControlWrapper>
                 }
             </Row>
         );
@@ -90,7 +135,7 @@ export class FilterComponent extends PureComponent<Props>
     renderReadonly = (): JSX.Element =>
     {
         return (
-            <Filter>
+            <Filter title='Edit filter' onClick={this.startEdit}>
                 {this.props.filter.path}&nbsp;{this.props.filter.operator}&nbsp;{this.props.filter.value}
             </Filter>
         );
@@ -103,9 +148,9 @@ export class FilterComponent extends PureComponent<Props>
 
     change = (attribute: keyof Filter, value: string) =>
     {
-        if (!this.props.editable) return;
+        if (!this.state.editable) return;
 
-        const filter = {...this.props.filter};
+        const filter = {...this.state.filter};
         filter[attribute] = value;
 
         if (attribute === 'operator' && value === 'is defined')
@@ -113,11 +158,32 @@ export class FilterComponent extends PureComponent<Props>
             filter.value = '';
         }
 
-        this.props.onChange(this.props.index, filter);
+        this.setState({ filter });
+    }
+    commit = () =>
+    {
+        this.stopEdit();
+
+        if (!equals(this.state.filter, this.props.filter))
+        {
+            this.props.onChange(this.state.filter);
+        }
     }
     remove = () =>
     {
-        this.props.onRemove(this.props.index);
+        this.props.onRemove(this.props.filter);
+    }
+
+    stopEdit = () =>
+    {
+        this.setState({ editable: false });
+    }
+    startEdit = () =>
+    {
+        this.setState((state, props) => ({
+            filter: {...props.filter},
+            editable: true
+        }));
     }
 
     calculatePathSuggestions = (input: string): string[] =>
@@ -130,10 +196,10 @@ export class FilterComponent extends PureComponent<Props>
     }
     calculateValueSuggestions = (value: string): string[] =>
     {
-        if (this.props.filter.operator === '==' &&
-            this.props.filter.path.length > 0)
+        if (this.state.filter.operator === '==' &&
+            this.state.filter.path.length > 0)
         {
-            return this.props.calculateValueSuggestions(this.props.filter, value);
+            return this.props.calculateValueSuggestions(this.state.filter, value);
         }
 
         return [];

@@ -149,3 +149,38 @@ def test_batch_date_range(sw_env):
                 ==
                 tuple(result['res']['value'] for (b, env, result, t)
                       in target[19:9:-1]))
+
+
+def test_batch_empty_filter(sw_env):
+    sw_env.start()
+    uploader = sw_env.upload_client()
+
+    measurements = []
+
+    for i in range(50):
+        measurements.append((
+            "B1",
+            {"commit": "a", "test": "x"},
+            {"res": {
+                "value": i,
+                "type": "time"
+            }},
+            None
+        ))
+    uploader.upload_measurements(measurements)
+
+    view = sw_env.create_view(
+        sw_env.template_view(name='a',
+                             filters=[sw_env.template_operator(
+                                 '', value=''
+                             )]))
+
+    res = sw_env.get_batched_measurements(sw_env.project_id, {
+        'views': [view['_id']],
+        'range': {
+            'entryCount': 1000
+        }
+    })
+
+    measurements = res['measurements']
+    assert len(measurements) == 50

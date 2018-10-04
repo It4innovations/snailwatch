@@ -1,7 +1,7 @@
 from app.lib.measurement import filters_to_mongo_selection
 
 
-def test_mongo_filters_conversion():
+def test_mongo_filters_complex():
     filters = [{
         'path': 'a.b',
         'operator': '==',
@@ -29,3 +29,13 @@ def test_mongo_filters_conversion():
             '$exists': True
         }
     }
+
+
+def test_mongo_filters_empty_path():
+    filters = [{
+        'path': '',
+        'operator': '==',
+        'value': ''
+    }]
+
+    assert filters_to_mongo_selection(filters) == {}

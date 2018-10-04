@@ -1,5 +1,12 @@
 import {groupBy, values, zipObj} from 'ramda';
-import {Filter} from '../view/filter';
+import {Operator} from '../view/filter';
+
+export interface RequestFilter
+{
+    path: string;
+    operator: Operator;
+    value: string;
+}
 
 const table = {
     '!=': '$ne',
@@ -10,7 +17,7 @@ const table = {
     'contains': '$regex'
 };
 
-function serializeFilters(filters: Filter[]): {}
+function serializeFilters(filters: RequestFilter[]): {}
 {
     const equals = filters.filter(f => f.operator === '==');
     if (equals.length > 0)
@@ -24,7 +31,7 @@ function serializeFilters(filters: Filter[]): {}
     return zipObj(keys, vals);
 }
 
-export function buildRequestFilter(filters: Filter[]): {}
+export function buildRequestFilter(filters: RequestFilter[]): {}
 {
     const byPath = groupBy(f => f.path, filters);
 

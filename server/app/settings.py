@@ -86,19 +86,14 @@ filter_operators = ['==', '!=', '<', '<=', '>', '>=', 'contains', 'is defined']
 filter_type = {
     'type': 'dict',
     'schema': {
-        'path': {
-            'type': 'string',
-            'required': True
-        },
+        'id': string(),
+        'path': string(empty=True),
         'operator': {
             'type': 'string',
             'required': True,
             'allowed': filter_operators
         },
-        'value': {
-            'type': 'string',
-            'required': True
-        }
+        'value': string(empty=True)
     }
 }
 user_ref = ref('users')

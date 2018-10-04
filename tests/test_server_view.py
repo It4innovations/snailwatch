@@ -1,3 +1,6 @@
+import uuid
+
+
 def test_view_disallow_empty_name(sw_env):
     sw_env.start()
 
@@ -18,6 +21,7 @@ def test_view_validate_operator_type(sw_env):
         'project': sw_env.project_id,
         'name': 'a',
         'filters': [{
+            'id': uuid.uuid4().hex,
             'path': '',
             'operator': 'x',
             'value': ''
@@ -35,6 +39,7 @@ def test_view_create(sw_env):
         'project': sw_env.project_id,
         'name': 'a',
         'filters': [{
+            'id': uuid.uuid4().hex,
             'path': 'b',
             'operator': '==',
             'value': 'c'
@@ -71,11 +76,11 @@ def test_auto_view_creation_after_upload(sw_env):
     views = tuple(sw_env.db.views.find({}))
     assert len(views) == 1
     assert views[0]['name'] == benchmark
-    assert views[0]['filters'] == [{
-        'path': 'benchmark',
-        'operator': '==',
-        'value': benchmark
-    }]
+
+    filter = views[0]['filters'][0]
+    assert filter['path'] == 'benchmark'
+    assert filter['operator'] == '=='
+    assert filter['value'] == benchmark
 
     uploader.upload_measurements([
         (benchmark, {}, {}, None),

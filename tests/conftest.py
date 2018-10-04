@@ -1,6 +1,8 @@
 
 import os
 import sys
+import uuid
+
 import pytest
 import subprocess
 import time
@@ -176,6 +178,7 @@ class SnailWatchEnv(Env):
 
     def template_operator(self, path, operator='==', value=''):
         return {
+            'id': uuid.uuid4().hex,
             'path': path,
             'operator': operator,
             'value': value

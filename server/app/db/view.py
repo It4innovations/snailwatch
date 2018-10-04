@@ -22,11 +22,14 @@ class ViewRepo(Repository):
 
     def get_views_with_benchmark(self, benchmark):
         return self.table.find({
-            'filters': [{
-                'path': 'benchmark',
-                'operator': '==',
-                'value': benchmark
-            }]
+            'filters': {
+                '$size': 1,
+                '$elemMatch': {
+                    'path': 'benchmark',
+                    'operator': '==',
+                    'value': benchmark
+                }
+            }
         })
 
     def get_views_for_user(self, user):

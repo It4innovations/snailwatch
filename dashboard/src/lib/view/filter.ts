@@ -1,4 +1,5 @@
 import {contains} from 'ramda';
+import uuid from 'uuid';
 import {getValueWithPath} from '../../util/object';
 import {Filter} from './filter';
 
@@ -6,6 +7,7 @@ export type Operator = '==' | '!=' | '<' | '<=' | '>' | '>=' | 'contains' | 'is 
 
 export interface Filter
 {
+    id: string;
     path: string;
     operator: Operator;
     value: string;
@@ -21,12 +23,14 @@ export class BadValueFilteredError extends Error
     }
 }
 
-export function createFilter(path: string = '', operator: Operator = '==', value: string = ''): Filter
+export function createFilter(filter: Partial<Filter> = {}): Filter
 {
     return {
-        path,
-        operator,
-        value
+        id: uuid.v4(),
+        path: '',
+        operator: '==',
+        value: '',
+        ...filter
     };
 }
 

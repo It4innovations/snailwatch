@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from functools import reduce
 
 from eve import ID_FIELD
@@ -110,11 +111,15 @@ def before_insert_measurements(measurements):
             y_axes = reduce(lambda a, b: a.intersection(b), y_axes, union)
             y_axes = ['result.{}.value'.format(y) for y in y_axes]
 
-            view_repo.create_internal(project_id, benchmark, [{
+            res = view_repo.create_internal(project_id, benchmark, [{
+                'id': uuid.uuid4().hex,
                 'path': 'benchmark',
                 'operator': '==',
                 'value': benchmark
             }], y_axes)
+            if res[3] != 201:
+                app.logger.error('Couldn\'t insert automatic view for '
+                                 'benchmark {}: {}'.format(benchmark, res[0]))
 
 
 def after_insert_measurements(measurements):

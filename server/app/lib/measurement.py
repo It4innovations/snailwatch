@@ -14,6 +14,7 @@ OPERATOR_TABLE = {
 
 
 def filters_to_mongo_selection(filters):
+    filters = tuple(f for f in filters if f['path'].strip())
     obj = group_by(filters, lambda f: f['path'])
 
     where = {}
