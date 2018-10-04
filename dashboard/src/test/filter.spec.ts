@@ -206,6 +206,19 @@ describe('buildRequestFilter', () => {
         };
         expect(buildRequestFilter(filters)).toEqual(expected);
     });
+    it('ignores empty path filters', () => {
+        const filters: Filter[] = [createFilter({
+            path: '',
+            operator: '<',
+            value: '9'
+        }), createFilter({
+            path: '    ',
+            operator: '>=',
+            value: '8'
+        })];
+
+        expect(buildRequestFilter(filters)).toEqual({});
+    });
     it('correctly selects equal operator', () => {
         const filters: Filter[] = [createFilter({
             path: 'a',

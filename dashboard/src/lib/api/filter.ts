@@ -33,7 +33,7 @@ function serializeFilters(filters: RequestFilter[]): {}
 
 export function buildRequestFilter(filters: RequestFilter[]): {}
 {
-    const byPath = groupBy(f => f.path, filters);
+    const byPath = groupBy(f => f.path, filters.filter(f => f.path.trim() !== ''));
 
     const keys = Object.keys(byPath);
     const vals = values(byPath).map(serializeFilters);
