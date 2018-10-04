@@ -1,24 +1,27 @@
-import {chain, contains, lensPath, reduce, uniq, view} from 'ramda';
+import {contains, lensPath, reduce, uniq, view} from 'ramda';
 
-export function getAllKeys<T>(data: T, prefix: string = ''): string[]
+export function getAllKeysSet<T>(data: T, set: Set<string>, prefix: string = '')
 {
     const keys = Object.keys(data);
-    return chain(k => {
+    for (const k of keys)
+    {
         const id = prefix === '' ? k : `${prefix}.${k}`;
         if (data[k] instanceof Object)
         {
-            return getAllKeys(data[k], id);
+            getAllKeysSet(data[k], set, id);
         }
-        else return [id];
-    }, keys);
+        else set.add(id);
+    }
 }
 
 export function getAllKeysMerged<T>(data: T[], reduceObj: (t: T) => {}): string[]
 {
-    return reduce((acc, obj) => {
-        const keys = getAllKeys(reduceObj(obj));
-        return uniq(acc.concat(keys));
-    }, [], data);
+    const set = new Set<string>();
+    for (const item of data)
+    {
+        getAllKeysSet(reduceObj(item), set);
+    }
+    return Array.from(set);
 }
 
 export function getValuesWithPath<T>(data: T[], path: string): string[]
@@ -40,4 +43,21 @@ export function getValueWithPath<T>(data: T, path: string): string | undefined
 {
     const lens = lensPath(path.split('.'));
     return view<T, string>(lens, data);
+}
+
+// https://gist.github.com/albertorestifo/83877c3e4c81066a592a47c4dcf6753b
+export function debugDiffObjects(prev: {}, current: {})
+{
+    const now = Object.keys(current);
+    const added = now.filter(key => {
+        if (prev[key] === undefined) return true;
+        const val = current[key];
+        if (prev[key] !== val)
+        {
+            console.log(`${key}`);
+        }
+        return false;
+    });
+    added.forEach(key => console.log(`${key}
+          + ${JSON.stringify(now[key])}`));
 }

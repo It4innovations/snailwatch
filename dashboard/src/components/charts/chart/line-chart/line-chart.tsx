@@ -1,4 +1,5 @@
 import chroma from 'chroma-js';
+import memoizeOne from 'memoize-one';
 import React, {PureComponent} from 'react';
 import {
     CartesianGrid,
@@ -48,6 +49,14 @@ const DATASET_COLORS = new ColorPalette(chroma.brewer.Set1);
 
 export class LineChart extends PureComponent<Props>
 {
+    private lineData = memoizeOne(
+        (datasets: LineChartDataset[], groupMode: GroupMode, xAxis: string,
+         dateFormat: string, showAverageTrend: boolean) =>
+            createLineData(datasets, groupMode, xAxis,
+                dateFormat, showAverageTrend, DATASET_COLORS
+            )
+    );
+
     render()
     {
         if (this.props.datasets.length > 1 && this.props.groupMode === GroupMode.None)
@@ -71,9 +80,8 @@ export class LineChart extends PureComponent<Props>
         const preview = this.props.preview || false;
         const padding = preview ? 10 : 20;
 
-        let {points, groups} = createLineData(this.props.datasets, this.props.groupMode, this.props.xAxis,
-            this.props.dateFormat, this.props.settings.showAverageTrend, DATASET_COLORS
-        );
+        let {points, groups} = this.lineData(this.props.datasets, this.props.groupMode, this.props.xAxis,
+            this.props.dateFormat, this.props.settings.showAverageTrend);
 
         const empty = points.length === 0;
         if (empty)

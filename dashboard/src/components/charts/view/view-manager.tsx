@@ -1,3 +1,4 @@
+import memoizeOne from 'memoize-one';
 import React, {PureComponent, ReactNode} from 'react';
 import Toggle from 'react-bootstrap-toggle';
 import MdClose from 'react-icons/lib/md/close';
@@ -73,6 +74,11 @@ const TitleHelp = styled(Help)`
 
 class ViewManagerComponent extends PureComponent<Props>
 {
+    private keys = memoizeOne(
+        (view: View) => getMeasurementKeys(view.measurements),
+        (a: View, b: View) => a.id === b.id
+    );
+
     render()
     {
         const email = () => !this.props.user.email ? 'your e-mail' : <b>{this.props.user.email}</b>;
@@ -87,7 +93,7 @@ class ViewManagerComponent extends PureComponent<Props>
             </>
         );
 
-        const measurementKeys = getMeasurementKeys(this.props.view.measurements);
+        const measurementKeys = this.keys(this.props.view);
         return (
             <Column>
                 <Row>

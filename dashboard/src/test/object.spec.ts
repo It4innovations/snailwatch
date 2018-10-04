@@ -1,6 +1,6 @@
-import {getAllKeys, getAllKeysMerged, getValuesWithPath, getValueWithPath} from '../util/object';
+import {getAllKeysSet, getAllKeysMerged, getValuesWithPath, getValueWithPath} from '../util/object';
 
-describe('getAllKeys', () =>
+describe('getAllKeysSet', () =>
 {
     it('Returns inner keys', () =>
     {
@@ -15,13 +15,14 @@ describe('getAllKeys', () =>
             }
         };
 
-        const keys = getAllKeys(obj);
-        expect(keys).toEqual([
+        const set = new Set();
+        getAllKeysSet(obj, set);
+        expect(set).toEqual(new Set([
             'data',
             'str',
             'inner.asd',
             'inner.inner2.key'
-        ]);
+        ]));
     });
 });
 

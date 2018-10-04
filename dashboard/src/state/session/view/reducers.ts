@@ -25,14 +25,14 @@ let reducers = reducerWithInitialState<ViewState>({ ...initialState })
     ...state,
     views: action.result
 }))
-.case(deleteMeasurementAction.started, (state, action) => ({
+.case(deleteMeasurementAction.done, (state, action) => ({
     ...state,
     views: state.views.map(v => ({
         ...v,
-        measurements: v.measurements.filter(m => m.id !== action.id)
+        measurements: v.measurements.filter(m => m.id !== action.params.id)
     }))
 }))
-.case(deleteAllMeasurementsAction.started, state => ({
+.case(deleteAllMeasurementsAction.done, state => ({
     ...state,
     views: state.views.map(v => ({
         ...v,

@@ -11,15 +11,17 @@ import {isBlank} from '../../../../util/string';
 import {AppEpic} from '../../../app/app-epic';
 import {getSelectedProject} from '../../project/reducers';
 import {getToken} from '../../user/reducers';
+import {ViewActions} from '../../view/actions';
 import {getViews} from '../../view/reducers';
 import {changeRangeFilterAction} from '../actions';
 import {deleteAllMeasurementsAction, deleteMeasurementAction} from '../measurements-page/actions';
+import {getRangeFilter} from '../reducers';
 import {
     reloadViewMeasurementsAction,
     selectChartViewAction,
     selectViewAction,
     setChartXAxisAction,
-    updateSelectedViewsAction,
+    updateSelectedViewsAction
 } from './actions';
 import {clearCache, getMeasurementsRecord, insertMeasurementsRecord} from './dataset-cache';
 
@@ -87,6 +89,12 @@ const handleViewSelect: AppEpic = (action$, store) =>
         })
     );
 
+const reloadDatasetsAfterViewChange: AppEpic = (action$, store) =>
+    action$.pipe(
+        ofAction(ViewActions.update.done),
+        map(() => reloadViewMeasurementsAction.started(getRangeFilter(store.value)))
+    );
+
 const reloadDatasetsAfterRangeFilterChange: AppEpic = action$ =>
     action$.pipe(
         ofAction(changeRangeFilterAction),
@@ -96,7 +104,7 @@ const reloadDatasetsAfterRangeFilterChange: AppEpic = action$ =>
 
 const clearCacheAfterMeasurementDelete: AppEpic = action$ =>
     action$.pipe(
-        ofActions([deleteMeasurementAction.started, deleteAllMeasurementsAction.started]),
+        ofActions([deleteMeasurementAction.done, deleteAllMeasurementsAction.done]),
         tap(() => {
             clearCache();
         }),
@@ -108,5 +116,6 @@ export const chartEpics = combineEpics(
     handleViewSelect,
     handleViewGridChartSelect,
     reloadViews,
-    reloadDatasetsAfterRangeFilterChange
+    reloadDatasetsAfterRangeFilterChange,
+    reloadDatasetsAfterViewChange
 );

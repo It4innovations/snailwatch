@@ -11,9 +11,11 @@ import {AppEpic} from '../app/app-epic';
 import {AppState} from '../app/reducers';
 import {initProjectSession, initUserSession} from './actions';
 import {loadGlobalMeasurements} from './pages/actions';
+import {reloadViewMeasurementsAction} from './pages/chart-page/actions';
 import {chartEpics} from './pages/chart-page/epics';
 import {pageEpics} from './pages/epics';
 import {measurementsEpics} from './pages/measurements-page/epics';
+import {getRangeFilter} from './pages/reducers';
 import {ProjectActions} from './project/actions';
 import {projectEpics} from './project/epics';
 import {getSelectedProject} from './project/reducers';
@@ -73,6 +75,7 @@ const initProjectSessionEpic: AppEpic = (action$, store, deps) =>
                                 params: range,
                                 result: globalMeasurements
                             }),
+                            reloadViewMeasurementsAction.started(getRangeFilter(store.value)),
                             initProjectSession.done({
                                 params: {},
                                 result: {}

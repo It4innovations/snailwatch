@@ -1,4 +1,5 @@
 import chroma from 'chroma-js';
+import memoizeOne from 'memoize-one';
 import React, {PureComponent} from 'react';
 import {
     Bar,
@@ -33,12 +34,20 @@ const BAR_COLORS = new ColorPalette(chroma.brewer.Set2);
 
 export class BarChart extends PureComponent<Props>
 {
+    private groups = memoizeOne(
+        (measurements: Measurement[], groupMode: GroupMode, xAxis: string,
+         yAxes: string[], dateFormat: string) =>
+            linearizeGroups(
+                groupMeasurements(measurements, groupMode, xAxis, yAxes, dateFormat),
+                dateFormat
+            )
+    );
+
     render()
     {
         const yAxes = this.props.yAxes;
-        const grouped = groupMeasurements(this.props.measurements, this.props.groupMode,
+        let data = this.groups(this.props.measurements, this.props.groupMode,
             this.props.xAxis, yAxes, this.props.dateFormat);
-        let data = linearizeGroups(grouped, this.props.dateFormat);
 
         const empty = data.length === 0;
         if (empty)

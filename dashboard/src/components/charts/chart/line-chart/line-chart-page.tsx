@@ -1,8 +1,10 @@
+import memoizeOne from 'memoize-one';
 import {chain} from 'ramda';
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
 import styled from 'styled-components';
+import {LineChartSettingsHelp, RangeHelp, ViewListHelp, XAxisHelp} from '../../../../help';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {Project} from '../../../../lib/project/project';
@@ -16,7 +18,6 @@ import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
-import {LineChartSettingsHelp, RangeHelp, ViewListHelp, XAxisHelp} from '../../../../help';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
@@ -67,6 +68,7 @@ const ViewManagerWrapper = styled.div`
   border-radius: 5px;
 `;
 
+
 class LineChartPageComponent extends PureComponent<Props, State>
 {
     readonly state: State = {
@@ -80,6 +82,11 @@ class LineChartPageComponent extends PureComponent<Props, State>
         },
         selectedView: null
     };
+
+    private datasets = memoizeOne(
+        (views: View[], selectedViews: string[]) =>
+            this.expandDatasets(selectedViews)
+    );
 
     render()
     {
@@ -118,7 +125,10 @@ class LineChartPageComponent extends PureComponent<Props, State>
     }
     renderGraph = (): JSX.Element =>
     {
-        const datasets = this.expandDatasets(this.props.selectedViews);
+        const datasets = this.datasets(
+            this.props.views,
+            this.props.selectedViews
+        );
         const view = this.props.views.find(v => v.id === this.state.selectedView);
 
         return (
