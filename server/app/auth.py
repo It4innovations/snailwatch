@@ -83,7 +83,6 @@ def requires_auth(with_user=False):
             if not token or not get_session_for_token(token):
                 return authenticate()
             if with_user:
-                from .db.user import UserRepo
                 user = get_user_from_request(request)
                 if not user:
                     return api_error(404, "User not found")

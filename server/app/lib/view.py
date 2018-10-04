@@ -40,7 +40,7 @@ def test_filter(filter, measurement):
 
     try:
         return ops[op](value, filter['value'])
-    except:
+    except Exception:
         return False
 
 

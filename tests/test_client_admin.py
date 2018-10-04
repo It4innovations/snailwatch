@@ -4,9 +4,7 @@ import os
 import shutil
 from io import BytesIO
 
-import pytest
 import requests
-from swclient.common import SnailwatchException
 
 
 def test_session_create_user(sw_env):
