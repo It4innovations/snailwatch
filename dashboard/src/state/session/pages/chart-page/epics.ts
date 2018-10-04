@@ -41,25 +41,37 @@ const reloadViews = createRequestEpic(reloadViewMeasurementsAction, (action, sta
     const rangeFilter = action.payload;
     const views = getViews(state);
     const dirtyViews = getDirtyViews(views, rangeFilter);
-    const dirtyViewSet = new Set(dirtyViews);
 
     if (dirtyViews.length === 0) return of(views);
 
-    return deps.client.loadMeasurementsBatched(getToken(state), getSelectedProject(state), dirtyViews, rangeFilter)
-        .pipe(
-            map(batched => {
-                return views.map(v => {
-                    if (!dirtyViewSet.has(v)) return v;
-                    const measurements = getMeasurements(batched, v);
-                    insertMeasurementsRecord(v, rangeFilter, measurements);
+    const dirtyViewSet = new Set(dirtyViews);
+    const token = getToken(state);
+    const project = getSelectedProject(state);
 
-                    return {
-                        ...v,
-                        measurements
-                    };
-                });
-            })
-    );
+    function mapViews<T>(t: T, extractMeasurements: (t: T, view: View) => Measurement[])
+    {
+        return views.map(v => {
+            if (!dirtyViewSet.has(v)) return v;
+            const measurements = extractMeasurements(t, v);
+            insertMeasurementsRecord(v, rangeFilter, measurements);
+
+            return {
+                ...v,
+                measurements
+            };
+        });
+    }
+
+    if (dirtyViews.length === 1)
+    {
+        return deps.client.loadMeasurements(token, project, dirtyViews[0], rangeFilter)
+            .pipe(map(measurements => mapViews(measurements, m => m)));
+    }
+    else
+    {
+        return deps.client.loadMeasurementsBatched(token, project, dirtyViews, rangeFilter)
+            .pipe(map(batched => mapViews(batched, (m, v) => getMeasurements(m, v))));
+    }
 });
 
 const handleViewGridChartSelect: AppEpic = action$ =>
