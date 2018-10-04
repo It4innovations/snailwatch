@@ -2,6 +2,6 @@ export interface LineChartSettings
 {
     showPoints: boolean;
     connectPoints: boolean;
-    showDeviation: boolean;
+    showErrorBars: boolean;
     showAverageTrend: boolean;
 }

@@ -117,7 +117,7 @@ export class LineChart extends PureComponent<Props>
     {
         const settings = this.props.settings;
         const dotActive = this.props.onMeasurementsSelected && !preview && !group.isAverageTrend;
-        const showDeviation = !preview && settings.showDeviation && !group.isAverageTrend;
+        const showErrorBars = !preview && settings.showErrorBars && !group.isAverageTrend;
         const showPoints = settings.showPoints && !group.isAverageTrend;
         const color = group.color;
         const connectPoints = settings.connectPoints || (group.isAverageTrend && settings.showAverageTrend);
@@ -140,7 +140,7 @@ export class LineChart extends PureComponent<Props>
                 }}
                 stroke={stroke}
                 fill={color}>
-                {showDeviation &&
+                {showErrorBars &&
                     <ErrorBar
                         dataKey={`data[${index}].range`}
                         stroke={DATASET_COLORS.getColor(index)}

@@ -41,8 +41,8 @@ export class LineChartSettingsComponent extends PureComponent<Props>
                 <Row>
                     <div>Show error bars: </div>
                     <input type='checkbox'
-                           checked={this.props.settings.showDeviation}
-                           onChange={this.change('showDeviation')} />
+                           checked={this.props.settings.showErrorBars}
+                           onChange={this.change('showErrorBars')} />
                 </Row>
             </>
         );

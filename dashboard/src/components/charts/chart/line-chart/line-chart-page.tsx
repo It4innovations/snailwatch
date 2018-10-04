@@ -11,7 +11,7 @@ import {Project} from '../../../../lib/project/project';
 import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
-import {setChartXAxisAction} from '../../../../state/session/pages/chart-page/actions';
+import {setChartXAxisAction, updateLineChartSettings} from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducers';
 import {getViews} from '../../../../state/session/view/reducers';
 import {formatKey} from '../../../../util/measurement';
@@ -26,6 +26,7 @@ import {MeasurementList} from '../measurement-list';
 import {LineChart, LineChartDataset} from './line-chart';
 import {LineChartSettings} from './line-chart-settings';
 import {LineChartSettingsComponent} from './line-chart-settings-component';
+import {getChartState} from '../../../../state/session/pages/chart-page/reducer';
 
 interface OwnProps
 {
@@ -38,10 +39,12 @@ interface StateProps
     views: View[];
     selectedViews: string[];
     xAxis: string;
+    lineChartSettings: LineChartSettings;
 }
 interface DispatchProps
 {
     setXAxis(axis: string): void;
+    updateLineChartSettings(settings: LineChartSettings): void;
 }
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 
@@ -49,7 +52,6 @@ interface State
 {
     groupMode: GroupMode;
     selectedMeasurements: Measurement[];
-    settings: LineChartSettings;
     selectedView: string | null;
 }
 
@@ -74,12 +76,6 @@ class LineChartPageComponent extends PureComponent<Props, State>
     readonly state: State = {
         groupMode: GroupMode.AxisX,
         selectedMeasurements: [],
-        settings: {
-            showPoints: false,
-            connectPoints: true,
-            showDeviation: false,
-            showAverageTrend: false
-        },
         selectedView: null
     };
 
@@ -117,8 +113,8 @@ class LineChartPageComponent extends PureComponent<Props, State>
                 </Box>
                 <Box title='Settings' help={LineChartSettingsHelp}>
                     <LineChartSettingsComponent
-                        settings={this.state.settings}
-                        onChangeSettings={this.changeSettings} />
+                        settings={this.props.lineChartSettings}
+                        onChangeSettings={this.props.updateLineChartSettings} />
                 </Box>
             </>
         );
@@ -138,7 +134,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     height={400}
                     responsive={true}
                     groupMode={this.state.groupMode}
-                    settings={this.state.settings}
+                    settings={this.props.lineChartSettings}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     datasets={datasets}
                     dateFormat={CHART_DATE_FORMAT} />
@@ -179,10 +175,6 @@ class LineChartPageComponent extends PureComponent<Props, State>
     {
         this.setState({ selectedMeasurements  });
     }
-    changeSettings = (settings: LineChartSettings) =>
-    {
-        this.setState({ settings });
-    }
 
     setSelectedView = (selectedView: View) =>
     {
@@ -197,8 +189,10 @@ class LineChartPageComponent extends PureComponent<Props, State>
 export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
     views: getViews(state),
-    selectedViews: state.session.pages.chartState.selectedViews,
-    xAxis: state.session.pages.chartState.xAxis
+    selectedViews: getChartState(state).selectedViews,
+    xAxis: getChartState(state).xAxis,
+    lineChartSettings: getChartState(state).lineChartSettings
 }), {
-    setXAxis: setChartXAxisAction
+    setXAxis: setChartXAxisAction,
+    updateLineChartSettings
 })(LineChartPageComponent));

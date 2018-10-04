@@ -76,7 +76,7 @@ class GridChartPageComponent extends PureComponent<Props, State>
     private settings: LineChartSettings = {
         connectPoints: true,
         showPoints: false,
-        showDeviation: false,
+        showErrorBars: false,
         showAverageTrend: false
     };
 
