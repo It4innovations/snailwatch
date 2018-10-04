@@ -24,8 +24,8 @@ interface State<T>
     suggestions: T[];
 }
 
-const Suggestion = styled.div`
-  font-size: 12px;
+const Wrapper = styled.div`
+  position: relative;
 `;
 
 export class SuggestInput<T = string> extends PureComponent<Props<T>, State<T>>
@@ -36,19 +36,23 @@ export class SuggestInput<T = string> extends PureComponent<Props<T>, State<T>>
 
     render()
     {
-        return <Autosuggest
-                theme={theme}
-                inputProps={{
-                    value: this.props.value,
-                    onChange: this.handleChange
-                }}
-                renderInputComponent={this.renderInput}
-                suggestions={this.state.suggestions}
-                getSuggestionValue={this.getSuggestionValue}
-                renderSuggestion={this.renderSuggestion}
-                onSuggestionsFetchRequested={this.calculateSuggestions}
-                onSuggestionsClearRequested={this.clearSuggestions}
-                onSuggestionSelected={this.onSuggestionSelected} />;
+        return (
+            <Wrapper>
+                <Autosuggest
+                    theme={theme}
+                    inputProps={{
+                        value: this.props.value,
+                        onChange: this.handleChange
+                    }}
+                    renderInputComponent={this.renderInput}
+                    suggestions={this.state.suggestions}
+                    getSuggestionValue={this.getSuggestionValue}
+                    renderSuggestion={this.renderSuggestion}
+                    onSuggestionsFetchRequested={this.calculateSuggestions}
+                    onSuggestionsClearRequested={this.clearSuggestions}
+                    onSuggestionSelected={this.onSuggestionSelected} />
+            </Wrapper>
+        );
     }
     renderSuggestion = (suggestion: T, params: RenderSuggestionParams): JSX.Element =>
     {
@@ -70,7 +74,7 @@ export class SuggestInput<T = string> extends PureComponent<Props<T>, State<T>>
         );
         html.pop();
 
-        return <Suggestion>{html}</Suggestion>;
+        return <div>{html}</div>;
     }
     renderInput = (props: InputProps<T>): JSX.Element =>
     {
