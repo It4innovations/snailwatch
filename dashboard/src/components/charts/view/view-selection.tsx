@@ -69,11 +69,16 @@ const View = Row.extend`
     margin-right: 5px;
   }
 `;
-const EditButton = styled.div`
-  margin-left: auto;
-`;
 const CreateButton = styled(Button)`
   margin-top: 5px;
+`;
+const NameWrapper = Row.extend`
+  width: 100%;
+  justify-content: space-between;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 class ViewSelectionComponent extends PureComponent<Props, State>
@@ -118,10 +123,11 @@ class ViewSelectionComponent extends PureComponent<Props, State>
                         <input type='checkbox'
                                checked={selectedViews.indexOf(v.id) !== -1}
                                onChange={() => this.toggleView(v)} />
-                        <div>{v.name}</div>
-                        <EditButton title='Edit view'>
-                            <MdEdit onClick={() => this.props.onEditView(v)} />
-                        </EditButton>
+                        <NameWrapper title='Edit view'
+                                     onClick={() => this.props.onEditView(v)}>
+                            <span>{v.name}</span>
+                            <MdEdit />
+                        </NameWrapper>
                     </View>
                 )}
             </ViewList>

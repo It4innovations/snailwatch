@@ -33,7 +33,7 @@ export class Help extends PureComponent<Props, State>
                          onMouseLeave={this.hide}
                          innerRef={this.iconRef}
                          className={this.props.className}>
-                    <FaQuestionCircle color='#007BFF' />
+                    <FaQuestionCircle color='#7199C3' />
                 </Wrapper>
                 {this.iconRef.current &&
                     <Popover placement='right'

@@ -15,10 +15,10 @@ import {getSelectedProject} from '../../../state/session/project/reducers';
 import {getUser} from '../../../state/session/user/reducers';
 import {ViewActions} from '../../../state/session/view/actions';
 import {getViews} from '../../../state/session/view/reducers';
+import {EditableText} from '../../global/editable-text';
 import {Help} from '../../global/help';
 import {ResultKeysMultiselect} from '../../global/keys/result-keys-multiselect';
 import {ViewFilterManager} from './view-filter-manager';
-import {ViewName} from './view-name';
 
 
 interface OwnProps
@@ -71,6 +71,9 @@ const TitleRow = styled.div`
 const TitleHelp = styled(Help)`
   margin-left: 5px;
 `;
+const ViewName = styled(EditableText)`
+  font-size: 20px;
+`;
 
 class ViewManagerComponent extends PureComponent<Props>
 {
@@ -97,9 +100,13 @@ class ViewManagerComponent extends PureComponent<Props>
         return (
             <Column>
                 <Row>
-                    <ViewName key={this.props.view.id}
-                              value={this.props.view.name}
-                              onChange={this.changeName} />
+                    <div title='Edit name'>
+                        <ViewName key={this.props.view.id}
+                                  value={this.props.view.name}
+                                  validate={this.validateName}
+                                  activeColor='#7199C3'
+                                  onChange={this.changeName} />
+                    </div>
                     <Button title='Close view detail' onClick={this.props.onClose}><MdClose /></Button>
                 </Row>
                 <ViewFilterManager
@@ -149,6 +156,10 @@ class ViewManagerComponent extends PureComponent<Props>
         />;
     }
 
+    validateName = (name: string): boolean =>
+    {
+        return name.trim() !== '';
+    }
     changeName = (name: string) =>
     {
         if (name !== this.props.view.name)

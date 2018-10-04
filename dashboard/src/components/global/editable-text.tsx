@@ -1,36 +1,56 @@
-import React, {PureComponent} from 'react';
-import {Input} from 'reactstrap';
+import React, {Component} from 'react';
 import {InputType} from 'reactstrap/lib/Input';
+import styled from 'styled-components';
 
 interface Props
 {
-    editing: boolean;
     value: string;
     className?: string;
     type?: InputType;
+    activeColor?: string;
+    validate(value: string): boolean;
     onChange(value: string): void;
 }
 
-export class EditableText extends PureComponent<Props>
+const Text = styled.div<{activeColor: string}>`
+  &:hover, &:focus {
+    color: ${props => props.activeColor}
+  }
+`;
+
+export class EditableText extends Component<Props>
 {
+    private text: React.RefObject<HTMLDivElement> = React.createRef();
+
     render()
     {
-        if (this.props.editing)
-        {
-            const type = this.props.type || 'text';
-            return <Input className={this.props.className}
-                          bsSize='sm'
-                          type={type}
-                          value={this.props.value}
-                          onChange={this.onChange} />;
-        }
-
-        return <div className={this.props.className}>{this.props.value}</div>;
+        return <Text innerRef={this.text}
+                     activeColor={this.props.activeColor || '#000000'}
+                     className={this.props.className}
+                     contentEditable={true}
+                     suppressContentEditableWarning={true}
+                     onKeyPress={this.handleInput}
+                     onBlur={this.handleBlur}>{this.props.value}</Text>;
     }
 
-    onChange = (e: React.FormEvent<HTMLInputElement>) =>
+    handleInput = (e: React.KeyboardEvent<HTMLDivElement>) =>
     {
-        const value = e.currentTarget.value;
-        this.props.onChange(value);
+        if (e.key === 'Enter')
+        {
+            e.preventDefault();
+            this.text.current.blur();
+        }
+    }
+    handleBlur = (e: React.FocusEvent<HTMLInputElement>) =>
+    {
+        const value = e.currentTarget.textContent;
+        if (value === this.props.value) return;
+
+        if (this.props.validate(value))
+        {
+            console.log('validate');
+            this.props.onChange(value);
+        }
+        else this.text.current.textContent = this.props.value;
     }
 }
