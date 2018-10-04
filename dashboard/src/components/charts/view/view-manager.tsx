@@ -54,6 +54,8 @@ const Column = styled.div`
 `;
 const KeysWrapper = styled.div`
   margin: 5px 0;
+  max-width: 250px;
+  word-break: break-all;
 `;
 const ActionButton = styled(Button)`
   margin-left: 10px;

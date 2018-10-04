@@ -46,8 +46,12 @@ const Operator = styled(Input)`
   width: 100px !important;
 `;
 const Filter = styled(Badge)`
+  max-width: 300px;
+  word-break: break-all;
+  white-space: normal !important;
   font-size: 14px !important;
   cursor: pointer;
+
   &:hover {
     background-color: #545B62;
   }

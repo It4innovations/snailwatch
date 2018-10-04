@@ -76,6 +76,8 @@ const NameWrapper = Row.extend`
   width: 100%;
   justify-content: space-between;
   cursor: pointer;
+  word-break: break-all;
+
   &:hover {
     text-decoration: underline;
   }
