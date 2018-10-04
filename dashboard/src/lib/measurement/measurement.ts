@@ -24,12 +24,9 @@ export function hashMeasurement(measurement: Measurement): string
         environment: measurement.environment
     });
 }
-export function getMeasurementKeys(measurements: Measurement[]): string[]
+export function getResultKeys(measurements: Measurement[]): string[]
 {
     return getAllKeysMerged(measurements, m => ({
-        timestamp: m.timestamp,
-        benchmark: m.benchmark,
-        environment: m.environment,
         result: m.result
     }));
 }

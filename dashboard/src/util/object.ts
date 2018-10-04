@@ -1,12 +1,18 @@
 import {contains, lensPath, reduce, uniq, view} from 'ramda';
 
+// https://stackoverflow.com/a/5878101/1107768
+export function isPlainObject(obj: {})
+{
+    return obj !== null && typeof obj === 'object' && obj.constructor === Object;
+}
+
 export function getAllKeysSet<T>(data: T, set: Set<string>, prefix: string = '')
 {
     const keys = Object.keys(data);
     for (const k of keys)
     {
         const id = prefix === '' ? k : `${prefix}.${k}`;
-        if (data[k] instanceof Object)
+        if (isPlainObject(data[k]))
         {
             getAllKeysSet(data[k], set, id);
         }

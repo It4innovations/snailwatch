@@ -4,6 +4,7 @@ import {isArray, isObject, isString} from 'util';
 import {Measurement} from '../lib/measurement/measurement';
 import {initialState as PageInitialState} from '../state/session/pages/reducers';
 import {initialState as ProjectInitialState} from '../state/session/project/reducers';
+import {isPlainObject} from './object';
 import {createRequest, isRequest} from './request';
 
 const SERIALIZATION_FORMAT = 'DD.MM.YYYYTHH:mm:ss';
@@ -52,12 +53,6 @@ export function serializeMeasurements(obj: {}): {}
         o => isMeasurementArray(o as Measurement[]),
         () => []
     );
-}
-
-// https://stackoverflow.com/a/5878101/1107768
-function isPlainObject(obj: {})
-{
-    return obj !== null && typeof obj === 'object' && obj.constructor === Object;
 }
 
 function traverse(obj: {},

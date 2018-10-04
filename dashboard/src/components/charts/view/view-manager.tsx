@@ -5,7 +5,7 @@ import MdClose from 'react-icons/lib/md/close';
 import {connect} from 'react-redux';
 import {Button, ButtonGroup} from 'reactstrap';
 import styled from 'styled-components';
-import {getMeasurementKeys, Measurement} from '../../../lib/measurement/measurement';
+import {getResultKeys, Measurement} from '../../../lib/measurement/measurement';
 import {Project} from '../../../lib/project/project';
 import {User} from '../../../lib/user/user';
 import {createWatch, View, Watch} from '../../../lib/view/view';
@@ -80,8 +80,7 @@ const ViewName = styled(EditableText)`
 class ViewManagerComponent extends PureComponent<Props>
 {
     private keys = memoizeOne(
-        (view: View) => getMeasurementKeys(view.measurements),
-        (a: View, b: View) => a.id === b.id
+        (view: View) => getResultKeys(view.measurements)
     );
 
     render()
