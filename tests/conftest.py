@@ -11,19 +11,21 @@ import requests
 import shutil
 
 from pymongo import MongoClient
-from swclient.client import Client
+
 
 TEST_DIR = os.path.dirname(__file__)
 ROOT = os.path.dirname(TEST_DIR)
 WORK_DIR = os.path.join(TEST_DIR, "work")
 SNAILWATCH_SERVER = os.path.join(ROOT, "server", "start.py")
-PYTHON_DIR = os.path.join(ROOT, "python")
+PYTHON_DIR = os.path.join(ROOT, "client")
 SERVER_DIR = os.path.join(ROOT, "server")
 
 MONGO_ADDRESS = os.environ.get('MONGO', 'localhost')
 
 sys.path.insert(0, PYTHON_DIR)
 sys.path.insert(0, SERVER_DIR)
+
+from swclient.client import Client  # noqa
 
 
 class Env:

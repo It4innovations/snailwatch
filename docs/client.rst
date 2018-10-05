@@ -7,7 +7,7 @@ You can either use it as a CLI tool or as a library directly in your code.
 Installation
 ------------
 
-``swclient`` is located in the ``python`` directory. If you just want to use it as a CLI tool,
+``swclient`` is located in the ``client`` directory. If you just want to use it as a CLI tool,
 it is enough to install its dependencies from the ``requirements.txt`` file:
 
 .. code-block:: bash
@@ -26,7 +26,7 @@ If you want to use it in your code as a library, we recommend to install `swclie
 CLI usage
 ---------
 The following examples assume that ``swclient`` is either installed or that
-you launch the commands from the ``python`` subdirectory in the Snailwatch repository.
+you launch the commands from the ``client`` subdirectory in the Snailwatch repository.
 
 .. code-block:: bash
 

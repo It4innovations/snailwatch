@@ -9,7 +9,7 @@ that its dependencies are installed. If you want
 to use raw API calls instead, please check the curl examples `below <#example-api-calls>`_.
 
 The following commands/scripts assume that ``swclient`` is either installed or that
-you launch them from the ``python`` subdirectory in the Snailwatch repository.
+you launch them from the ``client`` subdirectory in the Snailwatch repository.
 
 Create a user
 -------------

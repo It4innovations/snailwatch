@@ -123,7 +123,7 @@ class ProjectOverviewComponent extends PureComponent<Props & RouteComponentProps
         return (
             <>
                     <div>
-                        We provide a simple Python library located at <code>python/swclient</code> that
+                        We provide a simple Python library located at <code>client/swclient</code> that
                         simplifies measurement uploads and project/user management.<br />
                         You can use the following snippet as an example how to use it to upload measurements.<br />
                         Additional details can be found in the

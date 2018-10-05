@@ -25,10 +25,10 @@ test:server:
   stage: test
   before_script:
     - apt-get update && apt-get install -y --no-install-recommends git
-    - pip3 install flake8 pytest pymongo python/
+    - pip3 install flake8 pytest pymongo client/
     - pip3 install -r server/requirements.txt
   script:
-    - flake8 python server tests
+    - flake8 client server tests
     - MONGO=mongo python3 -m pytest --verbose tests
   artifacts:
     paths:

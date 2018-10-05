@@ -1,5 +1,6 @@
-import requests
 import datetime
+
+import requests
 
 from .common import SnailwatchException
 
@@ -31,8 +32,8 @@ class Client(object):
         :param timestamp: Time of the measurement
         """
         return self._post("measurements",
-                          self._serialize_measurement(benchmark, environment,
-                                                      result, timestamp))
+                          serialize_measurement(benchmark, environment,
+                                                result, timestamp))
 
     def upload_measurements(self, measurements):
         """
@@ -42,7 +43,7 @@ class Client(object):
 
         :param measurements: List of measurements
         """
-        serialized = [self._serialize_measurement(*m) for m in measurements]
+        serialized = [serialize_measurement(*m) for m in measurements]
         return self._post("measurements", serialized)
 
     def create_user(self, username, password, email=''):
@@ -62,7 +63,8 @@ class Client(object):
 
     def login(self, username, password):
         """
-        Login and return a session token.
+        Log in and return a session token.
+
         :param username: Username
         :param password: Password
         :return: session token
@@ -105,15 +107,16 @@ class Client(object):
                                       response.status_code, response.content)
         return response.json()
 
-    def _serialize_measurement(self, benchmark, environment, result,
-                               timestamp=None):
-        if timestamp is None:
-            timestamp = datetime.datetime.utcnow()
-        timestamp = timestamp.replace(microsecond=0)
 
-        return {
-            'benchmark': benchmark,
-            'timestamp': timestamp.isoformat(),
-            'environment': environment,
-            'result': result
-        }
+def serialize_measurement(benchmark, environment, result,
+                          timestamp=None):
+    if timestamp is None:
+        timestamp = datetime.datetime.utcnow()
+    timestamp = timestamp.replace(microsecond=0)
+
+    return {
+        'benchmark': benchmark,
+        'timestamp': timestamp.isoformat(),
+        'environment': environment,
+        'result': result
+    }
