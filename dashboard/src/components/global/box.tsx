@@ -1,5 +1,5 @@
 import React, {PureComponent, ReactNode} from 'react';
-import {Card} from 'reactstrap';
+import {Card, CardBody, CardHeader} from 'reactstrap';
 import styled from 'styled-components';
 import {Help} from './help';
 
@@ -16,12 +16,16 @@ type State = Readonly<{
 }>;
 
 const SlimCard = styled(Card)`
-    padding: 10px !important;
-    margin-bottom: 5px;
+  padding: 0 !important;
+  margin-bottom: 5px;
 `;
-const Title = styled.div<{hideable: boolean}>`
-    font-size: 1.25rem;
-    ${(props) => props.hideable ? 'cursor: pointer' : ''};
+const Title = styled(CardHeader)<{hideable: boolean}>`
+  padding: 0.25rem 0.75rem !important;
+  font-size: 1.25rem;
+  ${(props) => props.hideable ? 'cursor: pointer' : ''};
+`;
+const SlimBody = styled(CardBody)`
+  padding: 0.75rem !important;
 `;
 const Row = styled.div`
   display: flex;
@@ -56,7 +60,7 @@ export class Box extends PureComponent<Props, State>
                         {this.renderTitle()}
                     </Title>
                 }
-                {this.state.visible && <>{this.props.children}</>}
+                {this.state.visible && <SlimBody>{this.props.children}</SlimBody>}
             </SlimCard>
         );
     }

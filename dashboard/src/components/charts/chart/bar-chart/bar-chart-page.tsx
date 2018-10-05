@@ -2,6 +2,7 @@ import React, {Fragment, PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
 import styled from 'styled-components';
+import {RangeHelp, ViewListHelp, XAxisHelp} from '../../../../help';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {Project} from '../../../../lib/project/project';
@@ -11,15 +12,13 @@ import {AppState} from '../../../../state/app/reducers';
 import {setChartXAxisAction} from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducers';
 import {getViews} from '../../../../state/session/view/reducers';
-import {RangeHelp, ViewListHelp, XAxisHelp} from '../../../../help';
 import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
-import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
+import {ChartBottomPanel} from '../chart-bottom-panel';
 import {CHART_DATE_FORMAT} from '../configuration';
-import {MeasurementList} from '../measurement-list';
 import {BarChart} from './bar-chart';
 
 interface OwnProps
@@ -47,20 +46,6 @@ interface State
     selectedView: string | null;
 }
 
-const Row = styled.div`
-  display: flex;
-  align-items: stretch;
-`;
-const MeasurementsWrapper = styled.div`
-  width: 900px;
-`;
-const ViewManagerWrapper = styled.div`
-  flex-grow: 1;
-  margin-left: 15px;
-  padding: 15px;
-  border: 1px solid #000000;
-  border-radius: 5px;
-`;
 const ChartsWrapper = styled.div`
   min-height: 300px;
 `;
@@ -105,7 +90,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
     }
     renderGraph = (): JSX.Element =>
     {
-        const view = this.props.views.find(v => v.id === this.state.selectedView);
+        const view = this.props.views.find(v => v.id === this.state.selectedView) || null;
 
         return (
             <div>
@@ -113,18 +98,12 @@ class BarChartPageComponent extends PureComponent<Props, State>
                     {this.props.selectedViews.length === 0 ? 'Select a view' :
                         this.props.selectedViews.map(this.renderDataset)}
                 </ChartsWrapper>
-                <Row>
-                    <MeasurementsWrapper>
-                        <h4>Selected measurements</h4>
-                        <MeasurementList measurements={this.state.selectedMeasurements}
-                                         project={this.props.project} />
-                    </MeasurementsWrapper>
-                    {view &&
-                        <ViewManagerWrapper>
-                            <ViewManager view={view} onClose={this.deselectView} />
-                        </ViewManagerWrapper>
-                    }
-                </Row>
+                <ChartBottomPanel
+                    view={view}
+                    project={this.props.project}
+                    selectedMeasurements={this.state.selectedMeasurements}
+                    deselectView={this.deselectView}
+                    deselectMeasurements={this.deselectMeasurements} />
             </div>
         );
     }
@@ -144,6 +123,10 @@ class BarChartPageComponent extends PureComponent<Props, State>
         );
     }
 
+    deselectMeasurements = () =>
+    {
+        this.changeSelectedMeasurements([]);
+    }
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
     {
         this.setState({ selectedMeasurements  });

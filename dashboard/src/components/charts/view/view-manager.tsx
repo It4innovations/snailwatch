@@ -15,6 +15,7 @@ import {getSelectedProject} from '../../../state/session/project/reducers';
 import {getUser} from '../../../state/session/user/reducers';
 import {ViewActions} from '../../../state/session/view/actions';
 import {getViews} from '../../../state/session/view/reducers';
+import {Box} from '../../global/box';
 import {EditableText} from '../../global/editable-text';
 import {Help} from '../../global/help';
 import {ResultKeysMultiselect} from '../../global/keys/result-keys-multiselect';
@@ -24,6 +25,7 @@ import {ViewFilterManager} from './view-filter-manager';
 interface OwnProps
 {
     view: View;
+    className?: string;
     onClose(): void;
 }
 interface StateProps
@@ -63,7 +65,7 @@ const ActionButton = styled(Button)`
 const LastRow = styled(Row)`
   flex-grow: 1;
   margin-top: 5px;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: flex-end;
 `;
 const TitleRow = styled.div`
@@ -99,41 +101,56 @@ class ViewManagerComponent extends PureComponent<Props>
 
         const measurementKeys = this.keys(this.props.view);
         return (
-            <Column>
-                <Row>
-                    <div title='Edit name'>
-                        <ViewName key={this.props.view.id}
-                                  value={this.props.view.name}
-                                  validate={this.validateName}
-                                  activeColor='#7199C3'
-                                  onChange={this.changeName} />
-                    </div>
-                    <Button title='Close view detail' onClick={this.props.onClose}><MdClose /></Button>
-                </Row>
-                <ViewFilterManager
-                    key={this.props.view.id}
-                    view={this.props.view}
-                    onChange={this.props.changeView}
-                    measurements={this.props.globalMeasurements}
-                    measurementKeys={this.props.project.measurementKeys} />
-                <KeysWrapper>
-                    {this.renderHelpTitle('Y axes', 'Select attributes that will be displayed on the Y axis.')}
-                    <ResultKeysMultiselect keys={measurementKeys}
-                                           values={this.props.view.yAxes}
-                                           onChange={this.changeYAxes}
-                                           requireSelection={true} />
-                </KeysWrapper>
-                <div>
-                    {this.renderHelpTitle('Watch', watchHelp)}
-                    {this.renderWatch(this.props.view.watches)}
+            <Box title={this.renderTitle()} className={this.props.className}>
+                <Column>
+                    <ViewFilterManager
+                        key={this.props.view.id}
+                        view={this.props.view}
+                        onChange={this.props.changeView}
+                        measurements={this.props.globalMeasurements}
+                        measurementKeys={this.props.project.measurementKeys} />
+                    <KeysWrapper>
+                        {this.renderHelpTitle('Y axes', 'Select attributes that will be displayed on the Y axis.')}
+                        <ResultKeysMultiselect keys={measurementKeys}
+                                               values={this.props.view.yAxes}
+                                               onChange={this.changeYAxes}
+                                               requireSelection={true} />
+                    </KeysWrapper>
+                    <LastRow>
+                        <div>
+                            {this.renderHelpTitle('Watch', watchHelp)}
+                            {this.renderWatch(this.props.view.watches)}
+                        </div>
+                        <ButtonGroup>
+                            <ActionButton onClick={this.copyView} color='info' title='Copy view'>
+                                Copy
+                            </ActionButton>
+                            <ActionButton onClick={this.deleteView} color='danger' title='Delete view'>
+                                Delete
+                            </ActionButton>
+                        </ButtonGroup>
+                    </LastRow>
+                </Column>
+            </Box>
+        );
+    }
+    renderTitle = (): JSX.Element =>
+    {
+        return (
+            <Row>
+                <div title='Edit name'>
+                    <ViewName key={this.props.view.id}
+                              value={this.props.view.name}
+                              validate={this.validateName}
+                              activeColor='#7199C3'
+                              onChange={this.changeName} />
                 </div>
-                <LastRow>
-                    <ButtonGroup>
-                        <ActionButton onClick={this.copyView} color='info' title='Copy view'>Copy</ActionButton>
-                        <ActionButton onClick={this.deleteView} color='danger' title='Delete view'>Delete</ActionButton>
-                    </ButtonGroup>
-                </LastRow>
-            </Column>
+                <Button title='Close view detail'
+                        size='sm'
+                        onClick={this.props.onClose}>
+                    <MdClose size={20} />
+                </Button>
+            </Row>
         );
     }
     renderHelpTitle = (title: string, help: ReactNode | string): JSX.Element =>

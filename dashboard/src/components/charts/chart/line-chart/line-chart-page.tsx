@@ -3,7 +3,6 @@ import {chain} from 'ramda';
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router';
-import styled from 'styled-components';
 import {LineChartSettingsHelp, RangeHelp, ViewListHelp, XAxisHelp} from '../../../../help';
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
@@ -12,6 +11,7 @@ import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
 import {setChartXAxisAction, updateLineChartSettings} from '../../../../state/session/pages/chart-page/actions';
+import {getChartState} from '../../../../state/session/pages/chart-page/reducer';
 import {getSelectedProject} from '../../../../state/session/project/reducers';
 import {getViews} from '../../../../state/session/view/reducers';
 import {formatKey} from '../../../../util/measurement';
@@ -19,14 +19,12 @@ import {Box} from '../../../global/box';
 import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
-import {ViewManager} from '../../view/view-manager';
 import {ViewSelection} from '../../view/view-selection';
+import {ChartBottomPanel} from '../chart-bottom-panel';
 import {CHART_DATE_FORMAT} from '../configuration';
-import {MeasurementList} from '../measurement-list';
 import {LineChart, LineChartDataset} from './line-chart';
 import {LineChartSettings} from './line-chart-settings';
 import {LineChartSettingsComponent} from './line-chart-settings-component';
-import {getChartState} from '../../../../state/session/pages/chart-page/reducer';
 
 interface OwnProps
 {
@@ -54,22 +52,6 @@ interface State
     selectedMeasurements: Measurement[];
     selectedView: string | null;
 }
-
-const Row = styled.div`
-  display: flex;
-  align-items: stretch;
-`;
-const MeasurementsWrapper = styled.div`
-  width: 900px;
-`;
-const ViewManagerWrapper = styled.div`
-  flex-grow: 1;
-  margin-left: 15px;
-  padding: 15px;
-  border: 1px solid #000000;
-  border-radius: 5px;
-`;
-
 
 class LineChartPageComponent extends PureComponent<Props, State>
 {
@@ -125,7 +107,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
             this.props.views,
             this.props.selectedViews
         );
-        const view = this.props.views.find(v => v.id === this.state.selectedView);
+        const view = this.props.views.find(v => v.id === this.state.selectedView) || null;
 
         return (
             <>
@@ -138,18 +120,12 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     datasets={datasets}
                     dateFormat={CHART_DATE_FORMAT} />
-                <Row>
-                    <MeasurementsWrapper>
-                        <h4>Selected measurements</h4>
-                        <MeasurementList measurements={this.state.selectedMeasurements}
-                                         project={this.props.project} />
-                    </MeasurementsWrapper>
-                    {view &&
-                        <ViewManagerWrapper>
-                            <ViewManager view={view} onClose={this.deselectView} />
-                        </ViewManagerWrapper>
-                    }
-                </Row>
+                <ChartBottomPanel
+                    view={view}
+                    project={this.props.project}
+                    selectedMeasurements={this.state.selectedMeasurements}
+                    deselectView={this.deselectView}
+                    deselectMeasurements={this.deselectMeasurements} />
             </>
         );
     }
@@ -171,6 +147,10 @@ class LineChartPageComponent extends PureComponent<Props, State>
         }, viewIds);
     }
 
+    deselectMeasurements = () =>
+    {
+        this.changeSelectedMeasurements([]);
+    }
     changeSelectedMeasurements = (selectedMeasurements: Measurement[]) =>
     {
         this.setState({ selectedMeasurements  });
