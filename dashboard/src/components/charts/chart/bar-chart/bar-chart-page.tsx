@@ -9,35 +9,33 @@ import {Project} from '../../../../lib/project/project';
 import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
-import {setChartXAxisAction} from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducers';
 import {getViews} from '../../../../state/session/view/reducers';
 import {Box} from '../../../global/box';
-import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {ViewSelection} from '../../view/view-selection';
 import {ChartBottomPanel} from '../chart-bottom-panel';
-import {CHART_DATE_FORMAT} from '../configuration';
+import {DateFormat} from '../date-format';
+import {XAxisSelector} from '../x-axis-selector';
 import {BarChart} from './bar-chart';
 
 interface OwnProps
 {
     rangeFilter: RangeFilter;
+    xAxis: string;
+    dateFormat: DateFormat;
     onChangeRangeFilter(rangeFilter: RangeFilter): void;
+    onChangeXAxis(xAxis: string): void;
+    onChangeDateFormat(dateFormat: DateFormat): void;
 }
 interface StateProps
 {
     project: Project;
     views: View[];
     selectedViews: string[];
-    xAxis: string;
 }
-interface DispatchProps
-{
-    setXAxis(axis: string): void;
-}
-type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
+type Props = OwnProps & StateProps & RouteComponentProps<void>;
 
 interface State
 {
@@ -78,9 +76,11 @@ class BarChartPageComponent extends PureComponent<Props, State>
                         onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
                 <Box title='X axis' help={XAxisHelp}>
-                    <MeasurementKeys project={this.props.project}
-                                     value={this.props.xAxis}
-                                     onChange={this.props.setXAxis} />
+                    <XAxisSelector project={this.props.project}
+                                   xAxis={this.props.xAxis}
+                                   dateFormat={this.props.dateFormat}
+                                   onChangeXAxis={this.props.onChangeXAxis}
+                                   onChangeDateFormat={this.props.onChangeDateFormat} />
                 </Box>
                 <Box title='View list' help={ViewListHelp}>
                     <ViewSelection onEditView={this.setSelectedView} />
@@ -118,7 +118,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
                       xAxis={this.props.xAxis}
                       yAxes={view.yAxes}
                       groupMode={this.state.groupMode}
-                      dateFormat={CHART_DATE_FORMAT}
+                      dateFormat={this.props.dateFormat}
                       onMeasurementsSelected={this.changeSelectedMeasurements} />
         );
     }
@@ -142,11 +142,8 @@ class BarChartPageComponent extends PureComponent<Props, State>
     }
 }
 
-export const BarChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
+export const BarChartPage = withRouter(connect<StateProps, {}, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
     views: getViews(state),
-    selectedViews: state.session.pages.chartState.selectedViews,
-    xAxis: state.session.pages.chartState.xAxis,
-}), {
-    setXAxis: setChartXAxisAction,
-})(BarChartPageComponent));
+    selectedViews: state.session.pages.chartState.selectedViews
+}))(BarChartPageComponent));

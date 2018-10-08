@@ -10,18 +10,18 @@ import {Project} from '../../../../lib/project/project';
 import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
-import {setChartXAxisAction, updateLineChartSettings} from '../../../../state/session/pages/chart-page/actions';
+import {updateLineChartSettings} from '../../../../state/session/pages/chart-page/actions';
 import {getChartState} from '../../../../state/session/pages/chart-page/reducer';
 import {getSelectedProject} from '../../../../state/session/project/reducers';
 import {getViews} from '../../../../state/session/view/reducers';
 import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
-import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {ViewSelection} from '../../view/view-selection';
 import {ChartBottomPanel} from '../chart-bottom-panel';
-import {CHART_DATE_FORMAT} from '../configuration';
+import {DateFormat} from '../date-format';
+import {XAxisSelector} from '../x-axis-selector';
 import {LineChart, LineChartDataset} from './line-chart';
 import {LineChartSettings} from './line-chart-settings';
 import {LineChartSettingsComponent} from './line-chart-settings-component';
@@ -29,19 +29,21 @@ import {LineChartSettingsComponent} from './line-chart-settings-component';
 interface OwnProps
 {
     rangeFilter: RangeFilter;
+    xAxis: string;
+    dateFormat: DateFormat;
     onChangeRangeFilter(rangeFilter: RangeFilter): void;
+    onChangeXAxis(xAxis: string): void;
+    onChangeDateFormat(dateFormat: DateFormat): void;
 }
 interface StateProps
 {
     project: Project;
     views: View[];
     selectedViews: string[];
-    xAxis: string;
     lineChartSettings: LineChartSettings;
 }
 interface DispatchProps
 {
-    setXAxis(axis: string): void;
     updateLineChartSettings(settings: LineChartSettings): void;
 }
 type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
@@ -86,9 +88,11 @@ class LineChartPageComponent extends PureComponent<Props, State>
                         onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
                 <Box title='X axis' help={XAxisHelp}>
-                    <MeasurementKeys project={this.props.project}
-                                     value={this.props.xAxis}
-                                     onChange={this.props.setXAxis} />
+                    <XAxisSelector project={this.props.project}
+                                   xAxis={this.props.xAxis}
+                                   dateFormat={this.props.dateFormat}
+                                   onChangeXAxis={this.props.onChangeXAxis}
+                                   onChangeDateFormat={this.props.onChangeDateFormat} />
                 </Box>
                 <Box title='View list' help={ViewListHelp}>
                     <ViewSelection onEditView={this.setSelectedView} />
@@ -119,7 +123,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                     settings={this.props.lineChartSettings}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     datasets={datasets}
-                    dateFormat={CHART_DATE_FORMAT} />
+                    dateFormat={this.props.dateFormat} />
                 <ChartBottomPanel
                     view={view}
                     project={this.props.project}
@@ -170,9 +174,7 @@ export const LineChartPage = withRouter(connect<StateProps, DispatchProps, OwnPr
     project: getSelectedProject(state),
     views: getViews(state),
     selectedViews: getChartState(state).selectedViews,
-    xAxis: getChartState(state).xAxis,
     lineChartSettings: getChartState(state).lineChartSettings
 }), {
-    setXAxis: setChartXAxisAction,
     updateLineChartSettings
 })(LineChartPageComponent));

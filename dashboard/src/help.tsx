@@ -4,7 +4,7 @@ export const RangeHelp = 'Choose how many measurements you want to display. ' +
     'You can either pick a date range or display last N uploaded measurements for each view.';
 
 export const XAxisHelp = 'Choose what attribute will be displayed on the X axis. If you select timestamp, ' +
-    'the measurements will be grouped by day.';
+    'you can select how will the measurements be grouped (per month/per day/per hour).';
 
 export const ViewListHelp = <>Select which views will be displayed in the chart.
     You can use the pencil icon to edit or delete individual views.<br /><br />

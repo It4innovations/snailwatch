@@ -31,6 +31,10 @@ const MeasurementsWrapper = styled(Box)`
   width: 750px !important;
   max-width: 750px;
   margin: 0 0 0 15px;
+
+  .card-body {
+    padding: 0 !important;
+  }
 `;
 const ViewManagerWrapper = styled(ViewManager)`
   max-width: 750px;

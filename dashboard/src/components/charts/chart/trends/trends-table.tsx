@@ -18,7 +18,7 @@ import {compareNumber} from '../../../../util/math';
 import {Help} from '../../../global/help';
 import {MeasurementRecord} from '../../../global/measurement-record';
 import {MeasurementGroup} from '../chart-utils';
-import {CHART_DATE_FORMAT} from '../configuration';
+import {DateFormat} from '../date-format';
 
 interface Props
 {
@@ -26,6 +26,7 @@ interface Props
     measurements: Measurement[];
     project: Project;
     axisX: string;
+    dateFormat: DateFormat;
     trendWindow: number;
 }
 
@@ -100,7 +101,7 @@ export class TrendsTable extends PureComponent<Props>
         const data: ViewGroup[] = this.props.views.map(view => {
             const measurements = view.measurements;
             const relPerformance = calculateRelPerformance(view, measurements, this.props.axisX,
-                this.props.trendWindow, CHART_DATE_FORMAT);
+                this.props.trendWindow, this.props.dateFormat);
             const groups = relPerformance.groups;
 
             return {
@@ -109,7 +110,7 @@ export class TrendsTable extends PureComponent<Props>
                 measurements,
                 groups,
                 axisX: this.getAxisX(view, groups),
-                value: this.getValue(view, groups),
+                value: this.getValue(view, groups)
             };
         }).filter(g => g.measurements.length !== 0);
         const style = {

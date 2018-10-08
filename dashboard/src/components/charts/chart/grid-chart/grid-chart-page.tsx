@@ -13,19 +13,23 @@ import {getSelectedProject} from '../../../../state/session/project/reducers';
 import {getViews} from '../../../../state/session/view/reducers';
 import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
-import {MeasurementKeys} from '../../../global/keys/measurement-keys';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {applyFilter, ViewFilter, ViewSortMode} from '../../view/view-filter/view-filter';
 import {ViewFilterComponent} from '../../view/view-filter/view-filter-component';
-import {CHART_DATE_FORMAT} from '../configuration';
+import {DateFormat} from '../date-format';
 import {LineChart} from '../line-chart/line-chart';
 import {LineChartSettings} from '../line-chart/line-chart-settings';
+import {XAxisSelector} from '../x-axis-selector';
 
 interface OwnProps
 {
     rangeFilter: RangeFilter;
+    xAxis: string;
+    dateFormat: DateFormat;
     onChangeRangeFilter(rangeFilter: RangeFilter): void;
+    onChangeXAxis(xAxis: string): void;
+    onChangeDateFormat(dateFormat: DateFormat): void;
     selectView(view: SelectChartViewParams): void;
 }
 interface StateProps
@@ -37,7 +41,6 @@ interface StateProps
 type Props = OwnProps & StateProps & RouteComponentProps<void>;
 
 const initialState = {
-    xAxis: '',
     viewFilter: {
         query: '',
         sortMode: ViewSortMode.CreationTime
@@ -100,9 +103,11 @@ class GridChartPageComponent extends PureComponent<Props, State>
                         onFilterChange={this.props.onChangeRangeFilter} />
                 </Box>
                 <Box title='X axis' help={XAxisHelp}>
-                    <MeasurementKeys project={this.props.project}
-                                     value={this.state.xAxis}
-                                     onChange={this.changeXAxis} />
+                    <XAxisSelector project={this.props.project}
+                                   xAxis={this.props.xAxis}
+                                   dateFormat={this.props.dateFormat}
+                                   onChangeXAxis={this.props.onChangeXAxis}
+                                   onChangeDateFormat={this.props.onChangeDateFormat} />
                 </Box>
                 <Box>
                     <ViewFilterComponent filter={this.state.viewFilter}
@@ -137,13 +142,13 @@ class GridChartPageComponent extends PureComponent<Props, State>
                 <Label>{view.name}</Label>
                 <LineChart
                     datasets={datasets}
-                    xAxis={this.state.xAxis}
+                    xAxis={this.props.xAxis}
                     width={300}
                     height={150}
                     preview={true}
                     groupMode={GroupMode.AxisX}
                     settings={this.settings}
-                    dateFormat={CHART_DATE_FORMAT} />
+                    dateFormat={this.props.dateFormat} />
             </Dataset>
         );
     }
@@ -152,14 +157,10 @@ class GridChartPageComponent extends PureComponent<Props, State>
     {
         this.props.selectView({
             view,
-            xAxis: this.state.xAxis
+            xAxis: this.props.xAxis
         });
     }
 
-    changeXAxis = (xAxis: string) =>
-    {
-        this.setState({ xAxis });
-    }
     changeViewFilter = (viewFilter: ViewFilter) =>
     {
         this.setState({ viewFilter });

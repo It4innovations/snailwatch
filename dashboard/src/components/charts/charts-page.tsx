@@ -26,6 +26,7 @@ import {Request} from '../../util/request';
 import {MultiRequestComponent} from '../global/request/multi-request-component';
 import {ProjectGate} from '../project/project-gate';
 import {BarChartPage} from './chart/bar-chart/bar-chart-page';
+import {DATE_FORMAT_DAY, DateFormat} from './chart/date-format';
 import {GridChartPage} from './chart/grid-chart/grid-chart-page';
 import {LineChartPage} from './chart/line-chart/line-chart-page';
 import {TrendsPage} from './chart/trends/trends-page';
@@ -47,6 +48,12 @@ interface DispatchProps
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
+
+const initialState = {
+    xAxis: '',
+    dateFormat: DATE_FORMAT_DAY as DateFormat
+};
+type State = Readonly<typeof initialState>;
 
 interface TabSection
 {
@@ -83,37 +90,30 @@ const SectionHeader = styled.div`
   font-size: 1.5em;
 `;
 
-class ChartsWrapper extends PureComponent<Props>
-{
-    render()
-    {
-        return (
-            <ProjectGate>
-                <ChartsPageComponent {...this.props} />
-            </ProjectGate>
-        );
-    }
-}
 
-class ChartsPageComponent extends PureComponent<Props>
+class ChartsPageComponent extends PureComponent<Props, State>
 {
+    readonly state = initialState;
+
     render()
     {
         const match = this.props.match;
         const paths = Object.keys(chartToTab);
 
         return (
-            <Switch>
-                {paths.map(path =>
-                    <Route key={`route/${path}`}
-                           path={`${match.url}/${path}/:viewId`}
-                           exact={true}
-                           render={(props) => this.selectViewAndRedirect(path, props)} />
-                )}
-                <Route path={`${match.url}/:chart?`}
-                       render={(props: RouteComponentProps<{chart: string}>) =>
-                           this.renderBody(props.match.params.chart)} />
-            </Switch>
+            <ProjectGate>
+                <Switch>
+                    {paths.map(path =>
+                        <Route key={`route/${path}`}
+                               path={`${match.url}/${path}/:viewId`}
+                               exact={true}
+                               render={(props) => this.selectViewAndRedirect(path, props)} />
+                    )}
+                    <Route path={`${match.url}/:chart?`}
+                           render={(props: RouteComponentProps<{chart: string}>) =>
+                               this.renderBody(props.match.params.chart)} />
+                </Switch>
+            </ProjectGate>
         );
     }
     selectViewAndRedirect = (path: string, props: RouteComponentProps<{viewId: string}>): JSX.Element =>
@@ -164,19 +164,36 @@ class ChartsPageComponent extends PureComponent<Props>
                 <TabPanel>
                     <GridChartPage rangeFilter={this.props.rangeFilter}
                                    onChangeRangeFilter={this.props.changeRangeFilter}
+                                   xAxis={this.state.xAxis}
+                                   onChangeXAxis={this.changeXAxis}
+                                   dateFormat={this.state.dateFormat}
+                                   onChangeDateFormat={this.changeDateFormat}
                                    selectView={this.selectDataset} />
                 </TabPanel>
                 <TabPanel>
                     <LineChartPage rangeFilter={this.props.rangeFilter}
-                                   onChangeRangeFilter={this.props.changeRangeFilter} />
+                                   onChangeRangeFilter={this.props.changeRangeFilter}
+                                   xAxis={this.state.xAxis}
+                                   onChangeXAxis={this.changeXAxis}
+                                   dateFormat={this.state.dateFormat}
+                                   onChangeDateFormat={this.changeDateFormat}
+                    />
                 </TabPanel>
                 <TabPanel>
                     <BarChartPage rangeFilter={this.props.rangeFilter}
-                                  onChangeRangeFilter={this.props.changeRangeFilter} />
+                                  onChangeRangeFilter={this.props.changeRangeFilter}
+                                  xAxis={this.state.xAxis}
+                                  onChangeXAxis={this.changeXAxis}
+                                  dateFormat={this.state.dateFormat}
+                                  onChangeDateFormat={this.changeDateFormat} />
                 </TabPanel>
                 <TabPanel>
                     <TrendsPage rangeFilter={this.props.rangeFilter}
-                                onChangeRangeFilter={this.props.changeRangeFilter} />
+                                onChangeRangeFilter={this.props.changeRangeFilter}
+                                xAxis={this.state.xAxis}
+                                onChangeXAxis={this.changeXAxis}
+                                dateFormat={this.state.dateFormat}
+                                onChangeDateFormat={this.changeDateFormat} />
                 </TabPanel>
             </Tabs>
         );
@@ -200,6 +217,15 @@ class ChartsPageComponent extends PureComponent<Props>
     {
         this.changeTab(chartToTab['line'].index);
     }
+
+    changeXAxis = (xAxis: string) =>
+    {
+        this.setState({ xAxis });
+    }
+    changeDateFormat = (dateFormat: DateFormat) =>
+    {
+        this.setState({ dateFormat });
+    }
 }
 
 export const ChartsPage = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
@@ -212,4 +238,4 @@ export const ChartsPage = withRouter(connect<StateProps, DispatchProps>((state: 
     selectDataset: selectChartViewAction,
     selectView: selectViewAction,
     navigate: (path: string) => push(path)
-})(ChartsWrapper));
+})(ChartsPageComponent));
