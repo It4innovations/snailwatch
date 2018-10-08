@@ -67,6 +67,9 @@ const View = Row.extend`
 const CreateButton = styled(Button)`
   margin-top: 5px;
 `;
+const EditIcon = styled.div`
+  display: none;
+`;
 const NameWrapper = Row.extend`
   width: 100%;
   justify-content: space-between;
@@ -75,6 +78,9 @@ const NameWrapper = Row.extend`
 
   &:hover {
     text-decoration: underline;
+    ${EditIcon} {
+      display: block;
+    }
   }
 `;
 
@@ -123,7 +129,9 @@ class ViewSelectionComponent extends PureComponent<Props, State>
                         <NameWrapper title='Edit view'
                                      onClick={() => this.props.onEditView(v)}>
                             <span>{v.name}</span>
-                            <MdEdit />
+                            <EditIcon>
+                                <MdEdit />
+                            </EditIcon>
                         </NameWrapper>
                     </View>
                 )}

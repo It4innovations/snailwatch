@@ -45,7 +45,20 @@ const Row = styled.div`
 const Operator = styled(Input)`
   width: 100px !important;
 `;
+const DeleteButton = styled(Button)`
+  display: none !important;
+  padding: 2px !important;
+  margin-left: 5px;
+`;
+const FilterRow = styled(Row)`
+  &:hover {
+    ${DeleteButton} {
+      display: block !important;
+    }
+  }
+`;
 const Filter = styled(Badge)`
+  padding: 0.5rem !important;
   max-width: 300px;
   word-break: break-all;
   white-space: normal !important;
@@ -53,7 +66,8 @@ const Filter = styled(Badge)`
   cursor: pointer;
 
   &:hover {
-    background-color: #545B62;
+    background-color: #0069D9;
+    border-color: #0062CC;
   }
 `;
 const ActionButton = styled(Button)`
@@ -139,9 +153,20 @@ export class FilterComponent extends PureComponent<Props, State>
     renderReadonly = (): JSX.Element =>
     {
         return (
-            <Filter title='Edit filter' onClick={this.startEdit}>
-                {this.props.filter.path}&nbsp;{this.props.filter.operator}&nbsp;{this.props.filter.value}
-            </Filter>
+            <FilterRow>
+                <Filter title='Edit filter'
+                        onClick={this.startEdit}
+                        color='primary'>
+                    {this.props.filter.path}&nbsp;{this.props.filter.operator}&nbsp;{this.props.filter.value}
+                </Filter>
+                <DeleteButton outline
+                              size='sm'
+                              color='danger'
+                              title='Delete filter'
+                              onClick={this.remove}>
+                    <FaTrash size={16} />
+                </DeleteButton>
+            </FilterRow>
         );
     }
 
