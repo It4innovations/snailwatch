@@ -55,7 +55,7 @@ const Dataset = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-right: 4px;
+  margin: 0 4px 4px 0;
   padding: 10px;
   border: 1px solid #8c8c8c;
   border-radius: 5px;
