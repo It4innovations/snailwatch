@@ -13,6 +13,7 @@ const List = styled.ul`
   display: flex;
   justify-content: center;
   list-style: none;
+  flex-wrap: wrap;
 `;
 const Entry = styled.li`
   margin-right: 10px;
