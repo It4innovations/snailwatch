@@ -20,10 +20,11 @@ import {
     reloadViewMeasurementsAction,
     selectChartViewAction,
     selectViewAction,
-    setChartXAxisAction,
+    updateChartXAxisSettingsAction,
     updateSelectedViewsAction
 } from './actions';
 import {clearCache, getMeasurementsRecord, insertMeasurementsRecord} from './dataset-cache';
+import {getChartState} from './reducer';
 
 function getDirtyViews(views: View[], rangeFilter: RangeFilter): View[]
 {
@@ -74,12 +75,15 @@ const reloadViews = createRequestEpic(reloadViewMeasurementsAction, (action, sta
     }
 });
 
-const handleViewGridChartSelect: AppEpic = action$ =>
+const handleViewGridChartSelect: AppEpic = (action$, store) =>
     action$.pipe(
         ofAction(selectChartViewAction),
         switchMap(action =>
             from([
-                setChartXAxisAction(action.payload.xAxis),
+                updateChartXAxisSettingsAction({
+                    ...getChartState(store.value).xAxisSettings,
+                    xAxis: action.payload.xAxis
+                }),
                 updateSelectedViewsAction([action.payload.view.id])
             ])
         )
@@ -95,7 +99,10 @@ const handleViewSelect: AppEpic = (action$, store) =>
             const xAxis = isBlank(project.commitKey) ? 'timestamp' : project.commitKey; // TODO: get from URL?
 
             return from([
-                setChartXAxisAction(xAxis),
+                updateChartXAxisSettingsAction({
+                    ...getChartState(store.value).xAxisSettings,
+                    xAxis
+                }),
                 updateSelectedViewsAction([action.payload.viewId])
             ]);
         })

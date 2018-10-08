@@ -13,18 +13,16 @@ import {getViews} from '../../../../state/session/view/reducers';
 import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
-import {DateFormat} from '../date-format';
 import {XAxisSelector} from '../x-axis-selector';
+import {XAxisSettings} from '../x-axis-settings';
 import {TrendsTable} from './trends-table';
 
 interface OwnProps
 {
     rangeFilter: RangeFilter;
-    xAxis: string;
-    dateFormat: DateFormat;
+    xAxisSettings: XAxisSettings;
     onChangeRangeFilter(rangeFilter: RangeFilter): void;
-    onChangeXAxis(xAxis: string): void;
-    onChangeDateFormat(dateFormat: DateFormat): void;
+    onChangeXAxisSettings(settings: XAxisSettings): void;
 }
 interface StateProps
 {
@@ -54,8 +52,8 @@ class TrendsPageComponent extends PureComponent<Props>
                 views={this.props.views}
                 measurements={this.props.measurements}
                 project={this.props.project}
-                axisX={this.props.xAxis}
-                dateFormat={this.props.dateFormat}
+                axisX={this.props.xAxisSettings.xAxis}
+                dateFormat={this.props.xAxisSettings.dateFormat}
                 trendWindow={10} />
         );
     }
@@ -70,10 +68,8 @@ class TrendsPageComponent extends PureComponent<Props>
                 </Box>
                 <Box title='Group by' help={TrendGroupHelp}>
                     <XAxisSelector project={this.props.project}
-                                   xAxis={this.props.xAxis}
-                                   dateFormat={this.props.dateFormat}
-                                   onChangeXAxis={this.props.onChangeXAxis}
-                                   onChangeDateFormat={this.props.onChangeDateFormat} />
+                                   settings={this.props.xAxisSettings}
+                                   onChange={this.props.onChangeXAxisSettings} />
                 </Box>
             </>
         );

@@ -1,18 +1,16 @@
+import {sort} from 'ramda';
 import React, {ChangeEvent, PureComponent} from 'react';
 import MdEdit from 'react-icons/lib/md/edit';
 import {connect} from 'react-redux';
 import {Button, Input} from 'reactstrap';
 import styled from 'styled-components';
-import {sort} from 'ramda';
-import {RangeFilter} from '../../../lib/view/range-filter';
 import {Project} from '../../../lib/project/project';
+import {RangeFilter} from '../../../lib/view/range-filter';
 import {createView, View} from '../../../lib/view/view';
 import {AppState} from '../../../state/app/reducers';
-import {
-    selectChartViewAction,
-    SelectChartViewParams,
-    setChartXAxisAction, updateSelectedViewsAction
-} from '../../../state/session/pages/chart-page/actions';
+import {updateSelectedViewsAction} from '../../../state/session/pages/chart-page/actions';
+import {getChartState} from '../../../state/session/pages/chart-page/reducer';
+import {getRangeFilter} from '../../../state/session/pages/reducers';
 import {getSelectedProject} from '../../../state/session/project/reducers';
 import {ViewActions} from '../../../state/session/view/actions';
 import {getViews, getViewsState} from '../../../state/session/view/reducers';
@@ -29,18 +27,15 @@ interface StateProps
     views: View[];
     project: Project;
     viewRequest: Request;
-    xAxis: string;
     rangeFilter: RangeFilter;
     selectedViews: string[];
 }
 interface DispatchProps
 {
-    changeXAxis(xAxis: string): void;
     createView(view: View): void;
     updateView(view: View): void;
     deleteView(view: View): void;
     updateSelectedViews(views: string[]): void;
-    selectChartView(params: SelectChartViewParams): void;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -142,10 +137,7 @@ class ViewSelectionComponent extends PureComponent<Props, State>
     }
     selectView = (view: View) =>
     {
-        this.props.selectChartView({
-            view,
-            xAxis: this.props.xAxis
-        });
+        this.props.updateSelectedViews([view.id]);
     }
     changeViewQuery = (event: ChangeEvent<HTMLInputElement>) =>
     {
@@ -171,14 +163,11 @@ export const ViewSelection = connect<StateProps, DispatchProps, OwnProps>((state
     views: getViews(state),
     viewRequest: getViewsState(state).viewRequest,
     project: getSelectedProject(state),
-    xAxis: state.session.pages.chartState.xAxis,
-    rangeFilter: state.session.pages.global.rangeFilter,
-    selectedViews: state.session.pages.chartState.selectedViews
+    rangeFilter: getRangeFilter(state),
+    selectedViews: getChartState(state).selectedViews
 }), {
     createView: ViewActions.create.started,
     updateView: ViewActions.update.started,
     deleteView: ViewActions.delete.started,
-    changeXAxis: setChartXAxisAction,
-    updateSelectedViews: updateSelectedViewsAction,
-    selectChartView: selectChartViewAction,
+    updateSelectedViews: updateSelectedViewsAction
 })(ViewSelectionComponent);

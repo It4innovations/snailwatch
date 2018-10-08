@@ -20,8 +20,8 @@ import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {ViewSelection} from '../../view/view-selection';
 import {ChartBottomPanel} from '../chart-bottom-panel';
-import {DateFormat} from '../date-format';
 import {XAxisSelector} from '../x-axis-selector';
+import {XAxisSettings} from '../x-axis-settings';
 import {LineChart, LineChartDataset} from './line-chart';
 import {LineChartSettings} from './line-chart-settings';
 import {LineChartSettingsComponent} from './line-chart-settings-component';
@@ -29,11 +29,9 @@ import {LineChartSettingsComponent} from './line-chart-settings-component';
 interface OwnProps
 {
     rangeFilter: RangeFilter;
-    xAxis: string;
-    dateFormat: DateFormat;
+    xAxisSettings: XAxisSettings;
     onChangeRangeFilter(rangeFilter: RangeFilter): void;
-    onChangeXAxis(xAxis: string): void;
-    onChangeDateFormat(dateFormat: DateFormat): void;
+    onChangeXAxisSettings(settings: XAxisSettings): void;
 }
 interface StateProps
 {
@@ -89,10 +87,8 @@ class LineChartPageComponent extends PureComponent<Props, State>
                 </Box>
                 <Box title='X axis' help={XAxisHelp}>
                     <XAxisSelector project={this.props.project}
-                                   xAxis={this.props.xAxis}
-                                   dateFormat={this.props.dateFormat}
-                                   onChangeXAxis={this.props.onChangeXAxis}
-                                   onChangeDateFormat={this.props.onChangeDateFormat} />
+                                   settings={this.props.xAxisSettings}
+                                   onChange={this.props.onChangeXAxisSettings} />
                 </Box>
                 <Box title='View list' help={ViewListHelp}>
                     <ViewSelection onEditView={this.setSelectedView} />
@@ -116,14 +112,14 @@ class LineChartPageComponent extends PureComponent<Props, State>
         return (
             <>
                 <LineChart
-                    xAxis={this.props.xAxis}
+                    xAxis={this.props.xAxisSettings.xAxis}
                     height={400}
                     responsive={true}
                     groupMode={this.state.groupMode}
                     settings={this.props.lineChartSettings}
                     onMeasurementsSelected={this.changeSelectedMeasurements}
                     datasets={datasets}
-                    dateFormat={this.props.dateFormat} />
+                    dateFormat={this.props.xAxisSettings.dateFormat} />
                 <ChartBottomPanel
                     view={view}
                     project={this.props.project}

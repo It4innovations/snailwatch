@@ -17,19 +17,17 @@ import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {applyFilter, ViewFilter, ViewSortMode} from '../../view/view-filter/view-filter';
 import {ViewFilterComponent} from '../../view/view-filter/view-filter-component';
-import {DateFormat} from '../date-format';
 import {LineChart} from '../line-chart/line-chart';
 import {LineChartSettings} from '../line-chart/line-chart-settings';
 import {XAxisSelector} from '../x-axis-selector';
+import {XAxisSettings} from '../x-axis-settings';
 
 interface OwnProps
 {
     rangeFilter: RangeFilter;
-    xAxis: string;
-    dateFormat: DateFormat;
+    xAxisSettings: XAxisSettings;
     onChangeRangeFilter(rangeFilter: RangeFilter): void;
-    onChangeXAxis(xAxis: string): void;
-    onChangeDateFormat(dateFormat: DateFormat): void;
+    onChangeXAxisSettings(settings: XAxisSettings): void;
     selectView(view: SelectChartViewParams): void;
 }
 interface StateProps
@@ -104,10 +102,8 @@ class GridChartPageComponent extends PureComponent<Props, State>
                 </Box>
                 <Box title='X axis' help={XAxisHelp}>
                     <XAxisSelector project={this.props.project}
-                                   xAxis={this.props.xAxis}
-                                   dateFormat={this.props.dateFormat}
-                                   onChangeXAxis={this.props.onChangeXAxis}
-                                   onChangeDateFormat={this.props.onChangeDateFormat} />
+                                   settings={this.props.xAxisSettings}
+                                   onChange={this.props.onChangeXAxisSettings} />
                 </Box>
                 <Box>
                     <ViewFilterComponent filter={this.state.viewFilter}
@@ -142,13 +138,13 @@ class GridChartPageComponent extends PureComponent<Props, State>
                 <Label>{view.name}</Label>
                 <LineChart
                     datasets={datasets}
-                    xAxis={this.props.xAxis}
+                    xAxis={this.props.xAxisSettings.xAxis}
                     width={300}
                     height={150}
                     preview={true}
                     groupMode={GroupMode.AxisX}
                     settings={this.settings}
-                    dateFormat={this.props.dateFormat} />
+                    dateFormat={this.props.xAxisSettings.dateFormat} />
             </Dataset>
         );
     }
@@ -157,7 +153,7 @@ class GridChartPageComponent extends PureComponent<Props, State>
     {
         this.props.selectView({
             view,
-            xAxis: this.props.xAxis
+            xAxis: this.props.xAxisSettings.xAxis
         });
     }
 

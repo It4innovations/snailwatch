@@ -18,18 +18,21 @@ import {
     selectChartViewAction,
     SelectChartViewParams,
     selectViewAction,
-    SelectViewParams
+    SelectViewParams,
+    updateChartXAxisSettingsAction
 } from '../../state/session/pages/chart-page/actions';
+import {getChartState} from '../../state/session/pages/chart-page/reducer';
 import {getRangeFilter} from '../../state/session/pages/reducers';
 import {getSelectedProject} from '../../state/session/project/reducers';
+import {getViewsState} from '../../state/session/view/reducers';
 import {Request} from '../../util/request';
 import {MultiRequestComponent} from '../global/request/multi-request-component';
 import {ProjectGate} from '../project/project-gate';
 import {BarChartPage} from './chart/bar-chart/bar-chart-page';
-import {DATE_FORMAT_DAY, DateFormat} from './chart/date-format';
 import {GridChartPage} from './chart/grid-chart/grid-chart-page';
 import {LineChartPage} from './chart/line-chart/line-chart-page';
 import {TrendsPage} from './chart/trends/trends-page';
+import {XAxisSettings} from './chart/x-axis-settings';
 import style from './charts-page.scss';
 
 interface StateProps
@@ -38,22 +41,18 @@ interface StateProps
     rangeFilter: RangeFilter;
     measurementRequest: Request;
     viewRequest: Request;
+    xAxisSettings: XAxisSettings;
 }
 interface DispatchProps
 {
     changeRangeFilter(rangeFilter: RangeFilter): void;
+    changeXAxisSettings(settings: XAxisSettings): void;
     selectDataset(params: SelectChartViewParams): void;
     selectView(params: SelectViewParams): void;
     navigate(path: string): void;
 }
 
 type Props = StateProps & DispatchProps & RouteComponentProps<void>;
-
-const initialState = {
-    xAxis: '',
-    dateFormat: DATE_FORMAT_DAY as DateFormat
-};
-type State = Readonly<typeof initialState>;
 
 interface TabSection
 {
@@ -91,10 +90,8 @@ const SectionHeader = styled.div`
 `;
 
 
-class ChartsPageComponent extends PureComponent<Props, State>
+class ChartsPageComponent extends PureComponent<Props>
 {
-    readonly state = initialState;
-
     render()
     {
         const match = this.props.match;
@@ -164,36 +161,27 @@ class ChartsPageComponent extends PureComponent<Props, State>
                 <TabPanel>
                     <GridChartPage rangeFilter={this.props.rangeFilter}
                                    onChangeRangeFilter={this.props.changeRangeFilter}
-                                   xAxis={this.state.xAxis}
-                                   onChangeXAxis={this.changeXAxis}
-                                   dateFormat={this.state.dateFormat}
-                                   onChangeDateFormat={this.changeDateFormat}
+                                   xAxisSettings={this.props.xAxisSettings}
+                                   onChangeXAxisSettings={this.props.changeXAxisSettings}
                                    selectView={this.selectDataset} />
                 </TabPanel>
                 <TabPanel>
                     <LineChartPage rangeFilter={this.props.rangeFilter}
                                    onChangeRangeFilter={this.props.changeRangeFilter}
-                                   xAxis={this.state.xAxis}
-                                   onChangeXAxis={this.changeXAxis}
-                                   dateFormat={this.state.dateFormat}
-                                   onChangeDateFormat={this.changeDateFormat}
-                    />
+                                   xAxisSettings={this.props.xAxisSettings}
+                                   onChangeXAxisSettings={this.props.changeXAxisSettings} />
                 </TabPanel>
                 <TabPanel>
                     <BarChartPage rangeFilter={this.props.rangeFilter}
                                   onChangeRangeFilter={this.props.changeRangeFilter}
-                                  xAxis={this.state.xAxis}
-                                  onChangeXAxis={this.changeXAxis}
-                                  dateFormat={this.state.dateFormat}
-                                  onChangeDateFormat={this.changeDateFormat} />
+                                  xAxisSettings={this.props.xAxisSettings}
+                                  onChangeXAxisSettings={this.props.changeXAxisSettings} />
                 </TabPanel>
                 <TabPanel>
                     <TrendsPage rangeFilter={this.props.rangeFilter}
                                 onChangeRangeFilter={this.props.changeRangeFilter}
-                                xAxis={this.state.xAxis}
-                                onChangeXAxis={this.changeXAxis}
-                                dateFormat={this.state.dateFormat}
-                                onChangeDateFormat={this.changeDateFormat} />
+                                xAxisSettings={this.props.xAxisSettings}
+                                onChangeXAxisSettings={this.props.changeXAxisSettings} />
                 </TabPanel>
             </Tabs>
         );
@@ -217,24 +205,17 @@ class ChartsPageComponent extends PureComponent<Props, State>
     {
         this.changeTab(chartToTab['line'].index);
     }
-
-    changeXAxis = (xAxis: string) =>
-    {
-        this.setState({ xAxis });
-    }
-    changeDateFormat = (dateFormat: DateFormat) =>
-    {
-        this.setState({ dateFormat });
-    }
 }
 
 export const ChartsPage = withRouter(connect<StateProps, DispatchProps>((state: AppState) => ({
     project: getSelectedProject(state),
     rangeFilter: getRangeFilter(state),
-    measurementRequest: state.session.pages.chartState.measurementsRequest,
-    viewRequest: state.session.view.viewRequest
+    xAxisSettings: getChartState(state).xAxisSettings,
+    measurementRequest: getChartState(state).measurementsRequest,
+    viewRequest: getViewsState(state).viewRequest
 }), {
     changeRangeFilter: changeRangeFilterAction,
+    changeXAxisSettings: updateChartXAxisSettingsAction,
     selectDataset: selectChartViewAction,
     selectView: selectViewAction,
     navigate: (path: string) => push(path)

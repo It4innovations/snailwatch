@@ -226,8 +226,6 @@ export const ViewManager = connect<StateProps, DispatchProps, OwnProps>((state: 
     views: getViews(state),
     project: getSelectedProject(state),
     user: getUser(state),
-    xAxis: state.session.pages.chartState.xAxis,
-    rangeFilter: state.session.pages.global.rangeFilter,
     globalMeasurements: getGlobalMeasurements(state)
 }), {
     addView: ViewActions.create.started,

@@ -16,18 +16,16 @@ import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {ViewSelection} from '../../view/view-selection';
 import {ChartBottomPanel} from '../chart-bottom-panel';
-import {DateFormat} from '../date-format';
 import {XAxisSelector} from '../x-axis-selector';
+import {XAxisSettings} from '../x-axis-settings';
 import {BarChart} from './bar-chart';
 
 interface OwnProps
 {
     rangeFilter: RangeFilter;
-    xAxis: string;
-    dateFormat: DateFormat;
+    xAxisSettings: XAxisSettings;
     onChangeRangeFilter(rangeFilter: RangeFilter): void;
-    onChangeXAxis(xAxis: string): void;
-    onChangeDateFormat(dateFormat: DateFormat): void;
+    onChangeXAxisSettings(settings: XAxisSettings): void;
 }
 interface StateProps
 {
@@ -77,10 +75,8 @@ class BarChartPageComponent extends PureComponent<Props, State>
                 </Box>
                 <Box title='X axis' help={XAxisHelp}>
                     <XAxisSelector project={this.props.project}
-                                   xAxis={this.props.xAxis}
-                                   dateFormat={this.props.dateFormat}
-                                   onChangeXAxis={this.props.onChangeXAxis}
-                                   onChangeDateFormat={this.props.onChangeDateFormat} />
+                                   settings={this.props.xAxisSettings}
+                                   onChange={this.props.onChangeXAxisSettings} />
                 </Box>
                 <Box title='View list' help={ViewListHelp}>
                     <ViewSelection onEditView={this.setSelectedView} />
@@ -115,10 +111,10 @@ class BarChartPageComponent extends PureComponent<Props, State>
         return (
             <BarChart key={viewId}
                       measurements={view.measurements}
-                      xAxis={this.props.xAxis}
+                      xAxis={this.props.xAxisSettings.xAxis}
                       yAxes={view.yAxes}
                       groupMode={this.state.groupMode}
-                      dateFormat={this.props.dateFormat}
+                      dateFormat={this.props.xAxisSettings.dateFormat}
                       onMeasurementsSelected={this.changeSelectedMeasurements} />
         );
     }

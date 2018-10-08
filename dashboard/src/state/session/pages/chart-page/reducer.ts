@@ -1,13 +1,15 @@
 import {compose} from 'redux';
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
+import {DATE_FORMAT_DAY} from '../../../../components/charts/chart/date-format';
 import {LineChartSettings} from '../../../../components/charts/chart/line-chart/line-chart-settings';
+import {XAxisSettings} from '../../../../components/charts/chart/x-axis-settings';
 import {createRequest, hookRequestActions, Request} from '../../../../util/request';
 import {AppState} from '../../../app/reducers';
 import {clearSession} from '../../actions';
 import {ViewActions} from '../../view/actions';
 import {
     reloadViewMeasurementsAction,
-    setChartXAxisAction,
+    updateChartXAxisSettingsAction,
     updateLineChartSettings,
     updateSelectedViewsAction
 } from './actions';
@@ -16,14 +18,17 @@ export interface ChartPageState
 {
     measurementsRequest: Request;
     selectedViews: string[];
-    xAxis: string;
+    xAxisSettings: XAxisSettings;
     lineChartSettings: LineChartSettings;
 }
 
 const initialState: ChartPageState = {
     measurementsRequest: createRequest(),
     selectedViews: [],
-    xAxis: '',
+    xAxisSettings: {
+        xAxis: '',
+        dateFormat: DATE_FORMAT_DAY
+    },
     lineChartSettings: {
         connectPoints: true,
         showPoints: false,
@@ -34,7 +39,7 @@ const initialState: ChartPageState = {
 
 let reducer = reducerWithInitialState<ChartPageState>({ ...initialState })
 .case(clearSession, () => ({ ...initialState }))
-.case(setChartXAxisAction, (state, xAxis) => ({ ...state, xAxis }))
+.case(updateChartXAxisSettingsAction, (state, xAxisSettings) => ({ ...state, xAxisSettings }))
 .case(updateSelectedViewsAction, (state, selectedViews) => ({ ...state, selectedViews }))
 .case(updateLineChartSettings, (state, lineChartSettings) => ({ ...state, lineChartSettings }))
 .case(ViewActions.load.done, (state, action) => ({
