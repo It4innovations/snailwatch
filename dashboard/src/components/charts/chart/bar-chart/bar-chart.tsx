@@ -60,6 +60,8 @@ export class BarChart extends PureComponent<Props>
             }];
         }
 
+        const interval = this.props.xAxis === 'timestamp' ? 'preserveEnd' : 0;
+
         const height = 400;
         return (
             <ResponsiveContainer width='98%' height={height}>
@@ -67,6 +69,7 @@ export class BarChart extends PureComponent<Props>
                     <CartesianGrid strokeDasharray='3 3' />
                     <XAxis
                         dataKey='x'
+                        interval={interval}
                         height={40}
                         tick={props => <Tick {...props} />}>
                         {empty && <Label value='No data available' position='center' />}
