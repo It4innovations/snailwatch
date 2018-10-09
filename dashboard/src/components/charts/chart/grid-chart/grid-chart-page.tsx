@@ -8,7 +8,7 @@ import {Project} from '../../../../lib/project/project';
 import {RangeFilter} from '../../../../lib/view/range-filter';
 import {View} from '../../../../lib/view/view';
 import {AppState} from '../../../../state/app/reducers';
-import {SelectChartViewParams} from '../../../../state/session/pages/chart-page/actions';
+import {SelectChartViewParams, setAllViewsActiveAction} from '../../../../state/session/pages/chart-page/actions';
 import {getSelectedProject} from '../../../../state/session/project/reducers';
 import {getViews} from '../../../../state/session/view/reducers';
 import {formatKey} from '../../../../util/measurement';
@@ -35,8 +35,12 @@ interface StateProps
     project: Project;
     views: View[];
 }
+interface DispatchProps
+{
+    setAllViewsActive(): void;
+}
 
-type Props = OwnProps & StateProps & RouteComponentProps<void>;
+type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 
 const initialState = {
     viewFilter: {
@@ -81,6 +85,11 @@ class GridChartPageComponent extends PureComponent<Props, State>
         showAverageTrend: false
     };
 
+    componentDidMount()
+    {
+        this.props.setAllViewsActive();
+    }
+
     render()
     {
         return (
@@ -124,8 +133,6 @@ class GridChartPageComponent extends PureComponent<Props, State>
     renderView = (view: View): JSX.Element =>
     {
         const measurements = view.measurements;
-        if (measurements.length === 0) return null;
-
         const datasets = view.yAxes.map(yAxis => ({
             name: `${view.name} (${formatKey(yAxis)})`,
             yAxis,
@@ -163,7 +170,9 @@ class GridChartPageComponent extends PureComponent<Props, State>
     }
 }
 
-export const GridChartPage = withRouter(connect<StateProps, {}, OwnProps>((state: AppState) => ({
+export const GridChartPage = withRouter(connect<StateProps, DispatchProps, OwnProps>((state: AppState) => ({
     project: getSelectedProject(state),
     views: getViews(state)
-}))(GridChartPageComponent));
+}), {
+    setAllViewsActive: setAllViewsActiveAction
+})(GridChartPageComponent));

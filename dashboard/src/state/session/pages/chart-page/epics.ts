@@ -1,6 +1,7 @@
 import {combineEpics} from 'redux-observable';
 import {EMPTY, from, of} from 'rxjs';
 import {map, switchMap, tap} from 'rxjs/operators';
+import {Action, Success} from 'typescript-fsa';
 import {BatchedMeasurements} from '../../../../lib/api/snail-client';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {RangeFilter} from '../../../../lib/view/range-filter';
@@ -9,6 +10,7 @@ import {ofAction, ofActions} from '../../../../util/redux-observable';
 import {createRequestEpic} from '../../../../util/request';
 import {isBlank} from '../../../../util/string';
 import {AppEpic} from '../../../app/app-epic';
+import {AppState} from '../../../app/reducers';
 import {getSelectedProject} from '../../project/reducers';
 import {getToken} from '../../user/reducers';
 import {ViewActions} from '../../view/actions';
@@ -19,16 +21,36 @@ import {getRangeFilter} from '../reducers';
 import {
     reloadViewMeasurementsAction,
     selectChartViewAction,
-    selectViewAction,
+    selectViewAction, setAllViewsActiveAction,
     updateChartXAxisSettingsAction,
     updateSelectedViewsAction
 } from './actions';
-import {clearCache, getMeasurementsRecord, insertMeasurementsRecord} from './dataset-cache';
+import {
+    addToActiveViews,
+    clearCache,
+    getActiveViews,
+    getMeasurementsRecord,
+    insertMeasurementsRecord
+} from './dataset-cache';
 import {getChartState} from './reducer';
 
-function getDirtyViews(views: View[], rangeFilter: RangeFilter): View[]
+function getDirtyViews(state: AppState, rangeFilter: RangeFilter, newViews: string[]): View[]
 {
-    return views.filter(v => getMeasurementsRecord(v, rangeFilter) === null);
+    addToActiveViews(newViews);
+
+    const views = getViews(state);
+    const viewMap = new Map();
+
+    for (const view of views)
+    {
+        viewMap.set(view.id, view);
+    }
+
+    const selected = getActiveViews()
+        .map(id => viewMap.get(id))
+        .filter(v => v !== undefined);
+
+    return selected.filter(v => getMeasurementsRecord(v, rangeFilter) === null);
 }
 function getMeasurements(batch: BatchedMeasurements, view: View): Measurement[]
 {
@@ -38,12 +60,11 @@ function getMeasurements(batch: BatchedMeasurements, view: View): Measurement[]
 }
 
 const reloadViews = createRequestEpic(reloadViewMeasurementsAction, (action, store, deps) => {
-    const rangeFilter = action.payload;
+    const rangeFilter = action.payload.rangeFilter;
     const state = store.value;
-    const views = getViews(state);
-    const dirtyViews = getDirtyViews(views, rangeFilter);
+    const dirtyViews = getDirtyViews(state, rangeFilter, action.payload.views);
 
-    if (dirtyViews.length === 0) return of(views);
+    if (dirtyViews.length === 0) return of(getViews(state));
 
     const dirtyViewSet = new Set(dirtyViews.map(v => v.id));
     const token = getToken(state);
@@ -74,6 +95,15 @@ const reloadViews = createRequestEpic(reloadViewMeasurementsAction, (action, sto
             .pipe(map(batched => mapViews(batched, (m, v) => getMeasurements(m, v))));
     }
 }, true);
+
+const setAllViewsActive: AppEpic = (action$, store) =>
+    action$.pipe(
+        ofAction(setAllViewsActiveAction),
+        map(() => reloadViewMeasurementsAction.started({
+            rangeFilter: getRangeFilter(store.value),
+            views: getViews(store.value).map(v => v.id)
+        }))
+    );
 
 const handleViewGridChartSelect: AppEpic = (action$, store) =>
     action$.pipe(
@@ -111,15 +141,29 @@ const handleViewSelect: AppEpic = (action$, store) =>
 const reloadDatasetsAfterViewChange: AppEpic = (action$, store) =>
     action$.pipe(
         ofActions([ViewActions.create.done, ViewActions.update.done]),
-        map(() => reloadViewMeasurementsAction.started(getRangeFilter(store.value)))
+        map((action: Action<Success<View, View>>) => reloadViewMeasurementsAction.started({
+            rangeFilter: getRangeFilter(store.value),
+            views: [action.payload.result.id]
+        }))
+    );
+
+const reloadDatasetsAfterSelectedViewsChange: AppEpic = (action$, store) =>
+    action$.pipe(
+        ofAction(updateSelectedViewsAction),
+        map(() => reloadViewMeasurementsAction.started({
+            rangeFilter: getRangeFilter(store.value),
+            views: getChartState(store.value).selectedViews
+        }))
     );
 
 const reloadDatasetsAfterRangeFilterChange: AppEpic = action$ =>
     action$.pipe(
         ofAction(changeRangeFilterAction),
-        map(action => reloadViewMeasurementsAction.started(action.payload))
+        map(action => reloadViewMeasurementsAction.started({
+            rangeFilter: action.payload,
+            views: []
+        }))
     );
-
 
 const clearCacheAfterMeasurementDelete: AppEpic = action$ =>
     action$.pipe(
@@ -135,6 +179,8 @@ export const chartEpics = combineEpics(
     handleViewSelect,
     handleViewGridChartSelect,
     reloadViews,
+    reloadDatasetsAfterViewChange,
+    reloadDatasetsAfterSelectedViewsChange,
     reloadDatasetsAfterRangeFilterChange,
-    reloadDatasetsAfterViewChange
+    setAllViewsActive
 );

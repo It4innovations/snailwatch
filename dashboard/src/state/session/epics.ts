@@ -13,6 +13,7 @@ import {initProjectSession, initUserSession} from './actions';
 import {loadGlobalMeasurements} from './pages/actions';
 import {reloadViewMeasurementsAction} from './pages/chart-page/actions';
 import {chartEpics} from './pages/chart-page/epics';
+import {getChartState} from './pages/chart-page/reducer';
 import {pageEpics} from './pages/epics';
 import {measurementsEpics} from './pages/measurements-page/epics';
 import {getRangeFilter} from './pages/reducers';
@@ -75,7 +76,10 @@ const initProjectSessionEpic: AppEpic = (action$, store, deps) =>
                                 params: range,
                                 result: globalMeasurements
                             }),
-                            reloadViewMeasurementsAction.started(getRangeFilter(store.value)),
+                            reloadViewMeasurementsAction.started({
+                                rangeFilter: getRangeFilter(store.value),
+                                views: getChartState(store.value).selectedViews
+                            }),
                             initProjectSession.done({
                                 params: {},
                                 result: {}

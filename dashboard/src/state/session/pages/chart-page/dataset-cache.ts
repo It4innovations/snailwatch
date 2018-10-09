@@ -11,6 +11,19 @@ interface CacheRecord
 }
 
 const items: Map<string, CacheRecord> = new Map();
+const activeViews: Set<string> = new Set();
+
+export function addToActiveViews(views: string[])
+{
+    for (const view of views)
+    {
+        activeViews.add(view);
+    }
+}
+export function getActiveViews(): string[]
+{
+    return Array.from(activeViews);
+}
 
 export function insertMeasurementsRecord(view: View, rangeFilter: RangeFilter, measurements: Measurement[])
 {

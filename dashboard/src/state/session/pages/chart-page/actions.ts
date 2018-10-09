@@ -9,7 +9,16 @@ const actionCreator = actionCreatorFactory('chart-state');
 export const updateChartXAxisSettingsAction = actionCreator<XAxisSettings>('set-x-axis-settings');
 export const updateSelectedViewsAction = actionCreator<string[]>('update-selected-views');
 
-export const reloadViewMeasurementsAction = actionCreator.async<RangeFilter, View[]>('reload-datasets');
+export interface ReloadViewMeasurementsParams
+{
+    rangeFilter: RangeFilter;
+    views: string[];     // views that should be loaded
+}
+export const reloadViewMeasurementsAction = actionCreator.async<
+    ReloadViewMeasurementsParams, View[]>('reload-datasets');
+
+// sets all views as active, downloads datasets for them
+export const setAllViewsActiveAction = actionCreator('set-all-views-active');
 
 export interface SelectChartViewParams
 {

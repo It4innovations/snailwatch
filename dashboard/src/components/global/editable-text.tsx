@@ -48,7 +48,6 @@ export class EditableText extends Component<Props>
 
         if (this.props.validate(value))
         {
-            console.log('validate');
             this.props.onChange(value);
         }
         else this.text.current.textContent = this.props.value;
