@@ -51,7 +51,7 @@ export class RestClient implements SnailClient
     {
         return this.userCrud.loadOne(token, id);
     }
-    updateUser(token: string, user: User): Observable<boolean>
+    updateUser(token: string, user: User): Observable<User>
     {
         return this.userCrud.update(token, user, serializeUser(user));
     }
@@ -90,7 +90,7 @@ export class RestClient implements SnailClient
             return projects[0];
         }));
     }
-    updateProject(token: string, project: Project): Observable<boolean>
+    updateProject(token: string, project: Project): Observable<Project>
     {
         return this.projectCrud.update(token, project, serializeProject(project));
     }
@@ -181,7 +181,7 @@ export class RestClient implements SnailClient
     {
         return this.viewCrud.delete(token, view);
     }
-    updateView(token: string, view: View): Observable<boolean>
+    updateView(token: string, view: View): Observable<View>
     {
         return this.viewCrud.update(token, view, serializeView(view));
     }

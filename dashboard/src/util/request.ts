@@ -1,8 +1,8 @@
 import {default as moment, Moment} from 'moment';
 import {Action as ReduxAction} from 'redux';
 import {ActionsObservable, StateObservable} from 'redux-observable';
-import {from as observableFrom, Observable} from 'rxjs';
-import {catchError, map, switchMap} from 'rxjs/operators';
+import {EMPTY, forkJoin, from as observableFrom, Observable, Observer} from 'rxjs';
+import {catchError, flatMap, map, switchMap} from 'rxjs/operators';
 import {Action, AsyncActionCreators, Success} from 'typescript-fsa';
 import {ReducerBuilder} from 'typescript-fsa-reducers';
 import {isObject} from 'util';
@@ -151,18 +151,93 @@ export function mapRequestToActions<P, S, E>(creator: AsyncActionCreators<P, S, 
         ), catchError(error => handleActionError(creator, action, error)));
 }
 
+const requestSet = new Set();
 export function createRequestEpic<P, S, E>(creator: AsyncActionCreators<P, S, E>,
                                            startRequest: (action: Action<P>,
-                                                          state: AppState,
-                                                          deps: ServiceContainer) => Observable<S>): AppEpic
+                                                          store: StateObservable<AppState>,
+                                                          deps: ServiceContainer) => Observable<S>,
+                                           refreshRequests = false): AppEpic
 {
+    return createRequestWrapper(creator, startRequest, (action, store, deps) =>
+        mapRequestToActions(creator, action, startRequest(action, store, deps)),
+        refreshRequests
+    );
+}
+
+export function createRequestEpicOptimistic<P, S, E>(creator: AsyncActionCreators<P, S, E>,
+                                                     startRequest: (action: Action<P>,
+                                                                    store: StateObservable<AppState>,
+                                                                    deps: ServiceContainer) => Observable<S>,
+                                                     optimisticValue: (action: Action<P>, state: AppState) => S,
+                                                     revert: (action: Action<P>, state: AppState) =>
+                                                         Observable<ReduxAction>,
+                                                     refreshRequests = false
+                                                     ): AppEpic
+{
+    return createRequestWrapper(creator, startRequest, (action, store, deps) => {
+        const state = store.value;
+        const reverted = revert(action, state);
+        return Observable.create((observer: Observer<ReduxAction>) => {
+            // optimistically complete request
+            observer.next(creator.done({
+                params: action.payload,
+                result: optimisticValue(action, state)
+            }));
+
+            // start real request
+            const request = startRequest(action, store, deps);
+            request.pipe(
+                map(result =>
+                    [creator.done({
+                        params: action.payload,
+                        result
+                    })]
+                ),
+                catchError(error =>
+                    forkJoin([
+                        reverted,
+                        handleActionError(creator, action, error)
+                    ])
+                )
+            ).subscribe(actions => {
+                for (const a of actions)
+                {
+                    observer.next(a);
+                }
+                observer.complete();
+            });
+        });
+    }, refreshRequests);
+}
+
+function createRequestWrapper<P, S, E>(creator: AsyncActionCreators<P, S, E>,
+                                       startRequest: (action: Action<P>,
+                                                      store: StateObservable<AppState>,
+                                                      deps: ServiceContainer) => Observable<S>,
+                                       requestBody: (action: Action<P>, store: StateObservable<AppState>,
+                                                     deps: ServiceContainer) => Observable<ReduxAction>,
+                                       refreshRequests: boolean
+): AppEpic
+{
+    const operator = refreshRequests ? switchMap : flatMap;
+
     return (action$: ActionsObservable<ReduxAction>,
             store: StateObservable<AppState>,
             deps: ServiceContainer) =>
         action$.pipe(
             ofAction(creator.started),
-            switchMap((action: Action<P>) =>
-                mapRequestToActions(creator, action, startRequest(action, store.value, deps))
-            )
+            operator((action: Action<P>) =>
+            {
+                const type = action.type;
+
+                if (requestSet.has(type) && !refreshRequests) return EMPTY;
+                else requestSet.add(type);
+
+                const observable = requestBody(action, store, deps);
+                observable.subscribe(() => {}, () => {}, () => {
+                    requestSet.delete(type);
+                });
+                return observable;
+            })
         );
 }

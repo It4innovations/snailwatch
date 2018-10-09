@@ -21,7 +21,7 @@ export interface CrudActionWrapper<T, LoadParams = {}>
     load: OptionalActionsCreator<LoadParams, T[], {}>;
     loadOne: OptionalActionsCreator<LoadParams, T, {}>;
     create: AsyncActionCreators<T, T, {}>;
-    update: AsyncActionCreators<T, boolean, {}>;
+    update: AsyncActionCreators<T, T, {}>;
     delete: AsyncActionCreators<T, boolean, {}>;
 }
 
@@ -33,7 +33,7 @@ export function createCrudActions<T, LoadParams = {}>(name: string): CrudActionW
         load: creator.async<LoadParams, T[]>('load') as OptionalActionsCreator<LoadParams, T[], {}>,
         loadOne: creator.async<LoadParams, T>('load-one') as OptionalActionsCreator<LoadParams, T, {}>,
         create: creator.async<T, T>('create'),
-        update: creator.async<T, boolean>('update'),
+        update: creator.async<T, T>('update'),
         delete: creator.async<T, boolean>('delete')
     };
 }
@@ -63,8 +63,8 @@ export function createCrudReducer<State, Item extends {id: string}>(
             crudActions.update,
             requestSelector,
             (state, action) => ({
-                [itemKey]: [...(state[itemKey] as {} as Item[]).filter(v => v.id !== action.payload.params.id),
-                    action.payload.params]
+                [itemKey]: (state[itemKey] as {} as Item[])
+                    .map(v => v.id !== action.payload.params.id ? v : action.payload.result)
             } as {} as State)
         ),
         (r: typeof reducer) => hookRequestActions(r,

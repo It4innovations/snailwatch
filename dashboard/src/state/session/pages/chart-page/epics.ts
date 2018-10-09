@@ -37,22 +37,22 @@ function getMeasurements(batch: BatchedMeasurements, view: View): Measurement[]
     return batch.views[view.id].map(id => batch.measurements[id]);
 }
 
-
-const reloadViews = createRequestEpic(reloadViewMeasurementsAction, (action, state, deps) => {
+const reloadViews = createRequestEpic(reloadViewMeasurementsAction, (action, store, deps) => {
     const rangeFilter = action.payload;
+    const state = store.value;
     const views = getViews(state);
     const dirtyViews = getDirtyViews(views, rangeFilter);
 
     if (dirtyViews.length === 0) return of(views);
 
-    const dirtyViewSet = new Set(dirtyViews);
+    const dirtyViewSet = new Set(dirtyViews.map(v => v.id));
     const token = getToken(state);
     const project = getSelectedProject(state);
 
     function mapViews<T>(t: T, extractMeasurements: (t: T, view: View) => Measurement[])
     {
-        return views.map(v => {
-            if (!dirtyViewSet.has(v)) return v;
+        return getViews(store.value).map(v => {
+            if (!dirtyViewSet.has(v.id)) return v;
             const measurements = extractMeasurements(t, v);
             insertMeasurementsRecord(v, rangeFilter, measurements);
 
@@ -73,7 +73,7 @@ const reloadViews = createRequestEpic(reloadViewMeasurementsAction, (action, sta
         return deps.client.loadMeasurementsBatched(token, project, dirtyViews, rangeFilter)
             .pipe(map(batched => mapViews(batched, (m, v) => getMeasurements(m, v))));
     }
-});
+}, true);
 
 const handleViewGridChartSelect: AppEpic = (action$, store) =>
     action$.pipe(
@@ -110,7 +110,7 @@ const handleViewSelect: AppEpic = (action$, store) =>
 
 const reloadDatasetsAfterViewChange: AppEpic = (action$, store) =>
     action$.pipe(
-        ofAction(ViewActions.update.done),
+        ofActions([ViewActions.create.done, ViewActions.update.done]),
         map(() => reloadViewMeasurementsAction.started(getRangeFilter(store.value)))
     );
 

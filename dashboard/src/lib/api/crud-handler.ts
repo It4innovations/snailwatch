@@ -47,10 +47,10 @@ export class CrudHandler<T extends Identifiable, D extends DAO>
             token
         }).pipe(map(() => true));
     }
-    update(token: string, item: T, args: {}): Observable<boolean>
+    update(token: string, item: T, args: {}): Observable<T>
     {
         return this.requestManager.request(`${this.url}/${item.id}`, 'PATCH', args, {
             token
-        }).pipe(map(() => true));
+        }).pipe(map(() => item));
     }
 }

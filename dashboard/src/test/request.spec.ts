@@ -1,12 +1,10 @@
 import moment from 'moment';
 import {createStore} from 'redux';
-import {ActionsObservable, StateObservable} from 'redux-observable';
 import {of as observableOf, throwError as observableThrowError} from 'rxjs';
 import actionCreatorFactory, {Action, Failure, Success} from 'typescript-fsa';
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {selectActiveRequest} from '../components/global/request/multi-request-component';
-import {AppState} from '../state/app/reducers';
-import {createRequest, createRequestEpic, hookRequestActions, mapRequestToActions} from '../util/request';
+import {createRequest, hookRequestActions, mapRequestToActions} from '../util/request';
 
 const factory = actionCreatorFactory('request-test');
 const creator = factory.async<string, number>('action');
@@ -54,26 +52,6 @@ describe('mapRequestToActions', () =>
     });
 });
 
-describe('createRequestEpic', () => {
-    it('Starts request after started action', done => {
-        const action$ = ActionsObservable.of({
-            type: creator.started.type,
-            payload: 'test'
-        });
-
-        const epic = createRequestEpic(creator, (action) => {
-            expect(action.payload).toEqual('test');
-
-            return observableOf(0);
-        });
-        epic(action$, {
-            value: {}
-        } as StateObservable<AppState>, null).subscribe(() => {
-            done();
-        });
-    });
-});
-
 describe('hookRequestActions', () => {
     const createReducer = () =>
     {
@@ -88,7 +66,7 @@ describe('hookRequestActions', () => {
     };
     const makeStore = () => createStore(createReducer());
 
-    it('Set\'s request loading to true after start', () => {
+    it(`Set's request loading to true after start`, () => {
         const store = makeStore();
         store.dispatch(creator.started(''));
 
@@ -96,7 +74,7 @@ describe('hookRequestActions', () => {
         expect(store.getState().request.loading).toEqual(true);
         expect(store.getState().request.error).toEqual(null);
     });
-    it('Set\'s completed after error', () => {
+    it(`Set's completed after error`, () => {
         const store = makeStore();
         store.dispatch(creator.failed({
             params: '',
@@ -107,7 +85,7 @@ describe('hookRequestActions', () => {
         expect(store.getState().request.loading).toEqual(false);
         expect(store.getState().request.error).toEqual('error');
     });
-    it('Set\'s completed after success', () => {
+    it(`Set's completed after success`, () => {
         const store = makeStore();
         store.dispatch(creator.done({
             params: '',
@@ -124,7 +102,7 @@ describe('selectActiveRequest', () => {
     it('Returns null for empty request array', () => {
         expect(selectActiveRequest([])).toBe(null);
     });
-    it('Chooses the latest completed request if there\'s no loading', () => {
+    it(`Chooses the latest completed request if there's no loading`, () => {
         const requests = [
             createRequest({
                 completed: true,

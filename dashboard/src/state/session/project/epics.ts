@@ -11,16 +11,16 @@ import {getToken} from '../user/reducers';
 import {deselectProject, ProjectActions, regenerateUploadToken, selectProject} from './actions';
 import {getProjectById, getProjects} from './reducers';
 
-const loadProjectsEpic = createRequestEpic(ProjectActions.load, (action, state, deps) =>
-    deps.client.loadProjects(getToken(state))
+const loadProjectsEpic = createRequestEpic(ProjectActions.load, (action, store, deps) =>
+    deps.client.loadProjects(getToken(store.value))
 );
 
-const createProjectEpic = createRequestEpic(ProjectActions.create, (action, state, deps) =>
-    deps.client.createProject(getToken(state), action.payload)
+const createProjectEpic = createRequestEpic(ProjectActions.create, (action, store, deps) =>
+    deps.client.createProject(getToken(store.value), action.payload)
 );
 
-const updateProjectEpic = createRequestEpic(ProjectActions.update, (action, state, deps) =>
-    deps.client.updateProject(getToken(state), action.payload)
+const updateProjectEpic = createRequestEpic(ProjectActions.update, (action, store, deps) =>
+    deps.client.updateProject(getToken(store.value), action.payload)
 );
 
 const initSessionAfterProjectSelect: AppEpic = action$ =>
@@ -38,8 +38,9 @@ const initSessionAfterProjectSelect: AppEpic = action$ =>
         )
     );
 
-const regenerateUploadTokenEpic = createRequestEpic(regenerateUploadToken, (action, state, deps) =>
-    deps.client.regenerateUploadToken(getToken(state), getProjectById(getProjects(state), action.payload.project))
+const regenerateUploadTokenEpic = createRequestEpic(regenerateUploadToken, (action, store, deps) =>
+    deps.client.regenerateUploadToken(getToken(store.value), getProjectById(getProjects(store.value),
+        action.payload.project))
 );
 
 const goToProjectSelectionAfterUnselecting: AppEpic = (action$) =>

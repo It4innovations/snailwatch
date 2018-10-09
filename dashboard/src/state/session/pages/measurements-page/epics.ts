@@ -11,15 +11,16 @@ import {getRangeFilter} from '../reducers';
 import {deleteAllMeasurementsAction, deleteMeasurementAction, loadMeasurementsAction} from './actions';
 import {getMeasurementsPageView} from './reducer';
 
-const loadMeasurements = createRequestEpic(loadMeasurementsAction, (action, state, deps) => {
+const loadMeasurements = createRequestEpic(loadMeasurementsAction, (action, store, deps) => {
+    const state = store.value;
     const project = getSelectedProject(state);
     const rangeFilter = getRangeFilter(state);
 
     return deps.client.loadMeasurements(getToken(state), project, getMeasurementsPageView(state), rangeFilter);
 });
 
-const deleteMeasurement = createRequestEpic(deleteMeasurementAction, (action, state, deps) => {
-    return deps.client.deleteMeasurement(getToken(state), action.payload);
+const deleteMeasurement = createRequestEpic(deleteMeasurementAction, (action, store, deps) => {
+    return deps.client.deleteMeasurement(getToken(store.value), action.payload);
 });
 
 const deleteAllMeasurements: AppEpic = (action$, store, deps) =>

@@ -10,4 +10,3 @@ export const ofActions = (actionCreators: ActionCreator<{}>[]) => (source: Obser
         filter((action: Action<{}>) => (actionCreators.find(creator => isType(action, creator)) !== undefined))
     );
 };
-
