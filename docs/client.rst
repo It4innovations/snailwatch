@@ -31,7 +31,7 @@ you launch the commands from the ``client`` subdirectory in the Snailwatch repos
 .. code-block:: bash
 
     # create user (email is optional)
-    $ python -m python.swclient <server> create-user <admin-token> <username> --email <email>
+    $ python -m swclient <server> create-user <admin-token> <username> --email <email>
 
     # create project (repository URL is optional)
     $ python -m swclient <server> create-project <session-token> name --repository <repository>
@@ -51,14 +51,15 @@ Your script may look something like this (simplified example that measures a sin
 
 .. code-block:: python
 
-    import tests
-    from swclient.client import Client
     import os
+    import tests
+
+    from swclient.client import Client
 
     time_a = tests.benchmark_a()
 
     client = Client(
-        '<server>/api',
+        '<server>',
         <your-upload-token>
     )
 
