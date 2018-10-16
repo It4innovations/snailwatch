@@ -13,3 +13,10 @@ $ npm start
 
 You can find additional information about the dashboard deployment
 [here](https://snailwatch.readthedocs.io/en/latest/dashboard-deploy.html).
+
+## Screenshots
+**Dashboard overview**
+![Dashboard overview](../docs/screenshot.png)
+
+**Bar chart with execution stages**
+![Bar chart with execution stages](../docs/stacked-bar-chart.svg)
