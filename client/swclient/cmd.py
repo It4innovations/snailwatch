@@ -59,7 +59,7 @@ def get_password():
 def main():
     args = create_parser().parse_args()
 
-    client = Client(args.server_url, args.token)
+    client = Client(args.server_url, args.token if "token" in args else None)
 
     if args.action == "create-user":
         password = get_password()
