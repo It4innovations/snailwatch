@@ -1,7 +1,7 @@
 import {combineEpics} from 'redux-observable';
 import {EMPTY, from} from 'rxjs';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {switchMap} from 'rxjs/operators';
+import {catchError, switchMap} from 'rxjs/operators';
 import {SnailClient} from '../../lib/api/snail-client';
 import {Measurement} from '../../lib/measurement/measurement';
 import {createEntryRangeFilter, RangeFilter} from '../../lib/view/range-filter';
@@ -47,6 +47,7 @@ async function initProject(client: SnailClient, state: AppState, range: RangeFil
 }>
 {
     // TODO: load in parallel
+
     const views = await client.loadViews(getToken(state), getSelectedProject(state)).toPromise();
     const measurements = await client.loadMeasurements(getToken(state), getSelectedProject(state), null,
         range).toPromise();
@@ -57,6 +58,7 @@ async function initProject(client: SnailClient, state: AppState, range: RangeFil
     });
 }
 
+// TODO: refactor
 const initProjectSessionEpic: AppEpic = (action$, store, deps) =>
     action$.pipe(
         ofAction(initProjectSession.started),
@@ -85,7 +87,21 @@ const initProjectSessionEpic: AppEpic = (action$, store, deps) =>
                                 result: {}
                             })
                         ])
-                    )
+                    ),
+                    catchError(error => from([
+                        ViewActions.load.failed({
+                            params: {},
+                            error
+                        }),
+                        loadGlobalMeasurements.failed({
+                            params: range,
+                            error
+                        }),
+                        initProjectSession.done({
+                            params: {},
+                            result: {}
+                        })
+                    ]))
                 );
             }
             return EMPTY;

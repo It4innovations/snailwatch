@@ -2,7 +2,7 @@ import {default as moment, Moment} from 'moment';
 import {Action as ReduxAction} from 'redux';
 import {ActionsObservable, StateObservable} from 'redux-observable';
 import {EMPTY, forkJoin, from as observableFrom, Observable, Observer} from 'rxjs';
-import {catchError, flatMap, map, switchMap} from 'rxjs/operators';
+import {catchError, finalize, flatMap, map, switchMap} from 'rxjs/operators';
 import {Action, AsyncActionCreators, Success} from 'typescript-fsa';
 import {ReducerBuilder} from 'typescript-fsa-reducers';
 import {isObject} from 'util';
@@ -158,7 +158,7 @@ export function createRequestEpic<P, S, E>(creator: AsyncActionCreators<P, S, E>
                                                           deps: ServiceContainer) => Observable<S>,
                                            refreshRequests = false): AppEpic
 {
-    return createRequestWrapper(creator, startRequest, (action, store, deps) =>
+    return createRequestWrapper(creator, (action, store, deps) =>
         mapRequestToActions(creator, action, startRequest(action, store, deps)),
         refreshRequests
     );
@@ -174,7 +174,7 @@ export function createRequestEpicOptimistic<P, S, E>(creator: AsyncActionCreator
                                                      refreshRequests = false
                                                      ): AppEpic
 {
-    return createRequestWrapper(creator, startRequest, (action, store, deps) => {
+    return createRequestWrapper(creator, (action, store, deps) => {
         const state = store.value;
         const reverted = revert(action, state);
         return Observable.create((observer: Observer<ReduxAction>) => {
@@ -210,10 +210,14 @@ export function createRequestEpicOptimistic<P, S, E>(creator: AsyncActionCreator
     }, refreshRequests);
 }
 
+/**
+ * Runs the request, checking to make sure that more requests do not run in parallel.
+ * @param creator
+ * @param requestBody function that creates the request observable.
+ * @param refreshRequests True if new requests of the same type should overwrite old ones,
+ * false if they should be ignored.
+ */
 function createRequestWrapper<P, S, E>(creator: AsyncActionCreators<P, S, E>,
-                                       startRequest: (action: Action<P>,
-                                                      store: StateObservable<AppState>,
-                                                      deps: ServiceContainer) => Observable<S>,
                                        requestBody: (action: Action<P>, store: StateObservable<AppState>,
                                                      deps: ServiceContainer) => Observable<ReduxAction>,
                                        refreshRequests: boolean
@@ -233,11 +237,11 @@ function createRequestWrapper<P, S, E>(creator: AsyncActionCreators<P, S, E>,
                 if (requestSet.has(type) && !refreshRequests) return EMPTY;
                 else requestSet.add(type);
 
-                const observable = requestBody(action, store, deps);
-                observable.subscribe(() => {}, () => {}, () => {
-                    requestSet.delete(type);
-                });
-                return observable;
+                return requestBody(action, store, deps).pipe(
+                    finalize(() => {
+                        requestSet.delete(type);
+                    })
+                );
             })
         );
 }
