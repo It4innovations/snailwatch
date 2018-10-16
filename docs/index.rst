@@ -4,15 +4,27 @@ Snailwatch
 Snailwatch is a service for continuously monitoring your app's performance.
 It collects measured results of your benchmarks and allows you to see
 historical overview of their performance in a web dashboard. When the performance
-of some benchmark drops, it can automatically notify you with the details of the
+of any benchmark drops, it can automatically notify you with the details of the
 regression.
 
 .. figure:: pipeline.svg
-    :width: 80%
+    :width: 70%
     :alt: Snailwatch pipeline
     :align: center
 
     Snailwatch pipeline
+
+Current features:
+    - import of measurements
+    - historical overview of app performance with multiple chart types
+    - querying measurements using custom filters and aggregations
+    - automatic regression detection and notification via e-mail
+
+
+Planned features:
+    - usage of statistical methods to improve regression detection accuracy (T-test)
+    - integration with CI (Travis, Gitlab)
+    - integration with performance measurement tools (Gatling, JMeter)
 
 
 | To learn more about Snailwatch, read the :doc:`Overview <overview>`.
