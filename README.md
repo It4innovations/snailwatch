@@ -30,6 +30,9 @@ be available at `http://localhost:3000`.
 ADMIN_TOKEN is a secret token required for admin actions and DB_DIR
 specifies in which directory should the database be stored.
 
+### Dashboard example
+![Dashboard overview](docs/screenshot.png)
+
 ### Authors
 
 - Jakub Beránek (jakub.beranek@vsb.cz)
