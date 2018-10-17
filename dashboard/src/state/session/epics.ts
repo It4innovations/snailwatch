@@ -1,14 +1,9 @@
 import {combineEpics} from 'redux-observable';
-import {EMPTY, from} from 'rxjs';
-import {fromPromise} from 'rxjs/internal-compatibility';
-import {catchError, switchMap} from 'rxjs/operators';
-import {SnailClient} from '../../lib/api/snail-client';
-import {Measurement} from '../../lib/measurement/measurement';
-import {createEntryRangeFilter, RangeFilter} from '../../lib/view/range-filter';
-import {View} from '../../lib/view/view';
+import {EMPTY, forkJoin, from, of} from 'rxjs';
+import {catchError, map, mergeMap, switchMap} from 'rxjs/operators';
+import {createEntryRangeFilter} from '../../lib/view/range-filter';
 import {ofAction} from '../../util/redux-observable';
 import {AppEpic} from '../app/app-epic';
-import {AppState} from '../app/reducers';
 import {initProjectSession, initUserSession} from './actions';
 import {loadGlobalMeasurements} from './pages/actions';
 import {reloadViewMeasurementsAction} from './pages/chart-page/actions';
@@ -41,24 +36,6 @@ const initUserSessionEpic: AppEpic = (action$, store) =>
         })
     );
 
-async function initProject(client: SnailClient, state: AppState, range: RangeFilter): Promise<{
-    views: View[],
-    globalMeasurements: Measurement[]
-}>
-{
-    // TODO: load in parallel
-
-    const views = await client.loadViews(getToken(state), getSelectedProject(state)).toPromise();
-    const measurements = await client.loadMeasurements(getToken(state), getSelectedProject(state), null,
-        range).toPromise();
-
-    return Promise.resolve({
-        views,
-        globalMeasurements: measurements
-    });
-}
-
-// TODO: refactor
 const initProjectSessionEpic: AppEpic = (action$, store, deps) =>
     action$.pipe(
         ofAction(initProjectSession.started),
@@ -67,36 +44,33 @@ const initProjectSessionEpic: AppEpic = (action$, store, deps) =>
             if (isUserAuthenticated(store.value) && project !== null)
             {
                 const range = createEntryRangeFilter(1000);
-                return fromPromise(initProject(deps.client, store.value, range)).pipe(
-                    switchMap(({views, globalMeasurements}) =>
-                        from([
-                            ViewActions.load.done({
-                                params: {},
-                                result: views
-                            }),
-                            loadGlobalMeasurements.done({
-                                params: range,
-                                result: globalMeasurements
-                            }),
-                            reloadViewMeasurementsAction.started({
-                                rangeFilter: getRangeFilter(store.value),
-                                views: getChartState(store.value).selectedViews
-                            }),
-                            initProjectSession.done({
-                                params: {},
-                                result: {}
-                            })
-                        ])
-                    ),
-                    catchError(error => from([
+                return forkJoin([
+                    deps.client.loadViews(getToken(store.value), getSelectedProject(store.value)),
+                    deps.client.loadMeasurements(getToken(store.value), getSelectedProject(store.value),
+                        null, range)
+                ]).pipe(
+                    map(([views, measurements]) => [
+                        ViewActions.load.done({
+                            params: {},
+                            result: views
+                        }),
+                        loadGlobalMeasurements.done({
+                            params: range,
+                            result: measurements
+                        }),
+                        reloadViewMeasurementsAction.started({
+                            rangeFilter: getRangeFilter(store.value),
+                            views: getChartState(store.value).selectedViews
+                        })
+                    ]),
+                    catchError(error => of([
                         ViewActions.load.failed({
                             params: {},
                             error
-                        }),
-                        loadGlobalMeasurements.failed({
-                            params: range,
-                            error
-                        }),
+                        }
+                    )])),
+                    mergeMap(actions => from([
+                        ...actions,
                         initProjectSession.done({
                             params: {},
                             result: {}
