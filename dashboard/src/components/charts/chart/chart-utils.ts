@@ -109,8 +109,8 @@ function createGroup(batch: Measurement[], axisX: string, axisY: string[]): Meas
         const stddev = standardDeviation(vals);
         const deviation = {
             value: stddev,
-            low: average - stddev,
-            high: average + stddev
+            low: stddev,
+            high: stddev
         };
 
         return {
