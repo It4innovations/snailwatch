@@ -1,10 +1,5 @@
 import {combineEpics} from 'redux-observable';
-import {from as observableFrom} from 'rxjs';
-import {mergeMap, switchMap} from 'rxjs/operators';
-import {Action} from 'typescript-fsa';
-import {ofAction} from '../../../../util/redux-observable';
-import {createRequestEpic, mapRequestToActions} from '../../../../util/request';
-import {AppEpic} from '../../../app/app-epic';
+import {createRequestEpic} from '../../../../util/request';
 import {getSelectedProject} from '../../project/reducers';
 import {getToken} from '../../user/reducers';
 import {getRangeFilter} from '../reducers';
@@ -23,17 +18,9 @@ const deleteMeasurement = createRequestEpic(deleteMeasurementAction, (action, st
     return deps.client.deleteMeasurement(getToken(store.value), action.payload);
 });
 
-const deleteAllMeasurements: AppEpic = (action$, store, deps) =>
-    action$.pipe(
-        ofAction(deleteAllMeasurementsAction.started),
-        switchMap((action: Action<{}>) =>
-            mapRequestToActions(deleteAllMeasurementsAction, action,
-                deps.client.deleteProjectMeasurements(getToken(store.value), getSelectedProject(store.value))).pipe(
-                mergeMap(result => observableFrom([
-                    result,
-                    loadMeasurementsAction.started({})
-                ])))
-        ));
+const deleteAllMeasurements = createRequestEpic(deleteAllMeasurementsAction, (action, store, deps) => {
+    return deps.client.deleteProjectMeasurements(getToken(store.value), getSelectedProject(store.value));
+});
 
 export const measurementsEpics = combineEpics(
     loadMeasurements,

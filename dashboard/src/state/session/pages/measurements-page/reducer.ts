@@ -47,7 +47,7 @@ reducer = compose(
     ),
     (r: typeof reducer) => hookRequestActions(r, deleteAllMeasurementsAction,
         state => state.measurementsRequest,
-        (state, action) => ({
+        state => ({
             ...state,
             measurements: []
         })
