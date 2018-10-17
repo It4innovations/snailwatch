@@ -88,6 +88,13 @@ export class Tooltip extends PureComponent<TooltipProps & Props>
         if (measurements.length === 1) return measurements[0].timestamp.format(DATE_FORMAT);
 
         const dates = sort(compareDate, measurements.map(m => m.timestamp));
+
+        // checks whether the two dates have the same (day, month, year)
+        if (dates[0].isSame(dates[0], 'day'))
+        {
+            return `${dates[0].format(DATE_FORMAT)} - ${dates[1].format('HH:mm:ss')}`;
+        }
+
         return `${dates[0].format(DATE_FORMAT)} - ${dates[dates.length - 1].format(DATE_FORMAT)}`;
     }
 }
