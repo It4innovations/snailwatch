@@ -92,19 +92,17 @@ export class LineChart extends PureComponent<Props>
             points = [{x: '', data: []}];
         }
 
-        const interval = this.props.xAxis === 'timestamp' ? 'preserveEnd' : 0;
         const yDomain: [AxisDomain, AxisDomain] = this.props.fitToDomain ? ['dataMin', 'auto'] : [0, 'auto'];
 
         return (
             <ReLineChart data={points}
                          width={this.props.width}
                          height={this.props.height}
-                         margin={{left: 20}}
                          ref={this.props.chartRef}>
                 <CartesianGrid stroke='#CCCCCC' />
                 <XAxis
                     dataKey='x'
-                    interval={interval}
+                    interval='preserveStartEnd'
                     tickLine={!preview}
                     tick={props => !this.props.preview && <Tick {...props} />}
                     padding={{left: padding, right: padding}}>

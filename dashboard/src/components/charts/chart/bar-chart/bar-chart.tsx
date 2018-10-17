@@ -64,7 +64,6 @@ export class BarChart extends PureComponent<Props>
 
     renderChart = (): JSX.Element =>
     {
-        const interval = this.props.xAxis === 'timestamp' ? 'preserveEnd' : 0;
         const yAxes = this.props.yAxes;
         let data = this.groups(this.props.measurements, this.props.groupMode,
             this.props.xAxis, yAxes, this.props.dateFormat);
@@ -84,14 +83,13 @@ export class BarChart extends PureComponent<Props>
 
         return (
             <ReBarChart data={data}
-                        margin={{left: 20}}
                         width={this.props.width}
                         height={this.props.height}
                         ref={this.props.chartRef}>
                 <CartesianGrid strokeDasharray='3 3' />
                 <XAxis
                     dataKey='x'
-                    interval={interval}
+                    interval='preserveStartEnd'
                     height={40}
                     tick={props => <Tick {...props} />}>
                     {empty && <Label value='No data available' position='center' />}

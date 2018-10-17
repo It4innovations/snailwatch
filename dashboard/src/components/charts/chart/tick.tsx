@@ -27,23 +27,19 @@ export class Tick extends PureComponent<Props & Partial<DefaultProps>>
         const {width, height, x, y, fill, textAnchor} = this.props;
         const value = this.props.payload.value;
 
-        const shortened = this.shorten(value);
-
         return (
             <g>
-                <text width={width} height={height} x={x} y={y} fill={fill}
+                <text width={width}
+                      height={height}
+                      x={x}
+                      y={y}
+                      fill={fill}
+                      fontSize='13px'
                       textAnchor={textAnchor}>
-                    <tspan x={x} dy='0.71em'>{shortened}</tspan>
+                    <tspan x={x} dy='0.71em'>{value}</tspan>
                 </text>
                 <title>{value}</title>
             </g>
         );
-    }
-
-    shorten = (value: string): string =>
-    {
-        if (value.length < this.props.maxLength) return value;
-
-        return `${value.substr(0, this.props.maxLength)}…`;
     }
 }
