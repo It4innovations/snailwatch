@@ -27,20 +27,18 @@ const TooltipWrapper = styled.div`
   border: 1px solid #DDDDDD;
   padding: 8px;
 `;
-const Dataset = styled.div`
-  border-bottom: 1px solid black;
-  padding-bottom: 2px;
-  margin-bottom: 1px;
-  :last-child {
-    border-bottom: none;
-  }
-`;
 const DatasetLabel = styled.div<{color: string}>`
   color: ${props => props.color};
   text-shadow: 1px 1px 1px #AAAAAA;
 `;
-const DatasetInfo = styled.div`
-  font-size: 0.75rem;
+const DatasetInfo = styled.table`
+  font-size: 0.9rem;
+  border-collapse: collapse;
+  td {
+    border-bottom: 1px solid black;
+    text-align: center;
+    padding: 4px;
+  }
 `;
 const AxisX = styled.div`
   margin-bottom: 5px;
@@ -68,17 +66,17 @@ export class Tooltip extends PureComponent<TooltipProps & Props>
         }
 
         return (
-            <Dataset key={`${dataset.name}.${index}`}>
+            <div key={`${dataset.name}.${index}`}>
                 <DatasetLabel color={dataset.fill}>{name}</DatasetLabel>
                 {!single &&
                 <DatasetInfo>
-                    <div>Average: {dataset.value.toFixed(2)}</div>
-                    <div>Std. deviation: {dataset.deviation.value.toFixed(2)}</div>
-                    <div>Measurements: {dataset.measurements.length}</div>
-                    <div>Timestamp: {this.generateTimestamp(dataset.measurements)}</div>
+                    <tr><td>Average</td><td>{dataset.value.toFixed(2)}</td></tr>
+                    <tr><td>Std. dev.</td><td>{dataset.deviation.value.toFixed(2)}</td></tr>
+                    <tr><td>Measurements</td><td>{dataset.measurements.length}</td></tr>
+                    <tr><td>Timestamp</td><td>{this.generateTimestamp(dataset.measurements)}</td></tr>
                 </DatasetInfo>
                 }
-            </Dataset>
+            </div>
         );
     }
 
