@@ -16,6 +16,7 @@ import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {ViewSelection} from '../../view/view-selection';
 import {ChartBottomPanel} from '../chart-bottom-panel';
+import {ChartToolbarWrapper} from '../toolbar/chart-toolbar-wrapper';
 import {XAxisSelector} from '../x-axis-selector';
 import {XAxisSettings} from '../x-axis-settings';
 import {BarChart} from './bar-chart';
@@ -109,13 +110,19 @@ class BarChartPageComponent extends PureComponent<Props, State>
         if (!view) return <Fragment key={viewId}>Select a view</Fragment>;
 
         return (
-            <BarChart key={viewId}
-                      measurements={view.measurements}
-                      xAxis={this.props.xAxisSettings.xAxis}
-                      yAxes={view.yAxes}
-                      groupMode={this.state.groupMode}
-                      dateFormat={this.props.xAxisSettings.dateFormat}
-                      onMeasurementsSelected={this.changeSelectedMeasurements} />
+            <ChartToolbarWrapper key={viewId}>
+                {(ref, settings) => <BarChart measurements={view.measurements}
+                                              xAxis={this.props.xAxisSettings.xAxis}
+                                              yAxes={view.yAxes}
+                                              groupMode={this.state.groupMode}
+                                              dateFormat={this.props.xAxisSettings.dateFormat}
+                                              responsive={settings.responsive}
+                                              chartRef={ref}
+                                              width={1000}
+                                              height={400}
+                                              fitToDomain={settings.fitToDomain}
+                                              onMeasurementsSelected={this.changeSelectedMeasurements} />}
+            </ChartToolbarWrapper>
         );
     }
 

@@ -85,7 +85,7 @@ const Row = styled.div`
   justify-content: space-between;
 `;
 const SectionHeader = styled.div`
-  margin-left: 45px;
+  margin-left: 48px;
   font-size: 1.5em;
 `;
 

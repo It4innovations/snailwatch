@@ -1,7 +1,8 @@
 import chroma from 'chroma-js';
 import memoizeOne from 'memoize-one';
-import React, {PureComponent} from 'react';
+import React, {PureComponent, RefObject} from 'react';
 import {
+    AxisDomain,
     Bar,
     BarChart as ReBarChart,
     CartesianGrid,
@@ -27,6 +28,11 @@ interface Props
     yAxes: string[];
     groupMode: GroupMode;
     dateFormat: string;
+    chartRef?: RefObject<ReBarChart>;
+    responsive: boolean;
+    width?: number;
+    height: number;
+    fitToDomain?: boolean;
     onMeasurementsSelected(measurements: Measurement[]): void;
 }
 
@@ -45,6 +51,20 @@ export class BarChart extends PureComponent<Props>
 
     render()
     {
+        if (this.props.responsive)
+        {
+            return (
+                <ResponsiveContainer width='98%' height={this.props.height}>
+                    {this.renderChart()}
+                </ResponsiveContainer>
+            );
+        }
+        else return this.renderChart();
+    }
+
+    renderChart = (): JSX.Element =>
+    {
+        const interval = this.props.xAxis === 'timestamp' ? 'preserveEnd' : 0;
         const yAxes = this.props.yAxes;
         let data = this.groups(this.props.measurements, this.props.groupMode,
             this.props.xAxis, yAxes, this.props.dateFormat);
@@ -60,37 +80,38 @@ export class BarChart extends PureComponent<Props>
             }];
         }
 
-        const interval = this.props.xAxis === 'timestamp' ? 'preserveEnd' : 0;
+        const yDomain: [AxisDomain, AxisDomain] = this.props.fitToDomain ? ['dataMin', 'auto'] : [0, 'auto'];
 
-        const height = 400;
         return (
-            <ResponsiveContainer width='98%' height={height}>
-                <ReBarChart data={data} margin={{left: 20}}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis
-                        dataKey='x'
-                        interval={interval}
-                        height={40}
-                        tick={props => <Tick {...props} />}>
-                        {empty && <Label value='No data available' position='center' />}
-                    </XAxis>
-                    <YAxis />
-                    {!empty && <Tooltip wrapperStyle={{ zIndex: 999 }}
-                                        offset={50}
-                                        content={<BarTooltip xAxis={this.props.xAxis} />} />}
-                    <Legend align='right' />
-                    {yAxes.map((axis, index) =>
-                        <Bar key={`${axis}.${index}`}
-                             isAnimationActive={false}
-                             dataKey={`items["${axis}"].average`}
-                             stackId='0'
-                             onClick={this.handleBarClick}
-                             maxBarSize={60}
-                             name={formatKey(axis)}
-                             fill={BAR_COLORS.getColor(index)} />
-                    )}
-                </ReBarChart>
-            </ResponsiveContainer>
+            <ReBarChart data={data}
+                        margin={{left: 20}}
+                        width={this.props.width}
+                        height={this.props.height}
+                        ref={this.props.chartRef}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis
+                    dataKey='x'
+                    interval={interval}
+                    height={40}
+                    tick={props => <Tick {...props} />}>
+                    {empty && <Label value='No data available' position='center' />}
+                </XAxis>
+                <YAxis domain={yDomain} />
+                {!empty && <Tooltip wrapperStyle={{ zIndex: 999 }}
+                                    offset={50}
+                                    content={<BarTooltip xAxis={this.props.xAxis} />} />}
+                <Legend align='right' />
+                {yAxes.map((axis, index) =>
+                    <Bar key={`${axis}.${index}`}
+                         isAnimationActive={false}
+                         dataKey={`items["${axis}"].average`}
+                         stackId='0'
+                         onClick={this.handleBarClick}
+                         maxBarSize={60}
+                         name={formatKey(axis)}
+                         fill={BAR_COLORS.getColor(index)} />
+                )}
+            </ReBarChart>
         );
     }
 

@@ -1,7 +1,8 @@
 import chroma from 'chroma-js';
 import memoizeOne from 'memoize-one';
-import React, {PureComponent} from 'react';
+import React, {PureComponent, RefObject} from 'react';
 import {
+    AxisDomain,
     CartesianGrid,
     ErrorBar,
     Label,
@@ -38,10 +39,12 @@ interface Props
     width?: number;
     height: number;
     responsive?: boolean;
+    fitToDomain?: boolean;
     groupMode: GroupMode;
     settings: LineChartSettings;
     preview?: boolean;
     dateFormat: string;
+    chartRef?: RefObject<ReLineChart>;
     onMeasurementsSelected?(measurements: Measurement[]): void;
 }
 
@@ -90,12 +93,14 @@ export class LineChart extends PureComponent<Props>
         }
 
         const interval = this.props.xAxis === 'timestamp' ? 'preserveEnd' : 0;
+        const yDomain: [AxisDomain, AxisDomain] = this.props.fitToDomain ? ['dataMin', 'auto'] : [0, 'auto'];
 
         return (
             <ReLineChart data={points}
                          width={this.props.width}
                          height={this.props.height}
-                         margin={{left: 20}}>
+                         margin={{left: 20}}
+                         ref={this.props.chartRef}>
                 <CartesianGrid stroke='#CCCCCC' />
                 <XAxis
                     dataKey='x'
@@ -105,7 +110,8 @@ export class LineChart extends PureComponent<Props>
                     padding={{left: padding, right: padding}}>
                     {empty && <Label value='No data available' position='center' />}
                 </XAxis>
-                <YAxis padding={{bottom: padding, top: padding}} />
+                <YAxis padding={{bottom: padding, top: padding}}
+                       domain={yDomain} />
                 {!preview && <Tooltip wrapperStyle={{ zIndex: 999 }}
                                       offset={50}
                                       content={<PointTooltip xAxis={this.props.xAxis} />} />}

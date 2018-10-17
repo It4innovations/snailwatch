@@ -20,6 +20,7 @@ import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
 import {ViewSelection} from '../../view/view-selection';
 import {ChartBottomPanel} from '../chart-bottom-panel';
+import {ChartToolbarWrapper} from '../toolbar/chart-toolbar-wrapper';
 import {XAxisSelector} from '../x-axis-selector';
 import {XAxisSettings} from '../x-axis-settings';
 import {LineChart, LineChartDataset} from './line-chart';
@@ -58,7 +59,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
     readonly state: State = {
         groupMode: GroupMode.AxisX,
         selectedMeasurements: [],
-        selectedView: null
+        selectedView: null,
     };
 
     private datasets = memoizeOne(
@@ -111,15 +112,22 @@ class LineChartPageComponent extends PureComponent<Props, State>
 
         return (
             <>
-                <LineChart
-                    xAxis={this.props.xAxisSettings.xAxis}
-                    height={400}
-                    responsive={true}
-                    groupMode={this.state.groupMode}
-                    settings={this.props.lineChartSettings}
-                    onMeasurementsSelected={this.changeSelectedMeasurements}
-                    datasets={datasets}
-                    dateFormat={this.props.xAxisSettings.dateFormat} />
+                <ChartToolbarWrapper>
+                    {(ref, settings) =>
+                        <LineChart
+                            xAxis={this.props.xAxisSettings.xAxis}
+                            responsive={settings.responsive}
+                            height={400}
+                            width={1000}
+                            groupMode={this.state.groupMode}
+                            settings={this.props.lineChartSettings}
+                            onMeasurementsSelected={this.changeSelectedMeasurements}
+                            datasets={datasets}
+                            dateFormat={this.props.xAxisSettings.dateFormat}
+                            fitToDomain={settings.fitToDomain}
+                            chartRef={ref} />
+                    }
+                </ChartToolbarWrapper>
                 <ChartBottomPanel
                     view={view}
                     project={this.props.project}
