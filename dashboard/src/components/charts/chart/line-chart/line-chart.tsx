@@ -17,6 +17,7 @@ import {
 import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {ColorPalette} from '../../color-palette';
+import {formatYAxis} from '../chart-utils';
 import {Tick} from '../tick';
 import {LineChartSettings} from './line-chart-settings';
 import {LineLegend} from './line-legend';
@@ -109,7 +110,8 @@ export class LineChart extends PureComponent<Props>
                     {empty && <Label value='No data available' position='center' />}
                 </XAxis>
                 <YAxis padding={{bottom: padding, top: padding}}
-                       domain={yDomain} />
+                       domain={yDomain}
+                       tickFormatter={formatYAxis} />
                 {!preview && <Tooltip wrapperStyle={{ zIndex: 999 }}
                                       offset={50}
                                       content={<PointTooltip xAxis={this.props.xAxis} />} />}

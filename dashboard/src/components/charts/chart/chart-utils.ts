@@ -94,6 +94,35 @@ export function getMinTimestamp(group: MeasurementGroup): Moment
     return reduce((a, b) => compareDate(a, b) === -1 ? a : b, moment(), group.measurements.map(m => m.timestamp));
 }
 
+export function formatYAxis(value: string): string
+{
+    const num = Number(value);
+    const table = [{
+        divisor: 1000,
+        suffix: 'K'
+    }, {
+        divisor: 1000 * 1000,
+        suffix: 'M'
+    }, {
+        divisor: 1000 * 1000 * 1000,
+        suffix: 'G'
+    }];
+
+    for (let i = table.length - 1; i >= 0; i--)
+    {
+        const entry = table[i];
+        const div = num / entry.divisor;
+
+        if (div >= 1)
+        {
+            const normalized = div.toFixed(2).replace(/\.?(0)+$/, '');
+            return `${normalized}${entry.suffix}`;
+        }
+    }
+
+    return value;
+}
+
 function hasAxis(measurement: Measurement, axis: string)
 {
     return getValueWithPath(measurement, axis) !== undefined;

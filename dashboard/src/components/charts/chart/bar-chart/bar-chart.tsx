@@ -17,7 +17,7 @@ import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {formatKey} from '../../../../util/measurement';
 import {ColorPalette} from '../../color-palette';
-import {groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
+import {formatYAxis, groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
 import {Tick} from '../tick';
 import {BarTooltip} from './bar-tooltip';
 
@@ -94,7 +94,7 @@ export class BarChart extends PureComponent<Props>
                     tick={props => <Tick {...props} />}>
                     {empty && <Label value='No data available' position='center' />}
                 </XAxis>
-                <YAxis domain={yDomain} />
+                <YAxis domain={yDomain} tickFormatter={formatYAxis} />
                 {!empty && <Tooltip wrapperStyle={{ zIndex: 999 }}
                                     offset={50}
                                     content={<BarTooltip xAxis={this.props.xAxis} />} />}
