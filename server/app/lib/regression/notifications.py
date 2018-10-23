@@ -15,7 +15,8 @@ from ...lib.util import clean_key
 
 def read_template(path):
     loader = jinja2.FileSystemLoader(
-        searchpath=os.path.join(dirname(dirname(__file__)), 'templates'))
+        searchpath=os.path.join(dirname(dirname(dirname(__file__))),
+                                'templates'))
     env = jinja2.Environment(loader=loader)
     env.lstrip_blocks = True
     env.trim_blocks = True
