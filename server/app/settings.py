@@ -43,6 +43,7 @@ DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 IF_MATCH = False
 MONGO_QUERY_BLACKLIST = []
 BANDWIDTH_SAVER = False
+CACHE_CONTROL = "private,no-cache"
 
 
 # type helpers
