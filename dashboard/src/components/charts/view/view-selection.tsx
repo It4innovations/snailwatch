@@ -105,7 +105,15 @@ class ViewSelectionComponent extends PureComponent<Props, State>
     {
         const query = this.state.viewQuery.trim();
         const regex = new RegExp(query, 'i');
-        const filtered = sort((a, b) => a.name.localeCompare(b.name), views.filter(v => regex.test(v.name)));
+        const filtered = sort((a, b) => {
+            const aSelected = this.props.selectedViews.indexOf(a.id) !== -1;
+            const bSelected = this.props.selectedViews.indexOf(b.id) !== -1;
+
+            if (aSelected && !bSelected) return -1;
+            if (bSelected && !aSelected) return 1;
+
+            return a.name.localeCompare(b.name);
+        }, views.filter(v => regex.test(v.name)));
 
         if (views.length === 0)
         {
