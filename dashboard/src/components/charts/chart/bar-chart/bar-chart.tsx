@@ -18,6 +18,7 @@ import {Measurement} from '../../../../lib/measurement/measurement';
 import {formatKey} from '../../../../util/measurement';
 import {ColorPalette} from '../../color-palette';
 import {formatYAxis, groupMeasurements, linearizeGroups, MeasurementGroup} from '../chart-utils';
+import {SortMode} from '../sort-mode';
 import {Tick} from '../tick';
 import {BarTooltip} from './bar-tooltip';
 
@@ -33,6 +34,7 @@ interface Props
     width?: number;
     height: number;
     fitToDomain?: boolean;
+    sortMode: SortMode;
     onMeasurementsSelected(measurements: Measurement[]): void;
 }
 
@@ -42,10 +44,11 @@ export class BarChart extends PureComponent<Props>
 {
     private groups = memoizeOne(
         (measurements: Measurement[], groupMode: GroupMode, xAxis: string,
-         yAxes: string[], dateFormat: string) =>
+         yAxes: string[], dateFormat: string, sortMode: SortMode) =>
             linearizeGroups(
                 groupMeasurements(measurements, groupMode, xAxis, yAxes, dateFormat),
-                dateFormat
+                dateFormat,
+                sortMode
             )
     );
 
@@ -66,7 +69,7 @@ export class BarChart extends PureComponent<Props>
     {
         const yAxes = this.props.yAxes;
         let data = this.groups(this.props.measurements, this.props.groupMode,
-            this.props.xAxis, yAxes, this.props.dateFormat);
+            this.props.xAxis, yAxes, this.props.dateFormat, this.props.sortMode);
 
         const empty = data.length === 0;
         if (empty)

@@ -121,6 +121,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
                                               width={1000}
                                               height={400}
                                               fitToDomain={settings.fitToDomain}
+                                              sortMode={this.props.xAxisSettings.sortMode}
                                               onMeasurementsSelected={this.changeSelectedMeasurements} />}
             </ChartToolbarWrapper>
         );

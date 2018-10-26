@@ -6,6 +6,7 @@ import {
     linearizeGroups,
     MeasurementGroup
 } from '../../components/charts/chart/chart-utils';
+import {SortMode} from '../../components/charts/chart/sort-mode';
 import {compareDate} from '../../util/date';
 import {exponentialAverage} from '../../util/math';
 import {formatKey} from '../../util/measurement';
@@ -38,7 +39,7 @@ export function calculateRelPerformance(view: View, measurements: Measurement[],
         measurements, GroupMode.AxisX, axisX,
         view.yAxes, dateFormat
     );
-    const linearized = linearizeGroups(groups, dateFormat);
+    const linearized = linearizeGroups(groups, dateFormat, SortMode.Timestamp);
 
     return {
         groups: linearized,

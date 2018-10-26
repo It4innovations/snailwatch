@@ -150,6 +150,7 @@ class GridChartPageComponent extends PureComponent<Props, State>
                     height={150}
                     preview={true}
                     groupMode={GroupMode.AxisX}
+                    sortMode={this.props.xAxisSettings.sortMode}
                     settings={this.settings}
                     dateFormat={this.props.xAxisSettings.dateFormat} />
             </Dataset>

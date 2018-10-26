@@ -18,6 +18,7 @@ import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {Measurement} from '../../../../lib/measurement/measurement';
 import {ColorPalette} from '../../color-palette';
 import {formatYAxis} from '../chart-utils';
+import {SortMode} from '../sort-mode';
 import {Tick} from '../tick';
 import {LineChartSettings} from './line-chart-settings';
 import {LineLegend} from './line-legend';
@@ -45,6 +46,7 @@ interface Props
     settings: LineChartSettings;
     preview?: boolean;
     dateFormat: string;
+    sortMode: SortMode;
     chartRef?: RefObject<ReLineChart>;
     onMeasurementsSelected?(measurements: Measurement[]): void;
 }
@@ -55,9 +57,9 @@ export class LineChart extends PureComponent<Props>
 {
     private lineData = memoizeOne(
         (datasets: LineChartDataset[], groupMode: GroupMode, xAxis: string,
-         dateFormat: string, showAverageTrend: boolean) =>
+         dateFormat: string, showAverageTrend: boolean, sortMode: SortMode) =>
             createLineData(datasets, groupMode, xAxis,
-                dateFormat, showAverageTrend, DATASET_COLORS
+                dateFormat, showAverageTrend, sortMode, DATASET_COLORS
             )
     );
 
@@ -85,7 +87,7 @@ export class LineChart extends PureComponent<Props>
         const padding = preview ? 10 : 20;
 
         let {points, groups} = this.lineData(this.props.datasets, this.props.groupMode, this.props.xAxis,
-            this.props.dateFormat, this.props.settings.showAverageTrend);
+            this.props.dateFormat, this.props.settings.showAverageTrend, this.props.sortMode);
 
         const empty = points.length === 0;
         if (empty)

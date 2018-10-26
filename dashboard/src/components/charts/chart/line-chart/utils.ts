@@ -4,7 +4,8 @@ import {GroupMode} from '../../../../lib/measurement/group-mode';
 import {compareDate} from '../../../../util/date';
 import {exponentialAverage} from '../../../../util/math';
 import {ColorPalette} from '../../color-palette';
-import {formatXValue, getMinTimestamp, groupMeasurements, linearizeGroups} from '../chart-utils';
+import {formatXValue, getMinTimestamp, groupMeasurements, linearizeGroups, sortPoints} from '../chart-utils';
+import {SortMode} from '../sort-mode';
 import {LineChartDataset} from './line-chart';
 import {LabeledGroup, LinePoint} from './line-point';
 
@@ -13,6 +14,7 @@ export function createLineData(datasets: LineChartDataset[],
                                xAxis: string,
                                dateFormat: string,
                                useAverages: boolean,
+                               sortMode: SortMode,
                                palette: ColorPalette): {
     groups: LabeledGroup[],
     points: LinePoint[]
@@ -29,7 +31,7 @@ export function createLineData(datasets: LineChartDataset[],
     {
         groups.push(...groups.map((labeledGroup, i) => {
             const group = labeledGroup.group;
-            const linearized = linearizeGroups(group, dateFormat);
+            const linearized = linearizeGroups(group, dateFormat, sortMode);
             const averageGroup = clone(group);
             linearized.forEach((l, index) => {
                 const key = Object.keys(group[l.x].items)[0];
@@ -49,11 +51,11 @@ export function createLineData(datasets: LineChartDataset[],
 
     return {
         groups,
-        points: createLinePoints(groups, dateFormat)
+        points: createLinePoints(groups, dateFormat, sortMode)
     };
 }
 
-function createLinePoints(datasets: LabeledGroup[], dateFormat: string): LinePoint[]
+function createLinePoints(datasets: LabeledGroup[], dateFormat: string, sortMode: SortMode): LinePoint[]
 {
     const keys = uniq(chain(d => Object.keys(d.group), datasets));
     const vals: LinePoint[] = keys.map(x => ({
@@ -81,7 +83,7 @@ function createLinePoints(datasets: LabeledGroup[], dateFormat: string): LinePoi
         })
     }));
 
-    return sort((a, b) => compareDate(getPointTimestamp(a), getPointTimestamp(b)), vals).map(val => ({
+    return sort((a, b) => sortPoints(sortMode, getPointTimestamp, a, b), vals).map(val => ({
         ...val,
         x: formatXValue(val.x, dateFormat)
     }));

@@ -124,6 +124,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
                             onMeasurementsSelected={this.changeSelectedMeasurements}
                             datasets={datasets}
                             dateFormat={this.props.xAxisSettings.dateFormat}
+                            sortMode={this.props.xAxisSettings.sortMode}
                             fitToDomain={settings.fitToDomain}
                             chartRef={ref} />
                     }

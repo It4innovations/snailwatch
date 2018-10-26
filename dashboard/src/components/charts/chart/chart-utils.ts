@@ -5,6 +5,7 @@ import {hashMeasurement, Measurement} from '../../../lib/measurement/measurement
 import {compareDate} from '../../../util/date';
 import {standardDeviation} from '../../../util/math';
 import {getValueWithPath} from '../../../util/object';
+import {SortMode} from './sort-mode';
 
 
 export interface Deviation
@@ -57,10 +58,11 @@ export function groupMeasurements(measurements: Measurement[],
     const groups: Dictionary<MeasurementGroup> = map(batch => createGroup(batch, axisX, axesY), batches);
     return filter(isGroupValid, groups);
 }
-export function linearizeGroups(groups: Dictionary<MeasurementGroup>, dateFormat: string): MeasurementGroup[]
+export function linearizeGroups(groups: Dictionary<MeasurementGroup>, dateFormat: string, sortMode: SortMode)
+    : MeasurementGroup[]
 {
     return sort(
-        (a, b) => compareDate(getMinTimestamp(a), getMinTimestamp(b)),
+        (a, b) => sortPoints(sortMode, getMinTimestamp, a, b),
         values(groups)
     ).map(v => transformDateAxis(v, dateFormat));
 }
@@ -121,6 +123,24 @@ export function formatYAxis(value: string): string
     }
 
     return value;
+}
+
+export function sortPoints<T extends {x: string}>(sortMode: SortMode,
+                                                  getTimestamp: (t: T) => Moment, a: T, b: T): number
+{
+    if (sortMode === SortMode.Timestamp)
+    {
+        return compareDate(getTimestamp(a), getTimestamp(b));
+    }
+    else if (sortMode === SortMode.AxisXNumeric)
+    {
+        return Number(a.x) - Number(b.x);
+    }
+    else if (sortMode === SortMode.AxisXLexicographic)
+    {
+        return a.x.toLocaleLowerCase().localeCompare(b.x.toLocaleLowerCase());
+    }
+    else throw new Error(`Invalid sort mode: ${sortMode}`);
 }
 
 function hasAxis(measurement: Measurement, axis: string)

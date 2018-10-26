@@ -20,7 +20,7 @@ export interface AppState
 
 const sessionPersist = {
     key: 'session',
-    version: 0,
+    version: 1,
     storage,
     migrate: createMigrate(migrations),
     transforms: [

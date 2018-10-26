@@ -2,6 +2,7 @@ import {compose} from 'redux';
 import {reducerWithInitialState} from 'typescript-fsa-reducers';
 import {DATE_FORMAT_DAY} from '../../../../components/charts/chart/date-format';
 import {LineChartSettings} from '../../../../components/charts/chart/line-chart/line-chart-settings';
+import {SortMode} from '../../../../components/charts/chart/sort-mode';
 import {XAxisSettings} from '../../../../components/charts/chart/x-axis-settings';
 import {createRequest, hookRequestActions, Request} from '../../../../util/request';
 import {AppState} from '../../../app/reducers';
@@ -27,7 +28,8 @@ const initialState: ChartPageState = {
     selectedViews: [],
     xAxisSettings: {
         xAxis: '',
-        dateFormat: DATE_FORMAT_DAY
+        dateFormat: DATE_FORMAT_DAY,
+        sortMode: SortMode.Timestamp
     },
     lineChartSettings: {
         connectPoints: true,
