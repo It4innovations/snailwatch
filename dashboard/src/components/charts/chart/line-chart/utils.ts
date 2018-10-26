@@ -55,7 +55,7 @@ export function createLineData(datasets: LineChartDataset[],
     };
 }
 
-function createLinePoints(datasets: LabeledGroup[], dateFormat: string, sortMode: SortMode): LinePoint[]
+export function createLinePoints(datasets: LabeledGroup[], dateFormat: string, sortMode: SortMode): LinePoint[]
 {
     const keys = uniq(chain(d => Object.keys(d.group), datasets));
     const vals: LinePoint[] = keys.map(x => ({

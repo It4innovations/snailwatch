@@ -147,7 +147,7 @@ describe('Filter', () =>
 
     for (const data of operatorData)
     {
-        it(`evaluates ${data.left} ${data.operator} ${data.right} is ${data.result} correctly`, () =>
+        it(`evaluates ${data.left} ${data.operator} ${data.right} is ${data.result}`, () =>
         {
             const filter = createFilter({path: 'val', operator: data.operator, value: data.right});
             const obj = {
@@ -187,7 +187,7 @@ describe('applyFilter', () =>
     });
 });
 describe('buildRequestFilter', () => {
-    it('correctly groups multiple path entries', () => {
+    it('groups multiple path entries', () => {
         const filters: Filter[] = [createFilter({
             path: 'a',
             operator: '<',
@@ -219,7 +219,7 @@ describe('buildRequestFilter', () => {
 
         expect(buildRequestFilter(filters)).toEqual({});
     });
-    it('correctly selects equal operator', () => {
+    it('selects equal operator', () => {
         const filters: Filter[] = [createFilter({
             path: 'a',
             operator: '>=',
