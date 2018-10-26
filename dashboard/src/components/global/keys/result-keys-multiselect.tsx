@@ -20,6 +20,9 @@ const RowLabel = styled.div`
     margin-right: 5px;
   }
 `;
+const EmptyKeys = styled.div`
+  word-break: break-word;
+`;
 
 export class ResultKeysMultiselect extends PureComponent<Props>
 {
@@ -35,7 +38,7 @@ export class ResultKeysMultiselect extends PureComponent<Props>
     render()
     {
         const keys = getResultKeys(this.props.keys);
-        if (keys.length === 0) return <div>No result keys available, upload some measurements</div>;
+        if (keys.length === 0) return <EmptyKeys>No result keys available, upload some measurements</EmptyKeys>;
 
         const disableChecked = this.props.values.length === 1;
 
