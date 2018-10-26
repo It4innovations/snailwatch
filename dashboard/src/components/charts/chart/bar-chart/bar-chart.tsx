@@ -1,6 +1,7 @@
 import chroma from 'chroma-js';
 import memoizeOne from 'memoize-one';
 import React, {PureComponent, RefObject} from 'react';
+import {Alert} from 'reactstrap';
 import {
     AxisDomain,
     Bar,
@@ -72,6 +73,7 @@ export class BarChart extends PureComponent<Props>
             this.props.xAxis, yAxes, this.props.dateFormat, this.props.sortMode);
 
         const empty = data.length === 0;
+        let showMissingAttributesWarning = false;
         if (empty)
         {
             data = [{
@@ -80,39 +82,46 @@ export class BarChart extends PureComponent<Props>
                 hasDateAxis: false,
                 measurements: []
             }];
+            showMissingAttributesWarning = this.props.measurements.length > 0;
         }
 
         const yDomain: [AxisDomain, AxisDomain] = this.props.fitToDomain ? ['dataMin', 'auto'] : [0, 'auto'];
 
         return (
-            <ReBarChart data={data}
-                        width={this.props.width}
-                        height={this.props.height}
-                        ref={this.props.chartRef}>
-                <CartesianGrid strokeDasharray='3 3' />
-                <XAxis
-                    dataKey='x'
-                    interval='preserveStartEnd'
-                    height={40}
-                    tick={props => <Tick {...props} />}>
-                    {empty && <Label value='No data available' position='center' />}
-                </XAxis>
-                <YAxis domain={yDomain} tickFormatter={formatYAxis} />
-                {!empty && <Tooltip wrapperStyle={{ zIndex: 999 }}
-                                    offset={50}
-                                    content={<BarTooltip xAxis={this.props.xAxis} />} />}
-                <Legend align='right' />
-                {yAxes.map((axis, index) =>
-                    <Bar key={`${axis}.${index}`}
-                         isAnimationActive={false}
-                         dataKey={`items["${axis}"].average`}
-                         stackId='0'
-                         onClick={this.handleBarClick}
-                         maxBarSize={60}
-                         name={formatKey(axis)}
-                         fill={BAR_COLORS.getColor(index)} />
-                )}
-            </ReBarChart>
+            <div>
+                {showMissingAttributesWarning &&
+                <Alert color='warning'>
+                    Some measurements are not displayed because of missing X or Y axis value.
+                </Alert>}
+                <ReBarChart data={data}
+                            width={this.props.width}
+                            height={this.props.height}
+                            ref={this.props.chartRef}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis
+                        dataKey='x'
+                        interval='preserveStartEnd'
+                        height={40}
+                        tick={props => <Tick {...props} />}>
+                        {empty && <Label value='No data available' position='center' />}
+                    </XAxis>
+                    <YAxis domain={yDomain} tickFormatter={formatYAxis} />
+                    {!empty && <Tooltip wrapperStyle={{ zIndex: 999 }}
+                                        offset={50}
+                                        content={<BarTooltip xAxis={this.props.xAxis} />} />}
+                    <Legend align='right' />
+                    {yAxes.map((axis, index) =>
+                        <Bar key={`${axis}.${index}`}
+                             isAnimationActive={false}
+                             dataKey={`items["${axis}"].average`}
+                             stackId='0'
+                             onClick={this.handleBarClick}
+                             maxBarSize={60}
+                             name={formatKey(axis)}
+                             fill={BAR_COLORS.getColor(index)} />
+                    )}
+                </ReBarChart>
+            </div>
         );
     }
 

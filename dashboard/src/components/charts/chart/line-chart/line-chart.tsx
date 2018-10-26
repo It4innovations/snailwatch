@@ -1,6 +1,8 @@
 import chroma from 'chroma-js';
 import memoizeOne from 'memoize-one';
+import {reduce} from 'ramda';
 import React, {PureComponent, RefObject} from 'react';
+import {Alert} from 'reactstrap';
 import {
     AxisDomain,
     CartesianGrid,
@@ -89,37 +91,47 @@ export class LineChart extends PureComponent<Props>
         let {points, groups} = this.lineData(this.props.datasets, this.props.groupMode, this.props.xAxis,
             this.props.dateFormat, this.props.settings.showAverageTrend, this.props.sortMode);
 
+        let showMissingAttributesWarning = false;
         const empty = points.length === 0;
         if (empty)
         {
             points = [{x: '', data: []}];
+            const measurementLength = reduce((count, dataset) => count + dataset.measurements.length, 0,
+                this.props.datasets);
+            showMissingAttributesWarning = !this.props.preview && measurementLength > 0;
         }
 
         const yDomain: [AxisDomain, AxisDomain] = this.props.fitToDomain ? ['dataMin', 'auto'] : [0, 'auto'];
 
         return (
-            <ReLineChart data={points}
-                         width={this.props.width}
-                         height={this.props.height}
-                         ref={this.props.chartRef}>
-                <CartesianGrid stroke='#CCCCCC' />
-                <XAxis
-                    dataKey='x'
-                    interval='preserveStartEnd'
-                    tickLine={!preview}
-                    tick={props => !this.props.preview && <Tick {...props} />}
-                    padding={{left: padding, right: padding}}>
-                    {empty && <Label value='No data available' position='center' />}
-                </XAxis>
-                <YAxis padding={{bottom: padding, top: padding}}
-                       domain={yDomain}
-                       tickFormatter={formatYAxis} />
-                {!preview && <Tooltip wrapperStyle={{ zIndex: 999 }}
-                                      offset={50}
-                                      content={<PointTooltip xAxis={this.props.xAxis} />} />}
-                {!preview && <Legend content={<LineLegend groups={groups} />} />}
-                {groups.map((g, i) => this.renderLine(g, i, preview))}
-            </ReLineChart>
+            <div>
+                {showMissingAttributesWarning &&
+                <Alert color='warning'>
+                    Some measurements are not displayed because of missing X or Y axis value.
+                </Alert>}
+                <ReLineChart data={points}
+                             width={this.props.width}
+                             height={this.props.height}
+                             ref={this.props.chartRef}>
+                    <CartesianGrid stroke='#CCCCCC' />
+                    <XAxis
+                        dataKey='x'
+                        interval='preserveStartEnd'
+                        tickLine={!preview}
+                        tick={props => !this.props.preview && <Tick {...props} />}
+                        padding={{left: padding, right: padding}}>
+                        {empty && <Label value='No data available' position='center' />}
+                    </XAxis>
+                    <YAxis padding={{bottom: padding, top: padding}}
+                           domain={yDomain}
+                           tickFormatter={formatYAxis} />
+                    {!preview && <Tooltip wrapperStyle={{ zIndex: 999 }}
+                                          offset={50}
+                                          content={<PointTooltip xAxis={this.props.xAxis} />} />}
+                    {!preview && <Legend content={<LineLegend groups={groups} />} />}
+                    {groups.map((g, i) => this.renderLine(g, i, preview))}
+                </ReLineChart>
+            </div>
         );
     }
 
