@@ -22,6 +22,7 @@ import {LineChart} from '../line-chart/line-chart';
 import {LineChartSettings} from '../line-chart/line-chart-settings';
 import {XAxisSelector} from '../x-axis-selector';
 import {XAxisSettings} from '../x-axis-settings';
+import {Grid, GridCellProps, AutoSizer} from 'react-virtualized';
 
 interface OwnProps
 {
@@ -52,13 +53,8 @@ const initialState = {
 };
 type State = Readonly<typeof initialState>;
 
-const Grid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  padding-top: 1px;
-  padding-left: 1px;
-`;
 const Dataset = styled.div`
+  position: relative;
   display: flex;
   flex: 0 1 25%;
   flex-direction: column;
@@ -124,21 +120,36 @@ class GridChartPageComponent extends PureComponent<Props, State>
     }
     renderContent = (): JSX.Element =>
     {
-        const views = applyFilter(this.props.views, this.state.viewFilter);
+        let views = applyFilter(this.props.views, this.state.viewFilter);
+        if (this.state.viewFilter.hideEmpty)
+        {
+            views = views.filter(v => v.measurements.length > 0);
+        }
+
         return (
             <div>
                 <SubpageHeader>Grid overview</SubpageHeader>
-                <Grid>
-                    {views.length === 0 ? 'No data available, upload some measurements.' : views.map(this.renderView)}
-                </Grid>
+                {views.length === 0 ? 'No views available.' :
+                    <AutoSizer disableHeight>
+                        {({width}) => (
+                            <Grid
+                                cellRenderer={(props) => this.renderView(props, views)}
+                                columnCount={4}
+                                columnWidth={width / 4 - 5}
+                                height={800}
+                                rowCount={views.length / 4}
+                                rowHeight={200}
+                                width={width}
+                            />)}
+                    </AutoSizer>
+                }
             </div>
         );
     }
-    renderView = (view: View): JSX.Element =>
+    renderView = (props: GridCellProps, views: View[]): JSX.Element =>
     {
+        const view = views[props.rowIndex * 4 + props.columnIndex];
         const measurements = view.measurements;
-
-        if (this.state.viewFilter.hideEmpty && measurements.length === 0) return null;
 
         const datasets = view.yAxes.map(yAxis => ({
             name: `${view.name} (${formatKey(yAxis)})`,
@@ -146,7 +157,8 @@ class GridChartPageComponent extends PureComponent<Props, State>
             measurements
         }));
         return (
-            <Dataset key={view.id}
+            <Dataset key={props.key}
+                     style={props.style}
                      title={`Select ${view.name}`}
                      onClick={() => this.selectView(view)}>
                 <Label>{view.name}</Label>
