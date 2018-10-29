@@ -15,6 +15,11 @@ const Wrapper = styled.div`
     margin-bottom: 0;
   }
 `;
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
 const Label = styled.div`
   font-size: 1.25rem;
 `;
@@ -42,6 +47,10 @@ export class ViewFilterComponent extends PureComponent<Props>
                         <option value={ViewSortMode.Name}>View name</option>
                     </Input>
                 </Wrapper>
+                <Row>
+                    <Label>Hide empty: </Label>
+                    <input type='checkbox' checked={this.props.filter.hideEmpty} onChange={this.changeHideEmpty} />
+                </Row>
             </>
         );
     }
@@ -51,6 +60,13 @@ export class ViewFilterComponent extends PureComponent<Props>
         this.props.onChange({
             ...this.props.filter,
             query: event.currentTarget.value
+        });
+    }
+    changeHideEmpty = (event: React.ChangeEvent<HTMLInputElement>) =>
+    {
+        this.props.onChange({
+            ...this.props.filter,
+            hideEmpty: event.currentTarget.checked
         });
     }
     changeSortMode = (event: React.ChangeEvent<HTMLInputElement>) =>

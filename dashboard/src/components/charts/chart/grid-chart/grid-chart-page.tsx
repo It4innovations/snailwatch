@@ -45,7 +45,8 @@ type Props = OwnProps & StateProps & DispatchProps & RouteComponentProps<void>;
 const initialState = {
     viewFilter: {
         query: '',
-        sortMode: ViewSortMode.CreationTime
+        sortMode: ViewSortMode.CreationTime,
+        hideEmpty: true
     } as ViewFilter
 };
 type State = Readonly<typeof initialState>;
@@ -74,6 +75,7 @@ const Dataset = styled.div`
 const Label = styled.div`
   text-align: center;
 `;
+
 
 class GridChartPageComponent extends PureComponent<Props, State>
 {
@@ -134,6 +136,9 @@ class GridChartPageComponent extends PureComponent<Props, State>
     renderView = (view: View): JSX.Element =>
     {
         const measurements = view.measurements;
+
+        if (this.state.viewFilter.hideEmpty && measurements.length === 0) return null;
+
         const datasets = view.yAxes.map(yAxis => ({
             name: `${view.name} (${formatKey(yAxis)})`,
             yAxis,

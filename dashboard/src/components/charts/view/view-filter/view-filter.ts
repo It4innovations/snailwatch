@@ -12,6 +12,7 @@ export interface ViewFilter
 {
     query: string;
     sortMode: ViewSortMode;
+    hideEmpty: boolean;
 }
 
 export function applyFilter(views: View[], filter: ViewFilter): View[]
