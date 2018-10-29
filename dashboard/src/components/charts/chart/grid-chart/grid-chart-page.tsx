@@ -60,6 +60,7 @@ const Grid = styled.div`
 const Dataset = styled.div`
   display: flex;
   flex: 1;
+  flex-grow: 0;
   flex-direction: column;
   justify-content: center;
   margin: 0 4px 4px 0;
