@@ -32,6 +32,7 @@ const DatasetLabel = styled.div<{color: string}>`
   text-shadow: 1px 1px 1px #AAAAAA;
 `;
 const DatasetInfo = styled.table`
+  width: 100%;
   font-size: 0.9rem;
   border-collapse: collapse;
   td {
