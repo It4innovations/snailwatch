@@ -14,6 +14,7 @@ import {getViews} from '../../../../state/session/view/reducers';
 import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
+import {SubpageHeader} from '../../shared';
 import {ViewSelection} from '../../view/view-selection';
 import {ChartBottomPanel} from '../chart-bottom-panel';
 import {ChartToolbarWrapper} from '../toolbar/chart-toolbar-wrapper';
@@ -60,7 +61,6 @@ class BarChartPageComponent extends PureComponent<Props, State>
         return (
             <TwoColumnPage
                 menu={this.renderOptions}
-                menuWidth='auto'
                 content={this.renderGraph}
                 alignMenuToTop={false} />
         );
@@ -91,6 +91,7 @@ class BarChartPageComponent extends PureComponent<Props, State>
 
         return (
             <div>
+                <SubpageHeader>Bar chart</SubpageHeader>
                 <ChartsWrapper>
                     {this.props.selectedViews.length === 0 ? 'Select a view' :
                         this.props.selectedViews.map(this.renderDataset)}

@@ -22,8 +22,8 @@ const Row = styled.div`
   width: 100%;
 `;
 const MenuColumn = styled.div<{ width: string; alignMenuToTop: boolean; }>`
-  width: ${props => props.width};
-  max-width: 400px;
+  min-width: ${props => props.width};
+  max-width: ${props => props.width};
   margin-right: 10px;
   padding: 10px;
   background: #EAEAEA;
@@ -42,7 +42,7 @@ const ContentColumn = styled.div`
 export class TwoColumnPage extends Component<Props & OptionalProps>
 {
     static defaultProps: OptionalProps = {
-        menuWidth: '400px',
+        menuWidth: '300px',
         alignMenuToTop: true
     };
 

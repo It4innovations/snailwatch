@@ -18,6 +18,7 @@ import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
+import {SubpageHeader} from '../../shared';
 import {ViewSelection} from '../../view/view-selection';
 import {ChartBottomPanel} from '../chart-bottom-panel';
 import {ChartToolbarWrapper} from '../toolbar/chart-toolbar-wrapper';
@@ -72,7 +73,6 @@ class LineChartPageComponent extends PureComponent<Props, State>
         return (
             <TwoColumnPage
                 menu={this.renderOptions}
-                menuWidth='auto'
                 content={this.renderGraph}
                 alignMenuToTop={false} />
         );
@@ -112,6 +112,7 @@ class LineChartPageComponent extends PureComponent<Props, State>
 
         return (
             <>
+                <SubpageHeader>Line chart</SubpageHeader>
                 <ChartToolbarWrapper>
                     {(ref, settings) =>
                         <LineChart

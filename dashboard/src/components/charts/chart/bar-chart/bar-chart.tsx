@@ -73,7 +73,7 @@ export class BarChart extends PureComponent<Props>
             this.props.xAxis, yAxes, this.props.dateFormat, this.props.sortMode);
 
         const empty = data.length === 0;
-        let showMissingAttributesWarning = false;
+        let attributesMissing = false;
         if (empty)
         {
             data = [{
@@ -82,14 +82,14 @@ export class BarChart extends PureComponent<Props>
                 hasDateAxis: false,
                 measurements: []
             }];
-            showMissingAttributesWarning = this.props.measurements.length > 0;
+            attributesMissing = this.props.measurements.length > 0;
         }
 
         const yDomain: [AxisDomain, AxisDomain] = this.props.fitToDomain ? ['dataMin', 'auto'] : [0, 'auto'];
 
         return (
             <div>
-                {showMissingAttributesWarning &&
+                {attributesMissing &&
                 <Alert color='warning'>
                     Some measurements are not displayed because of missing X or Y axis value.
                 </Alert>}
@@ -103,7 +103,8 @@ export class BarChart extends PureComponent<Props>
                         interval='preserveStartEnd'
                         height={40}
                         tick={props => <Tick {...props} />}>
-                        {empty && <Label value='No data available' position='center' />}
+                        {empty && <Label value={attributesMissing ? 'Missing attributes' : 'No data available'}
+                                         position='center' />}
                     </XAxis>
                     <YAxis domain={yDomain} tickFormatter={formatYAxis} />
                     {!empty && <Tooltip wrapperStyle={{ zIndex: 999 }}

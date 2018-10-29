@@ -13,6 +13,7 @@ import {getViews} from '../../../../state/session/view/reducers';
 import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
+import {SubpageHeader} from '../../shared';
 import {XAxisSelector} from '../x-axis-selector';
 import {XAxisSettings} from '../x-axis-settings';
 import {TrendsTable} from './trends-table';
@@ -40,7 +41,6 @@ class TrendsPageComponent extends PureComponent<Props>
         return (
             <TwoColumnPage
                 menu={this.renderMenu}
-                menuWidth='auto'
                 content={this.renderContent}
                 alignMenuToTop={false} />
         );
@@ -48,13 +48,16 @@ class TrendsPageComponent extends PureComponent<Props>
     renderContent = (): JSX.Element =>
     {
         return (
-            <TrendsTable
-                views={this.props.views}
-                measurements={this.props.measurements}
-                project={this.props.project}
-                axisX={this.props.xAxisSettings.xAxis}
-                dateFormat={this.props.xAxisSettings.dateFormat}
-                trendWindow={10} />
+            <div>
+                <SubpageHeader>Trends</SubpageHeader>
+                <TrendsTable
+                    views={this.props.views}
+                    measurements={this.props.measurements}
+                    project={this.props.project}
+                    axisX={this.props.xAxisSettings.xAxis}
+                    dateFormat={this.props.xAxisSettings.dateFormat}
+                    trendWindow={10} />
+            </div>
         );
     }
     renderMenu = (): JSX.Element =>

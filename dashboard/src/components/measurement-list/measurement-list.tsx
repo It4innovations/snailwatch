@@ -89,7 +89,6 @@ class MeasurementListComponent extends PureComponent<Props>
             <ProjectGate>
                 <TwoColumnPage
                     menu={this.renderMenu}
-                    menuWidth='auto'
                     content={
                         <div>
                             <ErrorBox error={request.error} />

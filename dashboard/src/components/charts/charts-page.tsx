@@ -57,25 +57,20 @@ type Props = StateProps & DispatchProps & RouteComponentProps<void>;
 interface TabSection
 {
     index: number;
-    header: string;
 }
 
 const chartToTab: Dictionary<TabSection> = {
     '': {
         index: 0,
-        header: 'Grid overview'
     },
     'line': {
         index: 1,
-        header: 'Line chart'
     },
     'bar': {
         index: 2,
-        header: 'Bar chart'
     },
     'trends': {
         index: 3,
-        header: 'Trends'
     }
 };
 
@@ -84,11 +79,6 @@ const Row = styled.div`
   align-items: center;
   justify-content: space-between;
 `;
-const SectionHeader = styled.div`
-  margin-left: 48px;
-  font-size: 1.5em;
-`;
-
 
 class ChartsPageComponent extends PureComponent<Props>
 {
@@ -154,7 +144,6 @@ class ChartsPageComponent extends PureComponent<Props>
                                 </div>
                             </Tab>
                         </TabList>
-                        <SectionHeader>{activeTab.header}</SectionHeader>
                     </Row>
                     <MultiRequestComponent requests={[this.props.viewRequest, this.props.measurementRequest]} />
                 </Row>

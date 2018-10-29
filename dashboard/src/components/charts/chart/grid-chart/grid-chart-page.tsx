@@ -15,6 +15,7 @@ import {formatKey} from '../../../../util/measurement';
 import {Box} from '../../../global/box';
 import {TwoColumnPage} from '../../../global/two-column-page';
 import {RangeFilterSwitcher} from '../../range-filter/range-filter-switcher';
+import {SubpageHeader} from '../../shared';
 import {applyFilter, ViewFilter, ViewSortMode} from '../../view/view-filter/view-filter';
 import {ViewFilterComponent} from '../../view/view-filter/view-filter-component';
 import {LineChart} from '../line-chart/line-chart';
@@ -59,14 +60,11 @@ const Grid = styled.div`
 `;
 const Dataset = styled.div`
   display: flex;
-  flex: 1;
-  flex-grow: 0;
+  flex: 0 1 25%;
   flex-direction: column;
   justify-content: center;
-  margin: 0 4px 4px 0;
   padding: 10px;
   border: 1px solid #8c8c8c;
-  border-radius: 5px;
 
   &:hover {
     border-color: transparent;
@@ -99,7 +97,6 @@ class GridChartPageComponent extends PureComponent<Props, State>
         return (
             <TwoColumnPage
                 menu={this.renderMenu}
-                menuWidth='auto'
                 content={this.renderContent}
                 alignMenuToTop={false} />
         );
@@ -129,9 +126,12 @@ class GridChartPageComponent extends PureComponent<Props, State>
     {
         const views = applyFilter(this.props.views, this.state.viewFilter);
         return (
-            <Grid>
-                {views.length === 0 ? 'No data available, upload some measurements.' : views.map(this.renderView)}
-            </Grid>
+            <div>
+                <SubpageHeader>Grid overview</SubpageHeader>
+                <Grid>
+                    {views.length === 0 ? 'No data available, upload some measurements.' : views.map(this.renderView)}
+                </Grid>
+            </div>
         );
     }
     renderView = (view: View): JSX.Element =>
