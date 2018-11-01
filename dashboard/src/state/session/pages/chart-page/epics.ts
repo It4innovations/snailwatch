@@ -11,6 +11,7 @@ import {createRequestEpic} from '../../../../util/request';
 import {isBlank} from '../../../../util/string';
 import {AppEpic} from '../../../app/app-epic';
 import {AppState} from '../../../app/reducers';
+import {deselectProject} from '../../project/actions';
 import {getSelectedProject} from '../../project/reducers';
 import {getToken} from '../../user/reducers';
 import {ViewActions} from '../../view/actions';
@@ -21,7 +22,8 @@ import {getRangeFilter} from '../reducers';
 import {
     reloadViewMeasurementsAction,
     selectChartViewAction,
-    selectViewAction, setAllViewsActiveAction,
+    selectViewAction,
+    setAllViewsActiveAction,
     updateChartXAxisSettingsAction,
     updateSelectedViewsAction
 } from './actions';
@@ -167,7 +169,7 @@ const reloadDatasetsAfterRangeFilterChange: AppEpic = action$ =>
 
 const clearCacheAfterMeasurementDelete: AppEpic = action$ =>
     action$.pipe(
-        ofActions([deleteMeasurementAction.done, deleteAllMeasurementsAction.done]),
+        ofActions([deleteMeasurementAction.done, deleteAllMeasurementsAction.done, deselectProject]),
         tap(() => {
             clearCache();
         }),
