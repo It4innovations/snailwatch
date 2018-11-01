@@ -26,6 +26,8 @@ const TooltipWrapper = styled.div`
   background: #FFFFFF;
   border: 1px solid #DDDDDD;
   padding: 8px;
+  max-width: 450px;
+  word-break: break-all;
 `;
 const DatasetLabel = styled.div<{color: string}>`
   color: ${props => props.color};
@@ -51,7 +53,10 @@ export class Tooltip extends PureComponent<TooltipProps & Props>
     {
         return (
             <TooltipWrapper>
-                <AxisX>{this.props.xLabel}: {this.props.xValue}</AxisX>
+                <AxisX>
+                    <div><b>{this.props.xLabel}</b></div>
+                    <div>{this.props.xValue}</div>
+                </AxisX>
                 <div>{this.props.datasets.map(this.renderDataset)}</div>
             </TooltipWrapper>
         );
