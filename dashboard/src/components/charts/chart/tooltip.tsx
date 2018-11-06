@@ -76,10 +76,12 @@ export class Tooltip extends PureComponent<TooltipProps & Props>
                 <DatasetLabel color={dataset.fill}>{name}</DatasetLabel>
                 {!single &&
                 <DatasetInfo>
-                    <tr><td>Average</td><td>{dataset.value.toFixed(2)}</td></tr>
-                    <tr><td>Std. dev.</td><td>{dataset.deviation.value.toFixed(2)}</td></tr>
-                    <tr><td>Measurements</td><td>{dataset.measurements.length}</td></tr>
-                    <tr><td>Timestamp</td><td>{this.generateTimestamp(dataset.measurements)}</td></tr>
+                    <tbody>
+                        <tr><td>Average</td><td>{dataset.value.toFixed(2)}</td></tr>
+                        <tr><td>Std. dev.</td><td>{dataset.deviation.value.toFixed(2)}</td></tr>
+                        <tr><td>Measurements</td><td>{dataset.measurements.length}</td></tr>
+                        <tr><td>Timestamp</td><td>{this.generateTimestamp(dataset.measurements)}</td></tr>
+                    </tbody>
                 </DatasetInfo>
                 }
             </div>
