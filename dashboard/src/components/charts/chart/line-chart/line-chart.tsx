@@ -72,22 +72,6 @@ export class LineChart extends PureComponent<Props>
             return 'You have to use a group mode with multiple datasets';
         }
 
-        if (this.props.responsive)
-        {
-            return (
-                <ResponsiveContainer height={this.props.height}>
-                    {this.renderChart()}
-                </ResponsiveContainer>
-            );
-        }
-
-        return this.renderChart();
-    }
-    renderChart = (): JSX.Element =>
-    {
-        const preview = this.props.preview || false;
-        const padding = preview ? 10 : 20;
-
         let {points, groups} = this.lineData(this.props.datasets, this.props.groupMode, this.props.xAxis,
             this.props.dateFormat, this.props.settings.showAverageTrend, this.props.sortMode);
 
@@ -101,38 +85,63 @@ export class LineChart extends PureComponent<Props>
             attributesMissing = measurementLength > 0;
         }
 
-        const yDomain: [AxisDomain, AxisDomain] = this.props.fitToDomain ? ['dataMin', 'auto'] : [0, 'auto'];
-
         return (
             <div>
                 {attributesMissing && !this.props.preview &&
                 <Alert color='warning'>
                     Some measurements are not displayed because of missing X or Y axis value.
                 </Alert>}
-                <ReLineChart data={points}
-                             width={this.props.width}
-                             height={this.props.height}
-                             ref={this.props.chartRef}>
-                    <CartesianGrid stroke='#CCCCCC' />
-                    <XAxis
-                        dataKey='x'
-                        interval='preserveStartEnd'
-                        tickLine={!preview}
-                        tick={props => !this.props.preview && <Tick {...props} />}
-                        padding={{left: padding, right: padding}}>
-                        {empty && <Label value={attributesMissing ? 'Missing attributes' : 'No data available'}
-                                         position='center' />}
-                    </XAxis>
-                    <YAxis padding={{bottom: padding, top: padding}}
-                           domain={yDomain}
-                           tickFormatter={formatYAxis} />
-                    {!preview && <Tooltip wrapperStyle={{ zIndex: 999 }}
-                                          offset={50}
-                                          content={<PointTooltip xAxis={this.props.xAxis} />} />}
-                    {!preview && <Legend content={<LineLegend groups={groups} />} />}
-                    {groups.map((g, i) => this.renderLine(g, i, preview))}
-                </ReLineChart>
+                {this.renderChartWrapper(points, groups, empty, attributesMissing)}
             </div>
+        );
+
+    }
+    renderChartWrapper = (points: LinePoint[], groups: LabeledGroup[],
+                          empty: boolean, attributesMissing: boolean): JSX.Element =>
+    {
+        if (this.props.responsive)
+        {
+            return (
+                <ResponsiveContainer width='100%' height={this.props.height}>
+                    {this.renderChart(points, groups, empty, attributesMissing)}
+                </ResponsiveContainer>
+            );
+        }
+
+        return this.renderChart(points, groups, empty, attributesMissing);
+    }
+    renderChart = (points: LinePoint[], groups: LabeledGroup[],
+                   empty: boolean, attributesMissing: boolean): JSX.Element =>
+    {
+        const preview = this.props.preview || false;
+        const padding = preview ? 10 : 20;
+        const yDomain: [AxisDomain, AxisDomain] = this.props.fitToDomain ? ['dataMin', 'auto'] : [0, 'auto'];
+
+        // do not wrap the chart, it has to be a direct child of ResponsiveContainer
+        return (
+            <ReLineChart data={points}
+                         width={this.props.width}
+                         height={this.props.height}
+                         ref={this.props.chartRef}>
+                <CartesianGrid stroke='#CCCCCC' />
+                <XAxis
+                    dataKey='x'
+                    interval='preserveStartEnd'
+                    tickLine={!preview}
+                    tick={props => !this.props.preview && <Tick {...props} />}
+                    padding={{left: padding, right: padding}}>
+                    {empty && <Label value={attributesMissing ? 'Missing attributes' : 'No data available'}
+                                     position='center' />}
+                </XAxis>
+                <YAxis padding={{bottom: padding, top: padding}}
+                       domain={yDomain}
+                       tickFormatter={formatYAxis} />
+                {!preview && <Tooltip wrapperStyle={{ zIndex: 999 }}
+                                      offset={50}
+                                      content={<PointTooltip xAxis={this.props.xAxis} />} />}
+                {!preview && <Legend content={<LineLegend groups={groups} />} />}
+                {groups.map((g, i) => this.renderLine(g, i, preview))}
+            </ReLineChart>
         );
     }
 

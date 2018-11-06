@@ -55,22 +55,8 @@ export class BarChart extends PureComponent<Props>
 
     render()
     {
-        if (this.props.responsive)
-        {
-            return (
-                <ResponsiveContainer width='98%' height={this.props.height}>
-                    {this.renderChart()}
-                </ResponsiveContainer>
-            );
-        }
-        else return this.renderChart();
-    }
-
-    renderChart = (): JSX.Element =>
-    {
-        const yAxes = this.props.yAxes;
         let data = this.groups(this.props.measurements, this.props.groupMode,
-            this.props.xAxis, yAxes, this.props.dateFormat, this.props.sortMode);
+            this.props.xAxis, this.props.yAxes, this.props.dateFormat, this.props.sortMode);
 
         const empty = data.length === 0;
         let attributesMissing = false;
@@ -85,44 +71,65 @@ export class BarChart extends PureComponent<Props>
             attributesMissing = this.props.measurements.length > 0;
         }
 
-        const yDomain: [AxisDomain, AxisDomain] = this.props.fitToDomain ? ['dataMin', 'auto'] : [0, 'auto'];
-
         return (
             <div>
                 {attributesMissing &&
                 <Alert color='warning'>
                     Some measurements are not displayed because of missing X or Y axis value.
                 </Alert>}
-                <ReBarChart data={data}
-                            width={this.props.width}
-                            height={this.props.height}
-                            ref={this.props.chartRef}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis
-                        dataKey='x'
-                        interval='preserveStartEnd'
-                        height={40}
-                        tick={props => <Tick {...props} />}>
-                        {empty && <Label value={attributesMissing ? 'Missing attributes' : 'No data available'}
-                                         position='center' />}
-                    </XAxis>
-                    <YAxis domain={yDomain} tickFormatter={formatYAxis} />
-                    {!empty && <Tooltip wrapperStyle={{ zIndex: 999 }}
-                                        offset={50}
-                                        content={<BarTooltip xAxis={this.props.xAxis} />} />}
-                    <Legend align='right' />
-                    {yAxes.map((axis, index) =>
-                        <Bar key={`${axis}.${index}`}
-                             isAnimationActive={false}
-                             dataKey={`items["${axis}"].average`}
-                             stackId='0'
-                             onClick={this.handleBarClick}
-                             maxBarSize={60}
-                             name={formatKey(axis)}
-                             fill={BAR_COLORS.getColor(index)} />
-                    )}
-                </ReBarChart>
+                {this.renderChartWrapper(data, empty, attributesMissing)}
             </div>
+        );
+    }
+    renderChartWrapper = (data: MeasurementGroup[], empty: boolean, attributesMissing: boolean): JSX.Element =>
+    {
+        if (this.props.responsive)
+        {
+            return (
+                <ResponsiveContainer width='98%' height={this.props.height}>
+                    {this.renderChart(data, empty, attributesMissing)}
+                </ResponsiveContainer>
+            );
+        }
+        else return this.renderChart(data, empty, attributesMissing);
+    }
+
+    renderChart = (data: MeasurementGroup[], empty: boolean, attributesMissing: boolean): JSX.Element =>
+    {
+        const yAxes = this.props.yAxes;
+        const yDomain: [AxisDomain, AxisDomain] = this.props.fitToDomain ? ['dataMin', 'auto'] : [0, 'auto'];
+
+        // do not wrap the chart, it has to be a direct child of ResponsiveContainer
+        return (
+            <ReBarChart data={data}
+                        width={this.props.width}
+                        height={this.props.height}
+                        ref={this.props.chartRef}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis
+                    dataKey='x'
+                    interval='preserveStartEnd'
+                    height={40}
+                    tick={props => <Tick {...props} />}>
+                    {empty && <Label value={attributesMissing ? 'Missing attributes' : 'No data available'}
+                                     position='center' />}
+                </XAxis>
+                <YAxis domain={yDomain} tickFormatter={formatYAxis} />
+                {!empty && <Tooltip wrapperStyle={{ zIndex: 999 }}
+                                    offset={50}
+                                    content={<BarTooltip xAxis={this.props.xAxis} />} />}
+                <Legend align='right' />
+                {yAxes.map((axis, index) =>
+                    <Bar key={`${axis}.${index}`}
+                         isAnimationActive={false}
+                         dataKey={`items["${axis}"].average`}
+                         stackId='0'
+                         onClick={this.handleBarClick}
+                         maxBarSize={60}
+                         name={formatKey(axis)}
+                         fill={BAR_COLORS.getColor(index)} />
+                )}
+            </ReBarChart>
         );
     }
 
