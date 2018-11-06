@@ -1,5 +1,5 @@
 import React, {PureComponent, ReactNode} from 'react';
-import {Card, CardBody, CardHeader} from 'reactstrap';
+import {Card, CardBody, CardHeader, CardHeaderProps} from 'reactstrap';
 import styled from 'styled-components';
 import {Help} from './help';
 
@@ -19,7 +19,8 @@ const SlimCard = styled(Card)`
   padding: 0 !important;
   margin-bottom: 5px;
 `;
-const Title = styled(CardHeader)<{hideable: boolean}>`
+const Title = styled(({hideable, ...rest}: CardHeaderProps & {hideable: boolean}) =>
+    <CardHeader {...rest} /> )`
   padding: 0.25rem 0.75rem !important;
   font-size: 1.25rem;
   ${(props) => props.hideable ? 'cursor: pointer' : ''};
