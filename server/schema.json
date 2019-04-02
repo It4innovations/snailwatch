@@ -1,0 +1,404 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Snailwatch API",
+    "description" : "API for the performance collection and visualization service Snailwatch. You can find documentation at [http://snailwatch.readthedocs.io](http://snailwatch.readthedocs.io).",
+    "contact" : {
+      "email" : "jakub.beranek@vsb.cz"
+    },
+    "license" : {
+      "name" : "MIT",
+      "url" : "https://opensource.org/licenses/MIT"
+    },
+    "version" : "0.1"
+  },
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/IT4I/Snailwatch/0.1",
+    "description" : "SwaggerHub API Auto Mocking"
+  }, {
+    "url" : "https://snailwatch.it4i.cz/api",
+    "description" : "Main Snailwatch service"
+  } ],
+  "security" : [ {
+    "Token" : [ ]
+  } ],
+  "tags" : [ {
+    "name" : "User"
+  }, {
+    "name" : "Project"
+  }, {
+    "name" : "Measurement"
+  }, {
+    "name" : "Admin"
+  } ],
+  "paths" : {
+    "/login" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Creates a session for the given user and returns its session token.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "User was logged in and the session was created.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "User was not found or wrong password was given."
+          }
+        }
+      }
+    },
+    "/users" : {
+      "post" : {
+        "tags" : [ "Admin" ],
+        "summary" : "Creates a new user. This can be only done with an admin token.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_1"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "User was created.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_201"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects" : {
+      "post" : {
+        "tags" : [ "Project" ],
+        "summary" : "Creates a new project with the given name.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Project was successfully created."
+          }
+        }
+      }
+    },
+    "/projects/{id}" : {
+      "get" : {
+        "tags" : [ "Project" ],
+        "summary" : "Returns project with the given ID.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of project",
+          "required" : false,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Project with the given ID.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Project was not found"
+          }
+        }
+      }
+    },
+    "/projects/{id}/upload-token" : {
+      "get" : {
+        "tags" : [ "Project" ],
+        "summary" : "Returns upload token for the given project.",
+        "parameters" : [ {
+          "name" : "project-id",
+          "in" : "path",
+          "description" : "ID of the project",
+          "required" : false,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Upload token for the given Project.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string",
+                  "example" : "abcdef"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Project" ],
+        "summary" : "Revokes the upload token for the given project and returns a new generated token.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_3"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Old token was revoked, response contains new upload token.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string",
+                  "example" : "abcdef"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/measurements" : {
+      "post" : {
+        "tags" : [ "Measurement" ],
+        "summary" : "Creates a new measurement.",
+        "description" : "You have to provide two things: environment and the measured result.\n- **Environment**\n  - identifies the version of code and environment in which the benchmark was built and executed.\n  - commit hash, branch, CPU type, number of cores, compiler etc.\n- **Result**\n  - provides measured results\n  - execution time, memory consumption, average latency etc.\n",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MeasurementPut"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Measurement was successfully inserted."
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Project" : {
+        "required" : [ "id", "name", "owner" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "$ref" : "#/components/schemas/ObjectId"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Snailwatch"
+          },
+          "owner" : {
+            "$ref" : "#/components/schemas/ObjectId"
+          }
+        }
+      },
+      "MeasurementPut" : {
+        "required" : [ "benchmark", "environment", "result" ],
+        "type" : "object",
+        "properties" : {
+          "benchmark" : {
+            "type" : "string",
+            "example" : "HardWorkload1"
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "environment" : {
+            "example" : {
+              "cpu" : "Intel Core i7-8700K",
+              "ram" : "32 GiB",
+              "worker_count" : 32,
+              "branch" : "master",
+              "version" : "0.1.0-dev",
+              "commit" : "abcd5487e6a54"
+            },
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/KeyValue"
+            } ]
+          },
+          "result" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/MeasurementRecord"
+            },
+            "example" : {
+              "execution" : {
+                "type" : "time",
+                "value" : 516.5
+              },
+              "memory" : {
+                "type" : "size",
+                "value" : 1024
+              }
+            }
+          }
+        }
+      },
+      "MeasurementRecord" : {
+        "required" : [ "type", "value" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "enum" : [ "time", "size", "integer", "string" ]
+          },
+          "value" : {
+            "oneOf" : [ {
+              "type" : "string"
+            }, {
+              "type" : "number"
+            } ]
+          }
+        },
+        "example" : [ {
+          "type" : "time",
+          "value" : 516.5
+        }, {
+          "type" : "size",
+          "value" : 1024
+        } ]
+      },
+      "KeyValue" : {
+        "type" : "object",
+        "additionalProperties" : {
+          "type" : "string"
+        }
+      },
+      "ObjectId" : {
+        "type" : "string",
+        "example" : "abcd"
+      },
+      "body" : {
+        "required" : [ "password", "username" ],
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string",
+            "example" : "User"
+          },
+          "password" : {
+            "type" : "string",
+            "example" : "Password"
+          }
+        }
+      },
+      "inline_response_200" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "example" : "1234"
+          },
+          "token" : {
+            "type" : "string",
+            "example" : "abcdef"
+          }
+        }
+      },
+      "body_1" : {
+        "required" : [ "password", "username" ],
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string",
+            "example" : "User1"
+          },
+          "password" : {
+            "type" : "string",
+            "example" : "MyAwesomePassword"
+          }
+        }
+      },
+      "inline_response_201" : {
+        "type" : "object",
+        "properties" : {
+          "_id" : {
+            "type" : "string",
+            "description" : "ID of the created user.",
+            "example" : "1234"
+          }
+        }
+      },
+      "body_2" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "example" : "MyAwesomeProject"
+          }
+        }
+      },
+      "body_3" : {
+        "required" : [ "project" ],
+        "type" : "object",
+        "properties" : {
+          "project" : {
+            "type" : "string",
+            "description" : "Project ID",
+            "example" : "1234"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "Token" : {
+        "type" : "apiKey",
+        "description" : "The API authorizes requests through an API key in the HTTP header. The header field name is **Authorization**. Measurement uploads required upload token, user creation requires admin token and all other endpoints require session token. You can find more information about tokens in the [documentation](https://snailwatch.readthedocs.io/en/latest/overview.html).",
+        "name" : "Authorization",
+        "in" : "header"
+      }
+    }
+  }
+}

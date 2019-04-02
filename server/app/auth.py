@@ -18,9 +18,7 @@ AUTH_TOKEN_EXPIRATION_SEC = 3600 * 24 * 30
 
 class Authenticator(TokenAuth, ABC):
     def authenticate(self):
-        resp = Response(None, 401)
-        abort(401, description='Provide token in the Authorization header',
-              response=resp)
+        abort(401, description='Provide token in the Authorization header')
 
 
 class UserAuthenticator(Authenticator):
