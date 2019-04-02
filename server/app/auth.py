@@ -6,7 +6,7 @@ from functools import wraps
 import werkzeug.security
 from eve import ID_FIELD
 from eve.auth import TokenAuth
-from flask import Response, abort, current_app as app, g, jsonify, request
+from flask import abort, current_app as app, g, jsonify, request
 
 from .db.loginsession import LoginSessionRepo
 from .db.uploadtoken import UploadTokenRepo
