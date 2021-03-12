@@ -37,7 +37,7 @@
     "react-bootstrap-toggle": "^2.3.1",
     "react-copy-to-clipboard": "^5.0.1",
     "react-day-picker": "^7.2.1",
-    "react-dev-utils": "^9.0.1",
+    "react-dev-utils": "^11.0.4",
     "react-dom": "^16.5.1",
     "react-icons": "^2.2.7",
     "react-loading": "^2.0.2",
