@@ -1,3 +1,2 @@
-
-class SnailwatchException(Exception):
+class SnailwatchException(BaseException):
     pass

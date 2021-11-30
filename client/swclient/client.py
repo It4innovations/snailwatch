@@ -1,11 +1,21 @@
+import dataclasses
 import datetime
+from typing import Any, Dict, List, Optional
 
 import requests
 
 from .common import SnailwatchException
 
 
-class Client(object):
+@dataclasses.dataclass
+class Measurement:
+    benchmark: str
+    environment: Dict[str, Any]
+    result: Dict[str, Any]
+    timestamp: Optional[datetime.datetime] = None
+
+
+class Client:
     """
     This client provides high-level functions for user and project management
     and measurement uploads.
@@ -15,27 +25,19 @@ class Client(object):
         creating users
     """
 
-    def __init__(self, server_url, token=None):
+    def __init__(self, server_url: str, token: Optional[str] = None):
         if "://" not in server_url:
-            server_url = "http://" + server_url
+            server_url = f"https://{server_url}"
         self.server_url = server_url
         self.token = token
 
-    def upload_measurement(self, benchmark, environment, result,
-                           timestamp=None):
+    def upload_measurement(self, measurement: Measurement):
         """
         Uploads a measurement to the server.
-
-        :param benchmark: Benchmark name
-        :param environment: Environment of the benchmark
-        :param result: Measured result
-        :param timestamp: Time of the measurement
         """
-        return self._post("measurements",
-                          serialize_measurement(benchmark, environment,
-                                                result, timestamp))
+        return self._post("measurements", serialize_measurement(measurement))
 
-    def upload_measurements(self, measurements):
+    def upload_measurements(self, measurements: List[Measurement]):
         """
         Uploads multiple measurements at once.
         Each measurement should be specified as a tuple
@@ -43,10 +45,10 @@ class Client(object):
 
         :param measurements: List of measurements
         """
-        serialized = [serialize_measurement(*m) for m in measurements]
+        serialized = [serialize_measurement(m) for m in measurements]
         return self._post("measurements", serialized)
 
-    def create_user(self, username, password, email=''):
+    def create_user(self, username: str, password: str, email=""):
         """
         Create a user account.
 
@@ -55,27 +57,25 @@ class Client(object):
         :param email: E-mail
         """
         payload = {
-            'username': username,
-            'password': password,
-            'email': email
+            "username": username,
+            "password": password,
+            "email": email
         }
         return self._post("users", payload)
 
-    def login(self, username, password):
+    def login(self, username: str, password: str) -> str:
         """
         Log in and return a session token.
 
-        :param username: Username
-        :param password: Password
         :return: session token
         """
         payload = {
-            'username': username,
-            'password': password
+            "username": username,
+            "password": password
         }
-        return self._post("login", payload)['token']
+        return self._post("login", payload)["token"]
 
-    def create_project(self, name, repository=''):
+    def create_project(self, name: str, repository=""):
         """
         Create a project.
 
@@ -83,40 +83,40 @@ class Client(object):
         :param repository: URL of the project repository
         """
         payload = {
-            'name': name,
-            'repository': repository
+            "name": name,
+            "repository": repository
         }
         return self._post("projects", payload)
 
     def _post(self, address, payload):
         http_headers = {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         }
 
         if self.token:
-            http_headers['Authorization'] = self.token
+            http_headers["Authorization"] = self.token
 
         response = requests.post(
-            '{}/{}'.format(self.server_url, address),
+            "{}/{}".format(self.server_url, address),
             json=payload,
             headers=http_headers)
 
         if response.status_code <= 199 or response.status_code >= 300:
-            raise SnailwatchException('Remote request failed, '
-                                      'status: {}, message: {}',
+            raise SnailwatchException("Remote request failed, "
+                                      "status: {}, message: {}",
                                       response.status_code, response.content)
         return response.json()
 
 
-def serialize_measurement(benchmark, environment, result,
-                          timestamp=None):
+def serialize_measurement(measurement: Measurement) -> Dict[str, Any]:
+    timestamp = measurement.timestamp
     if timestamp is None:
         timestamp = datetime.datetime.utcnow()
     timestamp = timestamp.replace(microsecond=0)
 
     return {
-        'benchmark': benchmark,
-        'timestamp': timestamp.isoformat(),
-        'environment': environment,
-        'result': result
+        "benchmark": measurement.benchmark,
+        "timestamp": timestamp.isoformat(),
+        "environment": measurement.environment,
+        "result": measurement.result
     }
