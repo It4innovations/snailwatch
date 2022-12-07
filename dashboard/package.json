@@ -13,7 +13,7 @@
     "css-loader": "^2.1.1",
     "dotenv": "4.0.0",
     "ellipsize": "0.0.3",
-    "express": "^4.16.2",
+    "express": "^4.17.3",
     "express-static-gzip": "^0.3.2",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "0.11.2",
